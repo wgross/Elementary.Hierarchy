@@ -1,4 +1,4 @@
-﻿namespace Elementary.Hierarchy.Test
+﻿namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 {
     using Elementary.Hierarchy.Generic;
     using NUnit.Framework;
