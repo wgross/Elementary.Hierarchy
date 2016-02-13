@@ -66,24 +66,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GenericNodeVisitDescendantsTest.cs" />
-    <Compile Include="GenericNodeDescendantAtTest.cs" />
+    <Compile Include="TraverseWithDelegates\GenericNodeVisitDescendantsTest.cs" />
+    <Compile Include="TraverseWithDelegates\GenericNodeDescendantAtTest.cs" />
     <Compile Include="TraverseWithInterfaces\HasChildNodesVisitDescendantsTest.cs" />
     <Compile Include="TraverseWithInterfaces\HasIdentifiableChildNodesDescendantAtTest.cs" />
     <Compile Include="TraverseWithInterfaces\HasParentAndChildNodesPrecedingSiblingTest.cs" />
     <Compile Include="TraverseWithInterfaces\HasParentAndChildNodesFollowingSiblingTest.cs" />
     <Compile Include="TraverseWithInterfaces\HasParentNodeParentTest.cs" />
-    <Compile Include="GenericNodeAncestorsOrSelfTest.cs" />
+    <Compile Include="TraverseWithDelegates\GenericNodeAncestorsOrSelfTest.cs" />
     <Compile Include="TraverseWithInterfaces\HasChildNodesDescendantsTest.cs" />
     <Compile Include="TraverseWithInterfaces\HasParentNodeAncestorsOrSelfTest.cs" />
     <Compile Include="TraverseWithInterfaces\HasParentNodeAncestorsTest.cs" />
-    <Compile Include="GenericNodeParentTest.cs" />
+    <Compile Include="TraverseWithDelegates\GenericNodeParentTest.cs" />
     <Compile Include="HierarchyPathTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TraverseWithInterfaces\HasChildNodesDescendantsOrSelfTest.cs" />
-    <Compile Include="GenericNodeDescendantsTest.cs" />
-    <Compile Include="GenericNodeDescendantsOrSelfTest.cs" />
-    <Compile Include="GenericNodeAncestorsTest .cs" />
+    <Compile Include="TraverseWithDelegates\GenericNodeDescendantsTest.cs" />
+    <Compile Include="TraverseWithDelegates\GenericNodeDescendantsOrSelfTest.cs" />
+    <Compile Include="TraverseWithDelegates\GenericNodeAncestorsTest .cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
