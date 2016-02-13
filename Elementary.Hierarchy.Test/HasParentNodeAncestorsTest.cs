@@ -1,7 +1,6 @@
 ﻿namespace Elementary.Hierarchy.Test
 {
     using Moq;
-    using NSubstitute;
     using NUnit.Framework;
     using System.Collections.Generic;
     using System.Linq;
@@ -12,12 +11,12 @@
         public interface MockableNodeType : IHasParentNode<MockableNodeType>
         { }
 
-        private MockableNodeType startNode = null;
+        private Mock<MockableNodeType> startNode = new Mock<MockableNodeType>();
 
         [SetUp]
         public void ArrangeAllTests()
         {
-            this.startNode = Substitute.For<MockableNodeType>();
+            this.startNode = new Mock<MockableNodeType>();
         }
 
         [Test]
@@ -25,18 +24,19 @@
         {
             // ARRANGE
 
-            startNode.HasParentNode.Returns(false);
+            startNode // returns false for 'HasParentNode'
+                .Setup(m => m.HasParentNode).Returns(false);
 
             // ACT
 
-            IEnumerable<MockableNodeType> result = startNode.Ancestors().ToArray();
+            IEnumerable<MockableNodeType> result = startNode.Object.Ancestors().ToArray();
 
             // ASSERT
 
             Assert.AreEqual(0, result.Count());
 
-            var t1 = this.startNode.Received(1).HasParentNode;
-            var t2 = this.startNode.DidNotReceive().ParentNode;
+            startNode.Verify(m => m.HasParentNode, Times.Once);
+            startNode.Verify(m => m.ParentNode, Times.Never);
         }
 
         [Test]
@@ -44,25 +44,32 @@
         {
             // ARRANGE
 
-            var rootNode = Substitute.For<MockableNodeType>();
-            rootNode.HasParentNode.Returns(false);
+            var rootNode = new Mock<MockableNodeType>();
 
-            var parentOfStartNode = Substitute.For<MockableNodeType>();
-            parentOfStartNode.HasParentNode.Returns(true);
-            parentOfStartNode.ParentNode.Returns(rootNode);
+            rootNode // has no parent
+                .Setup(r => r.HasParentNode).Returns(false);
 
-            this.startNode.HasParentNode.Returns(true);
-            this.startNode.ParentNode.Returns(parentOfStartNode);
+            var parentOfStartNode = new Mock<MockableNodeType>();
+
+            parentOfStartNode // has root node as parent
+                .Setup(p => p.HasParentNode).Returns(true);
+            parentOfStartNode
+                .Setup(p => p.ParentNode).Returns(rootNode.Object);
+
+            this.startNode // has a parant
+                .Setup(m => m.HasParentNode).Returns(true);
+            this.startNode // returns parent node
+                .Setup(m => m.ParentNode).Returns(parentOfStartNode.Object);
 
             // ACT
 
-            IEnumerable<MockableNodeType> result = this.startNode.Ancestors().ToArray();
+            IEnumerable<MockableNodeType> result = this.startNode.Object.Ancestors().ToArray();
 
             // ASSERT
 
             Assert.AreEqual(2, result.Count());
-            Assert.AreSame(parentOfStartNode, result.ElementAt(0));
-            Assert.AreSame(rootNode, result.ElementAt(1));
+            Assert.AreSame(parentOfStartNode.Object, result.ElementAt(0));
+            Assert.AreSame(rootNode.Object, result.ElementAt(1));
         }
     }
 }

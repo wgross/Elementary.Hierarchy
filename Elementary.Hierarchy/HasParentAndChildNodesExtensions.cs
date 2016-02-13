@@ -20,7 +20,7 @@
             where TNode : class, IHasChildNodes<TNode>, IHasParentNode<TNode>
         {
             if (startNode == null)
-                throw new ArgumentNullException("startNode");
+                throw new ArgumentNullException(nameof(startNode));
 
             if (!startNode.HasParentNode)
                 return Enumerable.Empty<TNode>();
@@ -42,7 +42,7 @@
             where TNode : class, IHasChildNodes<TNode>, IHasParentNode<TNode>
         {
             if (startNode == null)
-                throw new ArgumentNullException("startNode");
+                throw new ArgumentNullException(nameof(startNode));
 
             if (!startNode.HasParentNode)
                 return Enumerable.Empty<TNode>();
