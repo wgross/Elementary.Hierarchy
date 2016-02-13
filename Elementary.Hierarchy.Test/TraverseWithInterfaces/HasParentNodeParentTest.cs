@@ -1,4 +1,4 @@
-﻿namespace Elementary.Hierarchy.Test
+﻿namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 {
     using Moq;
     using NUnit.Framework;
