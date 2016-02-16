@@ -2,7 +2,6 @@
 {
     using Elementary.Hierarchy.Generic;
     using System;
-    using System.Linq;
 
     public delegate bool TryGetChildNodeDelegate<TKey, TNode>(TNode startNode, TKey key, out TNode childNode);
 
@@ -72,57 +71,14 @@
             where TNode : IHasIdentifiableChildNodes<TKey, TNode>
         {
             var tryGetChildNode = (TryGetChildNodeDelegate<TKey, TNode>)((TNode p, TKey k, out TNode c) => p.TryGetChildNode(k, out c));
-            return DescendantAtOrDefault(startNode, tryGetChildNode, out foundKey, createDefault, key.Items.ToArray());
-        }
-
-        /// <summary>
-        /// Returns the node identified by the specified HierarchyPath instance.
-        /// If such a node couldn't be identified, default(Tnode) is returned.
-        /// </summary>
-        /// <typeparam name="TKey"></typeparam>
-        /// <typeparam name="TNode"></typeparam>
-        /// <param name="startNode"></param>
-        /// <param name="key"></param>
-        /// <param name="tryGetChildNode">delegate to retrieve a child node by specified key</param>
-        /// <returns>TNode instance behind key or default(TNode)</returns>
-        public static TNode DescendantAtOrDefault<TKey, TNode>(this TNode startNode, TryGetChildNodeDelegate<TKey, TNode> tryGetChildNode, HierarchyPath<TKey> key, Func<TNode> createDefault = null)
-        {
-            var foundAncestor = HierarchyPath.Create<TKey>();
-            return DescendantAtOrDefault(startNode, tryGetChildNode, out foundAncestor, createDefault, key.Items.ToArray());
-        }
-
-        /// <summary>
-        /// Returns the node identified by the specified HierarchyPath instance.
-        /// If such a node couldn't be identified, default(Tnode) is returned.
-        /// </summary>
-        /// <typeparam name="TKey">Type of the hierarchy key</typeparam>
-        /// <typeparam name="TNode">Type of the hierarchy node</typeparam>
-        /// <param name="startNode">node instance to start search at</param>
-        /// <param name="key">hierarchy key to search</param>
-        /// <param name="tryGetChildNode">child retrieval strategy</param>
-        /// <returns>TNode instance behind key or default(TNode)</returns>
-        public static TNode DescendantAtOrDefault<TKey, TNode>(this TNode startNode, TryGetChildNodeDelegate<TKey, TNode> tryGetChildNode, HierarchyPath<TKey> key, out HierarchyPath<TKey> foundKey, Func<TNode> createDefault = null)
-        {
-            return DescendantAtOrDefault(startNode, tryGetChildNode, out foundKey, createDefault, key.Items.ToArray());
-        }
-
-        private static TNode DescendantAtOrDefault<TKey, TNode>(TNode startNode, TryGetChildNodeDelegate<TKey, TNode> tryGetChildNode, out HierarchyPath<TKey> foundKey, Func<TNode> createDefault, params TKey[] key)
-        {
-            foundKey = HierarchyPath.Create<TKey>();
-            TNode childNode = startNode;
-            for (int i = 0; i < key.Length && childNode != null; i++)
-                if (!tryGetChildNode(childNode, key[i], out childNode))
-                    return (createDefault ?? (() => default(TNode)))();
-                else
-                    foundKey = foundKey.Join(key[i]); // add current key to 'found' path
-
-            return childNode;
+            return startNode.DescendantAtOrDefault(tryGetChildNode, key, out foundKey, createDefault);
         }
     }
 }
 
 namespace Elementary.Hierarchy.Generic
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -144,6 +100,46 @@ namespace Elementary.Hierarchy.Generic
             for (int i = 0; i < keyArray.Length; i++)
                 if (!tryGetChildNode(childNode, keyArray[i], out childNode))
                     throw new KeyNotFoundException($"Key not found:'{string.Join("/", keyArray.Take(i + 1))}'");
+
+            return childNode;
+        }
+
+        /// <summary>
+        /// Returns the node identified by the specified HierarchyPath instance.
+        /// If such a node couldn't be identified, default(Tnode) is returned.
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TNode"></typeparam>
+        /// <param name="startNode"></param>
+        /// <param name="key"></param>
+        /// <param name="tryGetChildNode">delegate to retrieve a child node by specified key</param>
+        /// <returns>TNode instance behind key or default(TNode)</returns>
+        public static TNode DescendantAtOrDefault<TKey, TNode>(this TNode startNode, TryGetChildNodeDelegate<TKey, TNode> tryGetChildNode, HierarchyPath<TKey> key, Func<TNode> createDefault = null)
+        {
+            var foundAncestor = HierarchyPath.Create<TKey>();
+            return startNode.DescendantAtOrDefault(tryGetChildNode, key, out foundAncestor, createDefault);
+        }
+
+        /// <summary>
+        /// Returns the node identified by the specified HierarchyPath instance.
+        /// If such a node couldn't be identified, default(Tnode) is returned.
+        /// </summary>
+        /// <typeparam name="TKey">Type of the hierarchy key</typeparam>
+        /// <typeparam name="TNode">Type of the hierarchy node</typeparam>
+        /// <param name="startNode">node instance to start search at</param>
+        /// <param name="key">hierarchy key to search</param>
+        /// <param name="tryGetChildNode">child retrieval strategy</param>
+        /// <returns>TNode instance behind key or default(TNode)</returns>
+        public static TNode DescendantAtOrDefault<TKey, TNode>(this TNode startNode, TryGetChildNodeDelegate<TKey, TNode> tryGetChildNode, HierarchyPath<TKey> key, out HierarchyPath<TKey> foundKey, Func<TNode> createDefault = null)
+        {
+            foundKey = HierarchyPath.Create<TKey>();
+            TNode childNode = startNode;
+            var keyItems = key.Items.ToArray();
+            for (int i = 0; i < keyItems.Length && childNode != null; i++)
+                if (!tryGetChildNode(childNode, keyItems[i], out childNode))
+                    return (createDefault ?? (() => default(TNode)))();
+                else
+                    foundKey = foundKey.Join(keyItems[i]); // add current key to 'found' path
 
             return childNode;
         }

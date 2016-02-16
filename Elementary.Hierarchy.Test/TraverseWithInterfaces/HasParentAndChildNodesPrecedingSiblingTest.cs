@@ -77,25 +77,34 @@
         }
 
         [Test]
-        public void RootNodeDoesntAllowSiblingNavigation()
+        public void I_root_node_has_no_siblings_on_PrecedingSiblings()
         {
             // ACT
 
-            MockableNodeType[] result = this.rootNode.Object.FollowingSiblings().ToArray();
+            MockableNodeType[] result = this.rootNode.Object.PrecedingSiblings().ToArray();
 
             // ASSERT
+
+            this.rootNode.Verify(n => n.HasParentNode, Times.Once);
+            this.rootNode.Verify(n => n.ParentNode, Times.Never);
 
             Assert.IsFalse(result.Any());
         }
 
         [Test]
-        public void GetPreviousSiblingFromFirstRootChild()
+        public void I_node_returns_left_sibling_on_PrecedingSiblings()
         {
             // ACT
 
             MockableNodeType[] result = this.rightNode.Object.PrecedingSiblings().ToArray();
 
             // ASSERT
+
+            this.rightNode.Verify(n => n.HasParentNode, Times.Once);
+            this.rightNode.Verify(n => n.ParentNode, Times.Once);
+            this.rootNode.Verify(n => n.HasChildNodes, Times.Never);
+            this.rootNode.Verify(n => n.ChildNodes, Times.Once);
+
             Assert.AreSame(this.rootNode.Object, this.leftNode.Object.Parent());
             Assert.AreSame(this.leftNode.Object, this.rootNode.Object.ChildNodes.ElementAt(0));
             Assert.AreSame(this.rightNode.Object, this.rootNode.Object.ChildNodes.ElementAt(1));
@@ -104,13 +113,18 @@
         }
 
         [Test]
-        public void GetNoSiblingFromFirstRootChild()
+        public void I_node_returns_no_siblings_on_PrecedingSiblings()
         {
             // ACT
 
             MockableNodeType[] result = this.leftNode.Object.PrecedingSiblings().ToArray();
 
             // ASSERT
+
+            this.leftNode.Verify(n => n.HasParentNode, Times.Once);
+            this.leftNode.Verify(n => n.ParentNode, Times.Once);
+            this.rootNode.Verify(n => n.HasChildNodes, Times.Never);
+            this.rootNode.Verify(n => n.ChildNodes, Times.Once);
 
             Assert.AreSame(this.rootNode.Object, this.leftNode.Object.Parent());
             Assert.AreSame(this.leftNode.Object, this.rootNode.Object.ChildNodes.ElementAt(0));
@@ -119,13 +133,18 @@
         }
 
         [Test]
-        public void GetAllSiblingsFromFirstLeafNode()
+        public void I_node_returns_all_siblings_on_PrecedingSiblings()
         {
             // ACT
 
             MockableNodeType[] result = this.rightLeaf3.Object.PrecedingSiblings().ToArray();
 
             // ASSERT
+
+            this.rightLeaf3.Verify(n => n.HasParentNode, Times.Once);
+            this.rightLeaf3.Verify(n => n.ParentNode, Times.Once);
+            this.rightNode.Verify(n => n.HasChildNodes, Times.Never);
+            this.rightNode.Verify(n => n.ChildNodes, Times.Once);
 
             Assert.AreSame(this.rightNode.Object, this.rightLeaf1.Object.Parent());
             Assert.AreSame(this.rightLeaf1.Object, this.rightNode.Object.ChildNodes.ElementAt(0));

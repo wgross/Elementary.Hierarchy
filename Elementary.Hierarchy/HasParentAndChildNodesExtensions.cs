@@ -25,6 +25,7 @@
             if (!startNode.HasParentNode)
                 return Enumerable.Empty<TNode>();
 
+            // no check for 'hasChildNodes' obviously because the startNode is already a child node.
             return startNode.ParentNode.ChildNodes.SkipWhile(n => !n.Equals(startNode)).Skip(1);
         }
 
