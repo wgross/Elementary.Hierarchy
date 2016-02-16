@@ -18,7 +18,7 @@
         }
 
         [Test]
-        public void RootNodeReturnsNoParent_IF()
+        public void I_Root_returns_null_on_Parent()
         {
             // ARRANGE
 
@@ -38,7 +38,7 @@
         }
 
         [Test]
-        public void InnerNodeReturnsParentNode_IF()
+        public void I_inner_node_returns_parent()
         {
             // ARRANGE
 

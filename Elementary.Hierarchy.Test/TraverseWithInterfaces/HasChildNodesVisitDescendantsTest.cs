@@ -63,7 +63,7 @@
         #region VisitDescendants
 
         [Test]
-        public void VisitDescandantsBreadthFirst()
+        public void I_visit_complete_tree_breadthFirst_on_VisitDescendants()
         {
             // ACT
 
@@ -100,7 +100,7 @@
         }
 
         [Test]
-        public void VisitDescandantsDepthFirst()
+        public void I_visit_complete_tree_depthFirst_on_VisitDescendants()
         {
             // ACT
 
@@ -135,12 +135,65 @@
             this.rightRightLeaf.VerifyAll();
         }
 
-        #endregion VisitDescendants
+        [Test]
+        public void I_visit_singleChild_on_VisitDescendants()
+        {
+            // ACT
 
-        #region DescendantsOrSelf
+            var result = new List<Tuple<List<MockableNodeType>, MockableNodeType>>();
+
+            this.leftNode.Object.VisitDescendants((bc, n) => result.Add(Tuple.Create(bc.ToList(), n)));
+
+            // ASSERT
+
+            // Check list of visited nodes
+            Assert.AreEqual(1, result.Count());
+            CollectionAssert.AreEqual(new[]
+            {
+                this.leftLeaf
+            }.Select(n => n.Object), result.Select(i => i.Item2));
+
+            // check presented breadcrumbs
+            CollectionAssert.AreEqual(new[] { this.leftNode.Object }, result.ElementAt(0).Item1);
+
+            this.leftNode.VerifyAll();
+            this.leftLeaf.VerifyAll();
+        }
 
         [Test]
-        public void VisitDescendantsOrSelfBreadthFirst()
+        public void I_visit_leftChild_first_on_VisitDescendants()
+        {
+            // ACT
+
+            var result = new List<Tuple<List<MockableNodeType>, MockableNodeType>>();
+
+            this.rightNode.Object.VisitDescendants((bc, n) => result.Add(Tuple.Create(bc.ToList(), n)));
+
+            // ASSERT
+
+            // Check list of visited nodes
+            Assert.AreEqual(2, result.Count());
+            CollectionAssert.AreEqual(new[]
+            {
+                this.leftRightLeaf,
+                this.rightRightLeaf
+            }.Select(n => n.Object), result.Select(i => i.Item2));
+
+            // check presented breadcrumbs
+            CollectionAssert.AreEqual(new[] { this.rightNode.Object }, result.ElementAt(0).Item1);
+            CollectionAssert.AreEqual(new[] { this.rightNode.Object }, result.ElementAt(1).Item1);
+
+            this.rightNode.VerifyAll();
+            this.leftRightLeaf.VerifyAll();
+            this.rightRightLeaf.VerifyAll();
+        }
+
+        #endregion VisitDescendants
+
+        #region VisitDescendantsOrSelf
+
+        [Test]
+        public void I_visit_complete_tree_breadthFirst_on_VisitDescendantsOrSelf()
         {
             // ACT
 
@@ -179,7 +232,7 @@
         }
 
         [Test]
-        public void VisitDescandantsOrSelfDepthFirst()
+        public void I_visit_complete_tree_depthFirst_on_VisitDescendantsOrSelf()
         {
             // ACT
 
@@ -216,6 +269,6 @@
             this.rightRightLeaf.VerifyAll();
         }
 
-        #endregion DescendantsOrSelf
+        #endregion VisitDescendantsOrSelf
     }
 }

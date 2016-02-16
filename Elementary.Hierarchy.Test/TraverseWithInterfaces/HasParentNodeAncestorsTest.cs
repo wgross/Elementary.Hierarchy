@@ -20,7 +20,7 @@
         }
 
         [Test]
-        public void RootNodeReturnsNoAncestors_IF()
+        public void I_root_node_returns_empty_collection_on_Ancestors()
         {
             // ARRANGE
 
@@ -40,7 +40,7 @@
         }
 
         [Test]
-        public void InnerNodeReturnsPathToRootNode_IF()
+        public void I_inner_node_returns_path_to_root_on_Ancestors()
         {
             // ARRANGE
 

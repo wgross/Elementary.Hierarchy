@@ -60,7 +60,7 @@
         }
 
         [Test]
-        public void LeafReturnsNoChildren()
+        public void I_leaf_returns_no_children_on_Descendants()
         {
             // ACT
 
@@ -77,7 +77,7 @@
         }
 
         [Test]
-        public void LeafReturnsNoChildrenButClaimsToHaveSubnodes()
+        public void I_inconsitent_leaf_returns_no_children_on_Descendants()
         {
             // ARRANGE
 
@@ -100,7 +100,7 @@
         }
 
         [Test]
-        public void EnumerateSingleChildToLeaf()
+        public void I_node_returns_single_child_on_Descendants()
         {
             // ACT
 
@@ -116,7 +116,7 @@
         }
 
         [Test]
-        public void EnumerateTwoChildrenToLeaf()
+        public void I_node_returns_left_child_first_on_Descendants()
         {
             // ACT
 
@@ -133,7 +133,7 @@
         }
 
         [Test]
-        public void EnumerateTreeBreadthFirst()
+        public void I_root_returns_descendants_breadthFirst_on_Descendants()
         {
             // ACT
 
@@ -160,7 +160,7 @@
         }
 
         [Test]
-        public void EnumerateTreeDepthFirst()
+        public void I_root_returns_descendants_depthFirst_on_Descendants()
         {
             // ACT
 
@@ -186,90 +186,7 @@
         }
 
         [Test]
-        public void EnumerateDecendantTreeToSpecifiedDepth()
-        {
-            // ACT
-
-            var ex = Assert.Throws<ArgumentException>(() => this.rootNode.Object.Descendants(maxDepth: -1));
-            var result0 = this.rootNode.Object.Descendants(maxDepth: 0).ToArray();
-            var result1 = this.rootNode.Object.Descendants(maxDepth: 1).ToArray();
-            var result2 = this.rootNode.Object.Descendants(maxDepth: 2).ToArray();
-            var result3 = this.rootNode.Object.Descendants(maxDepth: 3).ToArray();
-
-            // ASSERT
-
-            Assert.IsTrue(ex.Message.Contains("must be > 0"));
-            Assert.AreEqual("maxDepth", ex.ParamName);
-            Assert.IsFalse(result0.Any());
-            CollectionAssert.AreEqual(new[] { this.leftNode.Object, this.rightNode.Object }, result1);
-            CollectionAssert.AreEqual(new[] { this.leftNode.Object, this.rightNode.Object, this.leftLeaf.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result2);
-            CollectionAssert.AreEqual(new[] { this.leftNode.Object, this.rightNode.Object, this.leftLeaf.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result3);
-        }
-
-        [Test]
-        public void EnumerateDescendantOrSelfTreeToSpecifiedDepth()
-        {
-            // ACT
-
-            var ex = Assert.Throws<ArgumentException>(() => this.rootNode.Object.DescendantsOrSelf(maxDepth: -1).ToArray());
-            var result0 = this.rootNode.Object.DescendantsOrSelf(maxDepth: 0).ToArray();
-            var result1 = this.rootNode.Object.DescendantsOrSelf(maxDepth: 1).ToArray();
-            var result2 = this.rootNode.Object.DescendantsOrSelf(maxDepth: 2).ToArray();
-            var result3 = this.rootNode.Object.DescendantsOrSelf(maxDepth: 3).ToArray();
-            var result4 = this.rootNode.Object.DescendantsOrSelf(maxDepth: 4).ToArray();
-
-            // ASSERT
-
-            Assert.IsTrue(ex.Message.Contains("must be > 0"));
-            Assert.AreEqual("maxDepth", ex.ParamName);
-            Assert.IsFalse(result0.Any());
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object }, result1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object, this.leftNode.Object, this.rightNode.Object }, result2);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object, this.leftNode.Object, this.rightNode.Object, this.leftLeaf.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result3);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object, this.leftNode.Object, this.rightNode.Object, this.leftLeaf.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result4);
-        }
-
-        [Test]
-        public void EnumerateTreeDepthFirstToSpecificDepth()
-        {
-            // ACT
-
-            IEnumerable<MockableNodeType> result = this.rootNode.Object.Descendants(depthFirst: true).ToArray();
-
-            var ex = Assert.Throws<ArgumentException>(() => this.rootNode.Object.Descendants(depthFirst: true, maxDepth: -1));
-            var result0 = this.rootNode.Object.Descendants(depthFirst: true, maxDepth: 0).ToArray();
-            var result1 = this.rootNode.Object.Descendants(depthFirst: true, maxDepth: 1).ToArray();
-            var result2 = this.rootNode.Object.Descendants(depthFirst: true, maxDepth: 2).ToArray();
-            var result3 = this.rootNode.Object.Descendants(depthFirst: true, maxDepth: 3).ToArray();
-
-            // ASSERT
-
-            Assert.IsFalse(result0.Any());
-
-            CollectionAssert.AreEqual(new[] {
-                this.leftNode,
-                this.rightNode,
-            }.Select(n => n.Object), result1);
-
-            CollectionAssert.AreEqual(new[] {
-                this.leftNode,
-                this.leftLeaf,
-                this.rightNode,
-                this.leftRightLeaf,
-                this.rightRightLeaf
-            }.Select(n => n.Object), result2);
-
-            CollectionAssert.AreEqual(new[] {
-                this.leftNode,
-                this.leftLeaf,
-                this.rightNode,
-                this.leftRightLeaf,
-                this.rightRightLeaf
-            }.Select(n => n.Object), result3);
-        }
-
-        [Test]
-        public void DescendantsLevel1AreChildren()
+        public void I_root_returns_children_as_level1_descendants_on_Descendants()
         {
             // ACT
 
@@ -279,6 +196,50 @@
             // ASSERT
 
             CollectionAssert.AreEqual(children, descendants);
+        }
+
+        [Test]
+        public void I_root_throws_on_level0_on_Descendants()
+        {
+            // ACT
+
+            ArgumentException ex = Assert.Throws<ArgumentException>(() => this.rootNode.Object.Descendants(maxDepth: -1));
+            MockableNodeType[] result = this.rootNode.Object.Descendants(maxDepth: 0).ToArray();
+
+            // ASSERT
+
+            Assert.IsTrue(ex.Message.Contains("must be > 0"));
+            Assert.AreEqual("maxDepth", ex.ParamName);
+            Assert.IsFalse(result.Any());
+        }
+
+        [Test]
+        public void I_root_returns_all_descendants_on_highLevel_breadthFirst_on_Descendants()
+        {
+            // ACT
+
+            MockableNodeType[] result = this.rootNode.Object.Descendants(maxDepth: 3).ToArray();
+
+            // ASSERT
+
+            CollectionAssert.AreEqual(new[] { this.leftNode.Object, this.rightNode.Object, this.leftLeaf.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result);
+        }
+
+        [Test]
+        public void I_root_returns_all_descendants_on_highLevel_depthFirst_on_Descendants()
+        {
+            // ACT
+
+            MockableNodeType[] result = this.rootNode.Object.Descendants(maxDepth: 3, depthFirst: true).ToArray();
+
+            // ASSERT
+
+            CollectionAssert.AreEqual(new[] {
+                this.leftNode.Object,
+                this.leftLeaf.Object,
+                this.rightNode.Object,
+                this.leftRightLeaf.Object,
+                this.rightRightLeaf.Object }, result);
         }
     }
 }

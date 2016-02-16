@@ -26,7 +26,7 @@
         }
 
         [Test]
-        public void LeafReturnsItself()
+        public void D_leaf_returns_itself_on_DescendantsOrSelf()
         {
             // ACT
 
@@ -40,7 +40,7 @@
         }
 
         [Test]
-        public void LeafRetunsNoChildrenButClaimsToHaveSubnodes()
+        public void D_inconsistent_leaf_returns_itself_on_DescendantsOrSelf()
         {
             // ARRANGE
 
@@ -57,7 +57,7 @@
         }
 
         [Test]
-        public void EnumerateSingleChildToLeaf()
+        public void D_leaf_returns_single_child_on_DescendantsOrSelf()
         {
             // ACT
 
@@ -70,7 +70,7 @@
         }
 
         [Test]
-        public void EnumerateTwoChildrenToLeaf()
+        public void D_leaf_returns_left_before_right_child_on_DescendantsOrSelf()
         {
             // ACT
 
@@ -83,7 +83,7 @@
         }
 
         [Test]
-        public void EnumerateTreeBreadthFirst()
+        public void D_leaf_returns_descendants_breadthFirst_on_DescendantsOrSelf()
         {
             // ACT
 
@@ -96,7 +96,7 @@
         }
 
         [Test]
-        public void EnumerateTreeDepthFirst()
+        public void D_leaf_returns_descendants_depthFirst_on_DescendantsOrSelf()
         {
             // ACT
 
@@ -116,7 +116,7 @@
         }
 
         [Test]
-        public void DescendantsOrSelfLevel2AreChildren()
+        public void D_root_returns_children_as_level2_descendants_on_DescendantsOrSelf()
         {
             // ACT
 

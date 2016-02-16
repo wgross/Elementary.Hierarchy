@@ -10,7 +10,7 @@
     public class GenericNodeParentTest
     {
         [Test]
-        public void RootNodeReturnsNoParents_GN()
+        public void D_root_returns_null_on_Parent()
         {
             // ARRANGE
 
@@ -29,7 +29,7 @@
         }
 
         [Test]
-        public void InnerNodeReturnsParentNode_GN()
+        public void D_inner_node_returns_Parent()
         {
             // ARRANGE
 

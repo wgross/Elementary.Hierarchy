@@ -218,7 +218,7 @@
         {
             // ACT
             HierarchyPath<string> resultPath = null;
-            bool result = HierarchyPath.TryParse(path: "/test/test2", hierarchyPath: out resultPath, convertPathItem:i=>i, separator: "/");
+            bool result = HierarchyPath.TryParse(path: "/test/test2", hierarchyPath: out resultPath, convertPathItem: i => i, separator: "/");
 
             // ASSERT
 

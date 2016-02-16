@@ -9,9 +9,9 @@
     [TestFixture]
     public class GenericNodeDescendantsTest
     {
-        private IEnumerable<string> GetChildNodes(string startNode)
+        private IEnumerable<string> GetChildNodes(string rootNode)
         {
-            switch (startNode)
+            switch (rootNode)
             {
                 case "rootNode":
                     return new[] { "leftNode", "rightNode" };
@@ -26,11 +26,11 @@
         }
 
         [Test]
-        public void LeafReturnsNoChildren()
+        public void D_leaf_returns_no_children_on_Descendants()
         {
             // ACT
 
-            IEnumerable<string> result = "startNode".Descendants(this.GetChildNodes).ToArray();
+            IEnumerable<string> result = "leftRightLeaf".Descendants(this.GetChildNodes).ToArray();
 
             // ASSERT
 
@@ -39,7 +39,7 @@
         }
 
         [Test]
-        public void LeafReturnsNoChildrenButClaimsToHaveSubnodes()
+        public void D_inconsitent_leaf_returns_no_children_on_Descendants()
         {
             // ARRANGE
 
@@ -56,7 +56,7 @@
         }
 
         [Test]
-        public void EnumerateSingleChildToLeaf()
+        public void D_node_returns_single_child_on_Descendants()
         {
             // ACT
 
@@ -69,7 +69,7 @@
         }
 
         [Test]
-        public void EnumerateTwoChildrenToLeaf()
+        public void D_node_returns_left_child_first_on_Descendants()
         {
             // ACT
 
@@ -82,7 +82,7 @@
         }
 
         [Test]
-        public void EnumerateTreeBreadthFirst()
+        public void D_root_returns_descendants_breadthFirst_on_Descendants()
         {
             // ACT
 
@@ -95,7 +95,7 @@
         }
 
         [Test]
-        public void EnumerateTreeDepthFirst()
+        public void D_root_returns_descendants_depthFirst_on_Descendants()
         {
             // ACT
 
@@ -114,16 +114,62 @@
         }
 
         [Test]
-        public void DescendantsLevel1AreChildren()
+        public void D_root_returns_children_as_level1_descendants_on_Descendants()
         {
             // ACT
 
-            var descendants = "startNode".Descendants(this.GetChildNodes, maxDepth: 1).ToArray();
-            var children = "startNode".Children(this.GetChildNodes).ToArray();
+            var descendants = "rootNode".Descendants(this.GetChildNodes, maxDepth: 1).ToArray();
+            var children = "rootNode".Children(this.GetChildNodes).ToArray();
 
             // ASSERT
 
             CollectionAssert.AreEqual(children, descendants);
+        }
+
+        [Test]
+        public void D_root_throws_on_level0_on_Descendants()
+        {
+            // ACT
+
+            ArgumentException ex = Assert.Throws<ArgumentException>(() => "rootNode".Descendants(this.GetChildNodes, maxDepth: -1));
+            string[] result = "rootNode".Descendants(this.GetChildNodes, maxDepth: 0).ToArray();
+
+            // ASSERT
+
+            Assert.IsTrue(ex.Message.Contains("must be > 0"));
+            Assert.AreEqual("maxDepth", ex.ParamName);
+            Assert.IsFalse(result.Any());
+        }
+
+        [Test]
+        public void D_root_returns_all_descendants_on_highLevel_breadthFirst_on_Descendants()
+        {
+            // ACT
+
+            string[] result = "rootNode".Descendants(this.GetChildNodes, maxDepth: 3).ToArray();
+
+            // ASSERT
+
+            CollectionAssert.AreEqual(new[] { "leftNode", "rightNode", "leftLeaf", "leftRightLeaf", "rightRightLeaf" }, result);
+        }
+
+        [Test]
+        public void D_root_returns_descendants_on_highLevel_depthFirst_on_Descendants()
+        {
+            // ACT
+
+            IEnumerable<string> result = "rootNode".Descendants(this.GetChildNodes, depthFirst: true, maxDepth: 3).ToArray();
+
+            // ASSERT
+
+            Assert.AreEqual(5, result.Count());
+            CollectionAssert.AreEqual(new[] {
+                "leftNode",
+                "leftLeaf",
+                "rightNode",
+                "leftRightLeaf",
+                "rightRightLeaf"
+            }, result);
         }
     }
 }

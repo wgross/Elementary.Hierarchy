@@ -10,7 +10,7 @@
     public class GenericNodeAncestorsTest
     {
         [Test]
-        public void RootNodeReturnsNoParents_GN()
+        public void D_root_node_returns_empty_collection_on_Ancestors()
         {
             // ARRANGE
 
@@ -29,7 +29,7 @@
         }
 
         [Test]
-        public void InnerNodeReturnsPathToRootNode_GN()
+        public void D_inner_node_returns_path_to_root_on_Ancestors()
         {
             // ARRANGE
 

@@ -25,68 +25,10 @@
             return Enumerable.Empty<string>();
         }
 
-        [Test]
-        public void DescandantsReturnsNoChildren_GN()
-        {
-            // ACT
-
-            var result = new List<Tuple<List<string>, string>>();
-            "startNode".VisitDescendants(this.GetChildNodes, (b, n) => result.Add(Tuple.Create(b.ToList(), n)));
-
-            // ASSERT
-            Assert.AreEqual(0, result.Count);
-        }
+        #region VisitDescendants
 
         [Test]
-        public void LeafReturnsNoChildrenButClaimsToHaveSubnodes_GN()
-        {
-            // ARRANGE
-
-            Func<string, bool> hasChildNodes = n => true;
-            Func<string, IEnumerable<string>> getChildNodes = n => Enumerable.Empty<string>();
-
-            // ACT
-
-            IEnumerable<string> result = "badLeaf".Descendants(getChildNodes).ToArray();
-
-            // ASSERT
-
-            Assert.AreEqual(0, result.Count());
-        }
-
-        [Test]
-        public void EnumerateDescendantsSingleChildToLeaf_GN()
-        {
-            // ACT
-
-            var result = new List<Tuple<List<string>, string>>();
-            "leftNode".VisitDescendants(this.GetChildNodes, (b, n) => result.Add(Tuple.Create(b.ToList(), n)));
-
-            // ASSERT
-
-            Assert.AreEqual(1, result.Count());
-            Assert.AreEqual("leftLeaf", result.ElementAt(0).Item2);
-            CollectionAssert.AreEqual(new[] { "leftNode" }, result.ElementAt(0).Item1);
-        }
-
-        [Test]
-        public void EnumerateDescandantsTwoChildrenToLeaf_GN()
-        {
-            // ACT
-
-            var result = new List<Tuple<List<string>, string>>();
-            "rightNode".VisitDescendants(this.GetChildNodes, (b, n) => result.Add(Tuple.Create(b.ToList(), n)));
-
-            // ASSERT
-
-            Assert.AreEqual(2, result.Count());
-            CollectionAssert.AreEqual(new[] { "leftRightLeaf", "rightRightLeaf" }, result.Select(i => i.Item2));
-            CollectionAssert.AreEqual(new[] { "rightNode" }, result.ElementAt(0).Item1);
-            CollectionAssert.AreEqual(new[] { "rightNode" }, result.ElementAt(1).Item1);
-        }
-
-        [Test]
-        public void EnumerateDescendantsBreadthFirst_GN()
+        public void D_visit_complete_tree_breadthFirst_on_VisitDescendants()
         {
             // ACT
 
@@ -105,7 +47,7 @@
         }
 
         [Test]
-        public void EnumerateDescendantsDepthFirst_GN()
+        public void D_visit_complete_tree_depthFirst_on_VisitDescendants()
         {
             // ACT
 
@@ -132,21 +74,7 @@
         }
 
         [Test]
-        public void DescendantsOrDefaultReturnsLeaf_GN()
-        {
-            // ACT
-
-            var result = new List<Tuple<List<string>, string>>();
-            "startNode".VisitDescendantsOrSelf(this.GetChildNodes, (b, n) => result.Add(Tuple.Create(b.ToList(), n)));
-
-            // ASSERT
-            Assert.AreEqual(1, result.Count);
-            Assert.AreEqual(new string[] { }, result.ElementAt(0).Item1);
-            Assert.AreEqual("startNode", result.ElementAt(0).Item2);
-        }
-
-        [Test]
-        public void LeafReturnsItselfButClaimsToHaveSubnodes_GN()
+        public void D_inconsistent_node_visits_no_children_on_VisitDescendants()
         {
             // ARRANGE
 
@@ -155,50 +83,50 @@
 
             // ACT
 
-            IEnumerable<string> result = "badLeaf".DescendantsOrSelf(getChildNodes).ToArray();
+            IEnumerable<string> result = "badLeaf".Descendants(getChildNodes).ToArray();
+
+            // ASSERT
+
+            Assert.AreEqual(0, result.Count());
+        }
+
+        [Test]
+        public void D_visit_singleChild_on_VisitDescendants()
+        {
+            // ACT
+
+            var result = new List<Tuple<List<string>, string>>();
+            "leftNode".VisitDescendants(this.GetChildNodes, (b, n) => result.Add(Tuple.Create(b.ToList(), n)));
 
             // ASSERT
 
             Assert.AreEqual(1, result.Count());
-            Assert.AreEqual("badLeaf", result.ElementAt(0));
+            Assert.AreEqual("leftLeaf", result.ElementAt(0).Item2);
+            CollectionAssert.AreEqual(new[] { "leftNode" }, result.ElementAt(0).Item1);
         }
 
         [Test]
-        public void EnumerateDescandantsOrSelfSingleChildToLeaf_GN()
+        public void D_visit_leftChild_first_on_VisitDescendants()
         {
             // ACT
 
             var result = new List<Tuple<List<string>, string>>();
-            "leftNode".VisitDescendantsOrSelf(this.GetChildNodes, (b, n) => result.Add(Tuple.Create(b.ToList(), n)));
+            "rightNode".VisitDescendants(this.GetChildNodes, (b, n) => result.Add(Tuple.Create(b.ToList(), n)));
 
             // ASSERT
 
             Assert.AreEqual(2, result.Count());
-            Assert.AreEqual("leftNode", result.ElementAt(0).Item2);
-            Assert.AreEqual("leftLeaf", result.ElementAt(1).Item2);
-            CollectionAssert.AreEqual(new string[] { }, result.ElementAt(0).Item1);
-            CollectionAssert.AreEqual(new[] { "leftNode" }, result.ElementAt(1).Item1);
-        }
-
-        [Test]
-        public void EnumerateDescandantsOrSelfTwoChildrenToLeaf_GN()
-        {
-            // ACT
-
-            var result = new List<Tuple<List<string>, string>>();
-            "rightNode".VisitDescendantsOrSelf(this.GetChildNodes, (b, n) => result.Add(Tuple.Create(b.ToList(), n)));
-
-            // ASSERT
-
-            Assert.AreEqual(3, result.Count());
-            CollectionAssert.AreEqual(new[] { "rightNode", "leftRightLeaf", "rightRightLeaf" }, result.Select(i => i.Item2));
-            CollectionAssert.AreEqual(new string[] { }, result.ElementAt(0).Item1);
+            CollectionAssert.AreEqual(new[] { "leftRightLeaf", "rightRightLeaf" }, result.Select(i => i.Item2));
+            CollectionAssert.AreEqual(new[] { "rightNode" }, result.ElementAt(0).Item1);
             CollectionAssert.AreEqual(new[] { "rightNode" }, result.ElementAt(1).Item1);
-            CollectionAssert.AreEqual(new[] { "rightNode" }, result.ElementAt(2).Item1);
         }
 
+        #endregion VisitDescendants
+
+        #region VisitDescendantsOrSelf
+
         [Test]
-        public void EnumerateDescendantsOrSelfBreadthFirst_GN()
+        public void D_visit_complete_tree_breadthFirst_on_VisitDescendantsOrSelf()
         {
             // ACT
 
@@ -224,7 +152,7 @@
         }
 
         [Test]
-        public void EnumerateDescandantsOrSelfDepthFirst_GN()
+        public void D_visit_complete_tree_depthFirst_on_VisitDescendantsOrSelf()
         {
             // ACT
 
@@ -251,5 +179,7 @@
             CollectionAssert.AreEqual(new[] { "rootNode", "rightNode" }, result.ElementAt(4).Item1);
             CollectionAssert.AreEqual(new[] { "rootNode", "rightNode" }, result.ElementAt(5).Item1);
         }
+
+        #endregion VisitDescendantsOrSelf
     }
 }

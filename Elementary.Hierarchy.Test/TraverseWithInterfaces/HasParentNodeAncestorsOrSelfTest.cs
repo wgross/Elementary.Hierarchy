@@ -20,7 +20,7 @@
         }
 
         [Test]
-        public void RootNodeReturnsItself_IF()
+        public void I_root_returns_itself_on_AncestorsOrSelf()
         {
             // ARRANGE
 
@@ -41,7 +41,7 @@
         }
 
         [Test]
-        public void InnerNodeReturnsPathToRootNodeIncludingRootNode_IF()
+        public void I_inner_node_returns_path_to_root_on_AncestorsOrSefl()
         {
             // ARRANGE
 

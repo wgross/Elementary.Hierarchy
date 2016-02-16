@@ -10,7 +10,7 @@
     public class GenericNodeAncestorsOrSelfTest
     {
         [Test]
-        public void RootNodeReturnsItself_GN()
+        public void D_root_returns_itself_on_AncestorsOrSelf()
         {
             // ARRANGE
 
@@ -30,7 +30,7 @@
         }
 
         [Test]
-        public void InnerNodeReturnsPathToRootNodeIncludingRootNode_GN()
+        public void D_inner_node_returns_path_to_root_on_AncestorsOrSefl()
         {
             // ARRANGE
 

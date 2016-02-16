@@ -60,7 +60,7 @@
         }
 
         [Test]
-        public void LeafReturnsOnlyItself()
+        public void I_leaf_returns_itself_on_DescendantsOrSelf()
         {
             // ACT
 
@@ -73,11 +73,10 @@
 
             this.rightRightLeaf.Verify(n => n.HasChildNodes, Times.Once);
             this.rightRightLeaf.Verify(n => n.ChildNodes, Times.Never);
-            this.rightRightLeaf.VerifyAll();
         }
 
         [Test]
-        public void LeafRetunsOnlItselfButClaimsToHaveSubnodes()
+        public void I_inconsistent_leaf_returns_itself_on_DescendantsOrSelf()
         {
             // ARRANGE
 
@@ -101,7 +100,7 @@
         }
 
         [Test]
-        public void EnumerateSingleChildToLeaf()
+        public void I_leaf_returns_single_child_on_DescendantsOrSelf()
         {
             // ACT
 
@@ -110,15 +109,13 @@
             // ASSERT
 
             Assert.AreEqual(2, result.Count());
-            Assert.AreSame(this.leftNode.Object, result.ElementAt(0));
-            Assert.AreSame(this.leftLeaf.Object, result.ElementAt(1));
-
+            CollectionAssert.AreEqual(new[] { this.leftNode.Object, this.leftLeaf.Object }, result);
             this.leftNode.VerifyAll();
             this.leftLeaf.VerifyAll();
         }
 
         [Test]
-        public void EnumerateTwoChildrenToLeaf()
+        public void I_leaf_returns_left_before_right_child_on_DescendantsOrSelf()
         {
             // ACT
 
@@ -135,7 +132,7 @@
         }
 
         [Test]
-        public void EnumerateTreeBreadthFirst()
+        public void I_leaf_returns_descendants_breadthFirst_on_DescendantsOrSelf()
         {
             // ACT
 
@@ -162,7 +159,7 @@
         }
 
         [Test]
-        public void EnumerateTreeDepthFirst()
+        public void I_leaf_returns_descendants_depthFirst_on_DescendantsOrSelf()
         {
             // ACT
 
@@ -189,7 +186,7 @@
         }
 
         [Test]
-        public void DescendantsOrSelfLevel2AreChildren()
+        public void I_DescendantsOrSelfLevel2AreChildren_on_DescendantsOrSelf()
         {
             // ACT
 

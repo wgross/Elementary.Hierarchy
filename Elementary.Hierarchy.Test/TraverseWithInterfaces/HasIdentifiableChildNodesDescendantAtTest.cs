@@ -18,8 +18,10 @@
             this.startNode = new Mock<MockableNodeType>();
         }
 
+        #region DescandantAt
+
         [Test]
-        public void GetSubNodeWithDescendantAt_IF()
+        public void I_root_returns_child_on_DescendantAt()
         {
             // ARRANGE
 
@@ -41,7 +43,7 @@
         }
 
         [Test]
-        public void DescendantAtWithRootPathGetsStartNode_IF()
+        public void I_root_returns_itself_on_DescendantAt()
         {
             // ACT
 
@@ -53,7 +55,7 @@
         }
 
         [Test]
-        public void GetDescendantAtTwoLevelUnderStartNode_IF()
+        public void I_root_returns_grandchild_on_DescendentAt()
         {
             // ARRANGE
 
@@ -82,20 +84,27 @@
         }
 
         [Test]
-        [ExpectedException(typeof(KeyNotFoundException))]
-        public void DescendantAtFailsIfSubNodeDoesntExist_IF()
+        public void I_root_node_throws_on_invalid_childId_on_DescendantAt()
         {
             // ARRANGE
             this.startNode
                 .Setup(n => n.HasChildNodes).Returns(false);
 
-            // ACT & ASSERT
+            // ACT
 
-            this.startNode.Object.DescendantAt(HierarchyPath.Create(1));
+            KeyNotFoundException result = Assert.Throws<KeyNotFoundException>(() => { this.startNode.Object.DescendantAt(HierarchyPath.Create(1)); });
+
+            // ASSERT
+
+            Assert.IsTrue(result.Message.Contains("Key not found:'1'"));
         }
 
+        #endregion DescandantAt
+
+        #region DefaultAtOrdefault
+
         [Test]
-        public void DescendantAtOrDefaultGetsExistingSubnode_IF()
+        public void I_root_returns_child_on_DescendantAtOrDefault()
         {
             // ARRANGE
 
@@ -107,87 +116,42 @@
 
             // ACT
 
-            MockableNodeType result = this.startNode.Object.DescendantAtOrDefault(HierarchyPath.Create(1));
+            MockableNodeType result1 = this.startNode.Object.DescendantAtOrDefault(HierarchyPath.Create(1));
+
+            HierarchyPath<int> foundNodePath;
+            MockableNodeType result2 = this.startNode.Object.DescendantAtOrDefault(HierarchyPath.Create(1), out foundNodePath);
 
             // ASSERT
 
-            Assert.IsNotNull(result);
-            Assert.AreSame(childNode, result);
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once);
+            Assert.IsNotNull(result1);
+            Assert.AreSame(childNode, result1);
+            Assert.AreSame(childNode, result2);
+            Assert.AreEqual(HierarchyPath.Create(1), foundNodePath);
+            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Exactly(2));
         }
 
         [Test]
-        public void DescendantAtOrDefaultReturnsNullIfSubnodeDoesntExist_IF()
+        public void I_root_returns_itself_on_DescendantAtOrDefault()
         {
-            // ARRANGE
-
-            MockableNodeType childNode = new Mock<MockableNodeType>().Object;
-
-            this.startNode
-                .Setup(n => n.TryGetChildNode(1, out childNode))
-                .Returns(false);
-
             // ACT
 
-            MockableNodeType result = this.startNode.Object.DescendantAtOrDefault(HierarchyPath.Create(1));
+            MockableNodeType result1 = this.startNode.Object.DescendantAtOrDefault(HierarchyPath.Create<int>());
+
+            HierarchyPath<int> foundNodePath;
+            MockableNodeType result2 = this.startNode.Object.DescendantAtOrDefault(HierarchyPath.Create<int>(), out foundNodePath);
 
             // ASSERT
 
-            Assert.IsNull(result);
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once);
+            Assert.AreSame(startNode.Object, result1);
+            Assert.AreSame(startNode.Object, result2);
+            Assert.AreEqual(HierarchyPath.Create<int>(), foundNodePath);
+
+            MockableNodeType childNode;
+            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Never);
         }
 
         [Test]
-        public void DescendantAtOrDefaultReturnsParentPathIfSubnodeDoesntExist_IF()
-        {
-            // ARRANGE
-
-            MockableNodeType childNode = new Mock<MockableNodeType>().Object;
-
-            this.startNode
-                .Setup(n => n.TryGetChildNode(1, out childNode))
-                .Returns(false);
-
-            // ACT
-
-            HierarchyPath<int> foundPath;
-            MockableNodeType result = this.startNode.Object.DescendantAtOrDefault(HierarchyPath.Create(1), out foundPath);
-
-            // ASSERT
-
-            Assert.IsNull(result);
-            Assert.IsNotNull(foundPath);
-            Assert.AreEqual((object)HierarchyPath.Create<int>(), (object)foundPath);
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once);
-        }
-
-        [Test]
-        public void DescendantAtOrDefaultGetsExistingSubnodeAndParentNodePath_IF()
-        {
-            // ARRANGE
-
-            MockableNodeType childNode = new Mock<MockableNodeType>().Object;
-
-            this.startNode
-                .Setup(n => n.TryGetChildNode(1, out childNode))
-                .Returns(true);
-
-            // ACT
-
-            HierarchyPath<int> foundKey;
-            MockableNodeType result = this.startNode.Object.DescendantAtOrDefault(HierarchyPath.Create(1), out foundKey);
-
-            // ASSERT
-
-            Assert.IsNotNull(childNode);
-            Assert.AreSame(childNode, result);
-            Assert.IsNotNull(foundKey);
-            Assert.AreEqual((object)HierarchyPath.Create<int>(1), (object)foundKey);
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once);
-        }
-
-        [Test]
-        public void DescendantAtOrDefaultGetsExistingGrandchildNode_IF()
+        public void I_root_returns_grandchild_on_DescendantOrDefault()
         {
             // ARRANGE
 
@@ -206,81 +170,45 @@
 
             // ACT
 
-            MockableNodeType result = this.startNode.Object.DescendantAtOrDefault(HierarchyPath.Create(1, 2));
+            MockableNodeType result1 = this.startNode.Object.DescendantAtOrDefault(HierarchyPath.Create(1, 2));
+
+            HierarchyPath<int> foundNodePath;
+            MockableNodeType result2 = this.startNode.Object.DescendantAtOrDefault(HierarchyPath.Create(1, 2), out foundNodePath);
 
             // ASSERT
 
             Assert.IsNotNull(grandChildNode);
-            Assert.AreSame(grandChildNode, result);
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNodeObject), Times.Once);
-            this.startNode.Verify(n => n.TryGetChildNode(1, out grandChildNode), Times.Once);
+            Assert.AreSame(grandChildNode, result1);
+            this.startNode.Verify(n => n.TryGetChildNode(1, out childNodeObject), Times.Exactly(2));
+            this.startNode.Verify(n => n.TryGetChildNode(1, out grandChildNode), Times.Exactly(2));
         }
 
         [Test]
-        public void DescendantAtOrDefaultGetsExistingGrandchildNodeAndChildNodePath_IF()
+        public void I_root_returns_null_on_invalid_childId_on_DescendantOrDefault()
         {
             // ARRANGE
 
-            MockableNodeType grandChildNode = new Mock<MockableNodeType>().Object;
-
-            var childNode = new Mock<MockableNodeType>();
-            childNode
-                .Setup(n => n.TryGetChildNode(2, out grandChildNode))
-                .Returns(true);
-
-            var childNodeObject = childNode.Object;
+            MockableNodeType childNode = new Mock<MockableNodeType>().Object;
 
             this.startNode
-                .Setup(n => n.TryGetChildNode(1, out childNodeObject))
-                .Returns(true);
-
-            // ACT
-
-            HierarchyPath<int> foundKey = null;
-            MockableNodeType result = this.startNode.Object.DescendantAtOrDefault(HierarchyPath.Create(1, 2), out foundKey);
-
-            // ASSERT
-
-            Assert.IsNotNull(grandChildNode);
-            Assert.AreSame(grandChildNode, result);
-            Assert.IsNotNull(foundKey);
-            Assert.AreEqual((object)HierarchyPath.Create(1, 2), (object)foundKey);
-
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNodeObject), Times.Once);
-            this.startNode.Verify(n => n.TryGetChildNode(1, out grandChildNode), Times.Once);
-        }
-
-        [Test]
-        public void DescendantAtOrDefaultFailsIfGrandchildNodeDoesnExistReturnsParentPath_IF()
-        {
-            // ARRANGE
-
-            MockableNodeType grandChildNode = new Mock<MockableNodeType>().Object;
-
-            var childNode = new Mock<MockableNodeType>();
-            childNode
-                .Setup(n => n.TryGetChildNode(2, out grandChildNode))
+                .Setup(n => n.TryGetChildNode(1, out childNode))
                 .Returns(false);
 
-            var childNodeObject = childNode.Object;
-
-            this.startNode
-                .Setup(n => n.TryGetChildNode(1, out childNodeObject))
-                .Returns(true);
-
             // ACT
 
-            HierarchyPath<int> foundKey = null;
-            MockableNodeType result = this.startNode.Object.DescendantAtOrDefault(HierarchyPath.Create(1, 2), out foundKey);
+            MockableNodeType result1 = this.startNode.Object.DescendantAtOrDefault(HierarchyPath.Create(1));
+
+            HierarchyPath<int> foundNodePath;
+            MockableNodeType result2 = this.startNode.Object.DescendantAtOrDefault(HierarchyPath.Create(1), out foundNodePath);
 
             // ASSERT
 
-            Assert.IsNull(result);
-            Assert.IsNotNull(foundKey);
-            Assert.AreEqual((object)HierarchyPath.Create(1), (object)foundKey);
-
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNodeObject), Times.Once);
-            this.startNode.Verify(n => n.TryGetChildNode(1, out grandChildNode), Times.Once);
+            Assert.IsNull(result1);
+            Assert.IsNull(result2);
+            Assert.AreEqual(HierarchyPath.Create<int>(), foundNodePath);
+            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Exactly(2));
         }
+
+        #endregion DefaultAtOrdefault
     }
 }
