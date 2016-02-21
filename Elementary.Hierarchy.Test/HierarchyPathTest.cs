@@ -13,7 +13,7 @@
         #region Create
 
         [Test]
-        public void CreateEmptyPath()
+        public void Create_empty_hierarchy_path()
         {
             // ACT
 
@@ -29,7 +29,7 @@
         }
 
         [Test]
-        public void CreateNewHierarchyPathFromString()
+        public void Create_path_with_single_item()
         {
             // ACT
 
@@ -43,7 +43,7 @@
         }
 
         [Test]
-        public void CreateNewHierarchyPathFromStringArray()
+        public void Create_path_from_item_array()
         {
             // ACT
 
@@ -57,7 +57,7 @@
         }
 
         [Test]
-        public void ChangeArrayAfterCreateDoesntBreakThePath()
+        public void Create_immutable_path_from_item_array()
         {
             // ARRANGE
 
@@ -74,7 +74,7 @@
         }
 
         [Test]
-        public void HierarchyPathRemainsSameIfEnumerableSourceIsChanged()
+        public void Create_immutable_path_from_item_enumerable()
         {
             // ARRANGE
 
@@ -95,7 +95,7 @@
         #region Parent
 
         [Test]
-        public void SplitParentPathItems()
+        public void Split_parent_from_path_as_prefix()
         {
             // ARRANGE
 
@@ -111,7 +111,7 @@
         }
 
         [Test]
-        public void ParentPathItemsFromEmptyPath()
+        public void Split_empty_parent_path_from_empty_path()
         {
             // ARRANGE
 
@@ -131,7 +131,7 @@
         #region Leaf
 
         [Test]
-        public void SplitLeafPathItem()
+        public void Split_leaf_from_path()
         {
             // ARRANGE
 
@@ -151,7 +151,7 @@
         #region SplitDescendants
 
         [Test]
-        public void SplitDescendantsUnderRootItem()
+        public void Split_descendants_under_root_item()
         {
             // ARRANGE
 
@@ -167,7 +167,7 @@
         }
 
         [Test]
-        public void SplittingOfRootIsRoot()
+        public void Split_empty_descendants_from_empty_path()
         {
             // ARRANGE
 
@@ -184,7 +184,7 @@
         #region Parse
 
         [Test]
-        public void ParseHierarchyPathFromStringWithSeperator()
+        public void Parse_string_path_items_from_string_representation()
         {
             // ACT
 
@@ -197,7 +197,7 @@
         }
 
         [Test]
-        public void ParseIntegerHierarchyPathFromStringWithSeperator()
+        public void Parse_int_path_items_from_string_representation()
         {
             // ACT
 
@@ -214,7 +214,7 @@
         #region TryParse
 
         [Test]
-        public void TryParseHierarchyPathFromStringWithSeperator()
+        public void TryParse_string_path_items_from_string_representation()
         {
             // ACT
             HierarchyPath<string> resultPath = null;
@@ -228,7 +228,7 @@
         }
 
         [Test]
-        public void TryParseIntegerHierarchyPathFromStringWithSeperator()
+        public void TryParse_int_path_items_from_string_representation()
         {
             // ACT
 
@@ -243,7 +243,7 @@
         }
 
         [Test]
-        public void TryParseIntegerHierarchyPathFromStringWithSeperatorFails()
+        public void TryParse_returns_false_for_null_string_representation()
         {
             // ACT
 
@@ -261,7 +261,7 @@
         #region Equals
 
         [Test]
-        public void HierarchyPathesAreEqualIfAllPartsAreEqual()
+        public void Pathes_are_equal_if_all_items_are_equal()
         {
             // ARRANGE
 
@@ -281,7 +281,7 @@
         }
 
         [Test]
-        public void HierarchyPathesAreNotEqualIfLengthIsNotEqual()
+        public void Pathes_arent_equal_if_item_number_is_different()
         {
             // ARRANGE
 
@@ -301,12 +301,12 @@
         }
 
         [Test]
-        public void HierarchyPathesAreNotEqualIfItemTypeIsDifferent()
+        public void Pathes_are_different_if_item_type_is_different()
         {
             // ARRANGE
 
-            var right = HierarchyPath.Create("a", "b", "c");
-            var left = HierarchyPath.Create(1, 2, 3);
+            var right = HierarchyPath.Create<short>(1, 2, 3);
+            var left = HierarchyPath.Create<int>(1, 2, 3);
 
             // ACT
 
@@ -321,7 +321,7 @@
         }
 
         [Test]
-        public void StringHierarchyPathesAreNotEqualIfCasingIsDifferent()
+        public void Pathes_are_different_if_item_casing_is_different()
         {
             // ARRANGE
 
@@ -341,7 +341,7 @@
         }
 
         [Test]
-        public void HierarchyPathesAreEqualIfEualityComparerSaysSo()
+        public void Pathes_are_equal_if_equality_comparer_says_so()
         {
             // ARRANGE
 
@@ -361,7 +361,7 @@
         }
 
         [Test]
-        public void HierarchyPathesAreEqualForSameInstance()
+        public void Path_is_equal_compered_with_itself()
         {
             // ARRANGE
 
@@ -381,7 +381,7 @@
         #region ToString
 
         [Test]
-        public void HierarchyPathReturnsStringRepresentationOfPath()
+        public void Path_creates_string_representation_with_default_separator()
         {
             // ACT
 
@@ -393,7 +393,7 @@
         }
 
         [Test]
-        public void HierarchyPathReturnsStringRepresentationFromRootPath()
+        public void Path_creates_empty_string_represention_for_empty_path()
         {
             // ACT
 
@@ -409,7 +409,7 @@
         #region GetHashCode
 
         [Test]
-        public void HashcodesAreDifferentForPermutations()
+        public void Path_hashcode_is_different_for_permutations()
         {
             // ARRANGE
 
@@ -420,33 +420,13 @@
 
             AreNotEqual(left.GetHashCode(), right.GetHashCode());
         }
-
-        [Test]
-        public void EqualKeysHaveSameHashCode()
-        {
-            // ARRAMGE
-
-            var key1 = HierarchyPath.Create("a", "b");
-            var key2 = HierarchyPath.Create("a", "b");
-
-            // ACT
-
-            int hash1 = key1.GetHashCode();
-            int hash2 = key2.GetHashCode();
-
-            // ASSERT
-
-            AreEqual(hash1, hash2);
-            AreNotSame(key1, key2);
-            AreEqual(key1, key2);
-        }
-
+        
         #endregion GetHashCode
 
         #region Join
 
         [Test]
-        public void JoinRootHierarchyPathWithChildPart()
+        public void Join_empty_path_with_leaf_item()
         {
             // ARRAGE
 
@@ -464,7 +444,7 @@
         }
 
         [Test]
-        public void JoinHierarchyPathWithChildPart()
+        public void Join_path_with_leaf()
         {
             // ARRAGE
 
@@ -483,7 +463,7 @@
         }
 
         [Test]
-        public void JoinHierarchyPathWithOtherPath()
+        public void Join_path_with_leaf_path()
         {
             // ARRAGE
 
@@ -508,7 +488,7 @@
         #region RelativeToAncestor
 
         [Test]
-        public void CalculateRelativePathToAncestor()
+        public void Calculate_relative_path_from_ancestor_to_descendant()
         {
             // ARRANGE
 
@@ -526,7 +506,7 @@
         }
 
         [Test]
-        public void CalculateRelativePathToSelf()
+        public void Relative_path_to_itself_is_empty()
         {
             // ARRANGE
 
@@ -543,7 +523,7 @@
         }
 
         [Test]
-        public void CalculateRelativePathToDifferentBranch()
+        public void Calculate_relative_path_to_different_branch_throws()
         {
             // ARRANGE
 
@@ -557,7 +537,7 @@
         }
 
         [Test]
-        public void CalculateRelativePathToRoot()
+        public void Relative_path_to_root_is_itself_path()
         {
             // ASSERT
             var descendantKey = HierarchyPath.Create("a");
@@ -570,6 +550,7 @@
 
             AreEqual(1, result.Items.Count());
             AreEqual(descendantKey, result);
+            AreSame(descendantKey, result);
         }
 
         #endregion RelativeToAncestor
@@ -577,7 +558,7 @@
         #region IsDescendant
 
         [Test]
-        public void ChildKeyIsDescandantKeyOfParent()
+        public void Parent_path_is_ancestor_of_descendant_path()
         {
             // ARRANGE
 
@@ -596,7 +577,7 @@
         }
 
         [Test]
-        public void SiblingsAreNoDescendants()
+        public void Sibling_isnt_descendant()
         {
             // ARRANGE
 
