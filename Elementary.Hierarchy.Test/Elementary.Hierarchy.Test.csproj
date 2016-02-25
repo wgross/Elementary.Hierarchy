@@ -66,6 +66,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TraverseWithDelegates\GenericNodeParentAndChildNodesPrecedingSiblingTest.cs" />
     <Compile Include="TraverseWithDelegates\GenericNodeVisitDescendantsTest.cs" />
     <Compile Include="TraverseWithDelegates\GenericNodeDescendantAtTest.cs" />
     <Compile Include="TraverseWithDelegates\GenericNodeParentAndChildNodesFollowingSiblingTest.cs" />
