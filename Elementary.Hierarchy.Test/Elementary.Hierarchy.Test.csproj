@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="TraverseWithDelegates\GenericNodeVisitDescendantsTest.cs" />
     <Compile Include="TraverseWithDelegates\GenericNodeDescendantAtTest.cs" />
+    <Compile Include="TraverseWithDelegates\GenericNodeParentAndChildNodesFollowingSiblingTest.cs" />
     <Compile Include="TraverseWithInterfaces\HasChildNodesVisitDescendantsTest.cs" />
     <Compile Include="TraverseWithInterfaces\HasIdentifiableChildNodesDescendantAtTest.cs" />
     <Compile Include="TraverseWithInterfaces\HasParentAndChildNodesPrecedingSiblingTest.cs" />
