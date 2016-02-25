@@ -82,11 +82,7 @@ namespace Elementary.Hierarchy.Generic
             if (getChildren == null)
                 throw new ArgumentNullException(nameof(getChildren));
 
-            var parent = getParent(startNode);
-            if (parent == null)
-                return Enumerable.Empty<TNode>();
-
-            return getChildren(parent).SkipWhile(n => !n.Equals(startNode)).Skip(1);
+            return getChildren(getParent(startNode)).SkipWhile(n => !n.Equals(startNode)).Skip(1);
         }
 
         /// <summary>
@@ -109,11 +105,7 @@ namespace Elementary.Hierarchy.Generic
             if (getChildren == null)
                 throw new ArgumentNullException(nameof(getChildren));
 
-            var parent = getParent(startNode);
-            if (parent == null)
-                return Enumerable.Empty<TNode>();
-            
-            return getChildren(parent).TakeWhile(n => !n.Equals(startNode));
+            return getChildren(getParent(startNode)).TakeWhile(n => !n.Equals(startNode));
         }
     }
 }

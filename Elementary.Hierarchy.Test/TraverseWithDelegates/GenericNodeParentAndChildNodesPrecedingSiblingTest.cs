@@ -24,7 +24,7 @@
                 case "rightNode":
                     return new[] { "rightLeaf1", "rightLeaf2", "rightLeaf3" };
             }
-            throw new InvalidOperationException();
+            return Enumerable.Empty<string>();
         }
 
         private string GetParent(string startNode)
@@ -43,7 +43,7 @@
                 case "rightLeaf3":
                     return "rightNode";
             }
-            throw new InvalidOperationException();
+            return null;
         }
 
         [Test]

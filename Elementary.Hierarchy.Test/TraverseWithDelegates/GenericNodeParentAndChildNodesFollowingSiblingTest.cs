@@ -24,7 +24,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
                 case "rightNode":
                     return new[] { "rightLeaf1", "rightLeaf2", "rightLeaf3" };
             }
-            throw new InvalidOperationException();
+            return Enumerable.Empty<string>();
         }
 
         private string GetParent(string startNode)
@@ -43,7 +43,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
                 case "rightLeaf3":
                     return "rightNode";
             }
-            throw new InvalidOperationException();
+            return null;
         }
 
         [Test]
