@@ -3,8 +3,6 @@
     using Elementary.Hierarchy.Generic;
     using System;
 
-    
-
     public static class HasIdentifiableChildNodeExtensions
     {
         /// <summary>

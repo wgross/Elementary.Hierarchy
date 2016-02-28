@@ -2,7 +2,6 @@
 {
     using Elementary.Hierarchy.Generic;
     using NUnit.Framework;
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -39,8 +38,9 @@
                 switch (node)
                 {
                     case "startNode":
-                        parent= "parentOfStartNode";
+                        parent = "parentOfStartNode";
                         return true;
+
                     case "parentOfStartNode":
                         parent = "rootNode";
                         return true;

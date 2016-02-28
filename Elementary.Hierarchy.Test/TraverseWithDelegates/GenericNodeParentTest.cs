@@ -22,7 +22,7 @@
 
             // ACT
 
-            InvalidOperationException result= Assert.Throws<InvalidOperationException>(()=> "startNode".Parent(nodeHierarchy));
+            InvalidOperationException result = Assert.Throws<InvalidOperationException>(() => "startNode".Parent(nodeHierarchy));
 
             // ASSERT
 
@@ -39,7 +39,7 @@
                 switch (node)
                 {
                     case "startNode":
-                        parent =  "parentOfStartNode";
+                        parent = "parentOfStartNode";
                         return true;
 
                     case "parentOfStartNode":

@@ -22,7 +22,7 @@
                 if (n.HasParentNode)
                     p = n.ParentNode;
 
-                return (p!= null);
+                return (p != null);
             });
         }
 
@@ -116,7 +116,7 @@ namespace Elementary.Hierarchy.Generic
             if (tryGetParentNode == null)
                 throw new ArgumentNullException(nameof(tryGetParentNode));
 
-            TNode current = startNode;            
+            TNode current = startNode;
             while (tryGetParentNode(current, out current))
                 yield return current;
         }
