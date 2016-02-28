@@ -14,18 +14,19 @@
         {
             // ARRANGE
 
-            Func<string, string> nodeHierarchy = node =>
+            TryGetParent<string> nodeHierarchy = (string node, out string parent) =>
             {
-                return null;
+                parent = null;
+                return false;
             };
 
             // ACT
 
-            string result = "startNode".Parent(nodeHierarchy);
+            InvalidOperationException result= Assert.Throws<InvalidOperationException>(()=> "startNode".Parent(nodeHierarchy));
 
             // ASSERT
 
-            Assert.AreEqual(null, result);
+            Assert.IsTrue(result.Message.Contains("has no parent"));
         }
 
         [Test]
@@ -33,14 +34,20 @@
         {
             // ARRANGE
 
-            Func<string, string> nodeHierarchy = node =>
+            TryGetParent<string> nodeHierarchy = (string node, out string parent) =>
             {
                 switch (node)
                 {
-                    case "startNode": return "parentOfStartNode";
-                    case "parentOfStartNode": return "rootNode";
-                    default: return null;
+                    case "startNode":
+                        parent =  "parentOfStartNode";
+                        return true;
+
+                    case "parentOfStartNode":
+                        parent = "rootNode";
+                        return true;
                 }
+                parent = null;
+                return false;
             };
 
             // ACT

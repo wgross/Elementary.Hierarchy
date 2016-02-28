@@ -3,7 +3,7 @@
     using Elementary.Hierarchy.Generic;
     using System;
 
-    public delegate bool TryGetChildNodeDelegate<TKey, TNode>(TNode startNode, TKey key, out TNode childNode);
+    
 
     public static class HasIdentifiableChildNodeExtensions
     {
@@ -18,7 +18,7 @@
         public static TNode DescendantAt<TKey, TNode>(this TNode startNode, HierarchyPath<TKey> key)
             where TNode : IHasIdentifiableChildNodes<TKey, TNode>
         {
-            var tryGetChildNode = (TryGetChildNodeDelegate<TKey, TNode>)((TNode p, TKey k, out TNode c) => p.TryGetChildNode(k, out c));
+            var tryGetChildNode = (TryGetChildNode<TKey, TNode>)((TNode p, TKey k, out TNode c) => p.TryGetChildNode(k, out c));
             return startNode.DescendantAt(tryGetChildNode, key);
         }
 
@@ -70,7 +70,7 @@
         public static TNode DescendantAtOrDefault<TKey, TNode>(this TNode startNode, HierarchyPath<TKey> key, out HierarchyPath<TKey> foundKey, Func<TNode> createDefault = null)
             where TNode : IHasIdentifiableChildNodes<TKey, TNode>
         {
-            var tryGetChildNode = (TryGetChildNodeDelegate<TKey, TNode>)((TNode p, TKey k, out TNode c) => p.TryGetChildNode(k, out c));
+            var tryGetChildNode = (TryGetChildNode<TKey, TNode>)((TNode p, TKey k, out TNode c) => p.TryGetChildNode(k, out c));
             return startNode.DescendantAtOrDefault(tryGetChildNode, key, out foundKey, createDefault);
         }
     }
@@ -93,7 +93,7 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="key">hierarchy key to search</param>
         /// <param name="tryGetChildNode">delegate which implements the child node retrieval for the TNode instances</param>
         /// <returns></returns>
-        public static TNode DescendantAt<TKey, TNode>(this TNode startNode, TryGetChildNodeDelegate<TKey, TNode> tryGetChildNode, HierarchyPath<TKey> key)
+        public static TNode DescendantAt<TKey, TNode>(this TNode startNode, TryGetChildNode<TKey, TNode> tryGetChildNode, HierarchyPath<TKey> key)
         {
             var keyArray = key.Items.ToArray();
             TNode childNode = startNode;
@@ -114,7 +114,7 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="key"></param>
         /// <param name="tryGetChildNode">delegate to retrieve a child node by specified key</param>
         /// <returns>TNode instance behind key or default(TNode)</returns>
-        public static TNode DescendantAtOrDefault<TKey, TNode>(this TNode startNode, TryGetChildNodeDelegate<TKey, TNode> tryGetChildNode, HierarchyPath<TKey> key, Func<TNode> createDefault = null)
+        public static TNode DescendantAtOrDefault<TKey, TNode>(this TNode startNode, TryGetChildNode<TKey, TNode> tryGetChildNode, HierarchyPath<TKey> key, Func<TNode> createDefault = null)
         {
             var foundAncestor = HierarchyPath.Create<TKey>();
             return startNode.DescendantAtOrDefault(tryGetChildNode, key, out foundAncestor, createDefault);
@@ -130,7 +130,7 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="key">hierarchy key to search</param>
         /// <param name="tryGetChildNode">child retrieval strategy</param>
         /// <returns>TNode instance behind key or default(TNode)</returns>
-        public static TNode DescendantAtOrDefault<TKey, TNode>(this TNode startNode, TryGetChildNodeDelegate<TKey, TNode> tryGetChildNode, HierarchyPath<TKey> key, out HierarchyPath<TKey> foundKey, Func<TNode> createDefault = null)
+        public static TNode DescendantAtOrDefault<TKey, TNode>(this TNode startNode, TryGetChildNode<TKey, TNode> tryGetChildNode, HierarchyPath<TKey> key, out HierarchyPath<TKey> foundKey, Func<TNode> createDefault = null)
         {
             foundKey = HierarchyPath.Create<TKey>();
             TNode childNode = startNode;

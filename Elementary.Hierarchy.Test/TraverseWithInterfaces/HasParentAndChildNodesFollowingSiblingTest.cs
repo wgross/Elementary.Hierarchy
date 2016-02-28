@@ -120,7 +120,7 @@
             MockableNodeType[] result = this.rightNode.Object.FollowingSiblings().ToArray();
 
             // ASSERT
-            
+
             this.rightNode.Verify(n => n.HasParentNode, Times.Once);
             this.rightNode.Verify(n => n.ParentNode, Times.Once);
             this.rootNode.Verify(n => n.HasChildNodes, Times.Never);

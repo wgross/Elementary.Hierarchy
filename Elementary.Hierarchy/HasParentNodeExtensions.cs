@@ -15,7 +15,15 @@
         public static TNode Parent<TNode>(this TNode startNode)
             where TNode : class, IHasParentNode<TNode>
         {
-            return startNode.Parent(n => n.HasParentNode ? n.ParentNode : null);
+            //return startNode.Parent(n => n.HasParentNode ? n.ParentNode : null);
+            return startNode.Parent((TNode n, out TNode p) =>
+            {
+                p = null;
+                if (n.HasParentNode)
+                    p = n.ParentNode;
+
+                return (p!= null);
+            });
         }
 
         /// <summary>
@@ -53,7 +61,14 @@
         public static IEnumerable<TNode> AncestorsOrSelf<TNode>(this TNode startNode)
             where TNode : class, IHasParentNode<TNode>
         {
-            return startNode.AncestorsOrSelf(n => n.HasParentNode ? n.ParentNode : null);
+            return startNode.AncestorsOrSelf((TNode n, out TNode p) =>
+            {
+                p = null;
+                if (n.HasParentNode)
+                    p = n.ParentNode;
+
+                return (p != null);
+            });
         }
     }
 }
@@ -71,16 +86,18 @@ namespace Elementary.Hierarchy.Generic
         /// </summary>
         /// <typeparam name="TNode"></typeparam>
         /// <param name="startNode"></param>
-        /// <returns></returns>
-        public static TNode Parent<TNode>(this TNode startNode, Func<TNode, TNode> getParentNode)
+        /// <param name="tryGetParentNode">Delegate to calculate the parent node of the star node</param>
+        /// <returns>the parent Node or throws InvalidOperationException</returns>
+        public static TNode Parent<TNode>(this TNode startNode, TryGetParent<TNode> tryGetParentNode)
         {
-            if (startNode == null)
-                throw new ArgumentNullException(nameof(startNode));
+            if (tryGetParentNode == null)
+                throw new ArgumentNullException(nameof(tryGetParentNode));
 
-            if (getParentNode == null)
-                throw new ArgumentNullException(nameof(getParentNode));
+            TNode parentNode;
+            if (tryGetParentNode(startNode, out parentNode))
+                return parentNode;
 
-            return getParentNode(startNode);
+            throw new InvalidOperationException($"{startNode} has no parent");
         }
 
         /// <summary>
@@ -93,25 +110,15 @@ namespace Elementary.Hierarchy.Generic
         /// <typeparam name="TNode">Type of the node, implements <see cref="IHasParentNode"/></typeparam>
         /// <param name="startNode">reference to the node to start from</param>
         /// <param name="hasParentNode">returns true if the inspected node has a parent node</param>
-        /// <param name="getParentNode">returns the parent node of the inspected node</param>
-        public static IEnumerable<TNode> Ancestors<TNode>(this TNode startNode, Func<TNode, TNode> getParentNode)
-            where TNode : class
+        /// <param name="tryGetParentNode">returns the parent node of the inspected node</param>
+        public static IEnumerable<TNode> Ancestors<TNode>(this TNode startNode, TryGetParent<TNode> tryGetParentNode)
         {
-            if (startNode == null)
-                throw new ArgumentNullException(nameof(startNode));
+            if (tryGetParentNode == null)
+                throw new ArgumentNullException(nameof(tryGetParentNode));
 
-            if (getParentNode == null)
-                throw new ArgumentNullException(nameof(getParentNode));
-
-            TNode current = startNode;
-            while (current != null)
-            {
-                current = getParentNode(current);
-                if (current == null)
-                    yield break;
-                else
-                    yield return current;
-            }
+            TNode current = startNode;            
+            while (tryGetParentNode(current, out current))
+                yield return current;
         }
 
         /// <summary>
@@ -124,17 +131,13 @@ namespace Elementary.Hierarchy.Generic
         /// <typeparam name="TNode">Type of the node, implements <see cref="IHasParentNode"/></typeparam>
         /// <param name="startNode">reference to the node to start from</param>
         /// <param name="hasParentNode">returns true if the inspected node has a parent node</param>
-        /// <param name="getParentNode">returns the parent node of the inspected node</param>
-        public static IEnumerable<TNode> AncestorsOrSelf<TNode>(this TNode startNode, Func<TNode, TNode> getParentNode)
-            where TNode : class
+        /// <param name="tryGetParentNode">returns the parent node of the inspected node</param>
+        public static IEnumerable<TNode> AncestorsOrSelf<TNode>(this TNode startNode, TryGetParent<TNode> tryGetParentNode)
         {
-            if (startNode == null)
-                throw new ArgumentNullException(nameof(startNode));
+            if (tryGetParentNode == null)
+                throw new ArgumentNullException(nameof(tryGetParentNode));
 
-            if (getParentNode == null)
-                throw new ArgumentNullException(nameof(getParentNode));
-
-            return Enumerable.Repeat(startNode, 1).Union(startNode.Ancestors(getParentNode));
+            return Enumerable.Repeat(startNode, 1).Union(startNode.Ancestors(tryGetParentNode));
         }
     }
 }

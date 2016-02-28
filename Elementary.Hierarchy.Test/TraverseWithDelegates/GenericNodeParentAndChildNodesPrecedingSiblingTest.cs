@@ -1,12 +1,10 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 {
+    using Elementary.Hierarchy.Generic;
     using NUnit.Framework;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using Elementary.Hierarchy.Generic;
 
     [TestFixture]
     public class GenericNodeParentAndChildNodesPrecedingSiblingTest
@@ -24,26 +22,29 @@
                 case "rightNode":
                     return new[] { "rightLeaf1", "rightLeaf2", "rightLeaf3" };
             }
-            return Enumerable.Empty<string>();
+            throw new InvalidOperationException("Shouldn't be reached");
         }
 
-        private string GetParent(string startNode)
+        private bool TryGetParent(string startNode, out string parentNode)
         {
             switch (startNode)
             {
                 case "rootNode":
-                    return null;
+                    break;
 
                 case "leftNode":
                 case "rightNode":
-                    return "rootNode";
+                    parentNode = "rootNode";
+                    return true;
 
                 case "rightLeaf1":
                 case "rightLeaf2":
                 case "rightLeaf3":
-                    return "rightNode";
+                    parentNode = "rightNode";
+                    return true;
             }
-            return null;
+            parentNode = null;
+            return false;
         }
 
         [Test]
@@ -51,7 +52,7 @@
         {
             // ACT
 
-            string[] result = "rootNode".PrecedingSiblings(this.GetParent, this.GetChildNodes).ToArray();
+            string[] result = "rootNode".PrecedingSiblings(this.TryGetParent, this.GetChildNodes).ToArray();
 
             // ASSERT
 
@@ -63,7 +64,7 @@
         {
             // ACT
 
-            string[] result = "rightNode".PrecedingSiblings(this.GetParent, this.GetChildNodes).ToArray();
+            string[] result = "rightNode".PrecedingSiblings(this.TryGetParent, this.GetChildNodes).ToArray();
 
             // ASSERT
 
@@ -76,7 +77,7 @@
         {
             // ACT
 
-            string[] result = "leftNode".PrecedingSiblings(this.GetParent, this.GetChildNodes).ToArray();
+            string[] result = "leftNode".PrecedingSiblings(this.TryGetParent, this.GetChildNodes).ToArray();
 
             // ASSERT
 
@@ -88,7 +89,7 @@
         {
             // ACT
 
-            string[] result = "rightLeaf3".PrecedingSiblings(this.GetParent, this.GetChildNodes).ToArray();
+            string[] result = "rightLeaf3".PrecedingSiblings(this.TryGetParent, this.GetChildNodes).ToArray();
 
             // ASSERT
 

@@ -420,7 +420,7 @@
 
             AreNotEqual(left.GetHashCode(), right.GetHashCode());
         }
-        
+
         #endregion GetHashCode
 
         #region Join

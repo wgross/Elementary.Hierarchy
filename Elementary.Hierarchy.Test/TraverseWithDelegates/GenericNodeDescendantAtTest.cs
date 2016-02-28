@@ -15,7 +15,7 @@
         {
             // ARRANGE
 
-            var nodeHierarchy = (TryGetChildNodeDelegate<string, string>)(delegate (string node, string key, out string childNode)
+            var nodeHierarchy = (TryGetChildNode<string, string>)(delegate (string node, string key, out string childNode)
             {
                 if (node == "startNode" && key == "childNode")
                 {
@@ -40,7 +40,7 @@
         {
             // ARRANGE
 
-            var nodeHierarchy = (TryGetChildNodeDelegate<string, string>)(delegate (string node, string key, out string childNode)
+            var nodeHierarchy = (TryGetChildNode<string, string>)(delegate (string node, string key, out string childNode)
             {
                 if (node == "startNode" && key == "childNode")
                 {
@@ -67,7 +67,7 @@
 
             // ARRANGE
 
-            var nodeHierarchy = (TryGetChildNodeDelegate<string, string>)(delegate (string node, string key, out string childNode)
+            var nodeHierarchy = (TryGetChildNode<string, string>)(delegate (string node, string key, out string childNode)
             {
                 if (node == "startNode" && key == "childNode")
                 {
@@ -97,7 +97,7 @@
         {
             // ARRANGE
 
-            var nodeHierarchy = (TryGetChildNodeDelegate<string, string>)(delegate (string node, string key, out string childNode)
+            var nodeHierarchy = (TryGetChildNode<string, string>)(delegate (string node, string key, out string childNode)
             {
                 if (node == "startNode")
                 {
@@ -126,7 +126,7 @@
         {
             // ARRANGE
 
-            var nodeHierarchy = (TryGetChildNodeDelegate<string, string>)(delegate (string node, string key, out string childNode)
+            var nodeHierarchy = (TryGetChildNode<string, string>)(delegate (string node, string key, out string childNode)
             {
                 if (node == "startNode" && key == "childNode")
                 {
@@ -156,7 +156,7 @@
         {
             // ARRANGE
 
-            var nodeHierarchy = (TryGetChildNodeDelegate<string, string>)(delegate (string node, string key, out string childNode)
+            var nodeHierarchy = (TryGetChildNode<string, string>)(delegate (string node, string key, out string childNode)
             {
                 throw new InvalidOperationException("unknown node");
             });
@@ -178,7 +178,7 @@
         {
             // ARRANGE
 
-            var nodeHierarchy = (TryGetChildNodeDelegate<string, string>)(delegate (string node, string key, out string childNode)
+            var nodeHierarchy = (TryGetChildNode<string, string>)(delegate (string node, string key, out string childNode)
             {
                 if (node == "startNode" && key == "childNode")
                 {
@@ -213,7 +213,7 @@
         {
             // ARRANGE
 
-            var nodeHierarchy = (TryGetChildNodeDelegate<string, string>)(delegate (string node, string key, out string childNode)
+            var nodeHierarchy = (TryGetChildNode<string, string>)(delegate (string node, string key, out string childNode)
             {
                 if (node == "startNode")
                 {

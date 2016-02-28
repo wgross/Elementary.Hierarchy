@@ -2,7 +2,7 @@
 {
     using Moq;
     using NUnit.Framework;
-
+    using System;
     [TestFixture]
     public class HasParentNodeParentTest
     {
@@ -27,12 +27,12 @@
 
             // ACT
 
-            MockableNodeType result = startNode.Object.Parent();
+            InvalidOperationException result = Assert.Throws<InvalidOperationException>(()=> startNode.Object.Parent());
 
             // ASSERT
 
-            Assert.AreEqual(null, result);
-
+            Assert.IsTrue(result.Message.Contains("has no parent"));
+            
             startNode.Verify(m => m.HasParentNode, Times.Once);
             startNode.Verify(m => m.ParentNode, Times.Never);
         }

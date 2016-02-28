@@ -14,9 +14,10 @@
         {
             // ARRANGE
 
-            Func<string, string> nodeHierarchy = node =>
+            TryGetParent<string> nodeHierarchy = (string node, out string parent) =>
             {
-                return null;
+                parent = null;
+                return false;
             };
 
             // ACT
@@ -33,14 +34,19 @@
         {
             // ARRANGE
 
-            Func<string, string> nodeHierarchy = node =>
+            TryGetParent<string> nodeHierarchy = (string node, out string parent) =>
             {
                 switch (node)
                 {
-                    case "startNode": return "parentOfStartNode";
-                    case "parentOfStartNode": return "rootNode";
+                    case "startNode":
+                        parent= "parentOfStartNode";
+                        return true;
+                    case "parentOfStartNode":
+                        parent = "rootNode";
+                        return true;
                 }
-                return null;
+                parent = null;
+                return false;
             };
 
             // ACT
