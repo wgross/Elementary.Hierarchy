@@ -6,19 +6,26 @@ $git = (Get-Command git.exe).Path
 
 Task default -depends pack
 
+Task clean {
+    & $msbuild (Resolve-path $PSScriptRoot\Elementary.Hierarchy.sln) /t:Clean /p:Configuration=Release
+    & $msbuild (Resolve-path $PSScriptRoot\Elementary.Hierarchy.sln) /t:Clean /p:Configuration=Debug
+    
+    Remove-Item $PSScriptRoot\*.nupkg -ErrorAction SilentlyContinue
+}
+
 Task build {
 
-    & $msbuild (Resolve-path $PSScriptRoot\Elementary.Hierarchy.sln) /t:Rebuild /p:Configuration=Release
+    & $msbuild (Resolve-path $PSScriptRoot\Elementary.Hierarchy.sln) /t:Build /p:Configuration=Release
 
-} -precondition { Test-Path $msbuild }
+} -precondition { Test-Path $msbuild } 
 
 Task pack {
 
-    & $nuget Pack (Resolve-path $PSScriptRoot\Elementary.Hierarchy\Elementary.Hierarchy.csproj) -Prop Configuration=Release -Build -Symbols
+    & $nuget Pack (Resolve-path $PSScriptRoot\Elementary.Hierarchy\Elementary.Hierarchy.csproj) -Prop Configuration=Release -Build -Symbols -MSbuildVersion 14
     
     Copy-Item $PSScriptRoot\Elementary.Hierarchy.*.nupkg C:\src\packages
 
-} -precondition { Test-Path $nuget } -depends build 
+} -precondition { Test-Path $nuget } -depends clean 
 
 Task commit {
 
