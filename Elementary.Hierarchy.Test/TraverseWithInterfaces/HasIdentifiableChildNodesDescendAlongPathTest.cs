@@ -2,7 +2,6 @@
 {
     using Moq;
     using NUnit.Framework;
-    using System.Collections.Generic;
     using System.Linq;
 
     [TestFixture]
@@ -20,7 +19,22 @@
         }
 
         [Test]
-        public void I_root_returns_itself_and_child_on_DescentAlongPath()
+        public void I_root_returns_nothing_for_empty_path_on_DescentAlongPath()
+        {
+            // ACT
+
+            MockableNodeType[] result = this.startNode.Object.DescentAlongPath(HierarchyPath.Create(1)).ToArray();
+
+            // ASSERT
+
+            Assert.IsFalse(result.Any());
+
+            MockableNodeType childNode;
+            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once);
+        }
+
+        [Test]
+        public void I_root_returns_child_on_DescentAlongPath()
         {
             // ARRANGE
 
@@ -37,25 +51,13 @@
             // ASSERT
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.Length);
-            Assert.AreSame(this.startNode.Object, result[0]);
-            Assert.AreSame(childNode, result[1]);
+            CollectionAssert.AreEqual(new[] { childNode }, result);
+
+            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once);
         }
 
         [Test]
-        public void I_root_returns_itself_on_DescendantAt()
-        {
-            // ACT
-
-            MockableNodeType result = this.startNode.Object.DescendantAt(HierarchyPath.Create<int>());
-
-            // ASSERT
-
-            Assert.AreSame(startNode.Object, result);
-        }
-
-        [Test]
-        public void I_root_returns_grandchild_on_DescendentAt()
+        public void I_root_returns_child_and_grandchild_on_DescentAlongPath()
         {
             // ARRANGE
 
@@ -74,17 +76,18 @@
 
             // ACT
 
-            MockableNodeType result = this.startNode.Object.DescendantAt(HierarchyPath.Create(1, 2));
+            MockableNodeType[] result = this.startNode.Object.DescentAlongPath(HierarchyPath.Create(1, 2)).ToArray();
 
             // ASSERT
 
-            Assert.AreSame(subChildNode, result);
+            CollectionAssert.AreEqual(new[] { childNode, subChildNode }, result);
+
             this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once);
             childNodeMock.Verify(n => n.TryGetChildNode(2, out subChildNode), Times.Once);
         }
 
         [Test]
-        public void I_root_node_throws_on_invalid_childId_on_DescendantAt()
+        public void I_root_return_incomplete_list_on_DescentAlongPath()
         {
             // ARRANGE
             this.startNode
@@ -92,11 +95,14 @@
 
             // ACT
 
-            KeyNotFoundException result = Assert.Throws<KeyNotFoundException>(() => { this.startNode.Object.DescendantAt(HierarchyPath.Create(1)); });
+            MockableNodeType[] result = this.startNode.Object.DescentAlongPath(HierarchyPath.Create(1)).ToArray();
 
             // ASSERT
 
-            Assert.IsTrue(result.Message.Contains("Key not found:'1'"));
+            Assert.IsFalse(result.Any());
+
+            MockableNodeType childNode;
+            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once);
         }
     }
 }

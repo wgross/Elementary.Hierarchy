@@ -9,7 +9,7 @@
     public class GenericNodeDescentAlongPathTest
     {
         [Test]
-        public void D_root_returns_nothing_empty_path_on_DescentAlongPath()
+        public void D_root_returns_nothing_for_empty_path_on_DescentAlongPath()
         {
             // ARRANGE
 
