@@ -44,7 +44,6 @@ Task pack {
 
 } -precondition { Test-Path $nuget } -depends clean,test
 
-
 Task commit {
 
     & $hg commit -m "Auto commit of changed files before push"
