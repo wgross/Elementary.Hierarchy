@@ -75,6 +75,7 @@
     <Compile Include="TraverseWithDelegates\GenericNodeParentAndChildNodesFollowingSiblingTest.cs" />
     <Compile Include="TraverseWithInterfaces\HasChildNodesVisitDescendantsTest.cs" />
     <Compile Include="TraverseWithInterfaces\HasIdentifiableChildNodesDescendAlongPathTest.cs" />
+    <Compile Include="TraverseWithInterfaces\HasIdentifiableChildNodesTryGetDescendantAtTest.cs" />
     <Compile Include="TraverseWithInterfaces\HasIdentifiableChildNodesDescendantAtTest.cs" />
     <Compile Include="TraverseWithInterfaces\HasParentAndChildNodesPrecedingSiblingTest.cs" />
     <Compile Include="TraverseWithInterfaces\HasParentAndChildNodesFollowingSiblingTest.cs" />
