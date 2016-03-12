@@ -134,6 +134,31 @@ namespace Elementary.Hierarchy.Generic
             return childNode;
         }
 
+        /// <summary>
+        /// Retrieves a descendant of the start node or rezurns false if not found. 
+        /// The child nodes are retrieved with the specified tryGetChildNode delegate.
+        /// </summary>
+        /// <typeparam name="TKey">Type of the hierarchy key</typeparam>
+        /// <typeparam name="TNode">Type of the hierarchy node</typeparam>
+        /// <param name="startNode">node instance to start search at</param>
+        /// <param name="key">hierarchy key to search</param>
+        /// <param name="tryGetChildNode">delegate which implements the child node retrieval for the TNode instances</param>
+        /// <param name="descendantAt">contains the wanted descandant node of the search was succesful</param>
+        /// <returns>treu if node was found, false otherwise</returns>
+        public static bool TryGetDescendantAt<TKey, TNode>(this TNode startNode, TryGetChildNode<TKey, TNode> tryGetChildNode, HierarchyPath<TKey> key, out TNode descendantAt)
+        {
+            descendantAt = default(TNode);
+
+            var keyArray = key.Items.ToArray();
+            TNode currentNode = startNode;
+            for (int i = 0; i < keyArray.Length; i++)
+                if (!tryGetChildNode(currentNode, keyArray[i], out currentNode))
+                    return false;
+
+            descendantAt = currentNode;
+            return true;
+        }
+
         #endregion DescendantAt
 
         #region DescendantAtOrDefault
