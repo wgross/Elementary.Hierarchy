@@ -22,7 +22,7 @@ To support this use case Elementary.Hierarchy provides the class HierarchyPath<T
 var id = HierarchyPath.Create("a");
 
 // id of a node under the root node having the id 'a/b'
-var id = HierarchyPath.Create("a");
+var id = HierarchyPath.Create("a","b");
 
 // root id of a hierarchy using string based keys 
 HierachyPath.Create<string>()
