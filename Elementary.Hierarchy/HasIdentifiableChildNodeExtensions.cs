@@ -95,11 +95,11 @@
         /// <param name="startNode">node to start the traversal</param>
         /// <param name="path">path of node ids to follow down</param>
         /// <returns>Collection of the nodes shich where passed allong the traversal.</returns>
-        public static IEnumerable<TNode> DescentAlongPath<TKey, TNode>(this TNode startNode, HierarchyPath<TKey> path)
+        public static IEnumerable<TNode> DescendAlongPath<TKey, TNode>(this TNode startNode, HierarchyPath<TKey> path)
             where TNode : IHasIdentifiableChildNodes<TKey, TNode>
         {
             var tryGetChildNode = (TryGetChildNode<TKey, TNode>)((TNode p, TKey k, out TNode c) => p.TryGetChildNode(k, out c));
-            return startNode.DescentAlongPath(tryGetChildNode, path);
+            return startNode.DescendAlongPath(tryGetChildNode, path);
         }
 
         #endregion DescendAlongPath
@@ -214,7 +214,7 @@ namespace Elementary.Hierarchy.Generic
         #region DescendAlongPath
 
         /// <summary>
-        /// The Tree is traversed from the start node until the node is reached which si specified by the path.
+        /// The Tree is traversed from the start node until the node is reached which is specified by the path.
         /// The path is interpreted as a relative path.
         /// The traversal stops if the destination node cannot be reached, the start node is not returned.
         /// </summary>
@@ -223,9 +223,15 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="startNode">node to start the traversal</param>
         /// <param name="path">path of node ids to follow down</param>
         /// <param name="tryGetChildNode"></param>
-        /// <returns>Collection of the nodes shich where passed allong the traversal.</returns>
-        public static IEnumerable<TNode> DescentAlongPath<TKey, TNode>(this TNode startNode, TryGetChildNode<TKey, TNode> tryGetChildNode, HierarchyPath<TKey> path)
+        /// <returns>Collection of the nodes shich where passed allong the traversal starting with the 'startNode'</returns>
+        public static IEnumerable<TNode> DescendAlongPath<TKey, TNode>(this TNode startNode, TryGetChildNode<TKey, TNode> tryGetChildNode, HierarchyPath<TKey> path)
         {
+            // return the start node as the first node to traverse.
+            // this makes sure that at least one node is contained on the result
+
+            yield return startNode;
+
+            // now descendt fro the start node, if there is sometin left in the path
             TNode childNode = startNode;
             var keyItems = path.Items.ToArray();
             for (int i = 0; i < keyItems.Length; i++)

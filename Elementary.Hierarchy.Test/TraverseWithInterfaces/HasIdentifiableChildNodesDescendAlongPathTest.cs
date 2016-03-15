@@ -19,22 +19,22 @@
         }
 
         [Test]
-        public void I_root_returns_nothing_for_empty_path_on_DescentAlongPath()
+        public void I_root_returns_nothing_for_empty_path_on_DescendAlongPath()
         {
             // ACT
 
-            MockableNodeType[] result = this.startNode.Object.DescentAlongPath(HierarchyPath.Create(1)).ToArray();
+            MockableNodeType[] result = this.startNode.Object.DescendAlongPath(HierarchyPath.Create(1)).ToArray();
 
             // ASSERT
 
-            Assert.IsFalse(result.Any());
+            Assert.IsTrue(result.Any());
 
             MockableNodeType childNode;
             this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once);
         }
 
         [Test]
-        public void I_root_returns_child_on_DescentAlongPath()
+        public void I_root_returns_child_on_DescendAlongPath()
         {
             // ARRANGE
 
@@ -46,12 +46,12 @@
 
             // ACT
 
-            MockableNodeType[] result = this.startNode.Object.DescentAlongPath(HierarchyPath.Create(1)).ToArray();
+            MockableNodeType[] result = this.startNode.Object.DescendAlongPath(HierarchyPath.Create(1)).ToArray();
 
             // ASSERT
 
             Assert.IsNotNull(result);
-            CollectionAssert.AreEqual(new[] { childNode }, result);
+            CollectionAssert.AreEqual(new[] { this.startNode.Object, childNode }, result);
 
             this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once);
         }
@@ -76,18 +76,18 @@
 
             // ACT
 
-            MockableNodeType[] result = this.startNode.Object.DescentAlongPath(HierarchyPath.Create(1, 2)).ToArray();
+            MockableNodeType[] result = this.startNode.Object.DescendAlongPath(HierarchyPath.Create(1, 2)).ToArray();
 
             // ASSERT
 
-            CollectionAssert.AreEqual(new[] { childNode, subChildNode }, result);
+            CollectionAssert.AreEqual(new[] { this.startNode.Object, childNode, subChildNode }, result);
 
             this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once);
             childNodeMock.Verify(n => n.TryGetChildNode(2, out subChildNode), Times.Once);
         }
 
         [Test]
-        public void I_root_return_incomplete_list_on_DescentAlongPath()
+        public void I_root_return_incomplete_list_on_DescendAlongPath()
         {
             // ARRANGE
             this.startNode
@@ -95,11 +95,12 @@
 
             // ACT
 
-            MockableNodeType[] result = this.startNode.Object.DescentAlongPath(HierarchyPath.Create(1)).ToArray();
+            MockableNodeType[] result = this.startNode.Object.DescendAlongPath(HierarchyPath.Create(1)).ToArray();
 
             // ASSERT
 
-            Assert.IsFalse(result.Any());
+            Assert.IsTrue(result.Any());
+            CollectionAssert.AreEqual(new[] { this.startNode.Object }, result);
 
             MockableNodeType childNode;
             this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once);
