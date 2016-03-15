@@ -6,7 +6,7 @@
     using System.Linq;
 
     [TestFixture]
-    public class GenericNodeDescentAlongPathTest
+    public class GenericNodeDescendAlongPathTest
     {
         [Test]
         public void D_root_returns_itself_for_empty_path_on_DescendAlongPath()

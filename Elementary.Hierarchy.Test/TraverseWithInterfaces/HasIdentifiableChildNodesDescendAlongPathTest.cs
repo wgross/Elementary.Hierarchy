@@ -5,7 +5,7 @@
     using System.Linq;
 
     [TestFixture]
-    public class HasIdentifiableChildNodesDescentAlongPathTest
+    public class HasIdentifiableChildNodesDescendAlongPathTest
     {
         public interface MockableNodeType : IHasIdentifiableChildNodes<int, MockableNodeType>
         { }
@@ -57,7 +57,7 @@
         }
 
         [Test]
-        public void I_root_returns_child_and_grandchild_on_DescentAlongPath()
+        public void I_root_returns_child_and_grandchild_on_DescendAlongPath()
         {
             // ARRANGE
 
