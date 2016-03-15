@@ -31,7 +31,7 @@
             // ASSERT
 
             Assert.AreEqual(1, result.Count());
-            Assert.AreEqual("startNode",result.ElementAt(0));
+            Assert.AreEqual("startNode", result.ElementAt(0));
         }
 
         [Test]

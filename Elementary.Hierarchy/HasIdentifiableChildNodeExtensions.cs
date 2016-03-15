@@ -26,6 +26,7 @@
         #endregion DescendantAt
 
         #region TryGetDescendantAt
+
         /// <summary>
         /// Retrieves a descendant of the start node or returns false if not found.
         /// The child nodes are retrieved with the specified tryGetChildNode delegate.
@@ -44,7 +45,7 @@
             return startNode.TryGetDescendantAt(tryGetChildNode, key, out descendentAt);
         }
 
-        #endregion
+        #endregion TryGetDescendantAt
 
         #region DescendantAtOrDefault
 
