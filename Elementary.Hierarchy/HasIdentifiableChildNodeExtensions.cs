@@ -2,9 +2,12 @@
 {
     using Elementary.Hierarchy.Generic;
     using System;
+    using System.Collections.Generic;
 
     public static class HasIdentifiableChildNodeExtensions
     {
+        #region DescendantAt
+
         /// <summary>
         /// Retrieves a descendant of the start node or throws KeyNotFoundException if not found
         /// </summary>
@@ -20,24 +23,30 @@
             return startNode.DescendantAt(tryGetChildNode, key);
         }
 
+        #endregion DescendantAt
+
+        #region TryGetDescendantAt
         /// <summary>
-        /// Retrieves a descendant of the start node or throws KeyNotFoundException if not found.
-        /// The strategy how to retrieve a child node form a parent node is specified by the tryGetChildNode delegate.
+        /// Retrieves a descendant of the start node or returns false if not found.
+        /// The child nodes are retrieved with the specified tryGetChildNode delegate.
         /// </summary>
         /// <typeparam name="TKey">Type of the hierarchy key</typeparam>
         /// <typeparam name="TNode">Type of the hierarchy node</typeparam>
         /// <param name="startNode">node instance to start search at</param>
         /// <param name="key">hierarchy key to search</param>
-        /// <param name="tryGetChildNode">child retrieval strategy</param>
-        /// <returns></returns>
-        //public static TNode DescendantAt<TKey, TNode>(this TNode startNode, TKey key, TryGetChildNodeDelegate<TKey, TNode> tryGetChildNode)
-        //{
-        //    TNode childNode;
-        //    if (tryGetChildNode(startNode, key, out childNode))
-        //        return childNode;
+        /// <param name="tryGetChildNode">delegate which implements the child node retrieval for the TNode instances</param>
+        /// <param name="descendantAt">contains the wanted descandant node of the search was succesful</param>
+        /// <returns>true if node was found, false otherwise</returns>
+        public static bool TryGetDescendantAt<TKey, TNode>(this TNode startNode, HierarchyPath<TKey> key, out TNode descendentAt)
+            where TNode : IHasIdentifiableChildNodes<TKey, TNode>
+        {
+            var tryGetChildNode = (TryGetChildNode<TKey, TNode>)((TNode p, TKey k, out TNode c) => p.TryGetChildNode(k, out c));
+            return startNode.TryGetDescendantAt(tryGetChildNode, key, out descendentAt);
+        }
 
-        //    throw new KeyNotFoundException(string.Format("Key not found:'{0}'", key));
-        //}
+        #endregion
+
+        #region DescendantAtOrDefault
 
         /// <summary>
         /// Returns the node identified by the specified HierarchyPath instance.
@@ -71,6 +80,29 @@
             var tryGetChildNode = (TryGetChildNode<TKey, TNode>)((TNode p, TKey k, out TNode c) => p.TryGetChildNode(k, out c));
             return startNode.DescendantAtOrDefault(tryGetChildNode, key, out foundKey, createDefault);
         }
+
+        #endregion DescendantAtOrDefault
+
+        #region DescendAlongPath
+
+        /// <summary>
+        /// The Tree is traversed from the start node until the node is reached which si specified by the path.
+        /// The path is interpreted as a relative path.
+        /// The traversal stops if the destination node cannot be reached the start node is not returned.
+        /// </summary>
+        /// <typeparam name="TKey">Type of the hierarchy path items</typeparam>
+        /// <typeparam name="TNode">Type of the hierarchy node, mist implement IHasIdentifiableChildNodes</typeparam>
+        /// <param name="startNode">node to start the traversal</param>
+        /// <param name="path">path of node ids to follow down</param>
+        /// <returns>Collection of the nodes shich where passed allong the traversal.</returns>
+        public static IEnumerable<TNode> DescentAlongPath<TKey, TNode>(this TNode startNode, HierarchyPath<TKey> path)
+            where TNode : IHasIdentifiableChildNodes<TKey, TNode>
+        {
+            var tryGetChildNode = (TryGetChildNode<TKey, TNode>)((TNode p, TKey k, out TNode c) => p.TryGetChildNode(k, out c));
+            return startNode.DescentAlongPath(tryGetChildNode, path);
+        }
+
+        #endregion DescendAlongPath
     }
 }
 
@@ -82,6 +114,8 @@ namespace Elementary.Hierarchy.Generic
 
     public static class HasIdentifiableChildNodeExtensions
     {
+        #region DescendantAt
+
         /// <summary>
         /// Retrieves a descendant of the start node or throws KeyNotFoundException if not found. The child nodes are retrieved with the specified tryGetChildNode delegate.
         /// </summary>
@@ -101,6 +135,39 @@ namespace Elementary.Hierarchy.Generic
 
             return childNode;
         }
+
+        #endregion DescendantAt
+
+        #region TryGetDescendantAt
+
+        /// <summary>
+        /// Retrieves a descendant of the start node or returns false if not found.
+        /// The child nodes are retrieved with the specified tryGetChildNode delegate.
+        /// </summary>
+        /// <typeparam name="TKey">Type of the hierarchy key</typeparam>
+        /// <typeparam name="TNode">Type of the hierarchy node</typeparam>
+        /// <param name="startNode">node instance to start search at</param>
+        /// <param name="key">hierarchy key to search</param>
+        /// <param name="tryGetChildNode">delegate which implements the child node retrieval for the TNode instances</param>
+        /// <param name="descendantAt">contains the wanted descandant node of the search was succesful</param>
+        /// <returns>true if node was found, false otherwise</returns>
+        public static bool TryGetDescendantAt<TKey, TNode>(this TNode startNode, TryGetChildNode<TKey, TNode> tryGetChildNode, HierarchyPath<TKey> key, out TNode descendantAt)
+        {
+            descendantAt = default(TNode);
+
+            var keyArray = key.Items.ToArray();
+            TNode currentNode = startNode;
+            for (int i = 0; i < keyArray.Length; i++)
+                if (!tryGetChildNode(currentNode, keyArray[i], out currentNode))
+                    return false;
+
+            descendantAt = currentNode;
+            return true;
+        }
+
+        #endregion TryGetDescendantAt
+
+        #region DescendantAtOrDefault
 
         /// <summary>
         /// Returns the node identified by the specified HierarchyPath instance.
@@ -141,5 +208,33 @@ namespace Elementary.Hierarchy.Generic
 
             return childNode;
         }
+
+        #endregion DescendantAtOrDefault
+
+        #region DescendAlongPath
+
+        /// <summary>
+        /// The Tree is traversed from the start node until the node is reached which si specified by the path.
+        /// The path is interpreted as a relative path.
+        /// The traversal stops if the destination node cannot be reached, the start node is not returned.
+        /// </summary>
+        /// <typeparam name="TKey">Type of the hierarchy path items</typeparam>
+        /// <typeparam name="TNode">Type of the hierarchy node, mist implement IHasIdentifiableChildNodes</typeparam>
+        /// <param name="startNode">node to start the traversal</param>
+        /// <param name="path">path of node ids to follow down</param>
+        /// <param name="tryGetChildNode"></param>
+        /// <returns>Collection of the nodes shich where passed allong the traversal.</returns>
+        public static IEnumerable<TNode> DescentAlongPath<TKey, TNode>(this TNode startNode, TryGetChildNode<TKey, TNode> tryGetChildNode, HierarchyPath<TKey> path)
+        {
+            TNode childNode = startNode;
+            var keyItems = path.Items.ToArray();
+            for (int i = 0; i < keyItems.Length; i++)
+                if (tryGetChildNode(childNode, keyItems[i], out childNode))
+                    yield return childNode;
+                else
+                    yield break;
+        }
+
+        #endregion DescendAlongPath
     }
 }
