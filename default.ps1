@@ -44,19 +44,5 @@ Task pack {
 
 } -precondition { Test-Path $nuget } -depends clean,test
 
-Task commit {
-
-    & $hg commit -m "Auto commit of changed files before push"
-    & $git commit -m "Auto commit of changed files before push"
-
-} -precondition { Test-Path $hg }
-
-Task push {
-
-    & $hg push bitbucket
-    & $git push
-
-} -precondition { Test-Path $hg } -depends commit
-
 
     
