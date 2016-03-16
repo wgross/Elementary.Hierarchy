@@ -13,10 +13,10 @@ Install-Package Elementary.Hierarchy
 
 Elementary.Hierachy knows how to traverse two kinds of trees. The first kind is bilt from nodes which implemen the interfaces defined by Elementary.Hierarchy. Each of these interfaces enables traversal agorithms on every node: 
 
-* _IHasParentNode_ enables: Parent() and Ancestors()
-* _IHasChildNodes_ enables: Children() and Descendants(depthFirst:{true|false})
-* _IHasIdentifieableChildNodes_ : DescandantAt(), DescendAlongPath()
-* _IHasChildNodes_ and _IHasParentNode_ : FollowingSibings() and PrecedingSiblings()
+* _IHasParentNode_ enables _Parent()_ and _Ancestors()_
+* _IHasChildNodes_ enables _Children()_ and _Descendants(depthFirst:{true|false})_
+* _IHasIdentifieableChildNodes_ enables _DescendantAt()_, _DescendAlongPath()_
+* _IHasChildNodes_ and _IHasParentNode_ enables _FollowingSibings()_ and _PrecedingSiblings()_
 
 All traversal algorithms are implemented in a variant which doesn't rely on the interfaces for traversal: Instead you defines how to reach parents or children using a delegate. An Example:
 
