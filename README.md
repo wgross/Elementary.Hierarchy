@@ -6,10 +6,45 @@ This includes tree traversal and identfication of tree nodes with path-like iden
 # Installation 
 
 Elementary.Hierachy is easily installed using NuGet
-
+```
 Install-Package Elementary.Hierarchy
-
+```
 # Usage
+
+Elementary.Hierachy knows how to traverse two kinds of trees. The first kind is bilt from nodes which implemen the interfaces defined by Elementary.Hierarchy. Each of these interfaces enables traversal agorithms on every node: 
+
+* _IHasParentNode_ enables: Parent() and Ancestors()
+* _IHasChildNodes_ enables: Children() and Descendants(depthFirst:{true|false})
+* _IHasIdentifieableChildNodes_ : DescandantAt(), DescendAlongPath()
+* _IHasChildNodes_ and _IHasParentNode_ : FollowingSibings() and PrecedingSiblings()
+
+All traversal algorithms are implemented in a variant which doesn't rely on the interfaces for traversal: Instead you defines how to reach parents or children using a delegate. An Example:
+
+```csharp
+
+// define a tree with delegates
+
+IEnumerable<string> GetChildNodes(string rootNode)
+{
+    switch (rootNode)
+    {
+        case "rootNode":
+            return new[] { "leftNode", "rightNode" };
+
+        case "leftNode":
+            return new[] { "leftLeaf" };
+
+        case "rightNode":
+            return new[] { "leftRightLeaf", "rightRightLeaf" };
+    }
+    return Enumerable.Empty<string>();
+}
+
+// traverse the descandants 
+
+"rootNode".Descendants(GetChildNodes, depthFirst:false);
+```
+More examples of this approachthis can be found in the test in (Elementary.Hierarchy.Test/TraverseWithDelegates)[https://github.com/wgross/Elementary.Hierarchy/tree/master/Elementary.Hierarchy.Test/TraverseWithDelegates]
 
 ## Identify a node in a hierarchy
 
