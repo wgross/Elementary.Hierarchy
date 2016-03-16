@@ -45,7 +45,7 @@ IEnumerable<string> GetChildNodes(string rootNode)
 "rootNode".Descendants(GetChildNodes, depthFirst:false);
 ```
 
-More examples of this approach this can be found in the test in [Elementary.Hierarchy.Test/TraverseWithDelegates](https://github.com/wgross/Elementary.Hierarchy/tree/master/Elementary.Hierarchy.Test/TraverseWithDelegates)
+More examples of this approach this can be found in the test cases at [Elementary.Hierarchy.Test/TraverseWithDelegates](https://github.com/wgross/Elementary.Hierarchy/tree/master/Elementary.Hierarchy.Test/TraverseWithDelegates).
 
 ## Identify a node in a hierarchy
 
