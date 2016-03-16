@@ -2,7 +2,6 @@
 {
     using Moq;
     using NUnit.Framework;
-    using System.Collections.Generic;
 
     [TestFixture]
     public class HasIdentifiableChildNodesTryGetDescendantAtTest

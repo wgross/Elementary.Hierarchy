@@ -30,7 +30,7 @@ Task build {
 } -precondition { Test-Path $msbuild } -depends package_restore
 
 Task test {
-    
+
     & $nunit (Resolve-Path $PSScriptRoot/Elementary.Hierarchy.Test/Elementary.Hierarchy.Test.csproj)
 
 } -precondition { Test-Path $nunit } -depends build,package_restore
