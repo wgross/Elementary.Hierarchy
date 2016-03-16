@@ -11,18 +11,19 @@ Install-Package Elementary.Hierarchy
 ```
 ## Hierarchy Traversal
 
-Elementary.Hierachy knows how to traverse two kinds of trees. The first kind is bilt from nodes which implemen the interfaces defined by Elementary.Hierarchy. Each of these interfaces enables traversal agorithms on every node: 
+Elementary.Hierarchy knows how to traverse two kinds of trees. The first kind is bilt from nodes which implemen the interfaces defined by Elementary.Hierarchy. Each of these interfaces enables traversal agorithms on every node: 
 
 * _IHasParentNode_ enables _Parent()_ and _Ancestors()_
 * _IHasChildNodes_ enables _Children()_ and _Descendants(depthFirst:{true|false})_
 * _IHasIdentifieableChildNodes_ enables _DescendantAt()_, _DescendAlongPath()_
 * _IHasChildNodes_ and _IHasParentNode_ enables _FollowingSibings()_ and _PrecedingSiblings()_
 
-All traversal algorithms are implemented in a variant which doesn't rely on the interfaces for traversal: Instead you defines how to reach parents or children using a delegate. An Example:
+All traversal algorithms are implemented in a variant which doesn't rely on the interfaces for traversal: Instead you define how to reach parents or children of a node using a delegate. An Example:
 
 ```csharp
+using Elementary.Hierarchy.Generic
 
-// define a tree with delegates
+// define a tree with delegate
 
 IEnumerable<string> GetChildNodes(string rootNode)
 {
@@ -53,6 +54,8 @@ A node in a hierarchy might be identifified with a path like combination of ids 
 To support this use case Elementary.Hierarchy provides the class HierarchyPath<T>.
 
 ```csharp
+using Elementary.Hierarchy; 
+
 // id of a node under the root node having the id 'a'
 var id = HierarchyPath.Create("a");
 
