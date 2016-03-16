@@ -6,10 +6,10 @@
     using System.Linq;
 
     [TestFixture]
-    public class GenericNodeDescentAlongPathTest
+    public class GenericNodeDescendAlongPathTest
     {
         [Test]
-        public void D_root_returns_nothing_for_empty_path_on_DescentAlongPath()
+        public void D_root_returns_itself_for_empty_path_on_DescendAlongPath()
         {
             // ARRANGE
 
@@ -26,15 +26,16 @@
 
             // ACT
 
-            string[] result = "startNode".DescentAlongPath(nodeHierarchy, HierarchyPath.Create<string>()).ToArray();
+            string[] result = "startNode".DescendAlongPath(nodeHierarchy, HierarchyPath.Create<string>()).ToArray();
 
             // ASSERT
 
-            Assert.IsFalse(result.Any());
+            Assert.AreEqual(1, result.Count());
+            Assert.AreEqual("startNode", result.ElementAt(0));
         }
 
         [Test]
-        public void D_root_returns_child_on_DescentAlongPath()
+        public void D_root_returns_child_on_DescendAlongPath()
         {
             // ARRANGE
 
@@ -51,16 +52,16 @@
 
             // ACT
 
-            string[] result = "startNode".DescentAlongPath(nodeHierarchy, HierarchyPath.Create<string>("childNode")).ToArray();
+            string[] result = "startNode".DescendAlongPath(nodeHierarchy, HierarchyPath.Create<string>("childNode")).ToArray();
 
             // ASSERT
 
             Assert.IsNotNull(result);
-            CollectionAssert.AreEqual(new[] { "childNode" }, result);
+            CollectionAssert.AreEqual(new[] { "startNode", "childNode" }, result);
         }
 
         [Test]
-        public void D_root_returns_child_and_grandchild_on_DescentAlongPath()
+        public void D_root_returns_child_and_grandchild_on_DescendAlongPath()
         {
             // ARRANGE
 
@@ -82,15 +83,15 @@
 
             // ACT
 
-            string[] result = "startNode".DescentAlongPath(nodeHierarchy, HierarchyPath.Create("childNode", "grandChildNode")).ToArray();
+            string[] result = "startNode".DescendAlongPath(nodeHierarchy, HierarchyPath.Create("childNode", "grandChildNode")).ToArray();
 
             // ASSERT
 
-            CollectionAssert.AreEqual(new[] { "childNode", "grandChildNode" }, result);
+            CollectionAssert.AreEqual(new[] { "startNode", "childNode", "grandChildNode" }, result);
         }
 
         [Test]
-        public void D_root_return_incomplete_list_on_DescentAlongPath()
+        public void D_root_return_incomplete_list_on_DescendAlongPath()
         {
             // ARRANGE
 
@@ -107,11 +108,12 @@
 
             // ACT
 
-            string[] result = "startNode".DescentAlongPath(nodeHierarchy, HierarchyPath.Create("childNode")).ToArray();
+            string[] result = "startNode".DescendAlongPath(nodeHierarchy, HierarchyPath.Create("childNode")).ToArray();
 
             // ASSERT
 
-            Assert.IsFalse(result.Any());
+            Assert.IsTrue(result.Any());
+            CollectionAssert.AreEqual(new[] { "startNode" }, result);
         }
     }
 }

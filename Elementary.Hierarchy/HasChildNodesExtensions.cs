@@ -223,7 +223,7 @@ namespace Elementary.Hierarchy.Generic
         }
 
         #endregion Descendants/-OrSelf
-
+       
         #region VisitDescandants/-OrSelf
 
         /// <summary>

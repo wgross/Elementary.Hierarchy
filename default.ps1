@@ -30,7 +30,7 @@ Task build {
 } -precondition { Test-Path $msbuild } -depends package_restore
 
 Task test {
-    
+
     & $nunit (Resolve-Path $PSScriptRoot/Elementary.Hierarchy.Test/Elementary.Hierarchy.Test.csproj)
 
 } -precondition { Test-Path $nunit } -depends build,package_restore
@@ -43,20 +43,6 @@ Task pack {
     Copy-Item $PSScriptRoot\Elementary.Hierarchy.*.nupkg $localPackageSource
 
 } -precondition { Test-Path $nuget } -depends clean,test
-
-Task commit {
-
-    & $hg commit -m "Auto commit of changed files before push"
-    & $git commit -m "Auto commit of changed files before push"
-
-} -precondition { Test-Path $hg }
-
-Task push {
-
-    & $hg push bitbucket
-    & $git push
-
-} -precondition { Test-Path $hg } -depends commit
 
 
     
