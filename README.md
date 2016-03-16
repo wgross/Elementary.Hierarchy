@@ -50,7 +50,8 @@ More examples of this approach this can be found in the test cases at [Elementar
 
 ## Identify a node in a Hierarchy
 
-A node in a hierarchy might be identifified with a path like combination of ids which are unique within a parent nodes collection of child nodes only.
+A node in a hierarchy might be identifified with a path like collection of ids. Each of these id indentifies a child node under a parent node.
+
 To support this use case Elementary.Hierarchy provides the class HierarchyPath<T>.
 
 ```csharp
