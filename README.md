@@ -9,7 +9,7 @@ Elementary.Hierachy is easily installed using NuGet
 ```
 Install-Package Elementary.Hierarchy
 ```
-## Usage
+## Hierarchy Traversal
 
 Elementary.Hierachy knows how to traverse two kinds of trees. The first kind is bilt from nodes which implemen the interfaces defined by Elementary.Hierarchy. Each of these interfaces enables traversal agorithms on every node: 
 
@@ -47,7 +47,7 @@ IEnumerable<string> GetChildNodes(string rootNode)
 
 More examples of this approach this can be found in the test cases at [Elementary.Hierarchy.Test/TraverseWithDelegates](https://github.com/wgross/Elementary.Hierarchy/tree/master/Elementary.Hierarchy.Test/TraverseWithDelegates).
 
-### Identify a node in a hierarchy
+## Identify a node in a hierarchy
 
 A node in a hierarchy might be identifified with a path like combination of ids which are unique within a parent nodes collection of child nodes only.
 To support this use case Elementary.Hierarchy provides the class HierarchyPath<T>.
