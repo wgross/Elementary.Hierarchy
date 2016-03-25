@@ -201,7 +201,7 @@ namespace Elementary.Hierarchy.Generic
             foundKey = HierarchyPath.Create<TKey>();
             TNode childNode = startNode;
             var keyItems = key.Items.ToArray();
-            for (int i = 0; i < keyItems.Length && childNode != null; i++)
+            for (int i = 0; i < keyItems.Length; i++)
                 if (!tryGetChildNode(childNode, keyItems[i], out childNode))
                     return (createDefault ?? (() => default(TNode)))();
                 else

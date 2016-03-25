@@ -158,6 +158,7 @@
 
             var nodeHierarchy = (TryGetChildNode<string, string>)(delegate (string node, string key, out string childNode)
             {
+                childNode = null;
                 throw new InvalidOperationException("unknown node");
             });
 

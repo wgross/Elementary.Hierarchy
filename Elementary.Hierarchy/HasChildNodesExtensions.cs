@@ -62,29 +62,29 @@
 
         #endregion Descendants/-OrSelf
 
-        public static IEnumerable<TNode> DescendantsWithBreadcrumb<TNode>(this TNode startNode, List<TNode> breadcrumbs, bool? depthFirst = null, int? maxDepth = null)
-            where TNode : IHasChildNodes<TNode>
-        {
-            if (startNode == null)
-                throw new ArgumentNullException(nameof(startNode));
+        //public static IEnumerable<TNode> DescendantsWithBreadcrumb<TNode>(this TNode startNode, List<TNode> breadcrumbs, bool? depthFirst = null, int? maxDepth = null)
+        //    where TNode : IHasChildNodes<TNode>
+        //{
+        //    if (startNode == null)
+        //        throw new ArgumentNullException(nameof(startNode));
 
-            if (breadcrumbs == null)
-                throw new ArgumentNullException(nameof(breadcrumbs));
+        //    if (breadcrumbs == null)
+        //        throw new ArgumentNullException(nameof(breadcrumbs));
 
-            if (maxDepth.HasValue && maxDepth.Value < 0)
-                throw new ArgumentException("must be > 0", nameof(maxDepth));
+        //    if (maxDepth.HasValue && maxDepth.Value < 0)
+        //        throw new ArgumentException("must be > 0", nameof(maxDepth));
 
-            if (depthFirst.GetValueOrDefault(false))
-                return HasChildNodesGenericExtensions.EnumerateDescendentsDepthFirst(startNode,
-                    breadcrumbs: breadcrumbs,
-                    maxDepth: maxDepth ?? int.MaxValue,
-                    getChildNodes: n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>());
-            else // this is the default case:
-                return HasChildNodesGenericExtensions.EnumerateDescendantsBreadthFirst(startNode,
-                    breadcrumbs: breadcrumbs,
-                    maxDepth: maxDepth ?? int.MaxValue,
-                    getChildNodes: n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>());
-        }
+        //    if (depthFirst.GetValueOrDefault(false))
+        //        return HasChildNodesGenericExtensions.EnumerateDescendentsDepthFirst(startNode,
+        //            breadcrumbs: breadcrumbs,
+        //            maxDepth: maxDepth ?? int.MaxValue,
+        //            getChildNodes: n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>());
+        //    else // this is the default case:
+        //        return HasChildNodesGenericExtensions.EnumerateDescendantsBreadthFirst(startNode,
+        //            breadcrumbs: breadcrumbs,
+        //            maxDepth: maxDepth ?? int.MaxValue,
+        //            getChildNodes: n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>());
+        //}
 
         #region VisitDescandants/-OrSelf
 
@@ -142,9 +142,6 @@ namespace Elementary.Hierarchy.Generic
         /// <returns>enumerable children of the start node</returns>
         public static IEnumerable<TNode> Children<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren)
         {
-            if (startNode == null)
-                throw new ArgumentNullException(nameof(startNode));
-
             if (getChildren == null)
                 throw new ArgumentNullException(nameof(getChildren));
 
@@ -169,9 +166,6 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="getChildNodes">delegate retrueved the child nodes of the specified TNode instance</param>
         public static IEnumerable<TNode> Descendants<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, bool? depthFirst = null, int? maxDepth = null)
         {
-            if (startNode == null)
-                throw new ArgumentNullException(nameof(startNode));
-
             if (getChildNodes == null)
                 throw new ArgumentNullException(nameof(getChildNodes));
 
@@ -204,9 +198,6 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="getChildNodes">delegate retrueved the child nodes of the specified TNode instance</param>
         public static IEnumerable<TNode> DescendantsOrSelf<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, bool? depthFirst = null, int? maxDepth = null)
         {
-            if (startNode == null)
-                throw new ArgumentNullException(nameof(startNode));
-
             if (getChildNodes == null)
                 throw new ArgumentNullException(nameof(getChildNodes));
 
@@ -238,9 +229,6 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="maxDepth">maximum traversal depth. startnode is at level 0</param>
         public static void VisitDescendantsOrSelf<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren, Action<IEnumerable<TNode>, TNode> visitor, bool? depthFirst = null, int? maxDepth = null)
         {
-            if (startNode == null)
-                throw new ArgumentNullException(nameof(startNode));
-
             if (getChildren == null)
                 throw new ArgumentNullException(nameof(getChildren));
 
@@ -280,9 +268,6 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="maxDepth">maximum traversal depth. startnode is at level 0</param>
         public static void VisitDescendants<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren, Action<IEnumerable<TNode>, TNode> visitor, bool? depthFirst = null, int? maxDepth = null)
         {
-            if (startNode == null)
-                throw new ArgumentNullException(nameof(startNode));
-
             if (getChildren == null)
                 throw new ArgumentNullException(nameof(getChildren));
 
@@ -309,7 +294,7 @@ namespace Elementary.Hierarchy.Generic
 
         #region Internal implementation of hierarchy traversal
 
-        public static IEnumerable<TNode> EnumerateDescendantsBreadthFirst<TNode>(TNode startNode, List<TNode> breadcrumbs, int maxDepth, Func<TNode, IEnumerable<TNode>> getChildNodes)
+        private static IEnumerable<TNode> EnumerateDescendantsBreadthFirst<TNode>(TNode startNode, List<TNode> breadcrumbs, int maxDepth, Func<TNode, IEnumerable<TNode>> getChildNodes)
         {
             // enable the breadcrumb handling if needed
 
@@ -357,7 +342,7 @@ namespace Elementary.Hierarchy.Generic
             yield break;
         }
 
-        public static IEnumerable<TNode> EnumerateDescendentsDepthFirst<TNode>(TNode startNode, List<TNode> breadcrumbs, int maxDepth, Func<TNode, IEnumerable<TNode>> getChildNodes)
+        private static IEnumerable<TNode> EnumerateDescendentsDepthFirst<TNode>(TNode startNode, List<TNode> breadcrumbs, int maxDepth, Func<TNode, IEnumerable<TNode>> getChildNodes)
         {
             // enable the breadcrumb handling if needed
 
