@@ -110,7 +110,7 @@
             unchecked
             {
                 // a path item MAY be null. in thisn has don't call GetHashCode() but use 0 as the hashcode.
-                this.hashCode = this.Items.Aggregate((int)2166136261, (hc, i) => hc * (int)16777619 ^ (i?.GetHashCode() ?? 0));
+                this.hashCode = this.Items.Aggregate((int)2166136261, (hc, i) => hc * 16777619 ^ (i.GetHashCode()));
             }
         }
 
@@ -179,9 +179,9 @@
 
         #region Override object behaviour
 
-        public override bool Equals(object other)
+        public override bool Equals(object obj)
         {
-            return this.Equals(other, EqualityComparer<T>.Default);
+            return this.Equals(obj, EqualityComparer<T>.Default);
         }
 
         public bool Equals(object other, IEqualityComparer<T> comparer)

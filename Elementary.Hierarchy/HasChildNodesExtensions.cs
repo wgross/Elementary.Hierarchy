@@ -142,9 +142,6 @@ namespace Elementary.Hierarchy.Generic
         /// <returns>enumerable children of the start node</returns>
         public static IEnumerable<TNode> Children<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren)
         {
-            if (startNode == null)
-                throw new ArgumentNullException(nameof(startNode));
-
             if (getChildren == null)
                 throw new ArgumentNullException(nameof(getChildren));
 
@@ -169,9 +166,6 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="getChildNodes">delegate retrueved the child nodes of the specified TNode instance</param>
         public static IEnumerable<TNode> Descendants<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, bool? depthFirst = null, int? maxDepth = null)
         {
-            if (startNode == null)
-                throw new ArgumentNullException(nameof(startNode));
-
             if (getChildNodes == null)
                 throw new ArgumentNullException(nameof(getChildNodes));
 
@@ -204,9 +198,6 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="getChildNodes">delegate retrueved the child nodes of the specified TNode instance</param>
         public static IEnumerable<TNode> DescendantsOrSelf<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, bool? depthFirst = null, int? maxDepth = null)
         {
-            if (startNode == null)
-                throw new ArgumentNullException(nameof(startNode));
-
             if (getChildNodes == null)
                 throw new ArgumentNullException(nameof(getChildNodes));
 
@@ -238,9 +229,6 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="maxDepth">maximum traversal depth. startnode is at level 0</param>
         public static void VisitDescendantsOrSelf<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren, Action<IEnumerable<TNode>, TNode> visitor, bool? depthFirst = null, int? maxDepth = null)
         {
-            if (startNode == null)
-                throw new ArgumentNullException(nameof(startNode));
-
             if (getChildren == null)
                 throw new ArgumentNullException(nameof(getChildren));
 
@@ -280,9 +268,6 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="maxDepth">maximum traversal depth. startnode is at level 0</param>
         public static void VisitDescendants<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren, Action<IEnumerable<TNode>, TNode> visitor, bool? depthFirst = null, int? maxDepth = null)
         {
-            if (startNode == null)
-                throw new ArgumentNullException(nameof(startNode));
-
             if (getChildren == null)
                 throw new ArgumentNullException(nameof(getChildren));
 
