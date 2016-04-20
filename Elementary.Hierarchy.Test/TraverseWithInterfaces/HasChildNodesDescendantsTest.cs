@@ -60,7 +60,7 @@
         }
 
         [Test]
-        public void I_leaf_returns_no_children_on_Descendants()
+        public void IHasChildNodes_leaf_returns_no_children_on_Descendants()
         {
             // ACT
 
@@ -77,7 +77,7 @@
         }
 
         [Test]
-        public void I_inconsitent_leaf_returns_no_children_on_Descendants()
+        public void IHasChildNodes_inconsitent_leaf_returns_no_children_on_Descendants()
         {
             // ARRANGE
 
@@ -100,7 +100,7 @@
         }
 
         [Test]
-        public void I_node_returns_single_child_on_Descendants()
+        public void IHasChildNodes_node_returns_single_child_on_Descendants()
         {
             // ACT
 
@@ -116,7 +116,7 @@
         }
 
         [Test]
-        public void I_node_returns_left_child_first_on_Descendants()
+        public void IHasChildNodes_node_returns_left_child_first_on_Descendants()
         {
             // ACT
 
@@ -133,7 +133,7 @@
         }
 
         [Test]
-        public void I_root_returns_descendants_breadthFirst_on_Descendants()
+        public void IHasChildNodes_root_returns_descendants_breadthFirst_on_Descendants()
         {
             // ACT
 
@@ -160,7 +160,7 @@
         }
 
         [Test]
-        public void I_root_returns_descendants_depthFirst_on_Descendants()
+        public void IHasChildNodes_root_returns_descendants_depthFirst_on_Descendants()
         {
             // ACT
 
@@ -186,7 +186,7 @@
         }
 
         [Test]
-        public void I_root_returns_children_as_level1_descendants_on_Descendants()
+        public void IHasChildNodes_root_returns_children_as_level1_descendants_on_Descendants()
         {
             // ACT
 
@@ -199,7 +199,7 @@
         }
 
         [Test]
-        public void I_root_throws_on_level0_on_Descendants()
+        public void IHasChildNodes_root_throws_on_level0_on_Descendants()
         {
             // ACT
 
@@ -214,7 +214,7 @@
         }
 
         [Test]
-        public void I_root_returns_all_descendants_on_highLevel_breadthFirst_on_Descendants()
+        public void IHasChildNodes_root_returns_all_descendants_on_highLevel_breadthFirst_on_Descendants()
         {
             // ACT
 
@@ -226,7 +226,7 @@
         }
 
         [Test]
-        public void I_root_returns_all_descendants_on_highLevel_depthFirst_on_Descendants()
+        public void IHasChildNodes_root_returns_all_descendants_on_highLevel_depthFirst_on_Descendants()
         {
             // ACT
 
