@@ -72,7 +72,7 @@
             if (startNode is IHasDescendantNodes<TNode>)
             {
                 // if startNode knows how to retrieve its descendants it self then use this.
-                return Enumerable.Concat(new[] { startNode }, startNode.Descendants(depthFirst, maxDepth-1));
+                return Enumerable.Concat(new[] { startNode }, startNode.Descendants(depthFirst, maxDepth - 1));
             }
             else
             {
@@ -82,30 +82,6 @@
         }
 
         #endregion Descendants/-OrSelf
-
-        //public static IEnumerable<TNode> DescendantsWithBreadcrumb<TNode>(this TNode startNode, List<TNode> breadcrumbs, bool? depthFirst = null, int? maxDepth = null)
-        //    where TNode : IHasChildNodes<TNode>
-        //{
-        //    if (startNode == null)
-        //        throw new ArgumentNullException(nameof(startNode));
-
-        //    if (breadcrumbs == null)
-        //        throw new ArgumentNullException(nameof(breadcrumbs));
-
-        //    if (maxDepth.HasValue && maxDepth.Value < 0)
-        //        throw new ArgumentException("must be > 0", nameof(maxDepth));
-
-        //    if (depthFirst.GetValueOrDefault(false))
-        //        return HasChildNodesGenericExtensions.EnumerateDescendentsDepthFirst(startNode,
-        //            breadcrumbs: breadcrumbs,
-        //            maxDepth: maxDepth ?? int.MaxValue,
-        //            getChildNodes: n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>());
-        //    else // this is the default case:
-        //        return HasChildNodesGenericExtensions.EnumerateDescendantsBreadthFirst(startNode,
-        //            breadcrumbs: breadcrumbs,
-        //            maxDepth: maxDepth ?? int.MaxValue,
-        //            getChildNodes: n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>());
-        //}
 
         #region VisitDescandants/-OrSelf
 
@@ -235,7 +211,7 @@ namespace Elementary.Hierarchy.Generic
         }
 
         #endregion Descendants/-OrSelf
-       
+
         #region VisitDescandants/-OrSelf
 
         /// <summary>

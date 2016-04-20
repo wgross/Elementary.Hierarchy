@@ -86,8 +86,6 @@
                     this.leftNode.Object, this.rightNode.Object,
                     this.leftLeaf.Object,this.leftRightLeaf.Object, this.rightRightLeaf.Object
                 });
-
-            
         }
 
         [Test]

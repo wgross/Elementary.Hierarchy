@@ -2,12 +2,12 @@
 using System.Reflection;
 using System.Resources;
 
-[assembly:CLSCompliant(true)]
+[assembly: CLSCompliant(true)]
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Elementary.Hierarchy")]
-[assembly: AssemblyDescription("Elementary Hierarchy provides structures and algorithms to start developing of tree-like/hierarchical data structures.")]
+[assembly: AssemblyDescription("Elementary Hierarchy provides structures and algorithms for developing of tree-like/hierarchical data structures.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Wolfgang Groß")]
 [assembly: AssemblyProduct("Elementary.Hierarchy")]
