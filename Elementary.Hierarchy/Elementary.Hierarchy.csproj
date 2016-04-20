@@ -40,7 +40,7 @@
     <Compile Include="IHasChildNodes.cs" />
     <Compile Include="HasChildNodesExtensions.cs" />
     <Compile Include="HasIdentifiableChildNodeExtensions.cs" />
-    <Compile Include="IHasDescendants.cs" />
+    <Compile Include="IHasDescendantNodes.cs" />
     <Compile Include="IHasIdentifiableChildNodes.cs" />
     <Compile Include="IHasParentNode.cs" />
     <Compile Include="HasParentNodeExtensions.cs" />
