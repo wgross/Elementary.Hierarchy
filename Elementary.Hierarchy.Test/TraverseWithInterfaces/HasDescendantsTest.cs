@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 {
-    public class HasDescendantsTest
+    public class HasDescendantTest
     {
         public interface MockableNodeType : IHasDescendantNodes<MockableNodeType>
         { }
@@ -292,6 +292,56 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
                 this.rightNode.Object,
                 this.leftRightLeaf.Object,
                 this.rightRightLeaf.Object }, result);
+        }
+
+        [Test]
+        public void IHasDescendentNodes_DescendantsLevel1AreChildren_on_Descendants()
+        {
+            // ARRANGE
+
+            this.rootNode
+                .Setup(n => n.GetDescendants(false, 1))
+                .Returns(new[]
+                {
+                    this.leftNode.Object, this.rightNode.Object,
+                });
+
+            this.rootNode
+                .Setup(r => r.HasChildNodes)
+                .Returns(true);
+
+            this.rootNode
+                .Setup(r => r.ChildNodes)
+                .Returns(new[] { this.leftNode.Object, this.rightNode.Object });
+
+            // ACT
+
+            var descendantsOrSelf = this.rootNode.Object.Descendants(maxDepth: 1).ToArray();
+            var children = this.rootNode.Object.Children().ToArray();
+
+            // ASSERT
+
+            CollectionAssert.AreEqual(children, descendantsOrSelf);
+
+            this.rootNode.Verify(n => n.GetDescendants(false, 1), Times.Once);
+            this.rootNode.Verify(n => n.HasChildNodes, Times.Once);
+            this.rootNode.Verify(n => n.ChildNodes, Times.Once);
+
+            this.leftNode.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never);
+            this.leftNode.Verify(n => n.HasChildNodes, Times.Never);
+            this.leftNode.Verify(n => n.ChildNodes, Times.Never);
+
+            this.rightNode.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never);
+            this.rightNode.Verify(n => n.HasChildNodes, Times.Never);
+            this.rightNode.Verify(n => n.ChildNodes, Times.Never);
+
+            this.leftRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never);
+            this.leftRightLeaf.Verify(n => n.HasChildNodes, Times.Never);
+            this.leftRightLeaf.Verify(n => n.ChildNodes, Times.Never);
+
+            this.rightRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never);
+            this.rightRightLeaf.Verify(n => n.HasChildNodes, Times.Never);
+            this.rightRightLeaf.Verify(n => n.ChildNodes, Times.Never);
         }
     }
 }
