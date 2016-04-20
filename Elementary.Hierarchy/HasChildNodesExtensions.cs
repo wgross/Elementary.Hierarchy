@@ -40,7 +40,16 @@
         public static IEnumerable<TNode> Descendants<TNode>(this TNode startNode, bool? depthFirst = null, int? maxDepth = null)
             where TNode : IHasChildNodes<TNode>
         {
-            return startNode.Descendants(n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>(), depthFirst, maxDepth);
+            if (maxDepth.HasValue && maxDepth.Value < 0)
+                throw new ArgumentException("must be > 0", nameof(maxDepth));
+
+            return (
+                // if startNode kows how to retrieve its descendants it self then use this.
+                (startNode as IHasDescendantNodes<TNode>)?.GetDescendants(depthFirst.GetValueOrDefault(false), maxDepth.GetValueOrDefault(int.MaxValue))
+            ) ?? (
+                // otherwise build collection of desencdants by traversing the child nodes.
+                startNode.Descendants(n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>(), depthFirst, maxDepth)
+            );
         }
 
         /// <summary>
