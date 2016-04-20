@@ -60,7 +60,7 @@
         }
 
         [Test]
-        public void IHasChildNodes_leaf_returns_itself_on_DescendantsOrSelf()
+        public void I_leaf_returns_itself_on_DescendantsOrSelf()
         {
             // ACT
 
@@ -76,7 +76,7 @@
         }
 
         [Test]
-        public void IHasChildNodes_inconsistent_leaf_returns_itself_on_DescendantsOrSelf()
+        public void I_inconsistent_leaf_returns_itself_on_DescendantsOrSelf()
         {
             // ARRANGE
 
@@ -100,7 +100,7 @@
         }
 
         [Test]
-        public void IHasChildNodes_leaf_returns_single_child_on_DescendantsOrSelf()
+        public void I_leaf_returns_single_child_on_DescendantsOrSelf()
         {
             // ACT
 
@@ -115,7 +115,7 @@
         }
 
         [Test]
-        public void IHasChildNodes_leaf_returns_left_before_right_child_on_DescendantsOrSelf()
+        public void I_leaf_returns_left_before_right_child_on_DescendantsOrSelf()
         {
             // ACT
 
@@ -132,7 +132,7 @@
         }
 
         [Test]
-        public void IHasChildNodes_leaf_returns_descendants_breadthFirst_on_DescendantsOrSelf()
+        public void I_leaf_returns_descendants_breadthFirst_on_DescendantsOrSelf()
         {
             // ACT
 
@@ -159,7 +159,7 @@
         }
 
         [Test]
-        public void IHasChildNodes_leaf_returns_descendants_depthFirst_on_DescendantsOrSelf()
+        public void I_leaf_returns_descendants_depthFirst_on_DescendantsOrSelf()
         {
             // ACT
 
@@ -186,7 +186,7 @@
         }
 
         [Test]
-        public void IHasChildNodes_DescendantsOrSelfLevel2AreChildren_on_DescendantsOrSelf()
+        public void I_DescendantsOrSelfLevel2AreChildren_on_DescendantsOrSelf()
         {
             // ACT
 
