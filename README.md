@@ -18,12 +18,12 @@ Elementary.Hierarchy knows how to traverse two kinds of trees. The first kind is
 * __IHasIdentifieableChildNodes__ enables _DescendantAt()_, _DescendAlongPath()_
 * __IHasChildNodes__ and __IHasParentNode__ together enables _FollowingSibings()_ and _PrecedingSiblings()_
 
-All traversal algorithms are implemented in a variant which doesn't rely on the interfaces for traversal: Instead you define how to reach parents or children of a node using a delegate. An Example:
+A second kind of implementaion doesn't rely on interfaces but on delegate providing the logic to traverse the child or parent axis of the tree. An Example:
 
 ```csharp
 using Elementary.Hierarchy.Generic
 
-// define a tree with delegate
+// define a tree with a delegate
 
 IEnumerable<string> GetChildNodes(string rootNode)
 {
@@ -46,13 +46,13 @@ IEnumerable<string> GetChildNodes(string rootNode)
 "rootNode".Descendants(GetChildNodes, depthFirst:false);
 ```
 
-More examples of this approach this can be found in the test cases at [Elementary.Hierarchy.Test/TraverseWithDelegates](https://github.com/wgross/Elementary.Hierarchy/tree/master/Elementary.Hierarchy.Test/TraverseWithDelegates).
+More examples of this approach can be found in the test cases at [Elementary.Hierarchy.Test/TraverseWithDelegates](https://github.com/wgross/Elementary.Hierarchy/tree/master/Elementary.Hierarchy.Test/TraverseWithDelegates).
 
 ## Identify a node in a Hierarchy
 
-A node in a hierarchy might be identifified with a path like collection of ids. Each of these id indentifies a child node under a parent node.
+A node in a hierarchy might be identifified with a path like collection of ids. Each of these ids identifiy a child node under a parent node.
 
-To support this use case Elementary.Hierarchy provides the class HierarchyPath<T>.
+To support this use case Elementary.Hierarchy provides the class HierarchyPath<T>. While there are traversal algorithms relying on the HierachyPath<T>, the class itself doesn't deoend from the interfaces or algorithms of 'Elementary.Hierarchy' and can be used as it other contexts.
 
 ```csharp
 using Elementary.Hierarchy; 
