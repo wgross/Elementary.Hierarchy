@@ -11,3 +11,5 @@ TestResults/**
 /Elementary.Hierarchy.Test/obj/Debug
 /.vs/Elementary.Hierarchy/v14/.suo
 /TestResult.xml
+/Elementary.Hierarchy/bin/Release
+/Elementary.Hierarchy/obj/Release
