@@ -16,12 +16,6 @@
 
             var nodeHierarchy = (TryGetChildNode<string, string>)(delegate (string node, string key, out string childNode)
             {
-                if (node == "startNode" && key == "childNode")
-                {
-                    childNode = "childNode";
-                    return true;
-                }
-
                 throw new InvalidOperationException("unknown node");
             });
 
