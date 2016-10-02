@@ -95,6 +95,49 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
         }
 
         [Test]
+        public void D_no_vistor_throws_on_null_descandantVisitor_VisitDescandantAtAndAncestors()
+        {
+            // ARRANGE
+
+            var nodeHierarchy = (TryGetChildNode<string, string>)(delegate (string node, string key, out string childNode)
+            {
+                throw new InvalidOperationException("unknown node");
+            });
+
+            // ACT
+
+            var ancestors = new List<string>();
+            var result = Assert.Throws<ArgumentNullException>(() => "startNode".VisitDescandantAtAndAncestors(nodeHierarchy,
+                HierarchyPath.Create<string>(), visitDescendantAt: null, visitAncestors: a => ancestors.Add(a)));
+
+            // ASSERT
+
+            Assert.AreEqual("visitDescendantAt", result.ParamName);
+        }
+
+        [Test]
+        public void D_no_vistor_throws_on_null_ancestorsVisitor_VisitDescandantAtAndAncestors()
+        {
+            // ARRANGE
+
+            var nodeHierarchy = (TryGetChildNode<string, string>)(delegate (string node, string key, out string childNode)
+            {
+                throw new InvalidOperationException("unknown node");
+            });
+
+            // ACT
+
+            string descendantAt = null;
+            var ancestors = new List<string>();
+            var result = Assert.Throws<ArgumentNullException>(() => "startNode".VisitDescandantAtAndAncestors(nodeHierarchy,
+                HierarchyPath.Create<string>(), visitDescendantAt: d => descendantAt = d, visitAncestors: null));
+
+            // ASSERT
+
+            Assert.AreEqual("visitAncestors", result.ParamName);
+        }
+
+        [Test]
         public void D_visit_a_roots_child_throws_on_invalid_path_with_VisitDescandantAtAndAncestors()
         {
             // ARRANGE

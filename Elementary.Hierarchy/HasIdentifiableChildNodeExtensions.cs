@@ -259,6 +259,12 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="visitAncestors">the visitor to call for all ancestors</param>
         public static void VisitDescandantAtAndAncestors<TKey, TNode>(this TNode startNode, TryGetChildNode<TKey, TNode> tryGetChildNode, HierarchyPath<TKey> path, Action<TNode> visitDescendantAt, Action<TNode> visitAncestors)
         {
+            if (visitDescendantAt == null)
+                throw new ArgumentNullException(nameof(visitDescendantAt));
+
+            if (visitAncestors == null)
+                throw new ArgumentNullException(nameof(visitAncestors));
+
             var ancestors = new Stack<TNode>(new[] { startNode });
 
             // descend down the tree until the descendant is reached.
