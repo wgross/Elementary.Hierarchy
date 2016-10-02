@@ -7,7 +7,7 @@ $git = (Get-Command git.exe).Path
 $nunit = (Get-Command $PSScriptRoot\packages\NUnit.ConsoleRunner.3.2.0\tools\nunit3-console.exe).Path
 $localPackageSource = (Resolve-Path "C:\src\packages")
 
-Task default -depends build
+Task default -depends clean,build,test
 
 Task package_restore {
 
@@ -20,6 +20,7 @@ Task clean {
     & $msbuild (Resolve-path $PSScriptRoot\Elementary.Hierarchy.sln) /t:Clean /p:Configuration=Release
     & $msbuild (Resolve-path $PSScriptRoot\Elementary.Hierarchy.sln) /t:Clean /p:Configuration=Debug
     
+    Remove-Item $PSScriptRoot\packages -Recurse -ErrorAction SilentlyContinue
     Remove-Item $PSScriptRoot\*.nupkg -ErrorAction SilentlyContinue
 }
 
@@ -35,7 +36,7 @@ Task test {
 
 } -precondition { Test-Path $nunit } -depends build,package_restore
 
-Task pack {
+Task publish_local {
 
     & $nuget Pack (Resolve-path $PSScriptRoot\Elementary.Hierarchy\Elementary.Hierarchy.csproj) -Build -Prop "Configuration=Release" -Symbols -MSbuildVersion 14
     
