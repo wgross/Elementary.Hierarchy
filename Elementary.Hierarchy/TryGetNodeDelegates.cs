@@ -18,8 +18,8 @@
     /// <typeparam name="TKey">type of the hierarchy path item</typeparam>
     /// <typeparam name="TNode">type of the node</typeparam>
     /// <param name="startNode">node instance to seach for child item</param>
-    /// <param name="key">node identifier to search for</param>
+    /// <param name="path">node identifier to search for</param>
     /// <param name="childNode">found child node</param>
     /// <returns>true if child was found, false otherwise</returns>
-    public delegate bool TryGetChildNode<TKey, TNode>(TNode startNode, TKey key, out TNode childNode);
+    public delegate bool TryGetChildNode<TKey, TNode>(TNode startNode, TKey path, out TNode childNode);
 }
