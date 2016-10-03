@@ -104,6 +104,27 @@
         }
 
         #endregion DescendAlongPath
+
+        #region VisitDescendantAtAndAncestors
+
+        /// <summary>
+        /// The algorithm descends to the specified descendant and presents it to the visitor delegate.
+        /// Afterwards it ascends along the path and presents the ancestors of the descendant until the startNode is reached.
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TNode"></typeparam>
+        /// <param name="startNode">the tree node to start to descend</param>
+        /// <param name="path">specified the path to descend along from the start node</param>
+        /// <param name="visitDescendantAt">the visitor to call at teh descandant</param>
+        /// <param name="visitAncestors">the visitor to call for all ancestors</param>
+        public static void VisitDescandantAtAndAncestors<TKey, TNode>(this TNode startNode, HierarchyPath<TKey> path, Action<TNode> visitDescendantAt, Action<TNode> visitAncestors)
+            where TNode : IHasIdentifiableChildNodes<TKey, TNode>
+        {
+            var tryGetChildNode = (TryGetChildNode<TKey, TNode>)((TNode p, TKey k, out TNode c) => p.TryGetChildNode(k, out c));
+            startNode.VisitDescandantAtAndAncestors(tryGetChildNode, path, visitDescendantAt, visitAncestors);
+        }
+
+        #endregion VisitDescendantAtAndAncestors
     }
 }
 
@@ -247,8 +268,8 @@ namespace Elementary.Hierarchy.Generic
         #region VisitDescendantAtAndAncestors
 
         /// <summary>
-        /// The algorith descends to the specified ancestor and presents it to the visitor delegate.
-        /// Afterwards it ascends along the path and presents the ancestors of the decendant until the root is reached.
+        /// The algorithm descends to the specified descendant and presents it to the visitor delegate.
+        /// Afterwards it ascends along the path and presents the ancestors of the descendant until the startNode is reached.
         /// </summary>
         /// <typeparam name="TKey"></typeparam>
         /// <typeparam name="TNode"></typeparam>

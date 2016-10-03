@@ -157,10 +157,10 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
             string descendant = null;
             string ancestor = null;
-            Assert.Throws<KeyNotFoundException>(() => "startNode".VisitDescandantAtAndAncestors(nodeHierarchy,
+            var result = Assert.Throws<KeyNotFoundException>(() => "startNode".VisitDescandantAtAndAncestors(nodeHierarchy,
                 HierarchyPath.Create("childNode"), visitDescendantAt: d => descendant = d, visitAncestors: a => ancestor = a));
 
-            // ASSERT
+            Assert.That(result.Message.Contains("'childNode'"));
         }
     }
 }
