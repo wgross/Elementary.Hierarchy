@@ -1,0 +1,4 @@
+C:\src\elementary.hierarchy\Elementary.Hierarchy.SCL\bin\Debug\Elementary.Hierarchy.SCL.dll
+C:\src\elementary.hierarchy\Elementary.Hierarchy.SCL\bin\Debug\Elementary.Hierarchy.SCL.pdb
+C:\src\elementary.hierarchy\Elementary.Hierarchy.SCL\obj\Debug\Elementary.Hierarchy.SCL.dll
+C:\src\elementary.hierarchy\Elementary.Hierarchy.SCL\obj\Debug\Elementary.Hierarchy.SCL.pdb
