@@ -83,6 +83,23 @@
 
         #endregion Descendants/-OrSelf
 
+        #region Leaves
+
+        /// <summary>
+        /// Traverses the tree (depth first) and returns all nodes which are leaves of the tree. Leaves are recognizes because
+        /// The given delegate <paramref name="getChildNodes"/> doesn't return any child nodes.
+        /// </summary>
+        /// <typeparam name="TNode">type of the hierarchy node</typeparam>
+        /// <param name="startNode">The node instance to start traversal at</param>
+        /// <returns>An enumerableset of leaf nodes</returns>
+        public static IEnumerable<TNode> Leaves<TNode>(this TNode startNode)
+            where TNode : IHasChildNodes<TNode>
+        {
+            return startNode.Leaves(n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>());
+        }
+
+        #endregion Leaves
+
         #region VisitDescandants/-OrSelf
 
         /// <summary>
@@ -217,7 +234,7 @@ namespace Elementary.Hierarchy.Generic
         #region Leaves
 
         /// <summary>
-        /// Traverses the tree (depth first) and retuens all nodes which are leaves of the tree. Leaves are recognizes because
+        /// Traverses the tree (depth first) and returns all nodes which are leaves of the tree. Leaves are recognizes because
         /// The given delegate <paramref name="getChildNodes"/> doesn't return any child nodes.
         /// </summary>
         /// <typeparam name="TNode">type of the hierarchy node</typeparam>
