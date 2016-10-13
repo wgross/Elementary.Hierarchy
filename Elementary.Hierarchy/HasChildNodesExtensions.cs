@@ -133,7 +133,7 @@ namespace Elementary.Hierarchy.Generic
         /// Returns the child nodes of the given start node.
         /// The child nodes are retrieved by calling the specified getChildren Delegate.
         /// </summary>
-        /// <typeparam name="TNode"></typeparam>
+        /// <typeparam name="TNode">type of the hierarchy node</typeparam>
         /// <param name="startNode"></param>
         /// <param name="getChildren"></param>
         /// <returns>enumerable children of the start node</returns>
@@ -157,6 +157,7 @@ namespace Elementary.Hierarchy.Generic
         /// <returns>
         /// Returns an <see cref="IEnumerable"/> of <see cref="TNode"/> containing the descendants down to the leaf level.
         /// </returns>
+        /// <typeparam name="TNode">type of the hierarchy node</typeparam>
         /// <param name="startNode"></param>
         /// <param name="depthFirst">specifies if child noded are enumerated depth first or breadth first</param>
         /// <param name="hasChildNodes">delegate returns true if a given TNode instance has child nodes, false otherwise</param>
@@ -184,11 +185,12 @@ namespace Elementary.Hierarchy.Generic
         /// <summary>
         /// Traverses the tree downwards from the given start node. All nodes visited (incuding the start node) are returned inside the <see cref="IEnumerable"/> returned.
         /// By default breadth first is used.
-        /// The tree strcuture is explored by calling the specified delegates.
+        /// The tree structure is explored by calling the specified delegates.
         /// </summary>
         /// <returns>
         /// Returns an <see cref="IEnumerable"/> of <see cref="TNode"/> containing the descendants down to the leaf level and the start node.
         /// </returns>
+        /// <typeparam name="TNode">type of the hierarchy node</typeparam>
         /// <param name="startNode">The TNode instance to start traversal at</param>
         /// <param name="depthFirst">specifies if child noded are enumerated depth first or breadth first</param>
         /// <param name="hasChildNodes">delegate returns true if a given TNode instance has child nodes, false otherwise</param>
@@ -212,13 +214,31 @@ namespace Elementary.Hierarchy.Generic
 
         #endregion Descendants/-OrSelf
 
+        #region Leaves
+
+        /// <summary>
+        /// Traverses the tree (depth first) and retuens all nodes which are leaves of the tree. Leaves are recognizes because
+        /// The given delegate <paramref name="getChildNodes"/> doesn't return any child nodes.
+        /// </summary>
+        /// <typeparam name="TNode">type of the hierarchy node</typeparam>
+        /// <param name="startNode">The node instance to start traversal at</param>
+        /// <param name="getChildNodes"></param>
+        /// <returns></returns>
+        public static IEnumerable<TNode> Leaves<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes)
+        {
+            // all nodes which havn't a child node are leaves of the tree.
+            return startNode.DescendantsOrSelf(getChildNodes: getChildNodes).Where(n => !getChildNodes(n).Any());
+        }
+
+        #endregion Leaves
+
         #region VisitDescandants/-OrSelf
 
         /// <summary>
         /// Traverses all descendants and the given start node. All nodes are presented to the visitor.
         /// Additionally the path to the start node is presented to the visitor.
         /// </summary>
-        /// <typeparam name="TNode">type of the herarchy node</typeparam>
+        /// <typeparam name="TNode">type of the hierarchy node</typeparam>
         /// <param name="startNode">node start traversal at</param>
         /// <param name="getChildren">delegate to retruebe children form any node of the hierarchy</param>
         /// <param name="visitor">delegate to present each node and its path to the start node</param>
@@ -257,7 +277,7 @@ namespace Elementary.Hierarchy.Generic
         /// Traverses all descendants of teh given start node. All nodes are presented to the visitor.
         /// Additionally the path to the start node is presented to the visitor.
         /// </summary>
-        /// <typeparam name="TNode">type of the herarchy node</typeparam>
+        /// <typeparam name="TNode">type of the hierarchy node</typeparam>
         /// <param name="startNode">node start traversal at</param>
         /// <param name="getChildren">delegate to retruebe children form any node of the hierarchy</param>
         /// <param name="visitor">delegate to present each node and its path to the start node</param>
