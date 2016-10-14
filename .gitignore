@@ -1,11 +1,7 @@
-obj/**
-bin/**
 packages/**
-.hg/**
-.hgignore
-**.nupkg
 TestResults/**
-**/bin/**
-**/obj/**
-/.vs/Elementary.Hierarchy/v14/.suo
+**.nupkg
+**/bin
+**/obj
+*.suo
 /TestResult.xml
