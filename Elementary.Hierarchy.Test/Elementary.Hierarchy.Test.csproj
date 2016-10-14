@@ -86,9 +86,9 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Elementary.Hierarchy.Fcl\Elementary.Hierarchy.Fcl.csproj">
-      <Project>{f937b02e-73b9-4562-b2cb-4edc3ff4760d}</Project>
-      <Name>Elementary.Hierarchy.Fcl</Name>
+    <ProjectReference Include="..\Elementary.Hierarchy\Elementary.Hierarchy.csproj">
+      <Project>{21066849-bcd5-45f1-a91d-fed8a8fb8716}</Project>
+      <Name>Elementary.Hierarchy</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

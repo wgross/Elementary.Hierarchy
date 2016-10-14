@@ -39,7 +39,18 @@
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HasChildNodesExtensions.cs" />
+    <Compile Include="HasIdentifiableChildNodeExtensions.cs" />
+    <Compile Include="HasParentAndChildNodesExtensions.cs" />
+    <Compile Include="HasParentNodeExtensions.cs" />
+    <Compile Include="HierarchyPath.cs" />
+    <Compile Include="IHasChildNodes.cs" />
+    <Compile Include="IHasDescendantNodes.cs" />
+    <Compile Include="IHasIdentifiableChildNodes.cs" />
+    <Compile Include="IHasParentNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Traverser.cs" />
+    <Compile Include="TryGetNodeDelegates.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
