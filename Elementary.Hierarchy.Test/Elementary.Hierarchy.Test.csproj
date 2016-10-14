@@ -83,13 +83,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Elementary.Hierarchy\Elementary.Hierarchy.csproj">
-      <Project>{F937B02E-73B9-4562-B2CB-4EDC3FF4760D}</Project>
-      <Name>Elementary.Hierarchy</Name>
-    </ProjectReference>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+    <ProjectReference Include="..\Elementary.Hierarchy\Elementary.Hierarchy.csproj">
+      <Project>{21066849-bcd5-45f1-a91d-fed8a8fb8716}</Project>
+      <Name>Elementary.Hierarchy</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
