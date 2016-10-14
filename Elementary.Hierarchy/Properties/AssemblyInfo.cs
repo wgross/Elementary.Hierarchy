@@ -13,13 +13,13 @@ using System.Resources;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]
-
+    
 // Version information for an assembly consists of the following four values:
 //
 //      Major Version
 //      Minor Version
 //      Build Number
-//      Revision
+//      Revision    
 //
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:

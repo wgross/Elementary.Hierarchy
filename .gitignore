@@ -1,8 +1,11 @@
 packages/**
 TestResults/**
+.vs
+
 **.nupkg
 **/bin
 **/obj
 *.suo
 /TestResult.xml
-**.csproj.user
+*.csproj.user
+Elementary.Hierarchy/project.lock.json
