@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elementary.Hierarchy.Test", "Elementary.Hierarchy.Test\Elementary.Hierarchy.Test.csproj", "{43B1C353-320C-4CF4-AA34-E74537DD5384}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elementary.Hierarchy", "Elementary.Hierarchy.Fcl\Elementary.Hierarchy.csproj", "{F937B02E-73B9-4562-B2CB-4EDC3FF4760D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elementary.Hierarchy.Fcl", "Elementary.Hierarchy.Fcl\Elementary.Hierarchy.Fcl.csproj", "{F937B02E-73B9-4562-B2CB-4EDC3FF4760D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
