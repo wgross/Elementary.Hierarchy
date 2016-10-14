@@ -5,11 +5,7 @@ packages/**
 .hgignore
 **.nupkg
 TestResults/**
-/Elementary.Hierarchy/bin/Debug
-/Elementary.Hierarchy/obj/Debug
-/Elementary.Hierarchy.Test/bin/Debug
-/Elementary.Hierarchy.Test/obj/Debug
+**/bin/**
+**/obj/**
 /.vs/Elementary.Hierarchy/v14/.suo
 /TestResult.xml
-/Elementary.Hierarchy/bin/Release
-/Elementary.Hierarchy/obj/Release
