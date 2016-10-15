@@ -4,18 +4,21 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    /// <summary>
+    /// Provides extensions to classes implementing <see cref="IHasChildNodes{TNode}"/> and <see cref="IHasParentNode{TNode}"/>.
+    /// </summary>
     public static class HasParentAndChildNodesExtensions
     {
         /// <summary>
         /// Traverses the start nodes parent child nodes beginning with the first sibling following the start node.
-        /// The siblings are returned inside a <see cref="IEnumerable"/> of <see cref="TNode"/>.
+        /// The siblings are returned inside a <see cref="IEnumerable{TNode}"/>.
         /// The start node is not returned.
         /// </summary>
-        /// <returns>
-        /// An <see cref="IEnumerable"/> of <see cref="TNode"/> containing all visited nodes without the start node.
-        /// </returns>
-        /// <typeparam name="TNode">Type of the node, implements <see cref="IHasParentNode"/></typeparam>
+        /// <typeparam name="TNode">Type of the node, implements <see cref="IHasParentNode{TNode}"/></typeparam>
         /// <param name="startNode">reference to the node to start from</param>
+        /// <returns>
+        /// An <see cref="IEnumerable{TNode}"/> containing all visited nodes without the start node.
+        /// </returns>
         public static IEnumerable<TNode> FollowingSiblings<TNode>(this TNode startNode)
             where TNode : class, IHasChildNodes<TNode>, IHasParentNode<TNode>
         {
@@ -31,13 +34,13 @@
 
         /// <summary>
         /// Traverses the start nodes parent child node beginning with the first child until the start node is reached.
-        /// The siblings are returned inside a <see cref="IEnumerable"/> of <see cref="TNode"/>.
+        /// The siblings are returned inside a <see cref="IEnumerable{TNode}"/>/>.
         /// The start node is not returned.
         /// </summary>
         /// <returns>
-        /// An <see cref="IEnumerable"/> of <see cref="TNode"/> containing all visited nodes without the start node.
+        /// An <see cref="IEnumerable{TNode}"/> containing all visited nodes without the start node.
         /// </returns>
-        /// <typeparam name="TNode">Type of the node, implements <see cref="IHasParentNode"/></typeparam>
+        /// <typeparam name="TNode">Type of the node, implements <see cref="IHasParentNode{TNode}"/></typeparam>
         /// <param name="startNode">reference to the node to start from</param>
         public static IEnumerable<TNode> PrecedingSiblings<TNode>(this TNode startNode)
             where TNode : class, IHasChildNodes<TNode>, IHasParentNode<TNode>
@@ -59,17 +62,20 @@ namespace Elementary.Hierarchy.Generic
     using System.Collections.Generic;
     using System.Linq;
 
+    /// <summary>
+    /// Provides extsnsions to any type which may implement the cocept of 'having a parent node and children' with delegates.
+    /// </summary>
     public static class HasParentAndChildNodeGenericExtensions
     {
         /// <summary>
         /// Traverses the start nodes parent child nodes beginning with the first sibling following the start node.
-        /// The siblings are returned inside a <see cref="IEnumerable"/> of <see cref="TNode"/>.
+        /// The siblings are returned inside a <see cref="IEnumerable{T}"/>/>.
         /// The start node is not returned.
         /// </summary>
         /// <returns>
-        /// An <see cref="IEnumerable"/> of <see cref="TNode"/> containing all visited nodes without the start node.
+        /// An <see cref="IEnumerable{TNode}"/> containing all visited nodes without the <paramref name="startNode"/>.
         /// </returns>
-        /// <typeparam name="TNode">Type of the node, implements <see cref="IHasParentNode"/></typeparam>
+        /// <typeparam name="TNode">Type of the node, implements <see cref="IHasParentNode{TNode}"/></typeparam>
         /// <param name="startNode">reference to the node to start from</param>
         /// <param name="getChildren">Delegate to retrieve a nodes children</param>
         /// <param name="tryGetParent">Delegate to retrieve a nodes parent</param>
@@ -90,14 +96,14 @@ namespace Elementary.Hierarchy.Generic
         }
 
         /// <summary>
-        /// Traverses the start nodes parent child nodes beginning with the first child of the parent untol the start node is reached.
-        /// The siblings are returned inside a <see cref="IEnumerable"/> of <see cref="TNode"/>.
-        /// The start node is not returned.
+        /// Traverses the <paramref name="startNode"/>s parent child nodes beginning with the first child of the parent untol the start node is reached.
+        /// The siblings are returned inside a <see cref="IEnumerable{TNode}"/>/>.
+        /// The <paramref name="startNode"/> is not returned.
         /// </summary>
         /// <returns>
-        /// An <see cref="IEnumerable"/> of <see cref="TNode"/> containing all visited nodes without the start node.
+        /// An <see cref="IEnumerable{TNode}"/> containing all visited nodes without the start node.
         /// </returns>
-        /// <typeparam name="TNode">Type of the node, implements <see cref="IHasParentNode"/></typeparam>
+        /// <typeparam name="TNode">Type of the node, implements <see cref="IHasParentNode{TNode}"/></typeparam>
         /// <param name="startNode">reference to the node to start from</param>
         /// <param name="getChildren">Delegate to retrieve a nodes children</param>
         /// <param name="tryGetParent">Delegate to retrieve a nodes parent</param>

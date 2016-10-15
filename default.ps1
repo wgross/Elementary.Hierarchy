@@ -66,7 +66,6 @@ Task rebuild_packages -depends clean_packages,build_packages
 
 #endregion
 
-
 Task build {
 
     & $msbuild $solutionFileNames /t:Build /p:Configuration=Debug

@@ -120,24 +120,31 @@
 
         #region IHasParentNode<HierarchyPath<T>> Members
 
-        public bool HasParentNode { get; private set; }
+        /// <summary>
+        /// Determines if this path identifies a node which is having a parent node.
+        /// Number of items in <see cref="Items"/> &gt; 0
+        /// </summary>
+        public bool HasParentNode { get; }
 
-        public HierarchyPath<T> ParentNode
-        {
-            get
-            {
-                // TODO:PERF: O(n)+O(n-1)-> needs optimization
-                return HierarchyPath.Create(this.Items.Take(this.Items.Count() - 1));
-            }
-        }
+        /// <summary>
+        /// Returns a new <see cref="HierarchyPath{T}"/> containing a path identifiying the parent node of this node.
+        /// </summary>
+        public HierarchyPath<T> ParentNode => HierarchyPath.Create(this.Items.Take(this.Items.Count() - 1)); // TODO:PERF: O(n)+O(n-1)-> needs optimization
 
         #endregion IHasParentNode<HierarchyPath<T>> Members
 
         /// <summary>
         /// Return true is this instance soecifies a root noe path (without path items).
         /// </summary>
-        public bool IsRoot => !(this.Items.Any());
+        public bool IsRoot => !this.HasParentNode;
 
+
+        /// <summary>
+        /// Determines if a given <see cref="HierarchyPath{T}"/> instance identifies a descendant of this node.
+        /// A descendants path must contain this path as a prefix
+        /// </summary>
+        /// <param name="descendant">possible descendant path</param>
+        /// <returns>true if this path is an ancestor of <paramref name="descendant"/>, false otherwise</returns>
         public bool IsAncestorOf(HierarchyPath<T> descendant)
         {
             var itemsOfAncestor = this.Items.ToArray();
@@ -154,7 +161,10 @@
             return lengthOfMatchingPrefix == itemsOfAncestor.Length;
         }
 
-        public IEnumerable<T> Items { get; private set; }
+        /// <summary>
+        /// All parts of the <see cref="HierarchyPath{T}"/> instance.
+        /// </summary>
+        public IEnumerable<T> Items { get; }
 
         /// <summary>
         /// Returns the leaf (last item of this HierarchyPath) as a new HierarchyPath instance.
@@ -179,11 +189,23 @@
 
         #region Override object behaviour
 
+        /// <summary>
+        /// Verifies equality of two hierarchy pathes. <see cref="Equals(object, IEqualityComparer{T})"/> is called with <see cref="EqualityComparer{T}.Default"/>
+        /// </summary>
+        /// <param name="obj">the other instance to compare with</param>
+        /// <returns>true if this path is semantically equal to <paramref name="obj"/></returns>
         public override bool Equals(object obj)
         {
             return this.Equals(obj, EqualityComparer<T>.Default);
         }
 
+        /// <summary>
+        /// Verifies equality of this instance and another <see cref="HierarchyPath{T}"/> instance.
+        /// Equality of a <see cref="HierarchyPath{T}"/> requires equality of all <see cref="Items"/>
+        /// </summary>
+        /// <param name="other">the other instance to compare with</param>
+        /// <param name="comparer">Comparision strategy for all items in <see cref="Items"/></param>
+        /// <returns></returns>
         public bool Equals(object other, IEqualityComparer<T> comparer)
         {
             HierarchyPath<T> otherAsTreeKey = other as HierarchyPath<T>;
@@ -207,11 +229,20 @@
             return true;
         }
 
+        /// <summary>
+        /// The hashcode of this instance. The hash code is calculated from the hashcod of all <see cref="Items"/>
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
             return hashCode;
         }
 
+        /// <summary>
+        /// Creates a string representation of a <see cref="HierarchyPath{T}"/> instance.
+        /// By default '/' is used as a seperator
+        /// </summary>
+        /// <returns>string represention of this instance</returns>
         public override string ToString()
         {
             return string.Join("/", this.Items);
@@ -239,6 +270,11 @@
             return HierarchyPath.Create(this.Items.Concat((IEnumerable<T>)otherPath.Items));
         }
 
+        /// <summary>
+        /// Returns a new <see cref="HierarchyPath{T}"/> containing only the part under the given <paramref name="toAncestor"/> path.
+        /// </summary>
+        /// <param name="toAncestor"></param>
+        /// <returns>the items of <see cref="Items"/> under <paramref name="toAncestor"/> or an empty path if <paramref name="toAncestor"/> ins't an ancestor of this node</returns>
         public HierarchyPath<T> RelativeToAncestor(HierarchyPath<T> toAncestor)
         {
             if (!toAncestor.Items.Any())

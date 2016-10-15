@@ -3,7 +3,6 @@
     /// <summary>
     /// This delegate type is used for travesals of hierachies which involve upwards movements in the hierachy
     /// like visiting ancestors or siblings of the start node.
-    /// Because Elementary.Hierachy should support value types a generic Func<...> doesn't work.
     /// </summary>
     /// <typeparam name="TNode">type of the hierarchy nodes</typeparam>
     /// <param name="childNode">A node to start upwards traversal</param>

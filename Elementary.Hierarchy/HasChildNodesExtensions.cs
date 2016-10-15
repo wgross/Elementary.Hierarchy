@@ -4,18 +4,20 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
+    /// <summary>
+    /// Provides extensions to the interface <see cref="IHasChildNodes{TNode}"/>
+    /// </summary>
     public static class HasChildNodesExtensions
     {
         #region Children
 
         /// <summary>
-        /// Returns the child node of a given start node.
-        /// The child nodes are retrieved from the ChildNodes property if the <see cref="IHasChildNodes&lt;TNode&gt;"/> interface.
+        /// Returns the child node of a given <paramref name="startNode"/>
+        /// The child nodes are retrieved from the ChildNodes property if the <see cref="IHasChildNodes{TNode}"/> interface.
         /// </summary>
         /// <typeparam name="TNode"></typeparam>
         /// <param name="startNode"></param>
-        /// <returns>enumerable children of the start node</returns>
+        /// <returns>enumerable children of the <paramref name="startNode"/></returns>
         public static IEnumerable<TNode> Children<TNode>(this TNode startNode)
             where TNode : IHasChildNodes<TNode>
         {
@@ -27,14 +29,14 @@
         #region Descendants/-OrSelf
 
         /// <summary>
-        /// Traverses the tree downwards from the given start node. All nodes visited are returned inside the <see cref="IEnumerable"/> returned.
-        /// The start node isn't returned. By default breadth first is used.
+        /// Traverses the tree downwards from the given <paramref name="startNode"/>. All nodes visited are returned inside the <see cref="IEnumerable{TNode}"/> returned.
+        /// The <paramref name="startNode"/> isn't returned. By default breadth first is used.
         /// </summary>
         /// <returns>
-        /// Returns an <see cref="IEnumerable"/> of <see cref="TNode"/> containing the descendants down to the leaf level.
+        /// Returns an <see cref="IEnumerable{TNode}"/> containing the descendants down to the leaf level.
         /// </returns>
         /// <param name="startNode">The TNode instance to start traversal at</param>
-        /// <param name="maxDepth">Specifies the maximum depth of enumeration 0 is always empty, 1 is start node, 2 children of start node</param>
+        /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is always empty, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
         /// <param name="depthFirst">enables depth first traversal instead of breadth first</param>
         /// <typeparam name="TNode">type of the tree nodes. Must implement IHasChildNodes&lt;TNode&gt;</typeparam>
         public static IEnumerable<TNode> Descendants<TNode>(this TNode startNode, bool? depthFirst = null, int? maxDepth = null)
@@ -53,16 +55,16 @@
         }
 
         /// <summary>
-        /// Traverses the tree downwards from the given start node. All nodes visited (incuding the start node) are returned inside the <see cref="IEnumerable"/> returned.
+        /// Traverses the tree downwards from the given <paramref name="startNode"/>. All nodes visited (incuding the <paramref name="startNode"/>) are returned inside the <see cref="IEnumerable{TNode}"/> returned.
         /// By default breadth first is used.
         /// </summary>
         /// <returns>
-        /// Returns an <see cref="IEnumerable"/> of <see cref="TNode"/> containing the start node and its descendants down to the leaf level.
+        /// Returns an <see cref="IEnumerable{TNode}"/> containing the <paramref name="startNode"/> and its descendants down to the leaf level.
         /// </returns>
         /// <param name="startNode">The TNode instance to start traversal at</param>
         /// <param name="depthFirst">enables depth first traversal instead of breadth first</param>
-        /// <param name="maxDepth">Specifies the maximum depth of enumeration 0 is always empty, 1 is start node, 2 children of start node</param>
-        /// <typeparam name="TNode">type of the tree nodes. Must implement IHasChildNodes&lt;TNode&gt;</typeparam><
+        /// <param name="maxDepth">Specifies the maximum depth of enumeration 0 is always empty, 1 is <paramref name="startNode"/>, 2 children of <paramref name="startNode"/></param>
+        /// <typeparam name="TNode">type of the tree nodes. Must implement IHasChildNodes&lt;TNode&gt;</typeparam>
         public static IEnumerable<TNode> DescendantsOrSelf<TNode>(this TNode startNode, bool? depthFirst = null, int? maxDepth = null)
             where TNode : IHasChildNodes<TNode>
         {
@@ -86,8 +88,7 @@
         #region Leaves
 
         /// <summary>
-        /// Traverses the tree (depth first) and returns all nodes which are leaves of the tree. Leaves are recognizes because
-        /// The given delegate <paramref name="getChildNodes"/> doesn't return any child nodes.
+        /// Traverses the tree (depth first) and returns all nodes which are leaves of the tree. 
         /// </summary>
         /// <typeparam name="TNode">type of the hierarchy node</typeparam>
         /// <param name="startNode">The node instance to start traversal at</param>
@@ -103,14 +104,14 @@
         #region VisitDescandants/-OrSelf
 
         /// <summary>
-        /// Traverses all descendants and the given start node. All nodes are presented to the visitor.
-        /// Additionally the path to the start node is presented to the visitor.
+        /// Traverses all descendants and the given <paramref name="startNode"/>. All nodes are presented to the visitor.
+        /// Additionally the path to the <paramref name="startNode"/> is presented to the visitor.
         /// </summary>
         /// <typeparam name="TNode">type of the herarchy node</typeparam>
         /// <param name="startNode">node start traversal at</param>
-        /// <param name="visitor">delegate to present each node and its path to the start node</param>
+        /// <param name="visitor">delegate to present each node and its path to the <paramref name="startNode"/></param>
         /// <param name="depthFirst">enables deth first traversal, breadth first is default</param>
-        /// <param name="maxDepth">maximum traversal depth. startnode is at level 0</param>
+        /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is the startNode, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
         public static void VisitDescendantsOrSelf<TNode>(this TNode startNode, Action<IEnumerable<TNode>, TNode> visitor, bool? depthFirst = null, int? maxDepth = null)
             where TNode : IHasChildNodes<TNode>
         {
@@ -118,14 +119,14 @@
         }
 
         /// <summary>
-        /// Traverses all descendants of teh given start node. All nodes are presented to the visitor.
-        /// Additionally the path to the start node is presented to the visitor.
+        /// Traverses all descendants of teh given <paramref name="startNode"/>. All nodes are presented to the visitor.
+        /// Additionally the path to the <paramref name="startNode"/> is presented to the visitor.
         /// </summary>
         /// <typeparam name="TNode">type of the herarchy node</typeparam>
         /// <param name="startNode">node start traversal at</param>
-        /// <param name="visitor">delegate to present each node and its path to the start node</param>
+        /// <param name="visitor">delegate to present each node and its path to the <paramref name="startNode"/></param>
         /// <param name="depthFirst">enables deth first traversal, breadth first is default</param>
-        /// <param name="maxDepth">maximum traversal depth. startnode is at level 0</param>
+        /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is the startNode, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
         public static void VisitDescendants<TNode>(this TNode startNode, Action<IEnumerable<TNode>, TNode> visitor, bool? depthFirst = null, int? maxDepth = null)
             where TNode : IHasChildNodes<TNode>
         {
@@ -142,18 +143,21 @@ namespace Elementary.Hierarchy.Generic
     using System.Collections.Generic;
     using System.Linq;
 
+    /// <summary>
+    /// Provides extension for any type to implemnt the concept of 'having children' with delegates.
+    /// </summary>
     public static class HasChildNodesGenericExtensions
     {
         #region Children
 
         /// <summary>
-        /// Returns the child nodes of the given start node.
+        /// Returns the child nodes of the given <paramref name="startNode"/>.
         /// The child nodes are retrieved by calling the specified getChildren Delegate.
         /// </summary>
         /// <typeparam name="TNode">type of the hierarchy node</typeparam>
         /// <param name="startNode"></param>
         /// <param name="getChildren"></param>
-        /// <returns>enumerable children of the start node</returns>
+        /// <returns>enumerable children of the <paramref name="startNode"/></returns>
         public static IEnumerable<TNode> Children<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren)
         {
             if (getChildren == null)
@@ -167,18 +171,18 @@ namespace Elementary.Hierarchy.Generic
         #region Descendants/-OrSelf
 
         /// <summary>
-        /// Traverses the tree downwards from the given start node. All nodes visited are returned inside the <see cref="IEnumerable"/> returned.
-        /// The start node isn't returned. By default breadth first is used.
+        /// Traverses the tree downwards from the given <paramref name="startNode"/>. All nodes visited are returned inside the <see cref="IEnumerable{TNode}"/> returned.
+        /// The <paramref name="startNode"/> isn't returned. By default breadth first is used.
         /// The tree structure is defined by the two provided delegates.
         /// </summary>
         /// <returns>
-        /// Returns an <see cref="IEnumerable"/> of <see cref="TNode"/> containing the descendants down to the leaf level.
+        /// Returns an <see cref="IEnumerable{TNode}"/> containing the descendants down to the leaf level.
         /// </returns>
         /// <typeparam name="TNode">type of the hierarchy node</typeparam>
         /// <param name="startNode"></param>
         /// <param name="depthFirst">specifies if child noded are enumerated depth first or breadth first</param>
-        /// <param name="hasChildNodes">delegate returns true if a given TNode instance has child nodes, false otherwise</param>
-        /// <param name="getChildNodes">delegate retrueved the child nodes of the specified TNode instance</param>
+        /// <param name="getChildNodes">delegate retrieved the child nodes of the specified TNode instance</param>
+        /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is always empty, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
         public static IEnumerable<TNode> Descendants<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, bool? depthFirst = null, int? maxDepth = null)
         {
             if (getChildNodes == null)
@@ -200,18 +204,18 @@ namespace Elementary.Hierarchy.Generic
         }
 
         /// <summary>
-        /// Traverses the tree downwards from the given start node. All nodes visited (incuding the start node) are returned inside the <see cref="IEnumerable"/> returned.
+        /// Traverses the tree downwards from the given <paramref name="startNode"/>. All nodes visited (incuding the <paramref name="startNode"/>) are returned inside the <see cref="IEnumerable{TNode}"/> returned.
         /// By default breadth first is used.
         /// The tree structure is explored by calling the specified delegates.
         /// </summary>
         /// <returns>
-        /// Returns an <see cref="IEnumerable"/> of <see cref="TNode"/> containing the descendants down to the leaf level and the start node.
+        /// Returns an <see cref="IEnumerable{TNode}"/> containing the descendants down to the leaf level and the <paramref name="startNode"/>.
         /// </returns>
         /// <typeparam name="TNode">type of the hierarchy node</typeparam>
         /// <param name="startNode">The TNode instance to start traversal at</param>
         /// <param name="depthFirst">specifies if child noded are enumerated depth first or breadth first</param>
-        /// <param name="hasChildNodes">delegate returns true if a given TNode instance has child nodes, false otherwise</param>
         /// <param name="getChildNodes">delegate retrueved the child nodes of the specified TNode instance</param>
+        /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is the <paramref name="startNode"/>, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
         public static IEnumerable<TNode> DescendantsOrSelf<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, bool? depthFirst = null, int? maxDepth = null)
         {
             if (getChildNodes == null)
@@ -252,15 +256,15 @@ namespace Elementary.Hierarchy.Generic
         #region VisitDescandants/-OrSelf
 
         /// <summary>
-        /// Traverses all descendants and the given start node. All nodes are presented to the visitor.
-        /// Additionally the path to the start node is presented to the visitor.
+        /// Traverses all descendants and the given <paramref name="startNode"/>. All nodes are presented to the visitor.
+        /// Additionally the path to the <paramref name="startNode"/> is presented to the visitor.
         /// </summary>
         /// <typeparam name="TNode">type of the hierarchy node</typeparam>
         /// <param name="startNode">node start traversal at</param>
         /// <param name="getChildren">delegate to retruebe children form any node of the hierarchy</param>
-        /// <param name="visitor">delegate to present each node and its path to the start node</param>
+        /// <param name="visitor">delegate to present each node and its path to the <paramref name="startNode"/></param>
         /// <param name="depthFirst">enables deth first traversal, breadth first is default</param>
-        /// <param name="maxDepth">maximum traversal depth. startnode is at level 0</param>
+        /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is the <paramref name="startNode"/>, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
         public static void VisitDescendantsOrSelf<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren, Action<IEnumerable<TNode>, TNode> visitor, bool? depthFirst = null, int? maxDepth = null)
         {
             if (getChildren == null)
@@ -291,15 +295,15 @@ namespace Elementary.Hierarchy.Generic
         }
 
         /// <summary>
-        /// Traverses all descendants of teh given start node. All nodes are presented to the visitor.
-        /// Additionally the path to the start node is presented to the visitor.
+        /// Traverses all descendants of teh given <paramref name="startNode"/>. All nodes are presented to the visitor.
+        /// Additionally the path to the <paramref name="startNode"/> is presented to the visitor.
         /// </summary>
         /// <typeparam name="TNode">type of the hierarchy node</typeparam>
         /// <param name="startNode">node start traversal at</param>
         /// <param name="getChildren">delegate to retruebe children form any node of the hierarchy</param>
-        /// <param name="visitor">delegate to present each node and its path to the start node</param>
+        /// <param name="visitor">delegate to present each node and its path to the <paramref name="startNode"/></param>
         /// <param name="depthFirst">enables deth first traversal, breadth first is default</param>
-        /// <param name="maxDepth">maximum traversal depth. startnode is at level 0</param>
+        /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is always empty, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
         public static void VisitDescendants<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren, Action<IEnumerable<TNode>, TNode> visitor, bool? depthFirst = null, int? maxDepth = null)
         {
             if (getChildren == null)

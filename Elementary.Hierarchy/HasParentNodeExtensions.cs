@@ -4,6 +4,9 @@
     using System;
     using System.Collections.Generic;
 
+    /// <summary>
+    /// Provides extensions to classes implementing <see cref="IHasParentNode{TNode}"/> 
+    /// </summary>
     public static class HasParentNodeExtensions
     {
         /// <summary>
@@ -27,13 +30,13 @@
         }
 
         /// <summary>
-        /// Traverses the tree upwards to the root node. The visited nodes are returned inside the <see cref="IEnumerable"/> of <see cref="TNode"/>.
+        /// Traverses the tree upwards to the root node. The visited nodes are returned inside the <see cref="IEnumerable{T}"/>.
         /// The start node is not returned.
         /// </summary>
         /// <returns>
-        /// An <see cref="IEnumerable"/> of <see cref="TNode"/> containeing all visited nodes without the start node.
+        /// An <see cref="IEnumerable{TNode}"/> containing all visited nodes without the start node.
         /// </returns>
-        /// <typeparam name="TNode">Type of the node, implements <see cref="IHasParentNode"/></typeparam>
+        /// <typeparam name="TNode">Type of the node, implements <see cref="IHasParentNode{TNode}"/></typeparam>
         /// <param name="startNode">reference to the node to start from</param>
         public static IEnumerable<TNode> Ancestors<TNode>(this TNode startNode)
             where TNode : class, IHasParentNode<TNode>
@@ -50,13 +53,13 @@
         }
 
         /// <summary>
-        /// Traverses the tree upwards to the root node. The visited nodes are returned inside the <see cref="IEnumerable"/> of <see cref="TNode"/>.
+        /// Traverses the tree upwards to the root node. The visited nodes are returned inside the <see cref="IEnumerable{TNode}"/>.
         /// The start node is returned as well.
         /// </summary>
         /// <returns>
-        /// An <see cref="IEnumerable"/> of <see cref="TNode"/> containing all visited nodes including the start node.
+        /// An <see cref="IEnumerable{TNode}"/> containing all visited nodes including the start node.
         /// </returns>
-        /// <typeparam name="TNode">Type of the node, implements <see cref="IHasParentNode"/></typeparam>
+        /// <typeparam name="TNode">Type of the node, implements <see cref="IHasParentNode{TNode}"/></typeparam>
         /// <param name="startNode">reference to the node to start from</param>
         public static IEnumerable<TNode> AncestorsOrSelf<TNode>(this TNode startNode)
             where TNode : class, IHasParentNode<TNode>
@@ -79,6 +82,9 @@ namespace Elementary.Hierarchy.Generic
     using System.Collections.Generic;
     using System.Linq;
 
+    /// <summary>
+    /// Providing extsions to any type which implements the concept of 'having a parent node' with delegates
+    /// </summary>
     public static class HasParentNodeGenericExtensions
     {
         /// <summary>
@@ -101,15 +107,14 @@ namespace Elementary.Hierarchy.Generic
         }
 
         /// <summary>
-        /// Traverses the tree upwards to the root node. The visited nodes are returned inside the <see cref="IEnumerable"/> of <see cref="TNode"/>.
+        /// Traverses the tree upwards to the root node. The visited nodes are returned inside the <see cref="IEnumerable{TNode}"/>.
         /// The start node isn't returned. The structure of the tree is explored through the two given delegates.
         /// </summary>
         /// <returns>
-        /// An <see cref="IEnumerable"/> of <see cref="TNode"/> containing all visited nodes including the start node.
+        /// An <see cref="IEnumerable{TNode}"/> containing all visited nodes including the start node.
         /// </returns>
-        /// <typeparam name="TNode">Type of the node, implements <see cref="IHasParentNode"/></typeparam>
+        /// <typeparam name="TNode">Type of the node, implements <see cref="IHasParentNode{TNode}"/></typeparam>
         /// <param name="startNode">reference to the node to start from</param>
-        /// <param name="hasParentNode">returns true if the inspected node has a parent node</param>
         /// <param name="tryGetParentNode">returns the parent node of the inspected node</param>
         public static IEnumerable<TNode> Ancestors<TNode>(this TNode startNode, TryGetParent<TNode> tryGetParentNode)
         {
@@ -122,15 +127,14 @@ namespace Elementary.Hierarchy.Generic
         }
 
         /// <summary>
-        /// Traverses the tree upwards to the root node. The visited nodes are returned inside the <see cref="IEnumerable"/> of <see cref="TNode"/>.
+        /// Traverses the tree upwards to the root node. The visited nodes are returned inside the <see cref="IEnumerable{T}"/>.
         /// The start node is returned as well. The structure of the tree is explored through the two given delegates.
         /// </summary>
         /// <returns>
-        /// An <see cref="IEnumerable"/> of <see cref="TNode"/> containing all visited nodes including the start node.
+        /// An <see cref="IEnumerable{T}"/> containing all visited nodes including the start node.
         /// </returns>
-        /// <typeparam name="TNode">Type of the node, implements <see cref="IHasParentNode"/></typeparam>
+        /// <typeparam name="TNode">Type of the node, implements <see cref="IHasParentNode{TNode}"/></typeparam>
         /// <param name="startNode">reference to the node to start from</param>
-        /// <param name="hasParentNode">returns true if the inspected node has a parent node</param>
         /// <param name="tryGetParentNode">returns the parent node of the inspected node</param>
         public static IEnumerable<TNode> AncestorsOrSelf<TNode>(this TNode startNode, TryGetParent<TNode> tryGetParentNode)
         {
