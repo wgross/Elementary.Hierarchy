@@ -5,14 +5,15 @@
     using System.Collections.Generic;
 
     /// <summary>
-    /// Provides extsions to the interface <see cref="IHasIdentifiableChildNodes{TKey, TNode}"/> 
+    /// Provides extsions to the interface <see cref="IHasIdentifiableChildNodes{TKey, TNode}"/>
     /// </summary>
     public static class HasIdentifiableChildNodeExtensions
     {
         #region DescendantAt
 
         /// <summary>
-        /// Retrieves a descendant of the start node or throws <see cref="KeyNotFoundException"/> if not found
+        /// Retrieves a descendant of the <paramref name="startNode"/> or throws <see cref="KeyNotFoundException"/> if the
+        /// <paramref name="path"/> can't be followed completely.
         /// </summary>
         /// <typeparam name="TKey">Type of the hierarchy key</typeparam>
         /// <typeparam name="TNode">Type of the hierarchy node</typeparam>
@@ -138,14 +139,15 @@ namespace Elementary.Hierarchy.Generic
     using System.Linq;
 
     /// <summary>
-    /// Provided extensions to any type which may support the concept of haing 'idetifieable children' using delegates.
+    /// Provided extensions to any type which may support the concept of haing 'identifieable children' using delegates.
     /// </summary>
     public static class HasIdentifiableChildNodeExtensions
     {
         #region DescendantAt
 
         /// <summary>
-        /// Retrieves a descendant of the start node or throws <see cref="KeyNotFoundException"/> if not found. 
+        /// Retrieves a descendant of the <paramref name="startNode"/> or throws <see cref="KeyNotFoundException"/> if the
+        /// <paramref name="path"/> can't be followed completely.
         /// The child nodes are retrieved with the specified <paramref name="tryGetChildNode"/> delegate.
         /// </summary>
         /// <typeparam name="TKey">Type of the hierarchy key</typeparam>
@@ -153,7 +155,7 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="startNode">node instance to start search at</param>
         /// <param name="path">hierarchy key to search</param>
         /// <param name="tryGetChildNode">delegate which implements the child node retrieval for the TNode instances</param>
-        /// <returns>the requested node</returns>
+        /// <returns>the requested TNode instance</returns>
         public static TNode DescendantAt<TKey, TNode>(this TNode startNode, TryGetChildNode<TKey, TNode> tryGetChildNode, HierarchyPath<TKey> path)
         {
             var pathArray = path.Items.ToArray();
