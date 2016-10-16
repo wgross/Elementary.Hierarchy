@@ -1,7 +1,7 @@
 ﻿namespace Elementary.Hierarchy
 {
-    using System;
     using Elementary.Hierarchy.Generic;
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -34,11 +34,12 @@
         /// Traverses the tree upwards to the root node. The visited nodes are returned inside the <see cref="IEnumerable{TNode}"/>.
         /// The <paramref name="startNode"/> isn't returned.
         /// </summary>
-        /// <returns>
-        /// An <see cref="IEnumerable{TNode}"/> containing all visited nodes without the start node.
-        /// </returns>
         /// <typeparam name="TNode">Type of the node, implements <see cref="IHasParentNode{TNode}"/></typeparam>
         /// <param name="startNode">reference to the node to start from</param>
+        /// <returns>
+        /// An <see cref="IEnumerable{TNode}"/> containing all visited nodes but not <paramref name="startNode"/>.
+        /// If the <paramref name="startNode"/> has no parent the collection is empty.
+        /// </returns>
         public static IEnumerable<TNode> Ancestors<TNode>(this TNode startNode)
             where TNode : IHasParentNode<TNode>
         {
@@ -55,13 +56,13 @@
 
         /// <summary>
         /// Traverses the tree upwards to the root node. The visited nodes are returned inside the <see cref="IEnumerable{TNode}"/>.
-        /// The <paramref name="startNode"/> is returned as first result node.
+        /// The <paramref name="startNode"/> is returned first.
         /// </summary>
-        /// <returns>
-        /// An <see cref="IEnumerable{TNode}"/> containing all visited nodes including the start node.
-        /// </returns>
         /// <typeparam name="TNode">Type of the node, implements <see cref="IHasParentNode{TNode}"/></typeparam>
         /// <param name="startNode">reference to the node to start from</param>
+        /// <returns>
+        /// An <see cref="IEnumerable{TNode}"/> containing all visited nodes including the <paramref name="startNode"/>.
+        /// </returns>
         public static IEnumerable<TNode> AncestorsOrSelf<TNode>(this TNode startNode)
             where TNode : IHasParentNode<TNode>
         {
@@ -92,6 +93,7 @@ namespace Elementary.Hierarchy.Generic
         /// <summary>
         /// Returns the parent node of the <paramref name="startNode"/>.
         /// If the node hasn't a parent an <see cref="InvalidOperationException"/> is thrown.
+        /// The structure of the tree is defined by the <paramref name="tryGetParentNode"/> delegate.
         /// </summary>
         /// <typeparam name="TNode"></typeparam>
         /// <param name="startNode"></param>
@@ -111,7 +113,7 @@ namespace Elementary.Hierarchy.Generic
 
         /// <summary>
         /// Traverses the tree upwards to the root node. The visited nodes are returned inside the <see cref="IEnumerable{TNode}"/>.
-        /// The start node isn't returned. The structure of the tree is explored through the two given delegates.
+        /// The <paramref name="startNode"/> isn't returned. The structure of the tree is defined by the <paramref name="tryGetParentNode"/> delegate.
         /// </summary>
         /// <returns>
         /// An <see cref="IEnumerable{TNode}"/> containing all visited nodes including the start node.
@@ -130,11 +132,12 @@ namespace Elementary.Hierarchy.Generic
         }
 
         /// <summary>
-        /// Traverses the tree upwards to the root node. The visited nodes are returned inside the <see cref="IEnumerable{T}"/>.
-        /// The start node is returned as well. The structure of the tree is explored through the two given delegates.
+        /// Traverses the tree upwards to the root node. The visited nodes are returned inside the <see cref="IEnumerable{TNode}"/>.
+        /// The <paramref name="startNode"/> is returned first. 
+        /// The structure of the tree is defined by the <paramref name="tryGetParentNode"/> delegate.
         /// </summary>
         /// <returns>
-        /// An <see cref="IEnumerable{T}"/> containing all visited nodes including the start node.
+        /// An <see cref="IEnumerable{TNode}"/> containing all visited nodes including the start node.
         /// </returns>
         /// <typeparam name="TNode">Type of the node, implements <see cref="IHasParentNode{TNode}"/></typeparam>
         /// <param name="startNode">reference to the node to start from</param>
