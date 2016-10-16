@@ -32,7 +32,7 @@
         #region TryGetDescendantAt
 
         /// <summary>
-        /// Retrieves a descendant of the start node specifed by the <paramref name="path"/> or returns false if not found.
+        /// Retrieves a descendant of the <paramref name="startNode"/> specifed by the <paramref name="path"/> or returns false if not found.
         /// </summary>
         /// <typeparam name="TKey">Type of the hierarchy key</typeparam>
         /// <typeparam name="TNode">Type of the hierarchy node</typeparam>
@@ -172,7 +172,7 @@ namespace Elementary.Hierarchy.Generic
         #region TryGetDescendantAt
 
         /// <summary>
-        /// Retrieves a descendant of the start node or returns false if not found.
+        /// Retrieves a descendant of the <paramref name="startNode"/> or returns false if not found.
         /// The child nodes are retrieved with the specified tryGetChildNode delegate.
         /// </summary>
         /// <typeparam name="TKey">Type of the hierarchy key</typeparam>

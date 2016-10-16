@@ -7,8 +7,6 @@
     [TestFixture]
     public class GenericNodeTryGetDescendantAtTest
     {
-        #region TryGetDescendantAt
-
         [Test]
         public void D_root_returns_child_on_TryGetDescendantAt()
         {
@@ -92,7 +90,7 @@
         }
 
         [Test]
-        public void D_root_node_throws_on_invalid_childId_on_TryGetDescendantAt()
+        public void D_root_node_throws_KeyNotFoundException_on_invalid_childId_on_TryGetDescendantAt()
         {
             // ARRANGE
 
@@ -116,7 +114,5 @@
 
             Assert.IsFalse(result);
         }
-
-        #endregion TryGetDescendantAt
     }
 }

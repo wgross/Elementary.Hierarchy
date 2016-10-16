@@ -17,8 +17,6 @@
             this.startNode = new Mock<MockableNodeType>();
         }
 
-        #region TryGetDescendantAt
-
         [Test]
         public void I_root_returns_child_on_TryGetDescendantAt()
         {
@@ -89,7 +87,7 @@
         }
 
         [Test]
-        public void I_root_node_throws_on_invalid_childId_on_TryGetDescendantAt()
+        public void I_root_node_throws_KeyNotFoundException_on_invalid_childId_on_TryGetDescendantAt()
         {
             // ARRANGE
             this.startNode
@@ -104,7 +102,5 @@
 
             Assert.IsFalse(result);
         }
-
-        #endregion TryGetDescendantAt
     }
 }
