@@ -45,13 +45,13 @@
             if (maxDepth.HasValue && maxDepth.Value < 0)
                 throw new ArgumentException("must be > 0", nameof(maxDepth));
 
-            return (
-                // if startNode knows how to retrieve its descendants itself then use this.
-                (startNode as IHasDescendantNodes<TNode>)?.GetDescendants(depthFirst.GetValueOrDefault(false), maxDepth.GetValueOrDefault(int.MaxValue))
-            ) ?? (
-                // otherwise build collection of descencdants by traversing the child nodes.
-                startNode.Descendants(n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>(), depthFirst, maxDepth)
-            );
+            if (startNode is IHasDescendantNodes<TNode>)
+                return ((IHasDescendantNodes<TNode>)startNode).GetDescendants(depthFirst.GetValueOrDefault(false), maxDepth.GetValueOrDefault(int.MaxValue));
+
+            // startNode's implememtation doesn't provide an optimized accessor to its descendants. 
+            // just rely on the child nodes
+
+            return startNode.Descendants(n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>(), depthFirst, maxDepth);
         }
 
         /// <summary>
@@ -72,15 +72,12 @@
                 throw new ArgumentException("must be > 0", nameof(maxDepth));
 
             if (startNode is IHasDescendantNodes<TNode>)
-            {
-                // if startNode knows how to retrieve its descendants it self then use this.
                 return Enumerable.Concat(new[] { startNode }, startNode.Descendants(depthFirst, maxDepth - 1));
-            }
-            else
-            {
-                // otherwise build collection of descencdants by traversing the child nodes.
-                return startNode.DescendantsOrSelf(n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>(), depthFirst, maxDepth);
-            };
+
+            // startNode's implememtation doesn't provide an optimized accessor to its descendants. 
+            // just rely on the child nodes
+
+            return startNode.DescendantsOrSelf(n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>(), depthFirst, maxDepth);
         }
 
         #endregion Descendants/-OrSelf
