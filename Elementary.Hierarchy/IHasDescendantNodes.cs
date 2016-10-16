@@ -4,9 +4,9 @@ namespace Elementary.Hierarchy
 {
     /// <summary>
     /// This interface is meant to allow optimized retrieval of descendents at a specified maxmimum depth
-    /// compared to the sthraght forward approach of building a tree of descendants by visiting the child nodes
+    /// compared to the stright forward approach of building a tree of descendants by visiting the child nodes
     /// using <see cref="IHasChildNodes{TNode}"/>. This is useful if node data is stored in a database or has to
-    /// be retrieved a webservice.
+    /// be retrieved from a webservice.
     /// </summary>
     /// <typeparam name="TNode">Type of teh node to retrieve</typeparam>
     public interface IHasDescendantNodes<TNode> : IHasChildNodes<TNode>

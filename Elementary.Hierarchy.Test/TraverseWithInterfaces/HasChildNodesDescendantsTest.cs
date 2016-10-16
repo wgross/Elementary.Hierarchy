@@ -71,13 +71,13 @@
             Assert.IsNotNull(result);
             Assert.IsFalse(result.Any());
 
-            this.rightRightLeaf.Verify(n => n.HasChildNodes, Times.Once);
-            this.rightRightLeaf.Verify(n => n.ChildNodes, Times.Never);
+            this.rightRightLeaf.Verify(n => n.HasChildNodes, Times.Once());
+            this.rightRightLeaf.Verify(n => n.ChildNodes,Times.Never());
             this.rightRightLeaf.VerifyAll();
         }
 
         [Test]
-        public void IHasChildNodes_inconsitent_leaf_returns_no_children_on_Descendants()
+        public void IHasChildNodes_inconsistent_leaf_returns_no_children_on_Descendants()
         {
             // ARRANGE
 
@@ -95,8 +95,8 @@
 
             Assert.AreEqual(0, result.Count());
 
-            badLeaf.Verify(n => n.HasChildNodes, Times.Once);
-            badLeaf.Verify(n => n.ChildNodes, Times.Once);
+            badLeaf.Verify(n => n.HasChildNodes, Times.Once());
+            badLeaf.Verify(n => n.ChildNodes, Times.Once());
         }
 
         [Test]
@@ -199,7 +199,7 @@
         }
 
         [Test]
-        public void IHasChildNodes_root_throws_on_level0_on_Descendants()
+        public void IHasChildNodes_root_throws_ArgumentException_on_level0_on_Descendants()
         {
             // ACT
 

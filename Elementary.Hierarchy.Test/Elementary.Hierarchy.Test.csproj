@@ -57,10 +57,11 @@
     <Compile Include="TraverseWithDelegates\GenericNodeVisitDescendantsTest.cs" />
     <Compile Include="TraverseWithDelegates\GenericNodeDescendantAtTest.cs" />
     <Compile Include="TraverseWithDelegates\GenericNodeParentAndChildNodesFollowingSiblingTest.cs" />
+    <Compile Include="TraverseWithInterfaces\HasDescendantsDescendantsTest.cs" />
     <Compile Include="TraverseWithInterfaces\HasChildNodesLeavesTest.cs" />
     <Compile Include="TraverseWithInterfaces\HasIdentifiableChildNodesDescendantAtOrDefaultTest.cs" />
     <Compile Include="TraverseWithInterfaces\HasIdentifiableChildNodesVisitDescendantAtAndAncestorsTest.cs" />
-    <Compile Include="TraverseWithInterfaces\HasDescendantsOrSelfTest.cs" />
+    <Compile Include="TraverseWithInterfaces\HasDescendantsDescendantsOrSelfTest.cs" />
     <Compile Include="TraverseWithInterfaces\HasChildNodesVisitDescendantsTest.cs" />
     <Compile Include="TraverseWithInterfaces\HasDescendantsTest.cs" />
     <Compile Include="TraverseWithInterfaces\HasIdentifiableChildNodesDescendAlongPathTest.cs" />

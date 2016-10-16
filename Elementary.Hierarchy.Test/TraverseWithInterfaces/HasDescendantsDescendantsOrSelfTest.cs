@@ -1,15 +1,16 @@
-﻿using Moq;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
+﻿namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 {
-    public class HasDescendantTest
+    using Moq;
+    using NUnit.Framework;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    [TestFixture]
+    public class HasDescendantsDescendantsOrSelfTest
     {
         public interface MockableNodeType : IHasDescendantNodes<MockableNodeType>
-        { }
+        {
+        }
 
         private Mock<MockableNodeType> rootNode;
         private Mock<MockableNodeType> leftNode;
@@ -88,16 +89,17 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
         }
 
         [Test]
-        public void IHasDescendentNodes_leaf_returns_no_children_on_Descendants()
+        public void IHasDescendentNodes_leaf_returns_itself_on_DescendantsOrSelf()
         {
             // ACT
 
-            IEnumerable<MockableNodeType> result = this.rightRightLeaf.Object.Descendants().ToArray();
+            IEnumerable<MockableNodeType> result = this.rightRightLeaf.Object.DescendantsOrSelf().ToArray();
 
             // ASSERT
 
             Assert.IsNotNull(result);
-            Assert.IsFalse(result.Any());
+            Assert.AreEqual(1, result.Count());
+            Assert.AreSame(this.rightRightLeaf.Object, result.ElementAt(0));
 
             this.rightRightLeaf.Verify(n => n.GetDescendants(false, int.MaxValue), Times.Once());
             this.rightRightLeaf.Verify(n => n.HasChildNodes,Times.Never());
@@ -105,16 +107,16 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
         }
 
         [Test]
-        public void IHasDescendentNodes_node_returns_single_child_on_Descendants()
+        public void IHasDescendentNodes_leaf_returns_single_child_on_DescendantsOrSelf()
         {
             // ACT
 
-            IEnumerable<MockableNodeType> result = this.leftNode.Object.Descendants().ToArray();
+            IEnumerable<MockableNodeType> result = this.leftNode.Object.DescendantsOrSelf().ToArray();
 
             // ASSERT
 
-            Assert.AreEqual(1, result.Count());
-            Assert.AreSame(this.leftLeaf.Object, result.ElementAt(0));
+            Assert.AreEqual(2, result.Count());
+            CollectionAssert.AreEqual(new[] { this.leftNode.Object, this.leftLeaf.Object }, result);
 
             this.leftNode.Verify(n => n.GetDescendants(false, int.MaxValue), Times.Once());
             this.leftNode.Verify(n => n.HasChildNodes,Times.Never());
@@ -126,16 +128,16 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
         }
 
         [Test]
-        public void IHasDescendentNodes_node_returns_left_child_first_on_Descendants()
+        public void IHasDescendentNodes_leaf_returns_left_before_right_child_on_DescendantsOrSelf()
         {
             // ACT
 
-            IEnumerable<MockableNodeType> result = this.rightNode.Object.Descendants();
+            IEnumerable<MockableNodeType> result = this.rightNode.Object.DescendantsOrSelf();
 
             // ASSERT
 
-            Assert.AreEqual(2, result.Count());
-            CollectionAssert.AreEqual(new[] { this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result);
+            Assert.AreEqual(3, result.Count());
+            CollectionAssert.AreEqual(new[] { this.rightNode.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result);
 
             this.rightNode.Verify(n => n.GetDescendants(false, int.MaxValue), Times.Once());
             this.rightNode.Verify(n => n.HasChildNodes,Times.Never());
@@ -151,23 +153,23 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
         }
 
         [Test]
-        public void IHasDescendentNodes_root_returns_descendants_breadthFirst_on_Descendants()
+        public void IHasDescendentNodes_leaf_returns_descendants_breadthFirst_on_DescendantsOrSelf()
         {
             // ACT
 
-            IEnumerable<MockableNodeType> result = this.rootNode.Object.Descendants().ToArray();
+            IEnumerable<MockableNodeType> result = this.rootNode.Object.DescendantsOrSelf().ToArray();
 
             // ASSERT
 
-            Assert.AreEqual(5, result.Count());
-            CollectionAssert.AreEqual(new[]
-            {
-                this.leftNode.Object,
-                this.rightNode.Object,
-                this.leftLeaf.Object,
-                this.leftRightLeaf.Object,
-                this.rightRightLeaf.Object
-            }, result);
+            Assert.AreEqual(6, result.Count());
+            CollectionAssert.AreEqual(new[] {
+                this.rootNode,
+                this.leftNode,
+                this.rightNode,
+                this.leftLeaf,
+                this.leftRightLeaf,
+                this.rightRightLeaf
+            }.Select(n => n.Object), result);
 
             this.rootNode.Verify(n => n.GetDescendants(false, int.MaxValue), Times.Once());
             this.rootNode.Verify(n => n.HasChildNodes,Times.Never());
@@ -177,13 +179,13 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
             this.leftNode.Verify(n => n.HasChildNodes,Times.Never());
             this.leftNode.Verify(n => n.ChildNodes,Times.Never());
 
-            this.rightNode.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
-            this.rightNode.Verify(n => n.HasChildNodes,Times.Never());
-            this.rightNode.Verify(n => n.ChildNodes,Times.Never());
-
             this.leftLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
             this.leftLeaf.Verify(n => n.HasChildNodes,Times.Never());
             this.leftLeaf.Verify(n => n.ChildNodes,Times.Never());
+
+            this.rightNode.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
+            this.rightNode.Verify(n => n.HasChildNodes,Times.Never());
+            this.rightNode.Verify(n => n.ChildNodes,Times.Never());
 
             this.leftRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
             this.leftRightLeaf.Verify(n => n.HasChildNodes,Times.Never());
@@ -195,16 +197,17 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
         }
 
         [Test]
-        public void IHasDescendentNodes_root_returns_descendants_depthFirst_on_Descendants()
+        public void IHasDescendentNodes_leaf_returns_descendants_depthFirst_on_DescendantsOrSelf()
         {
             // ACT
 
-            IEnumerable<MockableNodeType> result = this.rootNode.Object.Descendants(depthFirst: true).ToArray();
+            IEnumerable<MockableNodeType> result = this.rootNode.Object.DescendantsOrSelf(depthFirst: true).ToArray();
 
             // ASSERT
 
-            Assert.AreEqual(5, result.Count());
+            Assert.AreEqual(6, result.Count());
             CollectionAssert.AreEqual(new[] {
+                this.rootNode,
                 this.leftNode,
                 this.leftLeaf,
                 this.rightNode,
@@ -220,13 +223,13 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
             this.leftNode.Verify(n => n.HasChildNodes,Times.Never());
             this.leftNode.Verify(n => n.ChildNodes,Times.Never());
 
-            this.rightNode.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
-            this.rightNode.Verify(n => n.HasChildNodes,Times.Never());
-            this.rightNode.Verify(n => n.ChildNodes,Times.Never());
-
             this.leftLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
             this.leftLeaf.Verify(n => n.HasChildNodes,Times.Never());
             this.leftLeaf.Verify(n => n.ChildNodes,Times.Never());
+
+            this.rightNode.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
+            this.rightNode.Verify(n => n.HasChildNodes,Times.Never());
+            this.rightNode.Verify(n => n.ChildNodes,Times.Never());
 
             this.leftRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
             this.leftRightLeaf.Verify(n => n.HasChildNodes,Times.Never());
@@ -238,64 +241,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
         }
 
         [Test]
-        public void IHasDescendentNodes_root_returns_children_as_level1_descendants_on_Descendants()
-        {
-            // ACT
-
-            var descendants = this.rootNode.Object.Descendants(maxDepth: 1).ToArray();
-            var children = this.rootNode.Object.Children().ToArray();
-
-            // ASSERT
-
-            CollectionAssert.AreEqual(children, descendants);
-        }
-
-        [Test]
-        public void IHasDescendentNodes_root_throws_on_level0_on_Descendants()
-        {
-            // ACT
-
-            ArgumentException ex = Assert.Throws<ArgumentException>(() => this.rootNode.Object.Descendants(maxDepth: -1));
-            MockableNodeType[] result = this.rootNode.Object.Descendants(maxDepth: 0).ToArray();
-
-            // ASSERT
-
-            Assert.IsTrue(ex.Message.Contains("must be > 0"));
-            Assert.AreEqual("maxDepth", ex.ParamName);
-            Assert.IsFalse(result.Any());
-        }
-
-        [Test]
-        public void IHasDescendentNodes_root_returns_all_descendants_on_highLevel_breadthFirst_on_Descendants()
-        {
-            // ACT
-
-            MockableNodeType[] result = this.rootNode.Object.Descendants(maxDepth: 3).ToArray();
-
-            // ASSERT
-
-            CollectionAssert.AreEqual(new[] { this.leftNode.Object, this.rightNode.Object, this.leftLeaf.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result);
-        }
-
-        [Test]
-        public void IHasDescendentNodes_root_returns_all_descendants_on_highLevel_depthFirst_on_Descendants()
-        {
-            // ACT
-
-            MockableNodeType[] result = this.rootNode.Object.Descendants(maxDepth: 3, depthFirst: true).ToArray();
-
-            // ASSERT
-
-            CollectionAssert.AreEqual(new[] {
-                this.leftNode.Object,
-                this.leftLeaf.Object,
-                this.rightNode.Object,
-                this.leftRightLeaf.Object,
-                this.rightRightLeaf.Object }, result);
-        }
-
-        [Test]
-        public void IHasDescendentNodes_DescendantsLevel1AreChildren_on_Descendants()
+        public void IHasDescendentNodes_DescendantsOrSelfLevel2AreChildren_on_DescendantsOrSelf()
         {
             // ARRANGE
 
@@ -316,7 +262,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 
             // ACT
 
-            var descendantsOrSelf = this.rootNode.Object.Descendants(maxDepth: 1).ToArray();
+            var descendantsOrSelf = this.rootNode.Object.DescendantsOrSelf(maxDepth: 2).Skip(1).ToArray();
             var children = this.rootNode.Object.Children().ToArray();
 
             // ASSERT

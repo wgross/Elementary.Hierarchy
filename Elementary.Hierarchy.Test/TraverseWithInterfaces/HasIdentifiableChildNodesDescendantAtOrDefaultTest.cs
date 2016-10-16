@@ -61,7 +61,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
             Assert.AreEqual(HierarchyPath.Create<int>(), foundNodePath);
 
             MockableNodeType childNode;
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Never);
+            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode),Times.Never());
         }
 
         [Test]

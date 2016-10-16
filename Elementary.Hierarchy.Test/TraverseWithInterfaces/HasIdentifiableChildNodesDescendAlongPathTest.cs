@@ -30,7 +30,7 @@
             Assert.IsTrue(result.Any());
 
             MockableNodeType childNode;
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once);
+            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once());
         }
 
         [Test]
@@ -53,7 +53,7 @@
             Assert.IsNotNull(result);
             CollectionAssert.AreEqual(new[] { this.startNode.Object, childNode }, result);
 
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once);
+            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once());
         }
 
         [Test]
@@ -82,8 +82,8 @@
 
             CollectionAssert.AreEqual(new[] { this.startNode.Object, childNode, subChildNode }, result);
 
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once);
-            childNodeMock.Verify(n => n.TryGetChildNode(2, out subChildNode), Times.Once);
+            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once());
+            childNodeMock.Verify(n => n.TryGetChildNode(2, out subChildNode), Times.Once());
         }
 
         [Test]
@@ -103,7 +103,7 @@
             CollectionAssert.AreEqual(new[] { this.startNode.Object }, result);
 
             MockableNodeType childNode;
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once);
+            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once());
         }
     }
 }

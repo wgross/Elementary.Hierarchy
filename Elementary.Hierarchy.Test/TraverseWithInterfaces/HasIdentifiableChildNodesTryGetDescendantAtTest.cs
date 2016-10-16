@@ -38,7 +38,7 @@
             Assert.IsTrue(result);
             Assert.IsNotNull(resultNode);
             Assert.AreSame(childNode, resultNode);
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once);
+            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once());
         }
 
         [Test]
@@ -82,8 +82,8 @@
 
             Assert.IsTrue(result);
             Assert.AreSame(subChildNode, resultNode);
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once);
-            childNodeMock.Verify(n => n.TryGetChildNode(2, out subChildNode), Times.Once);
+            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once());
+            childNodeMock.Verify(n => n.TryGetChildNode(2, out subChildNode), Times.Once());
         }
 
         [Test]

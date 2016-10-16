@@ -46,7 +46,7 @@
                 throw new ArgumentException("must be > 0", nameof(maxDepth));
 
             return (
-                // if startNode knows how to retrieve its descendants it self then use this.
+                // if startNode knows how to retrieve its descendants itself then use this.
                 (startNode as IHasDescendantNodes<TNode>)?.GetDescendants(depthFirst.GetValueOrDefault(false), maxDepth.GetValueOrDefault(int.MaxValue))
             ) ?? (
                 // otherwise build collection of descencdants by traversing the child nodes.

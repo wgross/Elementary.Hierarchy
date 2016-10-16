@@ -71,8 +71,8 @@
             Assert.IsNotNull(result);
             Assert.AreEqual(1, result.Count());
 
-            this.rightRightLeaf.Verify(n => n.HasChildNodes, Times.Once);
-            this.rightRightLeaf.Verify(n => n.ChildNodes, Times.Never);
+            this.rightRightLeaf.Verify(n => n.HasChildNodes, Times.Once());
+            this.rightRightLeaf.Verify(n => n.ChildNodes,Times.Never());
         }
 
         [Test]
@@ -95,8 +95,8 @@
             Assert.AreEqual(1, result.Count());
             Assert.AreSame(badLeaf.Object, result.ElementAt(0));
 
-            badLeaf.Verify(n => n.HasChildNodes, Times.Once);
-            badLeaf.Verify(n => n.ChildNodes, Times.Once);
+            badLeaf.Verify(n => n.HasChildNodes, Times.Once());
+            badLeaf.Verify(n => n.ChildNodes, Times.Once());
         }
 
         [Test]
