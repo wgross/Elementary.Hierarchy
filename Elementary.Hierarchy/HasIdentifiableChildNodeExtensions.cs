@@ -52,8 +52,9 @@
         #region DescendantAtOrDefault
 
         /// <summary>
-        /// Returns the node identified by the specified <paramref name="path"/> or calls the <paramref name="createDefault"/> delegate.
-        /// If no delegate was specified detault(TNode) is returned.
+        /// Retrieves a descendant of the <paramref name="startNode"/> specifed by the <paramref name="path"/> or returns a substitute value
+        /// Which can be supplied by the <paramref name="createDefault"/> delegate.
+        /// If no delegate was specified default(TNode) is returned.
         /// </summary>
         /// <typeparam name="TKey">Type of the hierarchy key</typeparam>
         /// <typeparam name="TNode">Type of the hierarchy node</typeparam>
@@ -69,14 +70,15 @@
         }
 
         /// <summary>
-        /// Returns the node identified by <paramref name="path"/>or calls the <paramref name="createDefault"/> delegate.
-        /// If such a node couldn't be identified, default(Tnode) is returned.
+        /// Retrieves a descendant of the <paramref name="startNode"/> specifed by the <paramref name="path"/> or returns a substitute value
+        /// Which can be supplied by the <paramref name="createDefault"/> delegate.
+        /// If no delegate was specified default(TNode) is returned.
         /// </summary>
         /// <typeparam name="TKey">Type of the hierarchy key</typeparam>
         /// <typeparam name="TNode">Type of the hierarchy node</typeparam>
         /// <param name="startNode">node instance to start search at</param>
         /// <param name="path">hierarchy key to search</param>
-        /// <param name="foundKey">Contains the treekey of the node where the search stopped</param>
+        /// <param name="foundKey">Contains the path of the node where the search stopped</param>
         /// <param name="createDefault">factory delegate to return a substitute value instead of the requested node</param>
         /// <returns>TNode instance behind key or default(TNode)</returns>
         public static TNode DescendantAtOrDefault<TKey, TNode>(this TNode startNode, HierarchyPath<TKey> path, out HierarchyPath<TKey> foundKey, Func<TNode> createDefault = null)
@@ -180,7 +182,7 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="startNode">node instance to start search at</param>
         /// <param name="path">hierarchy key to search</param>
         /// <param name="tryGetChildNode">delegate which implements the child node retrieval for the TNode instances</param>
-        /// <param name="descendantAt">contains the wanted descandant node of the search was succesful</param>
+        /// <param name="descendantAt">contains the wanted descendant node of the search was succesful</param>
         /// <returns>true if node was found, false otherwise</returns>
         public static bool TryGetDescendantAt<TKey, TNode>(this TNode startNode, TryGetChildNode<TKey, TNode> tryGetChildNode, HierarchyPath<TKey> path, out TNode descendantAt)
         {
@@ -201,8 +203,9 @@ namespace Elementary.Hierarchy.Generic
         #region DescendantAtOrDefault
 
         /// <summary>
-        /// Returns the node identified by the specified <paramref name="path"/>.
-        /// If such a node couldn't be identified, default(Tnode) is returned.
+        /// Retrieves a descendant of the <paramref name="startNode"/> specifed by the <paramref name="path"/> or returns a substitute value
+        /// Which can be supplied by the <paramref name="createDefault"/> delegate.
+        /// If no delegate was specified default(TNode) is returned.
         /// </summary>
         /// <typeparam name="TKey"></typeparam>
         /// <typeparam name="TNode"></typeparam>
@@ -218,8 +221,9 @@ namespace Elementary.Hierarchy.Generic
         }
 
         /// <summary>
-        /// Returns the node identified by the specified <paramref name="path"/> or the TNode returned by <paramref name="createDefault"/>.
-        /// If such a node couldn't be identified, default(Tnode) is returned.
+        /// Retrieves a descendant of the <paramref name="startNode"/> specifed by the <paramref name="path"/> or returns a substitute value
+        /// Which can be supplied by the <paramref name="createDefault"/> delegate.
+        /// If no delegate was specified default(TNode) is returned.
         /// </summary>
         /// <typeparam name="TKey">Type of the hierarchy key</typeparam>
         /// <typeparam name="TNode">Type of the hierarchy node</typeparam>

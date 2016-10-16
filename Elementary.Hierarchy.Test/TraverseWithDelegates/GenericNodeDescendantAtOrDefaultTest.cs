@@ -127,5 +127,35 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
             Assert.IsNull(result2);
             Assert.AreEqual(HierarchyPath.Create<string>(), foundNodePath);
         }
+
+        [Test]
+        public void D_root_returns_substitute_on_invalid_childId_on_DescendantOrDefault()
+        {
+            // ARRANGE
+
+            var nodeHierarchy = (TryGetChildNode<string, string>)(delegate (string node, string key, out string childNode)
+            {
+                if (node == "startNode")
+                {
+                    childNode = null;
+                    return false;
+                }
+
+                throw new InvalidOperationException("unknown node");
+            });
+
+            // ACT
+
+            string result1 = "startNode".DescendantAtOrDefault(nodeHierarchy, HierarchyPath.Create("childNode"),createDefault:()=> "substitute");
+
+            HierarchyPath<string> foundNodePath;
+            string result2 = "startNode".DescendantAtOrDefault(nodeHierarchy, HierarchyPath.Create("childNode"), out foundNodePath, createDefault: () => "substitute");
+
+            // ASSERT
+
+            Assert.AreEqual("substitute", result1);
+            Assert.AreEqual("substitute", result2);
+            Assert.AreEqual(HierarchyPath.Create<string>(), foundNodePath);
+        }
     }
 }

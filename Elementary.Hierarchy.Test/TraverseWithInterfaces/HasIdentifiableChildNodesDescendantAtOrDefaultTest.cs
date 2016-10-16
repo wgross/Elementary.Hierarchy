@@ -122,5 +122,33 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
             Assert.AreEqual(HierarchyPath.Create<int>(), foundNodePath);
             this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Exactly(2));
         }
+
+        [Test]
+        public void I_root_returns_substitute_on_invalid_childId_on_DescendantOrDefault()
+        {
+            // ARRANGE
+
+            MockableNodeType childNode = new Mock<MockableNodeType>().Object;
+
+            this.startNode
+                .Setup(n => n.TryGetChildNode(1, out childNode))
+                .Returns(false);
+
+            MockableNodeType substitute = new Mock<MockableNodeType>().Object;
+
+            // ACT
+
+            MockableNodeType result1 = this.startNode.Object.DescendantAtOrDefault(HierarchyPath.Create(1), createDefault:() => substitute);
+
+            HierarchyPath<int> foundNodePath;
+            MockableNodeType result2 = this.startNode.Object.DescendantAtOrDefault(HierarchyPath.Create(1), out foundNodePath, createDefault:() => substitute);
+
+            // ASSERT
+
+            Assert.AreSame(substitute, result1);
+            Assert.AreSame(substitute, result2);
+            Assert.AreEqual(HierarchyPath.Create<int>(), foundNodePath);
+            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Exactly(2));
+        }
     }
 }
