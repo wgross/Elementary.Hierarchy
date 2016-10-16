@@ -5,7 +5,7 @@
     using System.Collections.Generic;
 
     /// <summary>
-    /// Provides extsions to the interface <see cref="IHasIdentifiableChildNodes{TKey, TNode}"/>
+    /// Provides extensions to the interface <see cref="IHasIdentifiableChildNodes{TKey, TNode}"/>
     /// </summary>
     public static class HasIdentifiableChildNodeExtensions
     {
@@ -140,7 +140,7 @@ namespace Elementary.Hierarchy.Generic
     using System.Linq;
 
     /// <summary>
-    /// Provided extensions to any type which may support the concept of haing 'identifieable children' using delegates.
+    /// Provides extensions to any type which may support the concept of haing 'identifieable children' using delegates.
     /// </summary>
     public static class HasIdentifiableChildNodeExtensions
     {
@@ -282,23 +282,24 @@ namespace Elementary.Hierarchy.Generic
         #region VisitDescendantAtAndAncestors
 
         /// <summary>
-        /// The algorithm descends to the specified descendant and presents it to the visitor delegate.
-        /// Afterwards it ascends along the path and presents the ancestors of the descendant until the startNode is reached.
+        /// A descendent of the <paramref name="startNode"/> is presented to the <paramref name="visitDescendantAt"/>. 
+        /// Afterwards all ancestors are presented to <paramref name="visitAncestor"/> until the <paramref name="startNode"/> is reached.
+        /// if the <paramref name="startNode"/> is also the descendant to visit, it isn't presented to <paramref name="visitAncestor"/>.
         /// </summary>
         /// <typeparam name="TKey"></typeparam>
         /// <typeparam name="TNode"></typeparam>
         /// <param name="startNode">the tree node to start to descend</param>
         /// <param name="tryGetChildNode">the method to retreev child nodes from a parent node</param>
         /// <param name="path">specified the path to descend along from the start node</param>
-        /// <param name="visitDescendantAt">the visitor to call at teh descandant</param>
-        /// <param name="visitAncestors">the visitor to call for all ancestors</param>
-        public static void VisitDescandantAtAndAncestors<TKey, TNode>(this TNode startNode, TryGetChildNode<TKey, TNode> tryGetChildNode, HierarchyPath<TKey> path, Action<TNode> visitDescendantAt, Action<TNode> visitAncestors)
+        /// <param name="visitDescendantAt">the visitor to call at the descandant</param>
+        /// <param name="visitAncestor">the visitor to call for all ancestors</param>
+        public static void VisitDescandantAtAndAncestors<TKey, TNode>(this TNode startNode, TryGetChildNode<TKey, TNode> tryGetChildNode, HierarchyPath<TKey> path, Action<TNode> visitDescendantAt, Action<TNode> visitAncestor)
         {
             if (visitDescendantAt == null)
                 throw new ArgumentNullException(nameof(visitDescendantAt));
 
-            if (visitAncestors == null)
-                throw new ArgumentNullException(nameof(visitAncestors));
+            if (visitAncestor == null)
+                throw new ArgumentNullException(nameof(visitAncestor));
 
             var ancestors = new Stack<TNode>(new[] { startNode });
 
@@ -315,7 +316,7 @@ namespace Elementary.Hierarchy.Generic
             // and afterwards all ancestors are presented.
             visitDescendantAt(ancestors.Pop());
             while (ancestors.Any())
-                visitAncestors(ancestors.Pop());
+                visitAncestor(ancestors.Pop());
         }
 
         #endregion VisitDescendantAtAndAncestors

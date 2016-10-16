@@ -20,10 +20,8 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
             this.startNode = new Mock<MockableNodeType>();
         }
 
-        #region VisitDescandantAtAndAncestors
-
         [Test]
-        public void I_visit_the_root_node_with_VisitDescandantAtAndAncestors()
+        public void I_visit_the_root_node_as_descendant_once_on_VisitDescandantAtAndAncestors()
         {
             // ACT
 
@@ -91,7 +89,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
         }
 
         [Test]
-        public void I_no_vistor_throws_on_null_descandantVisitor_VisitDescandantAtAndAncestors()
+        public void I_throws_ArgumentNullException_on_null_descandantVisitor_VisitDescandantAtAndAncestors()
         {
             // ACT & ASSERT
 
@@ -102,7 +100,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
         }
 
         [Test]
-        public void I_no_vistor_throws_on_null_ancestorsVisitor_VisitDescandantAtAndAncestors()
+        public void I_throws_ArgumentNullException_on_null_ancestorVisitor_VisitDescandantAtAndAncestors()
         {
             // ACT & ASSERT
 
@@ -110,11 +108,11 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
             var result = Assert.Throws<ArgumentNullException>(() => startNode.Object
                 .VisitDescandantAtAndAncestors(HierarchyPath.Create<string>(), visitDescendantAt: d => descendant = d, visitAncestors: null));
 
-            Assert.AreEqual("visitAncestors", result.ParamName);
+            Assert.AreEqual("visitAncestor", result.ParamName);
         }
 
         [Test]
-        public void I_visit_a_roots_child_throws_on_invalid_path_with_VisitDescandantAtAndAncestors()
+        public void I_throws_KeyNotFoundException_on_invalid_path_on_VisitDescandantAtAndAncestors()
         {
             // ACT & ASSERT
 
@@ -125,7 +123,5 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
             Assert.That(result.Message.Contains("'childNode'"));
         }
-
-        #endregion VisitDescandantAtAndAncestors
     }
 }

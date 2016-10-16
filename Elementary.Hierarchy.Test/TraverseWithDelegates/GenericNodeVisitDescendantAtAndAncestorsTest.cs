@@ -9,7 +9,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
     public class GenericNodeVisitDescendantAtAndAncestorsTest
     {
         [Test]
-        public void D_visit_the_root_node_with_VisitDescandantAtAndAncestors()
+        public void D_visit_the_root_node_as_descendant_once_on_VisitDescandantAtAndAncestors()
         {
             // ARRANGE
 
@@ -23,7 +23,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
             string descendant = null;
             string ancestor = null; ;
             "startNode".VisitDescandantAtAndAncestors(nodeHierarchy,
-                HierarchyPath.Create<string>(), visitDescendantAt: d => descendant = d, visitAncestors: a => ancestor = a);
+                HierarchyPath.Create<string>(), visitDescendantAt: d => descendant = d, visitAncestor: a => ancestor = a);
 
             // ASSERT
 
@@ -32,7 +32,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
         }
 
         [Test]
-        public void D_visit_a_roots_child_node_with_VisitDescandantAtAndAncestors()
+        public void D_visit_a_roots_child_node_on_VisitDescandantAtAndAncestors()
         {
             // ARRANGE
 
@@ -52,7 +52,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
             string descendant = null;
             string ancestor = null;
             "startNode".VisitDescandantAtAndAncestors(nodeHierarchy,
-                HierarchyPath.Create("childNode"), visitDescendantAt: d => descendant = d, visitAncestors: a => ancestor = a);
+                HierarchyPath.Create("childNode"), visitDescendantAt: d => descendant = d, visitAncestor: a => ancestor = a);
 
             // ASSERT
 
@@ -61,7 +61,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
         }
 
         [Test]
-        public void D_visit_a_roots_grandchild_node_with_VisitDescandantAtAndAncestors()
+        public void D_visit_a_roots_grandchild_node_on_VisitDescandantAtAndAncestors()
         {
             // ARRANGE
 
@@ -86,7 +86,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
             string descendant = null;
             var ancestors = new List<string>();
             "startNode".VisitDescandantAtAndAncestors(nodeHierarchy,
-                HierarchyPath.Create("childNode", "grandChild"), visitDescendantAt: d => descendant = d, visitAncestors: a => ancestors.Add(a));
+                HierarchyPath.Create("childNode", "grandChild"), visitDescendantAt: d => descendant = d, visitAncestor: a => ancestors.Add(a));
 
             // ASSERT
 
@@ -95,7 +95,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
         }
 
         [Test]
-        public void D_no_vistor_throws_on_null_descandantVisitor_VisitDescandantAtAndAncestors()
+        public void D_throws_ArgumentNullException_on_null_descandantVisitor_VisitDescandantAtAndAncestors()
         {
             // ARRANGE
 
@@ -108,7 +108,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
             var ancestors = new List<string>();
             var result = Assert.Throws<ArgumentNullException>(() => "startNode".VisitDescandantAtAndAncestors(nodeHierarchy,
-                HierarchyPath.Create<string>(), visitDescendantAt: null, visitAncestors: a => ancestors.Add(a)));
+                HierarchyPath.Create<string>(), visitDescendantAt: null, visitAncestor: a => ancestors.Add(a)));
 
             // ASSERT
 
@@ -116,7 +116,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
         }
 
         [Test]
-        public void D_no_vistor_throws_on_null_ancestorsVisitor_VisitDescandantAtAndAncestors()
+        public void D_throws_ArgumentNullException_on_null_ancestorVisitor_VisitDescandantAtAndAncestors()
         {
             // ARRANGE
 
@@ -130,15 +130,15 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
             string descendantAt = null;
             var ancestors = new List<string>();
             var result = Assert.Throws<ArgumentNullException>(() => "startNode".VisitDescandantAtAndAncestors(nodeHierarchy,
-                HierarchyPath.Create<string>(), visitDescendantAt: d => descendantAt = d, visitAncestors: null));
+                HierarchyPath.Create<string>(), visitDescendantAt: d => descendantAt = d, visitAncestor: null));
 
             // ASSERT
 
-            Assert.AreEqual("visitAncestors", result.ParamName);
+            Assert.AreEqual("visitAncestor", result.ParamName);
         }
 
         [Test]
-        public void D_visit_a_roots_child_throws_on_invalid_path_with_VisitDescandantAtAndAncestors()
+        public void D_throws_KeyNotFoundException_on_invalid_path_on_VisitDescandantAtAndAncestors()
         {
             // ARRANGE
 
@@ -158,7 +158,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
             string descendant = null;
             string ancestor = null;
             var result = Assert.Throws<KeyNotFoundException>(() => "startNode".VisitDescandantAtAndAncestors(nodeHierarchy,
-                HierarchyPath.Create("childNode"), visitDescendantAt: d => descendant = d, visitAncestors: a => ancestor = a));
+                HierarchyPath.Create("childNode"), visitDescendantAt: d => descendant = d, visitAncestor: a => ancestor = a));
 
             Assert.That(result.Message.Contains("'childNode'"));
         }
