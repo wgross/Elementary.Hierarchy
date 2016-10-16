@@ -11,14 +11,16 @@ Install-Package Elementary.Hierarchy
 ```
 ## Hierarchy Traversal
 
-Elementary.Hierarchy knows how to traverse two kinds of trees. The first kind is build from nodes which implement the interfaces defined by Elementary.Hierarchy. Each of these interfaces enables traversal agorithms on every node: 
+Elementary.Hierarchy knows how to traverse two kinds of trees. 
+The first kind is build from nodes which implement the interfaces defined by Elementary.Hierarchy. Each of these interfaces enables traversal agorithms on every node: 
 
 * __IHasParentNode__ enables _Parent()_ and _Ancestors()_
 * __IHasChildNodes__ enables _Children()_ and _Descendants(depthFirst:{true|false})_
 * __IHasIdentifieableChildNodes__ enables _DescendantAt()_, _DescendAlongPath()_
 * __IHasChildNodes__ and __IHasParentNode__ together enables _FollowingSibings()_ and _PrecedingSiblings()_
 
-A second kind of implementaion doesn't rely on interfaces but on delegate providing the logic to traverse the child or parent axis of the tree. An Example:
+A second kind of implementation doesn't rely on interfaces but on a delegate providing the logic to traverse the child or parent axis of the tree. in other word: its not the node which nows is children pr parent but a delegate provides this information. By seperating the node itself from the tree structure a hierarchy can be implemented on any class or value type.
+An Example implements a small tree with strings:
 
 ```csharp
 using Elementary.Hierarchy.Generic
