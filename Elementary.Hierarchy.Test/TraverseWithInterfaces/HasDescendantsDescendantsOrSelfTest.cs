@@ -102,8 +102,8 @@
             Assert.AreSame(this.rightRightLeaf.Object, result.ElementAt(0));
 
             this.rightRightLeaf.Verify(n => n.GetDescendants(false, int.MaxValue), Times.Once());
-            this.rightRightLeaf.Verify(n => n.HasChildNodes,Times.Never());
-            this.rightRightLeaf.Verify(n => n.ChildNodes,Times.Never());
+            this.rightRightLeaf.Verify(n => n.HasChildNodes, Times.Never());
+            this.rightRightLeaf.Verify(n => n.ChildNodes, Times.Never());
         }
 
         [Test]
@@ -119,12 +119,12 @@
             CollectionAssert.AreEqual(new[] { this.leftNode.Object, this.leftLeaf.Object }, result);
 
             this.leftNode.Verify(n => n.GetDescendants(false, int.MaxValue), Times.Once());
-            this.leftNode.Verify(n => n.HasChildNodes,Times.Never());
-            this.leftNode.Verify(n => n.ChildNodes,Times.Never());
+            this.leftNode.Verify(n => n.HasChildNodes, Times.Never());
+            this.leftNode.Verify(n => n.ChildNodes, Times.Never());
 
-            this.leftLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
-            this.leftLeaf.Verify(n => n.HasChildNodes,Times.Never());
-            this.leftLeaf.Verify(n => n.ChildNodes,Times.Never());
+            this.leftLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never());
+            this.leftLeaf.Verify(n => n.HasChildNodes, Times.Never());
+            this.leftLeaf.Verify(n => n.ChildNodes, Times.Never());
         }
 
         [Test]
@@ -140,16 +140,16 @@
             CollectionAssert.AreEqual(new[] { this.rightNode.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result);
 
             this.rightNode.Verify(n => n.GetDescendants(false, int.MaxValue), Times.Once());
-            this.rightNode.Verify(n => n.HasChildNodes,Times.Never());
-            this.rightNode.Verify(n => n.ChildNodes,Times.Never());
+            this.rightNode.Verify(n => n.HasChildNodes, Times.Never());
+            this.rightNode.Verify(n => n.ChildNodes, Times.Never());
 
-            this.leftRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
-            this.leftRightLeaf.Verify(n => n.HasChildNodes,Times.Never());
-            this.leftRightLeaf.Verify(n => n.ChildNodes,Times.Never());
+            this.leftRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never());
+            this.leftRightLeaf.Verify(n => n.HasChildNodes, Times.Never());
+            this.leftRightLeaf.Verify(n => n.ChildNodes, Times.Never());
 
-            this.rightRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
-            this.rightRightLeaf.Verify(n => n.HasChildNodes,Times.Never());
-            this.rightRightLeaf.Verify(n => n.ChildNodes,Times.Never());
+            this.rightRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never());
+            this.rightRightLeaf.Verify(n => n.HasChildNodes, Times.Never());
+            this.rightRightLeaf.Verify(n => n.ChildNodes, Times.Never());
         }
 
         [Test]
@@ -172,28 +172,28 @@
             }.Select(n => n.Object), result);
 
             this.rootNode.Verify(n => n.GetDescendants(false, int.MaxValue), Times.Once());
-            this.rootNode.Verify(n => n.HasChildNodes,Times.Never());
-            this.rootNode.Verify(n => n.ChildNodes,Times.Never());
+            this.rootNode.Verify(n => n.HasChildNodes, Times.Never());
+            this.rootNode.Verify(n => n.ChildNodes, Times.Never());
 
-            this.leftNode.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
-            this.leftNode.Verify(n => n.HasChildNodes,Times.Never());
-            this.leftNode.Verify(n => n.ChildNodes,Times.Never());
+            this.leftNode.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never());
+            this.leftNode.Verify(n => n.HasChildNodes, Times.Never());
+            this.leftNode.Verify(n => n.ChildNodes, Times.Never());
 
-            this.leftLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
-            this.leftLeaf.Verify(n => n.HasChildNodes,Times.Never());
-            this.leftLeaf.Verify(n => n.ChildNodes,Times.Never());
+            this.leftLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never());
+            this.leftLeaf.Verify(n => n.HasChildNodes, Times.Never());
+            this.leftLeaf.Verify(n => n.ChildNodes, Times.Never());
 
-            this.rightNode.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
-            this.rightNode.Verify(n => n.HasChildNodes,Times.Never());
-            this.rightNode.Verify(n => n.ChildNodes,Times.Never());
+            this.rightNode.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never());
+            this.rightNode.Verify(n => n.HasChildNodes, Times.Never());
+            this.rightNode.Verify(n => n.ChildNodes, Times.Never());
 
-            this.leftRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
-            this.leftRightLeaf.Verify(n => n.HasChildNodes,Times.Never());
-            this.leftRightLeaf.Verify(n => n.ChildNodes,Times.Never());
+            this.leftRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never());
+            this.leftRightLeaf.Verify(n => n.HasChildNodes, Times.Never());
+            this.leftRightLeaf.Verify(n => n.ChildNodes, Times.Never());
 
-            this.rightRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
-            this.rightRightLeaf.Verify(n => n.HasChildNodes,Times.Never());
-            this.rightRightLeaf.Verify(n => n.ChildNodes,Times.Never());
+            this.rightRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never());
+            this.rightRightLeaf.Verify(n => n.HasChildNodes, Times.Never());
+            this.rightRightLeaf.Verify(n => n.ChildNodes, Times.Never());
         }
 
         [Test]
@@ -216,28 +216,28 @@
             }.Select(n => n.Object), result);
 
             this.rootNode.Verify(n => n.GetDescendants(true, int.MaxValue), Times.Once());
-            this.rootNode.Verify(n => n.HasChildNodes,Times.Never());
-            this.rootNode.Verify(n => n.ChildNodes,Times.Never());
+            this.rootNode.Verify(n => n.HasChildNodes, Times.Never());
+            this.rootNode.Verify(n => n.ChildNodes, Times.Never());
 
-            this.leftNode.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
-            this.leftNode.Verify(n => n.HasChildNodes,Times.Never());
-            this.leftNode.Verify(n => n.ChildNodes,Times.Never());
+            this.leftNode.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never());
+            this.leftNode.Verify(n => n.HasChildNodes, Times.Never());
+            this.leftNode.Verify(n => n.ChildNodes, Times.Never());
 
-            this.leftLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
-            this.leftLeaf.Verify(n => n.HasChildNodes,Times.Never());
-            this.leftLeaf.Verify(n => n.ChildNodes,Times.Never());
+            this.leftLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never());
+            this.leftLeaf.Verify(n => n.HasChildNodes, Times.Never());
+            this.leftLeaf.Verify(n => n.ChildNodes, Times.Never());
 
-            this.rightNode.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
-            this.rightNode.Verify(n => n.HasChildNodes,Times.Never());
-            this.rightNode.Verify(n => n.ChildNodes,Times.Never());
+            this.rightNode.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never());
+            this.rightNode.Verify(n => n.HasChildNodes, Times.Never());
+            this.rightNode.Verify(n => n.ChildNodes, Times.Never());
 
-            this.leftRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
-            this.leftRightLeaf.Verify(n => n.HasChildNodes,Times.Never());
-            this.leftRightLeaf.Verify(n => n.ChildNodes,Times.Never());
+            this.leftRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never());
+            this.leftRightLeaf.Verify(n => n.HasChildNodes, Times.Never());
+            this.leftRightLeaf.Verify(n => n.ChildNodes, Times.Never());
 
-            this.rightRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
-            this.rightRightLeaf.Verify(n => n.HasChildNodes,Times.Never());
-            this.rightRightLeaf.Verify(n => n.ChildNodes,Times.Never());
+            this.rightRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never());
+            this.rightRightLeaf.Verify(n => n.HasChildNodes, Times.Never());
+            this.rightRightLeaf.Verify(n => n.ChildNodes, Times.Never());
         }
 
         [Test]
@@ -273,21 +273,21 @@
             this.rootNode.Verify(n => n.HasChildNodes, Times.Once());
             this.rootNode.Verify(n => n.ChildNodes, Times.Once());
 
-            this.leftNode.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
-            this.leftNode.Verify(n => n.HasChildNodes,Times.Never());
-            this.leftNode.Verify(n => n.ChildNodes,Times.Never());
+            this.leftNode.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never());
+            this.leftNode.Verify(n => n.HasChildNodes, Times.Never());
+            this.leftNode.Verify(n => n.ChildNodes, Times.Never());
 
-            this.rightNode.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
-            this.rightNode.Verify(n => n.HasChildNodes,Times.Never());
-            this.rightNode.Verify(n => n.ChildNodes,Times.Never());
+            this.rightNode.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never());
+            this.rightNode.Verify(n => n.HasChildNodes, Times.Never());
+            this.rightNode.Verify(n => n.ChildNodes, Times.Never());
 
-            this.leftRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
-            this.leftRightLeaf.Verify(n => n.HasChildNodes,Times.Never());
-            this.leftRightLeaf.Verify(n => n.ChildNodes,Times.Never());
+            this.leftRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never());
+            this.leftRightLeaf.Verify(n => n.HasChildNodes, Times.Never());
+            this.leftRightLeaf.Verify(n => n.ChildNodes, Times.Never());
 
-            this.rightRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()),Times.Never());
-            this.rightRightLeaf.Verify(n => n.HasChildNodes,Times.Never());
-            this.rightRightLeaf.Verify(n => n.ChildNodes,Times.Never());
+            this.rightRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never());
+            this.rightRightLeaf.Verify(n => n.HasChildNodes, Times.Never());
+            this.rightRightLeaf.Verify(n => n.ChildNodes, Times.Never());
         }
     }
 }

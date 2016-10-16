@@ -37,7 +37,7 @@
             Assert.AreSame(startNode.Object, result.ElementAt(0));
 
             startNode.Verify(m => m.HasParentNode, Times.Once());
-            startNode.Verify(m => m.ParentNode,Times.Never());
+            startNode.Verify(m => m.ParentNode, Times.Never());
         }
 
         [Test]

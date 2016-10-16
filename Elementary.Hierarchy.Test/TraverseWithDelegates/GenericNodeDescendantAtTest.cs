@@ -118,7 +118,5 @@
         }
 
         #endregion DescendantAt
-
-        
     }
 }

@@ -72,7 +72,7 @@
             Assert.IsFalse(result.Any());
 
             this.rightRightLeaf.Verify(n => n.HasChildNodes, Times.Once());
-            this.rightRightLeaf.Verify(n => n.ChildNodes,Times.Never());
+            this.rightRightLeaf.Verify(n => n.ChildNodes, Times.Never());
             this.rightRightLeaf.VerifyAll();
         }
 

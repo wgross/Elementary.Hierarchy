@@ -35,7 +35,7 @@
             Assert.IsTrue(result.Message.Contains("has no parent"));
 
             startNode.Verify(m => m.HasParentNode, Times.Once());
-            startNode.Verify(m => m.ParentNode,Times.Never());
+            startNode.Verify(m => m.ParentNode, Times.Never());
         }
 
         [Test]

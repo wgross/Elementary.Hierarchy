@@ -86,7 +86,7 @@
             // ASSERT
 
             this.rootNode.Verify(n => n.HasParentNode, Times.Once());
-            this.rootNode.Verify(n => n.ParentNode,Times.Never());
+            this.rootNode.Verify(n => n.ParentNode, Times.Never());
 
             Assert.IsFalse(result.Any());
         }
@@ -102,7 +102,7 @@
 
             this.leftNode.Verify(n => n.HasParentNode, Times.Once());
             this.leftNode.Verify(n => n.ParentNode, Times.Once());
-            this.rootNode.Verify(n => n.HasChildNodes,Times.Never());
+            this.rootNode.Verify(n => n.HasChildNodes, Times.Never());
             this.rootNode.Verify(n => n.ChildNodes, Times.Once());
 
             Assert.AreSame(this.rootNode.Object, this.leftNode.Object.Parent());
@@ -123,7 +123,7 @@
 
             this.rightNode.Verify(n => n.HasParentNode, Times.Once());
             this.rightNode.Verify(n => n.ParentNode, Times.Once());
-            this.rootNode.Verify(n => n.HasChildNodes,Times.Never());
+            this.rootNode.Verify(n => n.HasChildNodes, Times.Never());
             this.rootNode.Verify(n => n.ChildNodes, Times.Once());
 
             Assert.AreSame(this.rootNode.Object, this.leftNode.Object.Parent());
@@ -143,7 +143,7 @@
 
             this.rightLeaf1.Verify(n => n.HasParentNode, Times.Once());
             this.rightLeaf1.Verify(n => n.ParentNode, Times.Once());
-            this.rightNode.Verify(n => n.HasChildNodes,Times.Never());
+            this.rightNode.Verify(n => n.HasChildNodes, Times.Never());
             this.rightNode.Verify(n => n.ChildNodes, Times.Once());
 
             Assert.AreSame(this.rightNode.Object, this.rightLeaf1.Object.Parent());

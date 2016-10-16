@@ -17,7 +17,7 @@
         {
             this.startNode = new Mock<MockableNodeType>();
         }
-        
+
         [Test]
         public void I_root_returns_child_on_DescendantAt()
         {

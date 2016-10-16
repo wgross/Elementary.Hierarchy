@@ -1,10 +1,6 @@
-﻿using NUnit.Framework;
+﻿using Elementary.Hierarchy.Generic;
+using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Elementary.Hierarchy.Generic;
 
 namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 {
@@ -146,7 +142,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
             // ACT
 
-            string result1 = "startNode".DescendantAtOrDefault(nodeHierarchy, HierarchyPath.Create("childNode"),createDefault:()=> "substitute");
+            string result1 = "startNode".DescendantAtOrDefault(nodeHierarchy, HierarchyPath.Create("childNode"), createDefault: () => "substitute");
 
             HierarchyPath<string> foundNodePath;
             string result2 = "startNode".DescendantAtOrDefault(nodeHierarchy, HierarchyPath.Create("childNode"), out foundNodePath, createDefault: () => "substitute");
