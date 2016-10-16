@@ -10,7 +10,7 @@
     public class GenericNodeParentTest
     {
         [Test]
-        public void D_root_returns_null_on_Parent()
+        public void D_root_throws_InvalidOperationException__on_Parent()
         {
             // ARRANGE
 

@@ -19,7 +19,7 @@
         }
 
         [Test]
-        public void I_Root_returns_null_on_Parent()
+        public void I_Root_throws_InvalidOperationException_on_Parent()
         {
             // ARRANGE
 
@@ -39,7 +39,7 @@
         }
 
         [Test]
-        public void I_inner_node_returns_parent()
+        public void I_inner_node_returns_parent_on_Parent()
         {
             // ARRANGE
 
