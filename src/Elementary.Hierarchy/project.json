@@ -1,5 +1,14 @@
 ﻿{
+  "title": "Elementary.Hierarchy",
+  "version": "1.6.0",
+  "copyright": "Copyright ©  2016",
+  "description": "Elementary Hierarchy provides structures and algorithms for developing of tree-like/hierarchical data structures.",
+  "authors": [ "Wolfgang Gross" ],
   "supports": {},
+  "buildOptions": {
+    "warningsAsErrors": true,
+    "xmlDoc": true
+  },
   "dependencies": {
     "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
     "NETStandard.Library": "1.6.0"

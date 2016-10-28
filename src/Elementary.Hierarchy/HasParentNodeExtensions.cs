@@ -108,7 +108,7 @@ namespace Elementary.Hierarchy.Generic
             if (tryGetParentNode(startNode, out parentNode))
                 return parentNode;
 
-            throw new InvalidOperationException($"{startNode} has no parent");
+            throw new InvalidOperationException($"{nameof(startNode)} has no parent");
         }
 
         /// <summary>

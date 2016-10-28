@@ -11,12 +11,12 @@
         public interface MockableNodeType : IHasIdentifiableChildNodes<int, MockableNodeType>
         { }
 
-        private MockableNodeType root = Substitute.For<MockableNodeType>();
+        private Mock<MockableNodeType> root;
 
         [SetUp]
         public void ArrangeAllTests()
         {
-            this.root = Substitute.For<MockableNodeType>();
+            this.root = new Mock<MockableNodeType>();
         }
 
         [Test]
@@ -24,29 +24,24 @@
         {
             // ARRANGE
 
-            MockableNodeType childNode = Substitute.For<MockableNodeType>();
+            var childNode = new Mock<MockableNodeType>().Object;
 
             var m = new Mock<MockableNodeType>();
+
             MockableNodeType cn = null;
             m.Setup(s => s.TryGetChildNode(1, out childNode)).Returns(true);
-            
-            this.root.TryGetChildNode(1, out cn).Returns(p =>
-            {
-                p[1] = childNode;
-                return true;
-            });
+
+            this.root.Setup(r =>r.TryGetChildNode(1, out cn)).Returns(true);
 
             // ACT
 
-//            MockableNodeType result = this.root.DescendantAt(HierarchyPath.Create(1));
-
-            MockableNodeType result=  m.Object.DescendantAt(HierarchyPath.Create(1));
+            MockableNodeType result = m.Object.DescendantAt(HierarchyPath.Create(1));
 
             // ASSERT
 
             Assert.IsNotNull(result);
             Assert.AreSame(childNode, result);
-            this.root.Received(1).TryGetChildNode(1, out cn);
+            this.root.Verify(r => r.TryGetChildNode(1, out cn), Times.Once());
         }
 
         [Test]
@@ -54,7 +49,7 @@
         {
             // ACT
 
-            MockableNodeType result = this.root.DescendantAt(HierarchyPath.Create<int>());
+            MockableNodeType result = this.root.Object.DescendantAt(HierarchyPath.Create<int>());
 
             // ASSERT
 
@@ -66,34 +61,35 @@
         {
             // ARRANGE
 
-            var subChildNode = Substitute.For<MockableNodeType>();
+            var subChildNode = new Mock<MockableNodeType>().Object;
 
-            var childNode = Substitute.For<MockableNodeType>();
-            childNode.TryGetChildNode(2, out subChildNode).Returns(true);
-            
-            this.root.TryGetChildNode(1, out childNode).Returns(true);
+            var childNode = new Mock<MockableNodeType>();
+            childNode.Setup(c => c.TryGetChildNode(2, out subChildNode)).Returns(true);
+
+            var childNodeObject = childNode.Object;
+
+            this.root.Setup(r => r.TryGetChildNode(1, out childNodeObject)).Returns(true);
 
             // ACT
 
-            MockableNodeType result = this.root.DescendantAt(HierarchyPath.Create(1, 2));
+            MockableNodeType result = this.root.Object.DescendantAt(HierarchyPath.Create(1, 2));
 
             // ASSERT
 
             Assert.AreSame(subChildNode, result);
-            this.root.Received(1).TryGetChildNode(1, out childNode);
-            childNode.Received(1).TryGetChildNode(2, out subChildNode);
+            this.root.Verify(r => r.TryGetChildNode(1, out childNodeObject), Times.Once());
+            childNode.Verify(c => c.TryGetChildNode(2, out subChildNode), Times.Once());
         }
 
         [Test]
-        [ExpectedException(typeof(KeyNotFoundException))]
         public void Root_throws_for_missing_child_on_DescendantAt()
         {
             // ARRANGE
-            this.root.HasChildNodes.Returns(false);
+            this.root.SetupGet(r => r.HasChildNodes).Returns(false);
 
             // ACT & ASSERT
 
-            KeyNotFoundException result = Assert.Throws<KeyNotFoundException>(()=> this.root.DescendantAt(HierarchyPath.Create(1)));
+            KeyNotFoundException result = Assert.Throws<KeyNotFoundException>(() => this.root.Object.DescendantAt(HierarchyPath.Create(1)));
 
             // ASSERT
 
@@ -107,17 +103,17 @@
 
             MockableNodeType childNode = Substitute.For<MockableNodeType>();
 
-            this.root.TryGetChildNode(1, out childNode).Returns(true);
+            this.root.Setup(r =>r.TryGetChildNode(1, out childNode)).Returns(true);
 
             // ACT
 
-            MockableNodeType result = this.root.DescendantAtOrDefault(HierarchyPath.Create(1));
+            MockableNodeType result = this.root.Object.DescendantAtOrDefault(HierarchyPath.Create(1));
 
             // ASSERT
 
             Assert.IsNotNull(result);
             Assert.AreSame(childNode, result);
-            this.root.Received(1).TryGetChildNode(1, out childNode);
+            this.root.Verify(r => r.TryGetChildNode(1, out childNode),Times.Once());
         }
 
         [Test]
@@ -127,16 +123,16 @@
 
             MockableNodeType childNode = Substitute.For<MockableNodeType>();
 
-            this.root.TryGetChildNode(1, out childNode).Returns(false);
+            this.root.Setup(r=>r.TryGetChildNode(1, out childNode)).Returns(false);
 
             // ACT
 
-            MockableNodeType result = this.root.DescendantAtOrDefault(HierarchyPath.Create(1));
+            MockableNodeType result = this.root.Object.DescendantAtOrDefault(HierarchyPath.Create(1));
 
             // ASSERT
 
             Assert.IsNull(result);
-            this.root.Received(1).TryGetChildNode(1, out childNode);
+            this.root.Verify(r=>r.TryGetChildNode(1, out childNode),Times.Once());
         }
 
         [Test]
@@ -146,19 +142,19 @@
 
             MockableNodeType childNode = Substitute.For<MockableNodeType>();
 
-            this.root.TryGetChildNode(1, out childNode).Returns(false);
+            this.root.Setup(r => r.TryGetChildNode(1, out childNode)).Returns(false);
 
             // ACT
 
             HierarchyPath<int> foundPath;
-            MockableNodeType result = this.root.DescendantAtOrDefault(HierarchyPath.Create(1), out foundPath);
+            MockableNodeType result = this.root.Object.DescendantAtOrDefault(HierarchyPath.Create(1), out foundPath);
 
             // ASSERT
 
             Assert.IsNull(result);
             Assert.IsNotNull(foundPath);
             Assert.AreEqual((object)HierarchyPath.Create<int>(), (object)foundPath);
-            this.root.Received(1).TryGetChildNode(1, out childNode);
+            this.root.Verify(r =>r.TryGetChildNode(1, out childNode), Times.Once);
         }
 
         [Test]
@@ -168,12 +164,12 @@
 
             MockableNodeType childNode = Substitute.For<MockableNodeType>();
 
-            this.root.TryGetChildNode(1, out childNode).Returns(true);
+            this.root.Setup(r => r.TryGetChildNode(1, out childNode)).Returns(true);
 
             // ACT
 
             HierarchyPath<int> foundKey;
-            MockableNodeType result = this.root.DescendantAtOrDefault(HierarchyPath.Create(1), out foundKey);
+            MockableNodeType result = this.root.Object.DescendantAtOrDefault(HierarchyPath.Create(1), out foundKey);
 
             // ASSERT
 
@@ -181,7 +177,7 @@
             Assert.AreSame(childNode, result);
             Assert.IsNotNull(foundKey);
             Assert.AreEqual((object)HierarchyPath.Create<int>(1), (object)foundKey);
-            this.root.Received(1).TryGetChildNode(1, out childNode);
+            this.root.Verify(r =>r.TryGetChildNode(1, out childNode),Times.Once());
         }
 
         [Test]
@@ -189,25 +185,25 @@
         {
             // ARRANGE
 
-            MockableNodeType grandChildNode = Substitute.For<MockableNodeType>();
+            var grandChildNode = new Mock<MockableNodeType>().Object;
+            var childNode = new Mock<MockableNodeType>();
 
-            var childNode = Substitute.For<MockableNodeType>();
-            childNode.TryGetChildNode(2, out grandChildNode).Returns(true);
+            childNode.Setup(c => c.TryGetChildNode(2, out grandChildNode)).Returns(true);
 
-            var childNodeObject = childNode;
+            var childNodeObject = childNode.Object;
 
-            this.root.TryGetChildNode(1, out childNodeObject).Returns(true);
+            this.root.Setup(r=>r.TryGetChildNode(1, out childNodeObject)).Returns(true);
 
             // ACT
 
-            MockableNodeType result = this.root.DescendantAtOrDefault(HierarchyPath.Create(1, 2));
+            MockableNodeType result = this.root.Object.DescendantAtOrDefault(HierarchyPath.Create(1, 2));
 
             // ASSERT
 
             Assert.IsNotNull(grandChildNode);
             Assert.AreSame(grandChildNode, result);
-            this.root.Received(1).TryGetChildNode(1, out childNodeObject);
-            this.root.Received(1).TryGetChildNode(1, out grandChildNode);
+            this.root.Verify(r =>r.TryGetChildNode(1, out childNodeObject),Times.Once());
+            this.root.Verify(r=>r.TryGetChildNode(1, out grandChildNode),Times.Once());
         }
 
         [Test]
@@ -216,18 +212,18 @@
             // ARRANGE
 
             MockableNodeType grandChildNode = Substitute.For<MockableNodeType>();
+            
+            var childNode = new Mock<MockableNodeType>();
+            childNode.Setup(c => c.TryGetChildNode(2, out grandChildNode)).Returns(true);
 
-            var childNode = Substitute.For<MockableNodeType>();
-            childNode.TryGetChildNode(2, out grandChildNode).Returns(true);
+            var childNodeObject = childNode.Object;
 
-            var childNodeObject = childNode;
-
-            this.root.TryGetChildNode(1, out childNodeObject).Returns(true);
+            this.root.Setup(r => r.TryGetChildNode(1, out childNodeObject)).Returns(true);
 
             // ACT
 
             HierarchyPath<int> foundKey = null;
-            MockableNodeType result = this.root.DescendantAtOrDefault(HierarchyPath.Create(1, 2), out foundKey);
+            MockableNodeType result = this.root.Object.DescendantAtOrDefault(HierarchyPath.Create(1, 2), out foundKey);
 
             // ASSERT
 
@@ -236,8 +232,8 @@
             Assert.IsNotNull(foundKey);
             Assert.AreEqual((object)HierarchyPath.Create(1, 2), (object)foundKey);
 
-            this.root.Received(1).TryGetChildNode(1, out childNodeObject);
-            this.root.Received(1).TryGetChildNode(1, out grandChildNode);
+            this.root.Verify(r => r.TryGetChildNode(1, out childNodeObject), Times.Once());
+            this.root.Verify(r => r.TryGetChildNode(1, out grandChildNode), Times.Once());
         }
 
         [Test]
@@ -245,19 +241,20 @@
         {
             // ARRANGE
 
-            MockableNodeType grandChildNode = Substitute.For<MockableNodeType>();
+            var grandChildNode = new Mock<MockableNodeType>().Object;
 
-            var childNode = Substitute.For<MockableNodeType>();
-            childNode.TryGetChildNode(2, out grandChildNode).Returns(false);
+            var childNode = new Mock<MockableNodeType>();
+            
+            childNode.Setup(c => c.TryGetChildNode(2, out grandChildNode)).Returns(false);
 
-            var childNodeObject = childNode;
+            var childNodeObject = childNode.Object;
 
-            this.root.TryGetChildNode(1, out childNodeObject).Returns(true);
+            this.root.Setup(r =>r.TryGetChildNode(1, out childNodeObject)).Returns(true);
 
             // ACT
 
             HierarchyPath<int> foundKey = null;
-            MockableNodeType result = this.root.DescendantAtOrDefault(HierarchyPath.Create(1, 2), out foundKey);
+            MockableNodeType result = this.root.Object.DescendantAtOrDefault(HierarchyPath.Create(1, 2), out foundKey);
 
             // ASSERT
 
@@ -265,8 +262,8 @@
             Assert.IsNotNull(foundKey);
             Assert.AreEqual((object)HierarchyPath.Create(1), (object)foundKey);
 
-            this.root.Received(1).TryGetChildNode(1, out childNodeObject);
-            this.root.Received(1).TryGetChildNode(1, out grandChildNode);
+            this.root.Verify(r =>r.TryGetChildNode(1, out childNodeObject),Times.Once());
+            this.root.Verify(r=>r.TryGetChildNode(1, out grandChildNode),Times.Once());
         }
     }
 }

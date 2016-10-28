@@ -96,16 +96,11 @@ Task build_assemblies -description "Compile all projects into .Net assemblies" {
     }
 }
 
-Task clean_assemblies -description "Remove all the usual build directories under the project root" {
+Task clean_assemblies -description "Remove all assemblies (Dll and Exe) under the project root" {
     
     $script:projectJsonItems | ForEach-Object {
 
-        # just remove the usual oputput directories instead of spefific files or file extsnsions.
-        # This included Cosumentatin files, config files or other artefacts which are copied 
-        # to the build directory
-
-        Remove-Item -Path (Join-Path $_.Directory bin) -Recurse -ErrorAction SilentlyContinue
-        Remove-Item -Path (Join-Path $_.Directory obj) -Recurse -ErrorAction SilentlyContinue
+        Get-ChildItem -Path $_.Directory -Include "*.dll","*.exe" -File -Recurse | Remove-Item
     }
 
 } -depends query_projectstructre
