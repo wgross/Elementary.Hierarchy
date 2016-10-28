@@ -117,8 +117,22 @@ Task test_assemblies -description "Run the unit test under 'test'. Output is wri
         Push-Location $_.Directory
         try {
             
-            # the projects directory name is taken as the name of the test result file.
-            &  $dotnet test -xml "$script:testResultsDirectory\$($_.Directory.BaseName).xml"
+            $testResultFileName = Join-Path $script:testResultsDirectory "$($_.Directory.BaseName).xml"
+
+            # Check if nunit or xunit is used as a test runner. They use diffrent parameters
+            # for test result file path specification
+
+            $testProjectJsonContent = Get-Content $_.FullName -Raw | ConvertFrom-Json
+            if($testProjectJsonContent.testRunner -eq "xunit") {
+
+                # the projects directory name is taken as the name of the test result file.
+                &  $dotnet test -xml "$script:testResultsDirectory\$($_.Directory.BaseName).xml"
+
+            } else {
+                
+                # the projects directory name is taken as the name of the test result file.
+                &  $dotnet test -result:$testResultFileName
+            }
 
         } finally {
             Pop-Location
