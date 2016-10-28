@@ -1,7 +1,6 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseUsingInterfaces
 {
     using Moq;
-    using NSubstitute;
     using NUnit.Framework;
     using System.Linq;
 
@@ -11,13 +10,13 @@
         public interface MockableNodeType : IHasChildNodes<MockableNodeType>, IHasParentNode<MockableNodeType>
         { }
 
-        private MockableNodeType rootNode;
-        private MockableNodeType leftNode;
-        private MockableNodeType rightNode;
+        private Mock<MockableNodeType> rootNode;
+        private Mock<MockableNodeType> leftNode;
+        private Mock<MockableNodeType> rightNode;
 
-        private MockableNodeType rightLeaf1;
-        private MockableNodeType rightLeaf2;
-        private MockableNodeType rightLeaf3;
+        private Mock<MockableNodeType> rightLeaf1;
+        private Mock<MockableNodeType> rightLeaf2;
+        private Mock<MockableNodeType> rightLeaf3;
 
         [SetUp]
         public void ArrangeAllTests()
@@ -28,35 +27,35 @@
             //                         /     \               \
             //                rightLeaf1  rightRightLeaf2   rightLeaf3
 
-            this.rightLeaf1 = Substitute.For<MockableNodeType>();
-            this.rightLeaf1.HasChildNodes.Returns(false);
-            this.rightLeaf1.HasParentNode.Returns(true);
+            this.rightLeaf1 = new Mock<MockableNodeType>();
+            this.rightLeaf1.SetupGet(n=>n.HasChildNodes).Returns(false);
+            this.rightLeaf1.SetupGet(n => n.HasParentNode).Returns(true);
 
-            this.rightLeaf2 = Substitute.For<MockableNodeType>();
-            this.rightLeaf2.HasChildNodes.Returns(false);
-            this.rightLeaf2.HasParentNode.Returns(true);
+            this.rightLeaf2 = new Mock<MockableNodeType>();
+            this.rightLeaf2.SetupGet(n => n.HasChildNodes).Returns(false);
+            this.rightLeaf2.SetupGet(n => n.HasParentNode).Returns(true);
 
-            this.rightLeaf3 = Substitute.For<MockableNodeType>();
-            this.rightLeaf3.HasChildNodes.Returns(false);
-            this.rightLeaf3.HasParentNode.Returns(true);
+            this.rightLeaf3 = new Mock<MockableNodeType>();
+            this.rightLeaf3.SetupGet(n => n.HasChildNodes).Returns(false);
+            this.rightLeaf3.SetupGet(n => n.HasParentNode).Returns(true);
 
-            this.leftNode = Substitute.For<MockableNodeType>();
-            this.leftNode.HasParentNode.Returns(true);
-            this.leftNode.HasChildNodes.Returns(false);
+            this.leftNode = new Mock<MockableNodeType>();
+            this.leftNode.SetupGet(n => n.HasParentNode).Returns(true);
+            this.leftNode.SetupGet(n => n.HasChildNodes).Returns(false);
 
-            this.rightNode = Substitute.For<MockableNodeType>();
-            this.rightNode.HasParentNode.Returns(true);
-            this.rightNode.HasChildNodes.Returns(true);
-            this.rightNode.ChildNodes.Returns(new[] { this.rightLeaf1, this.rightLeaf2, this.rightLeaf3 });
-            this.rightLeaf1.ParentNode.Returns(this.rightNode);
-            this.rightLeaf2.ParentNode.Returns(this.rightNode);
-            this.rightLeaf3.ParentNode.Returns(this.rightNode);
+            this.rightNode = new Mock<MockableNodeType>();
+            this.rightNode.SetupGet(n => n.HasParentNode).Returns(true);
+            this.rightNode.SetupGet(n => n.HasChildNodes).Returns(true);
+            this.rightNode.SetupGet(n => n.ChildNodes).Returns(new[] { this.rightLeaf1.Object, this.rightLeaf2.Object, this.rightLeaf3.Object });
+            this.rightLeaf1.SetupGet(n => n.ParentNode).Returns(this.rightNode.Object);
+            this.rightLeaf2.SetupGet(n => n.ParentNode).Returns(this.rightNode.Object);
+            this.rightLeaf3.SetupGet(n => n.ParentNode).Returns(this.rightNode.Object);
 
-            this.rootNode = Substitute.For<MockableNodeType>();
-            this.rootNode.HasChildNodes.Returns(true);
-            this.rootNode.ChildNodes.Returns(new[] { this.leftNode, this.rightNode });
-            this.rightNode.ParentNode.Returns(this.rootNode);
-            this.leftNode.ParentNode.Returns(this.rootNode);
+            this.rootNode = new Mock<MockableNodeType>();
+            this.rootNode.SetupGet(n => n.HasChildNodes).Returns(true);
+            this.rootNode.SetupGet(n => n.ChildNodes).Returns(new[] { this.leftNode.Object, this.rightNode.Object });
+            this.rightNode.SetupGet(n => n.ParentNode).Returns(this.rootNode.Object);
+            this.leftNode.SetupGet(n => n.ParentNode).Returns(this.rootNode.Object);
         }
 
         [Test]
@@ -64,7 +63,7 @@
         {
             // ACT
 
-            MockableNodeType[] result = this.rootNode.FollowingSiblings().ToArray();
+            MockableNodeType[] result = this.rootNode.Object.FollowingSiblings().ToArray();
 
             // ASSERT
 
@@ -76,14 +75,14 @@
         {
             // ACT
 
-            MockableNodeType[] result = this.rightNode.PrecedingSiblings().ToArray();
+            MockableNodeType[] result = this.rightNode.Object.PrecedingSiblings().ToArray();
 
             // ASSERT
-            Assert.AreSame(this.rootNode, this.leftNode.Parent());
-            Assert.AreSame(this.leftNode, this.rootNode.ChildNodes.ElementAt(0));
-            Assert.AreSame(this.rightNode, this.rootNode.ChildNodes.ElementAt(1));
+            Assert.AreSame(this.rootNode.Object, this.leftNode.Object.Parent());
+            Assert.AreSame(this.leftNode.Object, this.rootNode.Object.ChildNodes.ElementAt(0));
+            Assert.AreSame(this.rightNode.Object, this.rootNode.Object.ChildNodes.ElementAt(1));
             Assert.AreEqual(1, result.Count());
-            Assert.AreSame(this.leftNode, result.Single());
+            Assert.AreSame(this.leftNode.Object, result.Single());
         }
 
         [Test]
@@ -91,13 +90,13 @@
         {
             // ACT
 
-            MockableNodeType[] result = this.leftNode.PrecedingSiblings().ToArray();
+            MockableNodeType[] result = this.leftNode.Object.PrecedingSiblings().ToArray();
 
             // ASSERT
 
-            Assert.AreSame(this.rootNode, this.leftNode.Parent());
-            Assert.AreSame(this.leftNode, this.rootNode.ChildNodes.ElementAt(0));
-            Assert.AreSame(this.rightNode, this.rootNode.ChildNodes.ElementAt(1));
+            Assert.AreSame(this.rootNode.Object, this.leftNode.Object.Parent());
+            Assert.AreSame(this.leftNode.Object, this.rootNode.Object.ChildNodes.ElementAt(0));
+            Assert.AreSame(this.rightNode.Object, this.rootNode.Object.ChildNodes.ElementAt(1));
             Assert.AreEqual(0, result.Count());
         }
 
@@ -106,17 +105,17 @@
         {
             // ACT
 
-            MockableNodeType[] result = this.rightLeaf3.PrecedingSiblings().ToArray();
+            MockableNodeType[] result = this.rightLeaf3.Object.PrecedingSiblings().ToArray();
 
             // ASSERT
 
-            Assert.AreSame(this.rightNode, this.rightLeaf1.Parent());
-            Assert.AreSame(this.rightLeaf1, this.rightNode.ChildNodes.ElementAt(0));
-            Assert.AreSame(this.rightLeaf2, this.rightNode.ChildNodes.ElementAt(1));
-            Assert.AreSame(this.rightLeaf3, this.rightNode.ChildNodes.ElementAt(2));
+            Assert.AreSame(this.rightNode.Object, this.rightLeaf1.Object.Parent());
+            Assert.AreSame(this.rightLeaf1.Object, this.rightNode.Object.ChildNodes.ElementAt(0));
+            Assert.AreSame(this.rightLeaf2.Object, this.rightNode.Object.ChildNodes.ElementAt(1));
+            Assert.AreSame(this.rightLeaf3.Object, this.rightNode.Object.ChildNodes.ElementAt(2));
             Assert.AreEqual(2, result.Count());
-            Assert.AreSame(this.rightLeaf1, result.ElementAt(0));
-            Assert.AreSame(this.rightLeaf2, result.ElementAt(1));
+            Assert.AreSame(this.rightLeaf1.Object, result.ElementAt(0));
+            Assert.AreSame(this.rightLeaf2.Object, result.ElementAt(1));
         }
     }
 }

@@ -625,22 +625,6 @@
           "lib/netstandard1.0/Newtonsoft.Json.dll": {}
         }
       },
-      "NSubstitute/2.0.0-rc": {
-        "type": "package",
-        "dependencies": {
-          "Castle.Core": "4.0.0-beta001",
-          "Microsoft.CSharp": "4.0.1",
-          "NETStandard.Library": "1.6.0",
-          "System.Linq.Queryable": "4.0.1",
-          "System.Reflection.TypeExtensions": "4.1.0"
-        },
-        "compile": {
-          "lib/netstandard1.5/NSubstitute.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard1.5/NSubstitute.dll": {}
-        }
-      },
       "NuGet.Common/3.5.0-beta2-1484": {
         "type": "package",
         "dependencies": {
@@ -3337,28 +3321,6 @@
         "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.dll",
         "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.xml",
         "tools/install.ps1"
-      ]
-    },
-    "NSubstitute/2.0.0-rc": {
-      "sha512": "/EGcVrLZjLfKzrIN7rVVOjnnUwkMCFzdYFWshUkcjaii/I2+zR+botsBhm57tVPo0w9IWHOWolUFWlQh74jLyA==",
-      "type": "package",
-      "path": "NSubstitute/2.0.0-rc",
-      "files": [
-        "BreakingChanges.txt",
-        "CHANGELOG.txt",
-        "LICENSE.txt",
-        "NSubstitute.2.0.0-rc.nupkg.sha512",
-        "NSubstitute.nuspec",
-        "README.txt",
-        "acknowledgements.txt",
-        "lib/net35/NSubstitute.XML",
-        "lib/net35/NSubstitute.dll",
-        "lib/net40/NSubstitute.XML",
-        "lib/net40/NSubstitute.dll",
-        "lib/net45/NSubstitute.XML",
-        "lib/net45/NSubstitute.dll",
-        "lib/netstandard1.5/NSubstitute.dll",
-        "lib/netstandard1.5/NSubstitute.xml"
       ]
     },
     "NuGet.Common/3.5.0-beta2-1484": {
@@ -8065,7 +8027,6 @@
     "": [
       "Elementary.Hierarchy >= 1.6.0",
       "Moq >= 4.6.38-alpha",
-      "NSubstitute >= 2.0.0-rc",
       "System.Runtime.Serialization.Primitives >= 4.1.1",
       "dotnet-test-nunit >= 3.4.0-beta-2",
       "nunit >= 3.5.0"

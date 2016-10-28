@@ -6,7 +6,6 @@
   "dependencies": {
     "System.Runtime.Serialization.Primitives": "4.1.1",
     "Moq": "4.6.38-alpha",
-    "NSubstitute": "2.0.0-rc",
     "nunit": "3.5.0",
     "dotnet-test-nunit": "3.4.0-beta-2",
     "Elementary.Hierarchy": "1.6.0"

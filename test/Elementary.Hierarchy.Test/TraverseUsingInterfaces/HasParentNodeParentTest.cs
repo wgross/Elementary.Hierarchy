@@ -19,7 +19,7 @@
         }
 
         [Test]
-        public void Root_node_throws_InvalidOperationExption_on_Parent()
+        public void Root_node_throws_InvalidOperationException_on_Parent()
         {
             // ARRANGE
 
