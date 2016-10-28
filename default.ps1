@@ -1,91 +1,133 @@
-﻿Import-Module psake
+﻿Import-Module Pester
 
-#region Commands
+$dotnet = (Get-Command dotnet.exe).Path
 
-# Retrieve the pathes of the files from path
-$nuget = (Get-Command nuget.exe).Path
-$msbuild = (Get-Command msbuild.exe).Path
-$git = (Get-Command git.exe).Path
+#region Define file sets
 
-# NUnit cnosole runner is retrieved from the packages directory
-$nunit = (Get-Command $PSScriptRoot\packages\NUnit.ConsoleRunner.3.2.0\tools\nunit3-console.exe).Path
+Task query_projectstructre -description "Collect infomation about the project structure which is useful for other build tasks"  {
 
-#endregion 
+    # All soures are under /src
+    $script:sourceDirectoryName = Join-Path $PSScriptRoot src -Resolve
+    # All tests are under /test
+    $script:testDirectoryName = Join-Path $PSScriptRoot test -Resolve
 
-#region Files
+    # Get file items for all projects
+    $script:projectJsonItems = Get-ChildItem -Path $PSScriptRoot -Include "project.json"  -File -Recurse
+    # Subset of src projects
+    $script:testProjectJsonItems = $script:projectJsonItems | Where-Object { $_.DirectoryName.StartsWith($script:testDirectoryName) }
+    # Subset of tets projects
+    $script:sourceProjectJsonItems = $script:projectJsonItems | Where-Object { $_.DirectoryName.StartsWith($script:sourceDirectoryName) }
 
-$localPackageSource = (Resolve-Path "C:\src\packages")
-$solutionFileNames = (Get-ChildItem -File $PSScriptRoot -Include *.sln)
-
-#endregion 
-
-#region Nuget dependencies
-
-Task restore_dependencies {
-
-    # restore all nuget packages referenced by the current solution
-    & $nuget restore $solutionFileNames
-
-} -precondition { Test-Path $nuget }
-
-Task clean_dependencies {
-
-    Remove-Item $PSScriptRoot\packages -Recurse -ErrorAction SilentlyContinue
-
-} -precondition { Test-Path $nuget }
-
-#endregion 
-
-#region .Net Assemblies 
-
-Task clean_assemblies {
-
-    & $msbuild $solutionFileNames /t:Clean /p:Configuration=Release
-    & $msbuild $solutionFileNames /t:Clean /p:Configuration=Debug
+    # test results are stored in a seperate directory
+    $script:testResultsDirectory = New-Item -Path $PSScriptRoot\.testresults -ItemType Directory -ErrorAction SilentlyContinue
 }
 
-#endregion
-
-#region Nuget packages
-
-Task clean_packages {
-     
-    Remove-Item $PSScriptRoot\*.nupkg -ErrorAction SilentlyContinue
-}
-
-Task build_packages {
-
-    # The package is built automatically by nuget in a Release configuration using the nuget package proerties extracted
-    # from the project file and following the package defineions of teh nuspec file lying next to the project file.
-    # As a result there should be nuget package containing the ElementaryHierarchy assembly and its generated XML documentation
-
-    & $nuget Pack (Resolve-path $PSScriptRoot\Elementary.Hierarchy\Elementary.Hierarchy.csproj) -Build -Prop "Configuration=Release" -Symbols -MSbuildVersion 14
-}
-
-Task rebuild_packages -depends clean_packages,build_packages
-
-#endregion
-
-Task build {
-
-    & $msbuild $solutionFileNames /t:Build /p:Configuration=Debug
-
-} -precondition { Test-Path $msbuild } -depends restore
-
-Task test {
-
-    & $nunit (Resolve-Path $PSScriptRoot/Elementary.Hierarchy.Test/Elementary.Hierarchy.Test.csproj)
-
-} -precondition { Test-Path $nunit } -depends build,restore
-
-Task publish_local {
-
+Task clean_projectstruture -description "Remove temporary build files" {
     
-    # deploy to local package repo
-    Copy-Item $PSScriptRoot\Elementary.Hierarchy.*.nupkg $localPackageSource
+    # Remove temporary test result directory
+    Remove-Item $script:testResultsDirectory -Recurse -Force -ErrorAction SilentlyContinue
 
-} -precondition { Test-Path $nuget } -depends test,clean_packages
+} -depends query_projectstructre
 
-Task restore -depends restore_dependencies
-Task clean -depends clean_dependencies,clean_assemblies
-Task default -depends clean,build,test
+#endregion 
+
+#region Build targets for NuGet dependencies 
+
+Task clean_nuget -description "Remove nuget package cache from current users home" {
+    
+    # dotnet cli utility uses the users package cache only. 
+    # a project local nuget cache can be enforced but is not necessary by default.
+    # This differs from nuget.exe's behavior which uses by default project local packages directories
+    # see also: https://docs.microsoft.com/de-de/dotnet/articles/core/tools/dotnet-restore
+
+    Remove-Item (Join-Path $HOME .nuget\packages) -Force -Recurse -ErrorAction SilentlyContinue
+}
+
+Task restore_nuget -description "Restore nuget dependencies" {
+    
+    Push-Location $PSScriptRoot
+    try {
+        
+        # Calling dot net restore in root directory should be enough. 
+        & $dotnet restore
+
+    } finally {
+        Pop-Location
+    }
+}
+
+Task report_nuget -description "Print a list of all nuget dependencies. This is useful for mainline clearing." {
+    
+    # For Mainline clearing a complete set of nuget packages has to be retrieved.
+    # These are taken from the 'dependensies' section of all src project.jsons
+
+    $nugetDependecies = $script:sourceProjectJsonItems | Get-Content -Raw | ConvertFrom-Json | ForEach-Object {
+        $_.dependencies.PSObject.Properties | ForEach-Object {
+            if($_.Value -is [string]) {
+                [pscustomobject]@{
+                    Id = $_.Name
+                    Version = $_.Value
+                }
+            } else {
+                [pscustomobject]@{
+                    Id = $_.Name
+                    Version = $_.Value.Version
+                }
+            }
+        }
+    }
+    $nugetDependecies | Group-Object Id | Select-Object Name,Group
+
+} -depends query_projectstructre
+
+#endregion
+
+#region Build targets for .Net Assemblies
+
+Task build_assemblies -description "Compile all projects into .Net assemblies" {
+
+    Push-Location $PSScriptRoot
+    try {
+
+        & $dotnet build "**\project.json"
+
+    } finally {
+        Pop-Location
+    }
+}
+
+Task clean_assemblies -description "Remove all assemblies (Dll and Exe) under the project root" {
+    
+    $script:projectJsonItems | ForEach-Object {
+
+        Remove-Item -Path (Join-Path $_.Directory bin) -Recurse -ErrorAction SilentlyContinue
+        Remove-Item -Path (Join-Path $_.Directory obj) -Recurse -ErrorAction SilentlyContinue
+    }
+
+} -depends query_projectstructre
+
+Task test_assemblies -description "Run the unit test under 'test'. Output is written to .testresults directory" {
+    
+    $script:testProjectJsonItems | ForEach-Object {
+
+        Push-Location $_.Directory
+        try {
+            
+            # the projects directory name is taken as the name of the test result file.
+            &  $dotnet test -xml "$script:testResultsDirectory\$($_.Directory.BaseName).xml"
+
+        } finally {
+            Pop-Location
+        }
+    }
+
+} -depends query_projectstructre
+
+#endregion
+
+Task clean -description "The project tree is clean: all artifacts created by the development tool chain are removed"  -depends clean_assemblies
+Task restore -description "External dependencies are restored.The project is ready to be built." -depends restore_nuget
+Task build -description "The project is built: all artifacts created by the development tool chain are created" -depends restore,build_assemblies
+Task test -description "The project is tested: all automated tests of the project are run" -depends build,test_assemblies
+
+Task default -depends clean,restore,test
