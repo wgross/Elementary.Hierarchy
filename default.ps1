@@ -1,10 +1,10 @@
-﻿Import-Module Pester
+﻿Import-Module Psake
 
 $dotnet = (Get-Command dotnet.exe).Path
 
 #region Define file sets
 
-Task query_projectstructre -description "Collect infomation about the project structure which is useful for other build tasks"  {
+Task query_projectstructure -description "Collect infomation about the project structure which is useful for other build tasks"  {
 
     # All soures are under /src
     $script:sourceDirectoryName = Join-Path $PSScriptRoot src -Resolve
@@ -12,28 +12,36 @@ Task query_projectstructre -description "Collect infomation about the project st
     $script:testDirectoryName = Join-Path $PSScriptRoot test -Resolve
 
     # Get file items for all projects
-    $script:projectJsonItems = Get-ChildItem -Path $PSScriptRoot -Include "project.json"  -File -Recurse
+    $script:projectJsonItems = Get-ChildItem -Path $PSScriptRoot -Include "project.json" -File -Recurse
+    $script:projectJsonItems | Select-Object -ExpandProperty FullName | ForEach-Object { Write-Host "found projects: $_" }
+
     # Subset of src projects
     $script:testProjectJsonItems = $script:projectJsonItems | Where-Object { $_.DirectoryName.StartsWith($script:testDirectoryName) }
+    $script:testProjectJsonItems | Select-Object -ExpandProperty FullName | ForEach-Object { Write-Host "found test project: $_" }
+
     # Subset of tets projects
     $script:sourceProjectJsonItems = $script:projectJsonItems | Where-Object { $_.DirectoryName.StartsWith($script:sourceDirectoryName) }
 
     # test results are stored in a seperate directory
-    $script:testResultsDirectory = New-Item -Path $PSScriptRoot\.testresults -ItemType Directory -ErrorAction SilentlyContinue
+    if(Test-Path $PSScriptRoot\.testresults) {
+        $script:testResultsDirectory = Get-Item -Path $PSScriptRoot\.testresults
+    } else {   
+        $script:testResultsDirectory = New-Item -Path $PSScriptRoot\.testresults -ItemType Directory
+    }
 }
 
-Task clean_projectstruture -description "Remove temporary build files" {
+Task clean_projectstructure -description "Remove temporary build files" {
     
     # Remove temporary test result directory
     Remove-Item $script:testResultsDirectory -Recurse -Force -ErrorAction SilentlyContinue
 
-} -depends query_projectstructre
+} -depends query_projectstructure
 
 #endregion 
 
 #region Build targets for NuGet dependencies 
 
-Task clean_nuget -description "Remove nuget package cache from current users home" {
+Task clean_dependencies -description "Remove nuget package cache from current users home" {
     
     # dotnet cli utility uses the users package cache only. 
     # a project local nuget cache can be enforced but is not necessary by default.
@@ -43,7 +51,7 @@ Task clean_nuget -description "Remove nuget package cache from current users hom
     Remove-Item (Join-Path $HOME .nuget\packages) -Force -Recurse -ErrorAction SilentlyContinue
 }
 
-Task restore_nuget -description "Restore nuget dependencies" {
+Task restore_dependencies -description "Restore nuget dependencies" {
     
     Push-Location $PSScriptRoot
     try {
@@ -56,12 +64,12 @@ Task restore_nuget -description "Restore nuget dependencies" {
     }
 }
 
-Task report_nuget -description "Print a list of all nuget dependencies. This is useful for mainline clearing." {
+Task report_dependencies -description "Print a list of all nuget dependencies. This is useful for mainline clearing." {
     
     # For Mainline clearing a complete set of nuget packages has to be retrieved.
-    # These are taken from the 'dependensies' section of all src project.jsons
+    # These are taken from the 'dependencies' section of all src project.jsons
 
-    $nugetDependecies = $script:sourceProjectJsonItems | Get-Content -Raw | ConvertFrom-Json | ForEach-Object {
+    $nugetDependencies = $script:sourceProjectJsonItems | Get-Content -Raw | ConvertFrom-Json | ForEach-Object {
         $_.dependencies.PSObject.Properties | ForEach-Object {
             if($_.Value -is [string]) {
                 [pscustomobject]@{
@@ -76,9 +84,9 @@ Task report_nuget -description "Print a list of all nuget dependencies. This is 
             }
         }
     }
-    $nugetDependecies | Group-Object Id | Select-Object Name,Group
+    $nugetDependencies | Group-Object Id | Select-Object Name,Group
 
-} -depends query_projectstructre
+} -depends query_projectstructure
 
 #endregion
 
@@ -108,7 +116,7 @@ Task clean_assemblies -description "Remove all the usual build directories under
         Remove-Item -Path (Join-Path $_.Directory obj) -Recurse -ErrorAction SilentlyContinue
     }
 
-} -depends query_projectstructre
+} -depends query_projectstructure
 
 Task test_assemblies -description "Run the unit test under 'test'. Output is written to .testresults directory" {
     
@@ -116,20 +124,22 @@ Task test_assemblies -description "Run the unit test under 'test'. Output is wri
 
         Push-Location $_.Directory
         try {
+          
+            Write-Host "here: $script:testResultsDirectory"
+            $testResultFileName = Join-Path -Path $script:testResultsDirectory -ChildPath "$($_.Directory.BaseName).xml"
             
-            $testResultFileName = Join-Path $script:testResultsDirectory "$($_.Directory.BaseName).xml"
-
+        
             # Check if nunit or xunit is used as a test runner. They use diffrent parameters
             # for test result file path specification
-
-            $testProjectJsonContent = Get-Content $_.FullName -Raw | ConvertFrom-Json
+            
+            $testProjectJsonContent = Get-Content -Path $_.FullName -Raw | ConvertFrom-Json
             if($testProjectJsonContent.testRunner -eq "xunit") {
 
                 # the projects directory name is taken as the name of the test result file.
-                &  $dotnet test -xml "$script:testResultsDirectory\$($_.Directory.BaseName).xml"
+                &  $dotnet test -xml $testResultFileName
 
             } else {
-                
+                # NUnit: 
                 # the projects directory name is taken as the name of the test result file.
                 &  $dotnet test -result:$testResultFileName
             }
@@ -139,13 +149,13 @@ Task test_assemblies -description "Run the unit test under 'test'. Output is wri
         }
     }
 
-} -depends query_projectstructre
+} -depends query_projectstructure
 
 #endregion
 
 Task clean -description "The project tree is clean: all artifacts created by the development tool chain are removed"  -depends clean_assemblies
-Task restore -description "External dependencies are restored.The project is ready to be built." -depends restore_nuget
+Task restore -description "External dependencies are restored.The project is ready to be built." -depends restore_dependencies
 Task build -description "The project is built: all artifacts created by the development tool chain are created" -depends restore,build_assemblies
 Task test -description "The project is tested: all automated tests of the project are run" -depends build,test_assemblies
 
-Task default -depends clean,restore,test
+Task default -depends clean,restore,build,test
