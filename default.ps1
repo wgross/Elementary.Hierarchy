@@ -1,6 +1,7 @@
 ﻿Import-Module Psake
 
-$dotnet = (Get-Command dotnet.exe).Path
+$script:dotnet = (Get-Command dotnet.exe).Path
+$script:nuget = (Get-Command nuget.exe).Path
 
 #region Define file sets
 
@@ -70,7 +71,7 @@ Task restore_dependencies -description "Restore nuget dependencies" {
     try {
         
         # Calling dot net restore in root directory should be enough. 
-        & $dotnet restore
+        & $script:dotnet restore
 
     } finally {
         Pop-Location
@@ -110,7 +111,7 @@ Task build_assemblies -description "Compile all projects into .Net assemblies" {
     Push-Location $PSScriptRoot
     try {
 
-        & $dotnet build "**\project.json"
+        & $script:dotnet build "**\project.json"
 
     } finally {
         Pop-Location
@@ -147,12 +148,12 @@ Task test_assemblies -description "Run the unit test under 'test'. Output is wri
             if($testProjectJsonContent.testRunner -eq "xunit") {
 
                 # the projects directory name is taken as the name of the test result file.
-                &  $dotnet test -xml $testResultFileName
+                &  $script:dotnet test -xml $testResultFileName
 
             } else {
                 # NUnit: 
                 # the projects directory name is taken as the name of the test result file.
-                &  $dotnet test -result:$testResultFileName
+                &  $script:dotnet test -result:$testResultFileName
             }
 
         } finally {
@@ -176,7 +177,7 @@ Task build_packages -description "Create nuget packages from all projects having
 
             if($projectJsonContent.packOptions -ne $null) {
                 
-                & $dotnet pack -c "Release" -o $script:packageBuildDirectory
+                & $script:dotnet pack -c "Release" -o $script:packageBuildDirectory
 
             } else {
                 "Skipping project $($_.Fullname)" | Write-Host
@@ -196,6 +197,34 @@ Task clean_packages -description "Removes nuget packages build directory" {
 
 } -depends query_workspace
 
+Task publish_packages -description "Makes the packages known to the used package source" {
+    
+    # Publishing a package requires the nuget.exe. 
+    # Credentials/api key of the package feed ist url are taken from the efective Nuget.Config
+    Push-Location $script:packageBuildDirectory
+    try {
+        
+        Get-ChildItem *.nupkg -Exclude *.symbols.nupkg | ForEach-Object {
+            
+            "Publishing: $($_.FullName)" | Write-Host    
+            & $script:nuget push $_.FullName
+        }
+
+    } finally {
+        Pop-Location
+    }
+
+} -depends query_workspace
+
+Task report_nugetConfig -description "Extracts some config values from the effective Nuget config" {
+    
+    "Nuget.Config Path: $env:APPDATA\nuget\NuGet.config" | Write-Host
+    "Default NuGet Push Source: $(& $script:nuget config defaultPushSource)" | Write-Host
+    "Known Api Keys:" | Write-Host
+    $nugetConfigContentXml = [xml](Get-Content -Path $env:APPDATA\nuget\NuGet.config)
+    $nugetConfigContentXml.configuration.apikeys.add | Format-Table -AutoSize
+}
+
 #endregion
 
 Task clean -description "The project tree is clean: all artifacts created by the development tool chain are removed"  -depends clean_workspace,clean_assemblies
@@ -203,5 +232,5 @@ Task restore -description "External dependencies are restored.The project is rea
 Task build -description "The project is built: all artifacts created by the development tool chain are created" -depends restore,build_assemblies
 Task test -description "The project is tested: all automated tests of the project are run" -depends build,test_assemblies
 Task pack -description "All nuget packages a created" -depends build_packages
-
+Task publish -description "All atrefacts are published to their destinations" -depends publish_packages
 Task default -depends clean,restore,build,test,pack
