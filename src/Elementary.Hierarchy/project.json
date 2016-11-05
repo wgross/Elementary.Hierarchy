@@ -9,6 +9,19 @@
     "warningsAsErrors": true,
     "xmlDoc": true
   },
+  "packOptions": {
+    "licenseUrl": "https://raw.githubusercontent.com/wgross/Elementary.Hierarchy/master/LICENSE",
+    "tags": [
+      "framework","tree","traversal","hierarchy"
+    ],
+    "releaseNotes": "1.6: moved to .Net Standard 1.0",
+    "owners": [
+      "Wolfgang Gross"
+    ],
+    "repository": {
+      "url": "https://github.com/wgross/Elementary.Hierarchy"
+    }
+  },
   "dependencies": {
     "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
     "NETStandard.Library": "1.6.0"
