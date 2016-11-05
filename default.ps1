@@ -4,7 +4,7 @@ $dotnet = (Get-Command dotnet.exe).Path
 
 #region Define file sets
 
-Task query_projectstructure -description "Collect infomation about the project structure which is useful for other build tasks"  {
+Task query_workspace -description "Collect infomation about the workspace structure which is useful for other build tasks"  {
 
     # All soures are under /src
     $script:sourceDirectoryName = Join-Path $PSScriptRoot src -Resolve
@@ -28,18 +28,31 @@ Task query_projectstructure -description "Collect infomation about the project s
     } else {   
         $script:testResultsDirectory = New-Item -Path $PSScriptRoot\.testresults -ItemType Directory
     }
+
+    # nuget packages are stored in .packages
+    if(Test-Path $PSScriptRoot\.packages) {
+        $script:packageBuildDirectory = Get-Item -Path $PSScriptRoot\.packages
+    } else {   
+        $script:packageBuildDirectory = New-Item -Path $PSScriptRoot\.packages -ItemType Directory
+    }
 }
 
-Task clean_projectstructure -description "Remove temporary build files" {
+Task clean_workspace -description "Remove temporary build files" {
     
-    # Remove temporary test result directory
-    Remove-Item $script:testResultsDirectory -Recurse -Force -ErrorAction SilentlyContinue
+    # Remove from workspace...
+    @(
+        # ...test results
+        $script:testResultsDirectory
+        # ...nuget packages
+        $script:packageBuildDirectory
 
-} -depends query_projectstructure
+    ) | Remove-Item  -Recurse -Force -ErrorAction SilentlyContinue
+
+} -depends query_workspace
 
 #endregion 
 
-#region Build targets for NuGet dependencies 
+#region Tasks for NuGet dependencies 
 
 Task clean_dependencies -description "Remove nuget package cache from current users home" {
     
@@ -86,11 +99,11 @@ Task report_dependencies -description "Print a list of all nuget dependencies. T
     }
     $nugetDependencies | Group-Object Id | Select-Object Name,Group
 
-} -depends query_projectstructure
+} -depends query_workspace
 
 #endregion
 
-#region Build targets for .Net Assemblies
+#region Tasks for .Net Assemblies
 
 Task build_assemblies -description "Compile all projects into .Net assemblies" {
 
@@ -116,7 +129,7 @@ Task clean_assemblies -description "Remove all the usual build directories under
         Remove-Item -Path (Join-Path $_.Directory obj) -Recurse -ErrorAction SilentlyContinue
     }
 
-} -depends query_projectstructure
+} -depends query_workspace
 
 Task test_assemblies -description "Run the unit test under 'test'. Output is written to .testresults directory" {
     
@@ -125,9 +138,7 @@ Task test_assemblies -description "Run the unit test under 'test'. Output is wri
         Push-Location $_.Directory
         try {
           
-            Write-Host "here: $script:testResultsDirectory"
             $testResultFileName = Join-Path -Path $script:testResultsDirectory -ChildPath "$($_.Directory.BaseName).xml"
-            
         
             # Check if nunit or xunit is used as a test runner. They use diffrent parameters
             # for test result file path specification
@@ -149,13 +160,48 @@ Task test_assemblies -description "Run the unit test under 'test'. Output is wri
         }
     }
 
-} -depends query_projectstructure
+} -depends query_workspace
 
 #endregion
 
-Task clean -description "The project tree is clean: all artifacts created by the development tool chain are removed"  -depends clean_assemblies
+#region Tasks for Nuget packages
+
+Task build_packages -description "Create nuget packages from all projects having pack options defined" {
+    
+    $script:projectJsonItems | ForEach-Object {
+
+        Push-Location $_.Directory 
+        try {
+            $projectJsonContent = Get-Content -Path $_.FullName -Raw | ConvertFrom-Json
+
+            if($projectJsonContent.packOptions -ne $null) {
+                
+                & $dotnet pack -c "Release" -o $script:packageBuildDirectory
+
+            } else {
+                "Skipping project $($_.Fullname)" | Write-Host
+            }
+            
+        } finally {
+            Pop-Location
+        }
+
+    }
+
+} -depends query_workspace
+
+Task clean_packages -description "Removes nuget packages build directory" {
+    
+    Remove-Item $script:packageBuildDirectory -Recurse -Force
+
+} -depends query_workspace
+
+#endregion
+
+Task clean -description "The project tree is clean: all artifacts created by the development tool chain are removed"  -depends clean_workspace,clean_assemblies
 Task restore -description "External dependencies are restored.The project is ready to be built." -depends restore_dependencies
 Task build -description "The project is built: all artifacts created by the development tool chain are created" -depends restore,build_assemblies
 Task test -description "The project is tested: all automated tests of the project are run" -depends build,test_assemblies
+Task pack -description "All nuget packages a created" -depends build_packages
 
-Task default -depends clean,restore,build,test
+Task default -depends clean,restore,build,test,pack
