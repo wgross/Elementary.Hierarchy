@@ -1,11 +1,7 @@
-packages/**
-TestResults/**
-.vs
-.testresults
+.*
 **.nupkg
 **/bin
 **/obj
 *.suo
-/TestResult.xml
-*.csproj.user
+**/TestResult.xml
 **/project.lock.json
