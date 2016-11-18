@@ -8025,7 +8025,7 @@
   },
   "projectFileDependencyGroups": {
     "": [
-      "Elementary.Hierarchy >= 1.6.0",
+      "Elementary.Hierarchy",
       "Moq >= 4.6.38-alpha",
       "System.Runtime.Serialization.Primitives >= 4.1.1",
       "dotnet-test-nunit >= 3.4.0-beta-2",

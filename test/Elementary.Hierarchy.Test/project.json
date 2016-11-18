@@ -8,7 +8,9 @@
     "Moq": "4.6.38-alpha",
     "nunit": "3.5.0",
     "dotnet-test-nunit": "3.4.0-beta-2",
-    "Elementary.Hierarchy": "1.6.0"
+    "Elementary.Hierarchy": {
+      "target": "project"
+    }
   },
   "testRunner": "nunit",
   "frameworks": {
