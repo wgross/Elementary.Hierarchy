@@ -138,7 +138,6 @@
         /// </summary>
         public bool IsRoot => !this.HasParentNode;
 
-
         /// <summary>
         /// Determines if a given <see cref="HierarchyPath{T}"/> instance identifies a descendant of this node.
         /// A descendants path must contain this path as a prefix
@@ -246,6 +245,17 @@
         public override string ToString()
         {
             return string.Join("/", this.Items);
+        }
+
+        /// <summary>
+        /// Creates a string representation of a <see cref="HierarchyPath{T}"/> instance.
+        /// teh value of <paramref name="separator"/> is used to seperate two path items.
+        /// </summary>
+        /// <param name="separator">seperator to put in between two path items</param>
+        /// <returns>string represention of this instance</returns>
+        public string ToString(string separator)
+        {
+            return string.Join(separator, this.Items);
         }
 
         #endregion Override object behaviour
