@@ -1,6 +1,6 @@
 ﻿{
   "title": "Elementary.Hierarchy",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "copyright": "Copyright © 2016",
   "description": "Elementary Hierarchy provides interfaces, data structures and algorithms for developing of tree-like/hierarchical data structures.",
   "authors": [ "Wolfgang Gross" ],
@@ -14,7 +14,7 @@
     "tags": [
       "framework","tree","traversal","hierarchy"
     ],
-    "releaseNotes": "1.6: moved to .Net Standard 1.0",
+    "releaseNotes": "1.7: moved to .Net Standard 1.1, added HierarchyPath.ToString(separator)",
     "owners": [
       "Wolfgang Gross"
     ],
@@ -23,8 +23,11 @@
     }
   },
   "dependencies": {
-    "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
-    "NETStandard.Library": "1.6.0"
+    "System.Runtime": "4.3.0",
+    "System.Collections": "4.3.0",
+    "System.Diagnostics.Debug": "4.3.0",
+    "System.Globalization": "4.3.0",
+    "System.Linq": "4.3.0"  
   },
   "frameworks": {
     "netstandard1.1": {}
