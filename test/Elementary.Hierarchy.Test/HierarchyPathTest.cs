@@ -393,6 +393,30 @@
         }
 
         [Test]
+        public void Path_creates_string_representation_with_custom_separator()
+        {
+            // ACT
+
+            var result = HierarchyPath.Create("a", "b").ToString(".");
+
+            // ASSERT
+
+            AreEqual("a.b", result);
+        }
+
+        [Test]
+        public void Path_creates_string_representation_with_null_separator()
+        {
+            // ACT
+
+            var result = HierarchyPath.Create("a", "b").ToString(null);
+
+            // ASSERT
+
+            AreEqual("ab", result);
+        }
+
+        [Test]
         public void Path_creates_empty_string_represention_for_empty_path()
         {
             // ACT
