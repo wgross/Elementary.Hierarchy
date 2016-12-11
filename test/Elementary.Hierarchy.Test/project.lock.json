@@ -52,7 +52,7 @@
           "lib/netcoreapp1.0/dotnet-test-nunit.dll": {}
         }
       },
-      "Libuv/1.9.0": {
+      "Libuv/1.9.1": {
         "type": "package",
         "dependencies": {
           "Microsoft.NETCore.Platforms": "1.0.1"
@@ -314,10 +314,10 @@
           "lib/netstandard1.6/Microsoft.Extensions.Testing.Abstractions.dll": {}
         }
       },
-      "Microsoft.NETCore.App/1.0.1": {
+      "Microsoft.NETCore.App/1.1.0": {
         "type": "package",
         "dependencies": {
-          "Libuv": "1.9.0",
+          "Libuv": "1.9.1",
           "Microsoft.CSharp": "4.0.1",
           "Microsoft.CodeAnalysis.CSharp": "1.3.0",
           "Microsoft.CodeAnalysis.VisualBasic": "1.3.0",
@@ -2713,16 +2713,16 @@
       },
       "Elementary.Hierarchy/1.6.0": {
         "type": "project",
-        "framework": ".NETStandard,Version=v1.0",
+        "framework": ".NETStandard,Version=v1.1",
         "dependencies": {
           "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
           "NETStandard.Library": "1.6.0"
         },
         "compile": {
-          "netstandard1.0/Elementary.Hierarchy.dll": {}
+          "netstandard1.1/Elementary.Hierarchy.dll": {}
         },
         "runtime": {
-          "netstandard1.0/Elementary.Hierarchy.dll": {}
+          "netstandard1.1/Elementary.Hierarchy.dll": {}
         }
       }
     }
@@ -2762,12 +2762,12 @@
         "lib/netcoreapp1.0/dotnet-test-nunit.runtimeconfig.json"
       ]
     },
-    "Libuv/1.9.0": {
-      "sha512": "wmFiJwVsSYNdC7XcK+i+IUaAH+mankW1VGWV9vkUKsV/LBojIigsuQQJxroRNKVwPOPIZN5WzaX7IsrHD7r7qg==",
+    "Libuv/1.9.1": {
+      "sha512": "uqX2Frwf9PW8MaY7PRNY6HM5BpW1D8oj1EdqzrmbEFD5nH63Yat3aEjN/tws6Tw6Fk7LwmLBvtUh32tTeTaHiA==",
       "type": "package",
-      "path": "Libuv/1.9.0",
+      "path": "Libuv/1.9.1",
       "files": [
-        "Libuv.1.9.0.nupkg.sha512",
+        "Libuv.1.9.1.nupkg.sha512",
         "Libuv.nuspec",
         "License.txt",
         "runtimes/debian-x64/native/libuv.so",
@@ -2976,12 +2976,12 @@
         "lib/netstandard1.6/Microsoft.Extensions.Testing.Abstractions.dll"
       ]
     },
-    "Microsoft.NETCore.App/1.0.1": {
-      "sha512": "DcoBwtjyzA5I/Qjq9GmBHovFJ7lKkKMDfMm2FafZX6FOqmSPKUkPAGTokgZHq1dNxdusaNB+17Ce8WTNUnW3tA==",
+    "Microsoft.NETCore.App/1.1.0": {
+      "sha512": "DFec+OUojDVocn1GxAL9uJg4qwsgkvKiQpv6BKd9ljGezvc9p6GpFv51IIakiujkVW/wBtQ0xlfjVSgS1UG/uw==",
       "type": "package",
-      "path": "Microsoft.NETCore.App/1.0.1",
+      "path": "Microsoft.NETCore.App/1.1.0",
       "files": [
-        "Microsoft.NETCore.App.1.0.1.nupkg.sha512",
+        "Microsoft.NETCore.App.1.1.0.nupkg.sha512",
         "Microsoft.NETCore.App.nuspec",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
@@ -8032,7 +8032,7 @@
       "nunit >= 3.5.0"
     ],
     ".NETCoreApp,Version=v1.0": [
-      "Microsoft.NETCore.App >= 1.0.1"
+      "Microsoft.NETCore.App >= 1.1.0"
     ]
   },
   "tools": {},
