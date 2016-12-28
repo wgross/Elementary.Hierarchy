@@ -2802,7 +2802,7 @@
           "lib/netstandard1.3/System.Xml.XPath.XDocument.dll": {}
         }
       },
-      "Elementary.Hierarchy/1.7.0": {
+      "Elementary.Hierarchy/1.7.1": {
         "type": "project",
         "framework": ".NETStandard,Version=v1.1",
         "dependencies": {
@@ -8222,7 +8222,7 @@
         "ref/xamarinwatchos10/_._"
       ]
     },
-    "Elementary.Hierarchy/1.7.0": {
+    "Elementary.Hierarchy/1.7.1": {
       "type": "project",
       "path": "../../src/Elementary.Hierarchy/project.json",
       "msbuildProject": "../../src/Elementary.Hierarchy/Elementary.Hierarchy.xproj"

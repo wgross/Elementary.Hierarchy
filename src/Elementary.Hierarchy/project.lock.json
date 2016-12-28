@@ -2,6 +2,7 @@
   "locked": false,
   "version": 2,
   "targets": {
+    ".NETFramework,Version=v4.6.1": {},
     ".NETStandard,Version=v1.1": {
       "Microsoft.NETCore.Platforms/1.1.0": {
         "type": "package",
@@ -463,14 +464,15 @@
     }
   },
   "projectFileDependencyGroups": {
-    "": [
+    "": [],
+    ".NETFramework,Version=v4.6.1": [],
+    ".NETStandard,Version=v1.1": [
       "System.Collections >= 4.3.0",
       "System.Diagnostics.Debug >= 4.3.0",
       "System.Globalization >= 4.3.0",
       "System.Linq >= 4.3.0",
       "System.Runtime >= 4.3.0"
-    ],
-    ".NETStandard,Version=v1.1": []
+    ]
   },
   "tools": {},
   "projectFileToolGroups": {}
