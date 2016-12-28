@@ -1,6 +1,6 @@
 ﻿{
   "title": "Elementary.Hierarchy",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "copyright": "Copyright © 2016",
   "description": "Elementary Hierarchy provides interfaces, data structures and algorithms for developing of tree-like/hierarchical data structures.",
   "authors": [ "Wolfgang Gross" ],
@@ -14,7 +14,7 @@
     "tags": [
       "framework","tree","traversal","hierarchy"
     ],
-    "releaseNotes": "1.7: moved to .Net Standard 1.1, added HierarchyPath.ToString(separator)",
+    "releaseNotes": "1.7.1: added net461 as target platform, fixed assemblies wrong file version",
     "owners": [
       "Wolfgang Gross"
     ],
@@ -22,14 +22,18 @@
       "url": "https://github.com/wgross/Elementary.Hierarchy"
     }
   },
-  "dependencies": {
-    "System.Runtime": "4.3.0",
-    "System.Collections": "4.3.0",
-    "System.Diagnostics.Debug": "4.3.0",
-    "System.Globalization": "4.3.0",
-    "System.Linq": "4.3.0"  
-  },
   "frameworks": {
-    "netstandard1.1": {}
+    "netstandard1.1": {
+      "dependencies": {
+        "System.Runtime": "4.3.0",
+        "System.Collections": "4.3.0",
+        "System.Diagnostics.Debug": "4.3.0",
+        "System.Globalization": "4.3.0",
+        "System.Linq": "4.3.0"
+      }
+    },
+    "net461": {
+      "frameworkAssemblies": {}
+    }
   }
 }
