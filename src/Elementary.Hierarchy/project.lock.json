@@ -79,7 +79,7 @@
   },
   "libraries": {
     "Microsoft.NETCore.Platforms/1.1.0": {
-      "sha512": "kz0PEW2lhqygehI/d6XsPCQzD7ff7gUJaVGPVETX611eadGsA3A877GdSlU0LRVMCTH/+P3o2iDTak+S08V2+A==",
+      "sha512": "y1xSnVmtcrdn/dBWEuRPGSXAnB6RQgyplKxL7UWTHmF9GdzW+KyOn6qjAkLBGIwBUluETh8sbXHN2CvQWcqhLA==",
       "type": "package",
       "path": "Microsoft.NETCore.Platforms/1.1.0",
       "files": [
@@ -92,7 +92,7 @@
       ]
     },
     "Microsoft.NETCore.Targets/1.1.0": {
-      "sha512": "aOZA3BWfz9RXjpzt0sRJJMjAscAUm3Hoa4UWAfceV9UTYxgwZ1lZt5nO2myFf+/jetYQo4uTP7zS8sJY67BBxg==",
+      "sha512": "PFHBYTOhYrRQDGFdb8Hh3BTJ0eOSFkvBFAYnc0RKI4LdUWFrZP273JVkO7QNINB/igskUxqWgVLZBMxVYUQX9Q==",
       "type": "package",
       "path": "Microsoft.NETCore.Targets/1.1.0",
       "files": [
@@ -105,7 +105,7 @@
       ]
     },
     "System.Collections/4.3.0": {
-      "sha512": "3Dcj85/TBdVpL5Zr+gEEBUuFe2icOnLalmEh9hfck1PTYbbyWuZgh4fmm2ysCLTrqLQw6t3TgTyJ+VLp+Qb+Lw==",
+      "sha512": "KyCWywpX5DFFb0s+WqB+qhFPSLIhYAJ6/UZ6JyvIHNrFYa7CxhJiFedXbD5IqBUlpJbWIaKBj5PcB1bzOORcPw==",
       "type": "package",
       "path": "System.Collections/4.3.0",
       "files": [
@@ -171,7 +171,7 @@
       ]
     },
     "System.Diagnostics.Debug/4.3.0": {
-      "sha512": "ZUhUOdqmaG5Jk3Xdb8xi5kIyQYAA4PnTNlHx1mu9ZY3qv4ELIdKbnL/akbGaKi2RnNUWaZsAs31rvzFdewTj2g==",
+      "sha512": "rPhe6FFqDtCdHoXZcWf5duoAOenqMaEt7/ya8z61uiElx/IH3uIaA/f2pEJldDI2m2eHKkiisSXpOQnVxPHung==",
       "type": "package",
       "path": "System.Diagnostics.Debug/4.3.0",
       "files": [
@@ -237,7 +237,7 @@
       ]
     },
     "System.Globalization/4.3.0": {
-      "sha512": "kYdVd2f2PAdFGblzFswE4hkNANJBKRmsfa2X5LG2AcWE1c7/4t0pYae1L8vfZ5xvE2nK/R9JprtToA61OSHWIg==",
+      "sha512": "HKAuonwt3Oy7uMhaVEcQO8sTiVme4jCydlRkN2/q+qKbu4ibuOYsm4xS+lZwf52zQdjOkIhGdMAFcn3XamYxNg==",
       "type": "package",
       "path": "System.Globalization/4.3.0",
       "files": [
@@ -303,7 +303,7 @@
       ]
     },
     "System.Linq/4.3.0": {
-      "sha512": "5DbqIUpsDp0dFftytzuMmc0oeMdQwjcP/EWxsksIz/w1TcFRkZ3yKKz0PqiYFMmEwPSWw+qNVqD7PJ889JzHbw==",
+      "sha512": "gWCkq2lbZNn0bqLNArYQlPkw735d8Vxf52KLt9ziVrnhM5ji+B3ohfNgmocJgkdE/9R+Tng1Sp3rImbWTbmI1A==",
       "type": "package",
       "path": "System.Linq/4.3.0",
       "files": [
@@ -373,7 +373,7 @@
       ]
     },
     "System.Runtime/4.3.0": {
-      "sha512": "JufQi0vPQ0xGnAczR13AUFglDyVYt4Kqnz1AZaiKZ5+GICq0/1MH/mO/eAJHt/mHW1zjKBJd7kV26SrxddAhiw==",
+      "sha512": "V8Jlg8KOWsMRfq4l+FBAwPr/NV4BI63Uu5qc3TbRFsFvBOMCQiWw52OrMYWGmZcbb6Odqd1L014JxfTPleXfuA==",
       "type": "package",
       "path": "System.Runtime/4.3.0",
       "files": [

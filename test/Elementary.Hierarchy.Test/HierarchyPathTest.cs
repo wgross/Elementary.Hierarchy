@@ -111,19 +111,35 @@
         }
 
         [Test]
-        public void Split_empty_parent_path_from_empty_path()
+        public void Split_parent_from_string_root_path_throws_InvalidOperationException()
         {
             // ARRANGE
 
-            var path = HierarchyPath.Create(string.Empty);
+            var path = HierarchyPath.Create<string>();
 
             // ACT
 
-            var result = path.Parent();
+            var result = Throws<InvalidOperationException>(() => path.Parent());
 
             // ASSERT
 
-            IsFalse(result.Items.Any());
+            IsNotNull(result);
+        }
+
+        [Test]
+        public void Split_parent_from_int_root_path_throws_InvalidOperationException()
+        {
+            // ARRANGE
+
+            var path = HierarchyPath.Create<int>();
+
+            // ACT
+
+            var result = Throws<InvalidOperationException>(() => path.Parent());
+
+            // ASSERT
+
+            IsNotNull(result);
         }
 
         #endregion Parent
@@ -361,7 +377,7 @@
         }
 
         [Test]
-        public void Path_is_equal_compered_with_itself()
+        public void Path_is_equal_compared_with_itself()
         {
             // ARRANGE
 
@@ -620,5 +636,19 @@
         }
 
         #endregion IsDescendant
+
+        #region Root path disambiguisation
+
+        [Test]
+        public void Root_pathes_are_equal()
+        {
+            // ACT & ASSERT
+
+            AreEqual(HierarchyPath.Create<string>(), HierarchyPath.Parse("/", separator: "/"));
+            AreEqual(HierarchyPath.Parse("/", separator: "/"), HierarchyPath.Parse("", separator: "/"));
+            AreNotEqual(HierarchyPath.Create<string>(), HierarchyPath.Create<string>(""));
+        }
+
+        #endregion Root path disambiguisation
     }
 }
