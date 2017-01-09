@@ -5,7 +5,7 @@ This includes tree traversal and identfication of tree nodes with path-like iden
 
 ## Installation 
 
-Elementary.Hierachy is easily installed using NuGet
+Elementary.Hierarchy is easily installed using NuGet
 ```
 Install-Package Elementary.Hierarchy
 ```
@@ -19,7 +19,7 @@ The first kind is build from nodes which implement the interfaces defined by Ele
 * __IHasIdentifieableChildNodes__ enables _DescendantAt()_, _DescendAlongPath()_
 * __IHasChildNodes__ and __IHasParentNode__ together enables _FollowingSibings()_ and _PrecedingSiblings()_
 
-A second kind of implementation doesn't rely on interfaces but on a delegate providing the logic to traverse the child or parent axis of the tree. in other word: its not the node which nows is children pr parent but a delegate provides this information. By seperating the node itself from the tree structure a hierarchy can be implemented on any class or value type.
+A second flavor of implementation doesn't rely on interfaces but on a delegate providing the logic to traverse the child or parent axis of the tree. in other words: its not the node which nows is children pr parent but a delegate provides this information. By seperating the node itself from the tree structure a hierarchy can be implemented on any class or value type.
 An Example implements a small tree with strings:
 
 ```csharp
