@@ -1,18 +1,25 @@
-﻿{
+{
   "title": "Elementary.Hierarchy",
   "version": "1.7.1",
-  "copyright": "Copyright © 2016",
+  "copyright": "Copyright � 2016",
   "description": "Elementary Hierarchy provides interfaces, data structures and algorithms for developing of tree-like/hierarchical data structures.",
-  "authors": [ "Wolfgang Gross" ],
-  "supports": {},
+  "authors": [
+    "Wolfgang Gross"
+  ],
+  "supports": {
+  },
   "buildOptions": {
     "warningsAsErrors": true,
-    "xmlDoc": true
+    "xmlDoc": true,
+    "debugType": "full"
   },
   "packOptions": {
     "licenseUrl": "https://raw.githubusercontent.com/wgross/Elementary.Hierarchy/master/LICENSE",
     "tags": [
-      "framework","tree","traversal","hierarchy"
+      "framework",
+      "tree",
+      "traversal",
+      "hierarchy"
     ],
     "releaseNotes": "1.7.1: added net461 as target platform, fixed assemblies wrong file version",
     "owners": [
@@ -33,7 +40,8 @@
       }
     },
     "net461": {
-      "frameworkAssemblies": {}
+      "frameworkAssemblies": {
+      }
     }
   }
 }
