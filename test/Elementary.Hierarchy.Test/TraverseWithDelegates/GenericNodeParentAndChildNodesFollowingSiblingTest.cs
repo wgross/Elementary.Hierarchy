@@ -1,12 +1,11 @@
 ﻿using Elementary.Hierarchy.Generic;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 {
-    [TestFixture]
     public class GenericNodeParentAndChildNodesFollowingSiblingTest
     {
         private IEnumerable<string> GetChildNodes(string rootNode)
@@ -47,7 +46,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
             return false;
         }
 
-        [Test]
+        [Fact]
         public void D_root_node_has_no_siblings_on_FollowingSiblings()
         {
             // ACT
@@ -56,10 +55,10 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
             // ASSERT
 
-            Assert.IsFalse(result.Any());
+            Assert.False(result.Any());
         }
 
-        [Test]
+        [Fact]
         public void D_node_returns_right_sibling_on_FollowingSiblings()
         {
             // ACT
@@ -68,11 +67,11 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
             // ASSERT
 
-            Assert.AreEqual(1, result.Count());
-            Assert.AreSame("rightNode", result.Single());
+            Assert.Equal(1, result.Count());
+            Assert.Same("rightNode", result.Single());
         }
 
-        [Test]
+        [Fact]
         public void D_node_returns_no_siblings_on_FollowingSiblings()
         {
             // ACT
@@ -81,10 +80,10 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
             // ASSERT
 
-            Assert.AreEqual(0, result.Count());
+            Assert.Equal(0, result.Count());
         }
 
-        [Test]
+        [Fact]
         public void D_node_returns_all_siblings_on_FollowingSiblings()
         {
             // ACT
@@ -93,9 +92,9 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
             // ASSERT
 
-            Assert.AreEqual(2, result.Count());
-            Assert.AreSame("rightLeaf2", result.ElementAt(0));
-            Assert.AreSame("rightLeaf3", result.ElementAt(1));
+            Assert.Equal(2, result.Count());
+            Assert.Same("rightLeaf2", result.ElementAt(0));
+            Assert.Same("rightLeaf3", result.ElementAt(1));
         }
     }
 }

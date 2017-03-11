@@ -1,12 +1,11 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 {
     using Elementary.Hierarchy.Generic;
-    using NUnit.Framework;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Xunit;
 
-    [TestFixture]
     public class GenericNodeDescendantsOrSelfTest
     {
         private IEnumerable<string> GetChildNodes(string startNode)
@@ -25,7 +24,7 @@
             return Enumerable.Empty<string>();
         }
 
-        [Test]
+        [Fact]
         public void D_leaf_returns_itself_on_DescendantsOrSelf()
         {
             // ACT
@@ -34,12 +33,12 @@
 
             // ASSERT
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual(1, result.Count());
-            Assert.AreEqual("leftLeaf", result.ElementAt(0));
+            Assert.NotNull(result);
+            Assert.Equal(1, result.Count());
+            Assert.Equal("leftLeaf", result.ElementAt(0));
         }
 
-        [Test]
+        [Fact]
         public void D_inconsistent_leaf_returns_itself_on_DescendantsOrSelf()
         {
             // ARRANGE
@@ -52,11 +51,11 @@
 
             // ASSERT
 
-            Assert.AreEqual(1, result.Count());
-            Assert.AreEqual("badLeaf", result.ElementAt(0));
+            Assert.Equal(1, result.Count());
+            Assert.Equal("badLeaf", result.ElementAt(0));
         }
 
-        [Test]
+        [Fact]
         public void D_leaf_returns_single_child_on_DescendantsOrSelf()
         {
             // ACT
@@ -65,11 +64,11 @@
 
             // ASSERT
 
-            Assert.AreEqual(2, result.Count());
-            CollectionAssert.AreEqual(new[] { "leftNode", "leftLeaf" }, result);
+            Assert.Equal(2, result.Count());
+            Assert.Equal(new[] { "leftNode", "leftLeaf" }, result);
         }
 
-        [Test]
+        [Fact]
         public void D_leaf_returns_left_before_right_child_on_DescendantsOrSelf()
         {
             // ACT
@@ -78,11 +77,11 @@
 
             // ASSERT
 
-            Assert.AreEqual(3, result.Count());
-            CollectionAssert.AreEqual(new[] { "rightNode", "leftRightLeaf", "rightRightLeaf" }, result);
+            Assert.Equal(3, result.Count());
+            Assert.Equal(new[] { "rightNode", "leftRightLeaf", "rightRightLeaf" }, result);
         }
 
-        [Test]
+        [Fact]
         public void D_leaf_returns_descendants_breadthFirst_on_DescendantsOrSelf()
         {
             // ACT
@@ -91,11 +90,11 @@
 
             // ASSERT
 
-            Assert.AreEqual(6, result.Count());
-            CollectionAssert.AreEqual(new[] { "rootNode", "leftNode", "rightNode", "leftLeaf", "leftRightLeaf", "rightRightLeaf" }, result);
+            Assert.Equal(6, result.Count());
+            Assert.Equal(new[] { "rootNode", "leftNode", "rightNode", "leftLeaf", "leftRightLeaf", "rightRightLeaf" }, result);
         }
 
-        [Test]
+        [Fact]
         public void D_leaf_returns_descendants_depthFirst_on_DescendantsOrSelf()
         {
             // ACT
@@ -104,8 +103,8 @@
 
             // ASSERT
 
-            Assert.AreEqual(6, result.Count());
-            CollectionAssert.AreEqual(new[] {
+            Assert.Equal(6, result.Count());
+            Assert.Equal(new[] {
                 "rootNode",
                 "leftNode",
                 "leftLeaf",
@@ -115,7 +114,7 @@
             }, result);
         }
 
-        [Test]
+        [Fact]
         public void D_root_returns_children_as_level2_descendants_on_DescendantsOrSelf()
         {
             // ACT
@@ -125,7 +124,7 @@
 
             // ASSERT
 
-            CollectionAssert.AreEqual(children, descendants);
+            Assert.Equal(children, descendants);
         }
     }
 }

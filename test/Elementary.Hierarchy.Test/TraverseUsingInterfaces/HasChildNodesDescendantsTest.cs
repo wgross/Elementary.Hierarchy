@@ -1,12 +1,11 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseUsingInterfaces
 {
     using Moq;
-    using NUnit.Framework;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Xunit;
 
-    [TestFixture]
     public class HasChildNodesDescendantsTest
     {
         public interface MockableNodeType : IHasChildNodes<MockableNodeType>
@@ -19,8 +18,7 @@
         private Mock<MockableNodeType> leftRightLeaf;
         private Mock<MockableNodeType> rightRightLeaf;
 
-        [SetUp]
-        public void ArrangeAllTests()
+        public HasChildNodesDescendantsTest()
         {
             //                rootNode
             //                /      \
@@ -59,7 +57,7 @@
                 .Setup(n => n.ChildNodes).Returns(new[] { this.leftNode.Object, this.rightNode.Object });
         }
 
-        [Test]
+        [Fact]
         public void LeafReturnsNoChildren()
         {
             // ACT
@@ -68,15 +66,15 @@
 
             // ASSERT
 
-            Assert.IsNotNull(result);
-            Assert.IsFalse(result.Any());
+            Assert.NotNull(result);
+            Assert.False(result.Any());
 
             this.rightRightLeaf.Verify(n => n.HasChildNodes, Times.Once);
             this.rightRightLeaf.Verify(n => n.ChildNodes, Times.Never);
             this.rightRightLeaf.VerifyAll();
         }
 
-        [Test]
+        [Fact]
         public void LeafReturnsNoChildrenButClaimsToHaveSubnodes()
         {
             // ARRANGE
@@ -93,13 +91,13 @@
 
             // ASSERT
 
-            Assert.AreEqual(0, result.Count());
+            Assert.Equal(0, result.Count());
 
             badLeaf.Verify(n => n.HasChildNodes, Times.Once);
             badLeaf.Verify(n => n.ChildNodes, Times.Once);
         }
 
-        [Test]
+        [Fact]
         public void EnumerateSingleChildToLeaf()
         {
             // ACT
@@ -108,14 +106,14 @@
 
             // ASSERT
 
-            Assert.AreEqual(1, result.Count());
-            Assert.AreSame(this.leftLeaf.Object, result.ElementAt(0));
+            Assert.Equal(1, result.Count());
+            Assert.Same(this.leftLeaf.Object, result.ElementAt(0));
 
             this.leftNode.VerifyAll();
             this.leftLeaf.VerifyAll();
         }
 
-        [Test]
+        [Fact]
         public void EnumerateTwoChildrenToLeaf()
         {
             // ACT
@@ -124,15 +122,15 @@
 
             // ASSERT
 
-            Assert.AreEqual(2, result.Count());
-            CollectionAssert.AreEqual(new[] { this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result);
+            Assert.Equal(2, result.Count());
+            Assert.Equal(new[] { this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result);
 
             this.rightNode.VerifyAll();
             this.leftRightLeaf.VerifyAll();
             this.rightRightLeaf.VerifyAll();
         }
 
-        [Test]
+        [Fact]
         public void EnumerateTreeBreadthFirst()
         {
             // ACT
@@ -141,8 +139,8 @@
 
             // ASSERT
 
-            Assert.AreEqual(5, result.Count());
-            CollectionAssert.AreEqual(new[]
+            Assert.Equal(5, result.Count());
+            Assert.Equal(new[]
             {
                 this.leftNode.Object,
                 this.rightNode.Object,
@@ -159,7 +157,7 @@
             this.rightRightLeaf.VerifyAll();
         }
 
-        [Test]
+        [Fact]
         public void EnumerateTreeDepthFirst()
         {
             // ACT
@@ -168,8 +166,8 @@
 
             // ASSERT
 
-            Assert.AreEqual(5, result.Count());
-            CollectionAssert.AreEqual(new[] {
+            Assert.Equal(5, result.Count());
+            Assert.Equal(new[] {
                 this.leftNode,
                 this.leftLeaf,
                 this.rightNode,
@@ -185,7 +183,7 @@
             this.rightRightLeaf.VerifyAll();
         }
 
-        [Test]
+        [Fact]
         public void EnumerateDecendantTreeToSpecifiedDepth()
         {
             // ACT
@@ -198,15 +196,15 @@
 
             // ASSERT
 
-            Assert.IsTrue(ex.Message.Contains("must be > 0"));
-            Assert.AreEqual("maxDepth", ex.ParamName);
-            Assert.IsFalse(result0.Any());
-            CollectionAssert.AreEqual(new[] { this.leftNode.Object, this.rightNode.Object }, result1);
-            CollectionAssert.AreEqual(new[] { this.leftNode.Object, this.rightNode.Object, this.leftLeaf.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result2);
-            CollectionAssert.AreEqual(new[] { this.leftNode.Object, this.rightNode.Object, this.leftLeaf.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result3);
+            Assert.True(ex.Message.Contains("must be > 0"));
+            Assert.Equal("maxDepth", ex.ParamName);
+            Assert.False(result0.Any());
+            Assert.Equal(new[] { this.leftNode.Object, this.rightNode.Object }, result1);
+            Assert.Equal(new[] { this.leftNode.Object, this.rightNode.Object, this.leftLeaf.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result2);
+            Assert.Equal(new[] { this.leftNode.Object, this.rightNode.Object, this.leftLeaf.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result3);
         }
 
-        [Test]
+        [Fact]
         public void EnumerateDescendantOrSelfTreeToSpecifiedDepth()
         {
             // ACT
@@ -220,16 +218,16 @@
 
             // ASSERT
 
-            Assert.IsTrue(ex.Message.Contains("must be > 0"));
-            Assert.AreEqual("maxDepth", ex.ParamName);
-            Assert.IsFalse(result0.Any());
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object }, result1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object, this.leftNode.Object, this.rightNode.Object }, result2);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object, this.leftNode.Object, this.rightNode.Object, this.leftLeaf.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result3);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object, this.leftNode.Object, this.rightNode.Object, this.leftLeaf.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result4);
+            Assert.True(ex.Message.Contains("must be > 0"));
+            Assert.Equal("maxDepth", ex.ParamName);
+            Assert.False(result0.Any());
+            Assert.Equal(new[] { this.rootNode.Object }, result1);
+            Assert.Equal(new[] { this.rootNode.Object, this.leftNode.Object, this.rightNode.Object }, result2);
+            Assert.Equal(new[] { this.rootNode.Object, this.leftNode.Object, this.rightNode.Object, this.leftLeaf.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result3);
+            Assert.Equal(new[] { this.rootNode.Object, this.leftNode.Object, this.rightNode.Object, this.leftLeaf.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result4);
         }
 
-        [Test]
+        [Fact]
         public void EnumerateTreeDepthFirstToSpecificDepth()
         {
             // ACT
@@ -244,14 +242,14 @@
 
             // ASSERT
 
-            Assert.IsFalse(result0.Any());
+            Assert.False(result0.Any());
 
-            CollectionAssert.AreEqual(new[] {
+            Assert.Equal(new[] {
                 this.leftNode,
                 this.rightNode,
             }.Select(n => n.Object), result1);
 
-            CollectionAssert.AreEqual(new[] {
+            Assert.Equal(new[] {
                 this.leftNode,
                 this.leftLeaf,
                 this.rightNode,
@@ -259,7 +257,7 @@
                 this.rightRightLeaf
             }.Select(n => n.Object), result2);
 
-            CollectionAssert.AreEqual(new[] {
+            Assert.Equal(new[] {
                 this.leftNode,
                 this.leftLeaf,
                 this.rightNode,
@@ -268,7 +266,7 @@
             }.Select(n => n.Object), result3);
         }
 
-        [Test]
+        [Fact]
         public void DescendantsLevel1AreChildren()
         {
             // ACT
@@ -278,7 +276,7 @@
 
             // ASSERT
 
-            CollectionAssert.AreEqual(children, descendants);
+            Assert.Equal(children, descendants);
         }
     }
 }

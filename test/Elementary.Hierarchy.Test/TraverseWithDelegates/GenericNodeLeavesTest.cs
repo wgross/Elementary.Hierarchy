@@ -1,15 +1,15 @@
 ﻿using Elementary.Hierarchy.Generic;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 {
-    [TestFixture]
+    
     public class GenericNodeLeavesTest
     {
-        [Test]
+        [Fact]
         public void D_empty_root_returns_itself_on_Leaves()
         {
             // ARRANGE
@@ -22,12 +22,12 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
             // ASSERT
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual(1, result.Count());
-            Assert.AreEqual("root", result.ElementAt(0));
+            Assert.NotNull(result);
+            Assert.Equal(1, result.Count());
+            Assert.Equal("root", result.ElementAt(0));
         }
 
-        [Test]
+        [Fact]
         public void D_root_returns_its_descendant_leaves_on_Leaves()
         {
             // ARRANGE
@@ -54,9 +54,9 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
             // ASSERT
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual(3, result.Count());
-            Assert.AreEqual(new[] { "leftLeaf", "leftRightLeaf", "rightRightLeaf" }, result.ToArray());
+            Assert.NotNull(result);
+            Assert.Equal(3, result.Count());
+            Assert.Equal(new[] { "leftLeaf", "leftRightLeaf", "rightRightLeaf" }, result.ToArray());
         }
     }
 }

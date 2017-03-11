@@ -1,10 +1,9 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseUsingInterfaces
 {
     using Moq;
-    using NUnit.Framework;
     using System.Linq;
+    using Xunit;
 
-    [TestFixture]
     public class HasParentAndChildNodesPrecedingSiblingTest
     {
         public interface MockableNodeType : IHasChildNodes<MockableNodeType>, IHasParentNode<MockableNodeType>
@@ -18,8 +17,7 @@
         private Mock<MockableNodeType> rightLeaf2;
         private Mock<MockableNodeType> rightLeaf3;
 
-        [SetUp]
-        public void ArrangeAllTests()
+        public HasParentAndChildNodesPrecedingSiblingTest()
         {
             //                rootNode
             //              /         \
@@ -28,7 +26,7 @@
             //                rightLeaf1  rightRightLeaf2   rightLeaf3
 
             this.rightLeaf1 = new Mock<MockableNodeType>();
-            this.rightLeaf1.SetupGet(n=>n.HasChildNodes).Returns(false);
+            this.rightLeaf1.SetupGet(n => n.HasChildNodes).Returns(false);
             this.rightLeaf1.SetupGet(n => n.HasParentNode).Returns(true);
 
             this.rightLeaf2 = new Mock<MockableNodeType>();
@@ -58,7 +56,7 @@
             this.leftNode.SetupGet(n => n.ParentNode).Returns(this.rootNode.Object);
         }
 
-        [Test]
+        [Fact]
         public void Root_node_hasno_preceding_siblings()
         {
             // ACT
@@ -67,10 +65,10 @@
 
             // ASSERT
 
-            Assert.IsFalse(result.Any());
+            Assert.False(result.Any());
         }
 
-        [Test]
+        [Fact]
         public void Return_preceding_sibling_for_PrecedingSiblings()
         {
             // ACT
@@ -78,14 +76,14 @@
             MockableNodeType[] result = this.rightNode.Object.PrecedingSiblings().ToArray();
 
             // ASSERT
-            Assert.AreSame(this.rootNode.Object, this.leftNode.Object.Parent());
-            Assert.AreSame(this.leftNode.Object, this.rootNode.Object.ChildNodes.ElementAt(0));
-            Assert.AreSame(this.rightNode.Object, this.rootNode.Object.ChildNodes.ElementAt(1));
-            Assert.AreEqual(1, result.Count());
-            Assert.AreSame(this.leftNode.Object, result.Single());
+            Assert.Same(this.rootNode.Object, this.leftNode.Object.Parent());
+            Assert.Same(this.leftNode.Object, this.rootNode.Object.ChildNodes.ElementAt(0));
+            Assert.Same(this.rightNode.Object, this.rootNode.Object.ChildNodes.ElementAt(1));
+            Assert.Equal(1, result.Count());
+            Assert.Same(this.leftNode.Object, result.Single());
         }
 
-        [Test]
+        [Fact]
         public void Return_empty_siblinngs_for_PrecedingSiblings()
         {
             // ACT
@@ -94,13 +92,13 @@
 
             // ASSERT
 
-            Assert.AreSame(this.rootNode.Object, this.leftNode.Object.Parent());
-            Assert.AreSame(this.leftNode.Object, this.rootNode.Object.ChildNodes.ElementAt(0));
-            Assert.AreSame(this.rightNode.Object, this.rootNode.Object.ChildNodes.ElementAt(1));
-            Assert.AreEqual(0, result.Count());
+            Assert.Same(this.rootNode.Object, this.leftNode.Object.Parent());
+            Assert.Same(this.leftNode.Object, this.rootNode.Object.ChildNodes.ElementAt(0));
+            Assert.Same(this.rightNode.Object, this.rootNode.Object.ChildNodes.ElementAt(1));
+            Assert.Equal(0, result.Count());
         }
 
-        [Test]
+        [Fact]
         public void Return_multiple_siblings_for_PrecedingSiblings()
         {
             // ACT
@@ -109,13 +107,13 @@
 
             // ASSERT
 
-            Assert.AreSame(this.rightNode.Object, this.rightLeaf1.Object.Parent());
-            Assert.AreSame(this.rightLeaf1.Object, this.rightNode.Object.ChildNodes.ElementAt(0));
-            Assert.AreSame(this.rightLeaf2.Object, this.rightNode.Object.ChildNodes.ElementAt(1));
-            Assert.AreSame(this.rightLeaf3.Object, this.rightNode.Object.ChildNodes.ElementAt(2));
-            Assert.AreEqual(2, result.Count());
-            Assert.AreSame(this.rightLeaf1.Object, result.ElementAt(0));
-            Assert.AreSame(this.rightLeaf2.Object, result.ElementAt(1));
+            Assert.Same(this.rightNode.Object, this.rightLeaf1.Object.Parent());
+            Assert.Same(this.rightLeaf1.Object, this.rightNode.Object.ChildNodes.ElementAt(0));
+            Assert.Same(this.rightLeaf2.Object, this.rightNode.Object.ChildNodes.ElementAt(1));
+            Assert.Same(this.rightLeaf3.Object, this.rightNode.Object.ChildNodes.ElementAt(2));
+            Assert.Equal(2, result.Count());
+            Assert.Same(this.rightLeaf1.Object, result.ElementAt(0));
+            Assert.Same(this.rightLeaf2.Object, result.ElementAt(1));
         }
     }
 }

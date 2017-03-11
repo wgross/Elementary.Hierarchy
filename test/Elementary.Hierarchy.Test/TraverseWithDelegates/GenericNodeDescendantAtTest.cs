@@ -1,16 +1,15 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 {
     using Elementary.Hierarchy.Generic;
-    using NUnit.Framework;
     using System;
     using System.Collections.Generic;
+    using Xunit;
 
-    [TestFixture]
     public class GenericNodeDescendantAtTest
     {
         #region DescendantAt
 
-        [Test]
+        [Fact]
         public void D_root_returns_child_on_DescendantAt()
         {
             // ARRANGE
@@ -32,10 +31,10 @@
 
             // ASSERT
 
-            Assert.AreEqual("startNode", result);
+            Assert.Equal("startNode", result);
         }
 
-        [Test]
+        [Fact]
         public void D_root_returns_itself_on_DescendantAt()
         {
             // ARRANGE
@@ -57,10 +56,10 @@
 
             // ASSERT
 
-            Assert.AreEqual("startNode", result);
+            Assert.Equal("startNode", result);
         }
 
-        [Test]
+        [Fact]
         public void D_root_returns_grandchild_on_DescendentAt()
         {
             // ARRANGE
@@ -89,10 +88,10 @@
 
             // ASSERT
 
-            Assert.AreSame("grandChildNode", result);
+            Assert.Same("grandChildNode", result);
         }
 
-        [Test]
+        [Fact]
         public void D_root_node_throws_on_invalid_childId_on_DescendantAt()
         {
             // ARRANGE
@@ -114,7 +113,7 @@
 
             // ASSERT
 
-            Assert.IsTrue(result.Message.Contains("Key not found:'childNode'"));
+            Assert.True(result.Message.Contains("Key not found:'childNode'"));
         }
 
         #endregion DescendantAt
