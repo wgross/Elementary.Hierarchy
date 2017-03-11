@@ -1,5 +1,12 @@
 ﻿Import-Module Psake
 
+
+# Include additional tasks in the build script
+
+if(Test-Path "$PSScriptRoot\psake.tasks.ps1") {
+    Include -fileNamePathToInclude "$PSScriptRoot\psake.tasks.ps1"
+}
+
 #region Validate Environment
 
 Task doctor -description "Test dev environment" {
@@ -383,12 +390,13 @@ Task clean_coverage {
 Task build_coverage -description "Run the unit test under 'test' to measure the tests coverage. Output is written to .coverage directory" {
 
     # Run test projects with openCover and collect result separted by project in an XML file.
-    
+    $filterAssemblies = "-[xunit.*]*"
     $script:projectItems.test | ForEach-Object {
         $projectDirectory = $_.Directory
         Get-ChildItem "$($_.Directory.FullName)\bin\Debug\netcoreapp1.*\$($_.Directory.BaseName).Dll" -Recurse | ForEach-Object {
             "test assembly: $_" | Write-Host
             & $script:openCoverConsole -oldStyle -target:$script:dotnet -targetdir:$($projectDirectory.FullName) -targetargs:test -register:user -output:$script:coverageResultsDirectory\$($_.BaseName).xml
+            # -filter:$filterAssemblies
         }
     }
 
