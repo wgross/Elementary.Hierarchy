@@ -10,13 +10,13 @@
         ///
         /// </summary>
         /// <param name="child"></param>
-        void RemoveChild(IHierarchyNodeWriter<TNode> child);
+        IHierarchyNodeWriter<TNode> RemoveChild(IHierarchyNodeWriter<TNode> child);
 
         /// <summary>
         /// Replaces the child node with a new instance
         /// </summary>
         /// <param name="childToReplace"></param>
         /// <param name="newChild"></param>
-        void ReplaceChild(IHierarchyNodeWriter<TNode> childToReplace, IHierarchyNodeWriter<TNode> newChild);
+        IHierarchyNodeWriter<TNode> ReplaceChild(IHierarchyNodeWriter<TNode> childToReplace, IHierarchyNodeWriter<TNode> newChild);
     }
 }
