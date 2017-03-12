@@ -1,11 +1,10 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 {
     using Moq;
-    using NUnit.Framework;
     using System.Collections.Generic;
     using System.Linq;
+    using Xunit;
 
-    [TestFixture]
     public class HasParentNodeAncestorsTest
     {
         public interface MockableNodeType : IHasParentNode<MockableNodeType>
@@ -13,13 +12,12 @@
 
         private Mock<MockableNodeType> startNode = new Mock<MockableNodeType>();
 
-        [SetUp]
-        public void ArrangeAllTests()
+        public HasParentNodeAncestorsTest()
         {
             this.startNode = new Mock<MockableNodeType>();
         }
 
-        [Test]
+        [Fact]
         public void I_root_node_returns_empty_collection_on_Ancestors()
         {
             // ARRANGE
@@ -33,13 +31,13 @@
 
             // ASSERT
 
-            Assert.AreEqual(0, result.Count());
+            Assert.Equal(0, result.Count());
 
             startNode.Verify(m => m.HasParentNode, Times.Once());
             startNode.Verify(m => m.ParentNode, Times.Never());
         }
 
-        [Test]
+        [Fact]
         public void I_inner_node_returns_path_to_root_on_Ancestors()
         {
             // ARRANGE
@@ -67,9 +65,9 @@
 
             // ASSERT
 
-            Assert.AreEqual(2, result.Count());
-            Assert.AreSame(parentOfStartNode.Object, result.ElementAt(0));
-            Assert.AreSame(rootNode.Object, result.ElementAt(1));
+            Assert.Equal(2, result.Count());
+            Assert.Same(parentOfStartNode.Object, result.ElementAt(0));
+            Assert.Same(rootNode.Object, result.ElementAt(1));
         }
     }
 }

@@ -1,12 +1,11 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 {
     using Elementary.Hierarchy.Generic;
-    using NUnit.Framework;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Xunit;
 
-    [TestFixture]
     public class GenericNodeVisitDescendantsTest
     {
         private IEnumerable<string> GetChildNodes(string startNode)
@@ -27,7 +26,7 @@
 
         #region VisitDescendants
 
-        [Test]
+        [Fact]
         public void D_visit_complete_tree_breadthFirst_on_VisitDescendants()
         {
             // ACT
@@ -37,16 +36,16 @@
 
             // ASSERT
 
-            Assert.AreEqual(5, result.Count());
-            CollectionAssert.AreEqual(new[] { "leftNode", "rightNode", "leftLeaf", "leftRightLeaf", "rightRightLeaf" }, result.Select(i => i.Item2));
-            CollectionAssert.AreEqual(new[] { "rootNode" }, result.ElementAt(0).Item1);
-            CollectionAssert.AreEqual(new[] { "rootNode" }, result.ElementAt(1).Item1);
-            CollectionAssert.AreEqual(new[] { "rootNode", "leftNode" }, result.ElementAt(2).Item1);
-            CollectionAssert.AreEqual(new[] { "rootNode", "rightNode" }, result.ElementAt(3).Item1);
-            CollectionAssert.AreEqual(new[] { "rootNode", "rightNode" }, result.ElementAt(4).Item1);
+            Assert.Equal(5, result.Count());
+            Assert.Equal(new[] { "leftNode", "rightNode", "leftLeaf", "leftRightLeaf", "rightRightLeaf" }, result.Select(i => i.Item2));
+            Assert.Equal(new[] { "rootNode" }, result.ElementAt(0).Item1);
+            Assert.Equal(new[] { "rootNode" }, result.ElementAt(1).Item1);
+            Assert.Equal(new[] { "rootNode", "leftNode" }, result.ElementAt(2).Item1);
+            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(3).Item1);
+            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(4).Item1);
         }
 
-        [Test]
+        [Fact]
         public void D_visit_complete_tree_depthFirst_on_VisitDescendants()
         {
             // ACT
@@ -56,8 +55,8 @@
 
             // ASSERT
 
-            Assert.AreEqual(5, result.Count());
-            CollectionAssert.AreEqual(new[] {
+            Assert.Equal(5, result.Count());
+            Assert.Equal(new[] {
                 "leftNode",
                 "leftLeaf",
                 "rightNode",
@@ -65,15 +64,15 @@
                 "rightRightLeaf"
             }, result.Select(i => i.Item2));
 
-            CollectionAssert.AreEqual(new[] { "leftNode", "leftLeaf", "rightNode", "leftRightLeaf", "rightRightLeaf" }, result.Select(i => i.Item2));
-            CollectionAssert.AreEqual(new[] { "rootNode" }, result.ElementAt(0).Item1);
-            CollectionAssert.AreEqual(new[] { "rootNode", "leftNode" }, result.ElementAt(1).Item1);
-            CollectionAssert.AreEqual(new[] { "rootNode" }, result.ElementAt(2).Item1);
-            CollectionAssert.AreEqual(new[] { "rootNode", "rightNode" }, result.ElementAt(3).Item1);
-            CollectionAssert.AreEqual(new[] { "rootNode", "rightNode" }, result.ElementAt(4).Item1);
+            Assert.Equal(new[] { "leftNode", "leftLeaf", "rightNode", "leftRightLeaf", "rightRightLeaf" }, result.Select(i => i.Item2));
+            Assert.Equal(new[] { "rootNode" }, result.ElementAt(0).Item1);
+            Assert.Equal(new[] { "rootNode", "leftNode" }, result.ElementAt(1).Item1);
+            Assert.Equal(new[] { "rootNode" }, result.ElementAt(2).Item1);
+            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(3).Item1);
+            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(4).Item1);
         }
 
-        [Test]
+        [Fact]
         public void D_inconsistent_node_visits_no_children_on_VisitDescendants()
         {
             // ARRANGE
@@ -87,10 +86,10 @@
 
             // ASSERT
 
-            Assert.AreEqual(0, result.Count());
+            Assert.Equal(0, result.Count());
         }
 
-        [Test]
+        [Fact]
         public void D_visit_singleChild_on_VisitDescendants()
         {
             // ACT
@@ -100,12 +99,12 @@
 
             // ASSERT
 
-            Assert.AreEqual(1, result.Count());
-            Assert.AreEqual("leftLeaf", result.ElementAt(0).Item2);
-            CollectionAssert.AreEqual(new[] { "leftNode" }, result.ElementAt(0).Item1);
+            Assert.Equal(1, result.Count());
+            Assert.Equal("leftLeaf", result.ElementAt(0).Item2);
+            Assert.Equal(new[] { "leftNode" }, result.ElementAt(0).Item1);
         }
 
-        [Test]
+        [Fact]
         public void D_visit_leftChild_first_on_VisitDescendants()
         {
             // ACT
@@ -115,17 +114,17 @@
 
             // ASSERT
 
-            Assert.AreEqual(2, result.Count());
-            CollectionAssert.AreEqual(new[] { "leftRightLeaf", "rightRightLeaf" }, result.Select(i => i.Item2));
-            CollectionAssert.AreEqual(new[] { "rightNode" }, result.ElementAt(0).Item1);
-            CollectionAssert.AreEqual(new[] { "rightNode" }, result.ElementAt(1).Item1);
+            Assert.Equal(2, result.Count());
+            Assert.Equal(new[] { "leftRightLeaf", "rightRightLeaf" }, result.Select(i => i.Item2));
+            Assert.Equal(new[] { "rightNode" }, result.ElementAt(0).Item1);
+            Assert.Equal(new[] { "rightNode" }, result.ElementAt(1).Item1);
         }
 
         #endregion VisitDescendants
 
         #region VisitDescendantsOrSelf
 
-        [Test]
+        [Fact]
         public void D_visit_complete_tree_breadthFirst_on_VisitDescendantsOrSelf()
         {
             // ACT
@@ -135,23 +134,23 @@
 
             // ASSERT
 
-            Assert.AreEqual(6, result.Count());
-            CollectionAssert.AreEqual(new[] {
+            Assert.Equal(6, result.Count());
+            Assert.Equal(new[] {
                 "rootNode",
                 "leftNode",
                 "rightNode",
                 "leftLeaf",
                 "leftRightLeaf",
                 "rightRightLeaf" }, result.Select(i => i.Item2));
-            CollectionAssert.AreEqual(new string[] { }, result.ElementAt(0).Item1);
-            CollectionAssert.AreEqual(new[] { "rootNode" }, result.ElementAt(1).Item1);
-            CollectionAssert.AreEqual(new[] { "rootNode" }, result.ElementAt(2).Item1);
-            CollectionAssert.AreEqual(new[] { "rootNode", "leftNode" }, result.ElementAt(3).Item1);
-            CollectionAssert.AreEqual(new[] { "rootNode", "rightNode" }, result.ElementAt(4).Item1);
-            CollectionAssert.AreEqual(new[] { "rootNode", "rightNode" }, result.ElementAt(5).Item1);
+            Assert.Equal(new string[] { }, result.ElementAt(0).Item1);
+            Assert.Equal(new[] { "rootNode" }, result.ElementAt(1).Item1);
+            Assert.Equal(new[] { "rootNode" }, result.ElementAt(2).Item1);
+            Assert.Equal(new[] { "rootNode", "leftNode" }, result.ElementAt(3).Item1);
+            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(4).Item1);
+            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(5).Item1);
         }
 
-        [Test]
+        [Fact]
         public void D_visit_complete_tree_depthFirst_on_VisitDescendantsOrSelf()
         {
             // ACT
@@ -161,8 +160,8 @@
 
             // ASSERT
 
-            Assert.AreEqual(6, result.Count());
-            CollectionAssert.AreEqual(new[] {
+            Assert.Equal(6, result.Count());
+            Assert.Equal(new[] {
                 "rootNode",
                 "leftNode",
                 "leftLeaf",
@@ -171,13 +170,13 @@
                 "rightRightLeaf"
             }, result.Select(i => i.Item2));
 
-            CollectionAssert.AreEqual(new[] { "rootNode", "leftNode", "leftLeaf", "rightNode", "leftRightLeaf", "rightRightLeaf" }, result.Select(i => i.Item2));
-            CollectionAssert.AreEqual(new string[] { }, result.ElementAt(0).Item1);
-            CollectionAssert.AreEqual(new[] { "rootNode" }, result.ElementAt(1).Item1);
-            CollectionAssert.AreEqual(new[] { "rootNode", "leftNode" }, result.ElementAt(2).Item1);
-            CollectionAssert.AreEqual(new[] { "rootNode" }, result.ElementAt(3).Item1);
-            CollectionAssert.AreEqual(new[] { "rootNode", "rightNode" }, result.ElementAt(4).Item1);
-            CollectionAssert.AreEqual(new[] { "rootNode", "rightNode" }, result.ElementAt(5).Item1);
+            Assert.Equal(new[] { "rootNode", "leftNode", "leftLeaf", "rightNode", "leftRightLeaf", "rightRightLeaf" }, result.Select(i => i.Item2));
+            Assert.Equal(new string[] { }, result.ElementAt(0).Item1);
+            Assert.Equal(new[] { "rootNode" }, result.ElementAt(1).Item1);
+            Assert.Equal(new[] { "rootNode", "leftNode" }, result.ElementAt(2).Item1);
+            Assert.Equal(new[] { "rootNode" }, result.ElementAt(3).Item1);
+            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(4).Item1);
+            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(5).Item1);
         }
 
         #endregion VisitDescendantsOrSelf

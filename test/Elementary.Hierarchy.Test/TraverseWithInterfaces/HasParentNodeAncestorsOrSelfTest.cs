@@ -1,11 +1,10 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 {
     using Moq;
-    using NUnit.Framework;
     using System.Collections.Generic;
     using System.Linq;
+    using Xunit;
 
-    [TestFixture]
     public class HasParentAncestorsAndSelfTest
     {
         public interface MockableNodeType : IHasParentNode<MockableNodeType>
@@ -13,13 +12,12 @@
 
         private Mock<MockableNodeType> startNode;
 
-        [SetUp]
-        public void ArrangeAllTests()
+        public HasParentAncestorsAndSelfTest()
         {
             this.startNode = new Mock<MockableNodeType>();
         }
 
-        [Test]
+        [Fact]
         public void I_root_returns_itself_on_AncestorsOrSelf()
         {
             // ARRANGE
@@ -33,14 +31,14 @@
 
             // ASSERT
 
-            Assert.AreEqual(1, result.Count());
-            Assert.AreSame(startNode.Object, result.ElementAt(0));
+            Assert.Equal(1, result.Count());
+            Assert.Same(startNode.Object, result.ElementAt(0));
 
             startNode.Verify(m => m.HasParentNode, Times.Once());
             startNode.Verify(m => m.ParentNode, Times.Never());
         }
 
-        [Test]
+        [Fact]
         public void I_inner_node_returns_path_to_root_on_AncestorsOrSefl()
         {
             // ARRANGE
@@ -68,10 +66,10 @@
 
             // ASSERT
 
-            Assert.AreEqual(3, result.Count());
-            Assert.AreSame(this.startNode.Object, result.ElementAt(0));
-            Assert.AreSame(parentOfStartNode.Object, result.ElementAt(1));
-            Assert.AreSame(rootNode.Object, result.ElementAt(2));
+            Assert.Equal(3, result.Count());
+            Assert.Same(this.startNode.Object, result.ElementAt(0));
+            Assert.Same(parentOfStartNode.Object, result.ElementAt(1));
+            Assert.Same(rootNode.Object, result.ElementAt(2));
         }
     }
 }

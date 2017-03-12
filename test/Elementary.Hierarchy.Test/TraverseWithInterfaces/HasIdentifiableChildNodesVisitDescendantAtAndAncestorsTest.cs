@@ -1,11 +1,10 @@
 ﻿using Moq;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using Xunit;
 
 namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 {
-    [TestFixture]
     public class HasIdentifiableChildNodesVisitDescendantAtAndAncestorsTest
     {
         public interface MockableNodeType : IHasIdentifiableChildNodes<string, MockableNodeType>
@@ -13,13 +12,12 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
         private Mock<MockableNodeType> startNode = new Mock<MockableNodeType>();
 
-        [SetUp]
-        public void ArrangeAllTests()
+        public HasIdentifiableChildNodesVisitDescendantAtAndAncestorsTest()
         {
             this.startNode = new Mock<MockableNodeType>();
         }
 
-        [Test]
+        [Fact]
         public void I_visit_the_root_node_as_descendant_once_on_VisitDescandantAtAndAncestors()
         {
             // ACT
@@ -30,11 +28,11 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
             // ASSERT
 
-            Assert.AreSame(this.startNode.Object, descendant);
-            Assert.IsNull(ancestor);
+            Assert.Same(this.startNode.Object, descendant);
+            Assert.Null(ancestor);
         }
 
-        [Test]
+        [Fact]
         public void I_visit_a_roots_child_node_with_VisitDescandantAtAndAncestors()
         {
             // ARRANGE
@@ -53,11 +51,11 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
             // ASSERT
 
-            Assert.AreSame(childNode, descendant);
-            Assert.AreSame(this.startNode.Object, ancestor);
+            Assert.Same(childNode, descendant);
+            Assert.Same(this.startNode.Object, ancestor);
         }
 
-        [Test]
+        [Fact]
         public void I_visit_a_roots_grandchild_node_with_VisitDescandantAtAndAncestors()
         {
             // ARRANGE
@@ -83,11 +81,11 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
             // ASSERT
 
-            Assert.AreSame(grandChild, descendant);
-            CollectionAssert.AreEqual(new[] { childNode, startNode.Object }, ancestors);
+            Assert.Same(grandChild, descendant);
+            Assert.Equal(new[] { childNode, startNode.Object }, ancestors);
         }
 
-        [Test]
+        [Fact]
         public void I_throws_ArgumentNullException_on_null_descandantVisitor_VisitDescandantAtAndAncestors()
         {
             // ACT & ASSERT
@@ -95,10 +93,10 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
             List<MockableNodeType> ancestors = new List<MockableNodeType>();
             var result = Assert.Throws<ArgumentNullException>(() => startNode.Object.VisitDescandantAtAndAncestors(HierarchyPath.Create<string>(), visitDescendantAt: null, visitAncestors: a => ancestors.Add(a)));
 
-            Assert.AreEqual("visitDescendantAt", result.ParamName);
+            Assert.Equal("visitDescendantAt", result.ParamName);
         }
 
-        [Test]
+        [Fact]
         public void I_throws_ArgumentNullException_on_null_ancestorVisitor_VisitDescandantAtAndAncestors()
         {
             // ACT & ASSERT
@@ -107,10 +105,10 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
             var result = Assert.Throws<ArgumentNullException>(() => startNode.Object
                 .VisitDescandantAtAndAncestors(HierarchyPath.Create<string>(), visitDescendantAt: d => descendant = d, visitAncestors: null));
 
-            Assert.AreEqual("visitAncestor", result.ParamName);
+            Assert.Equal("visitAncestor", result.ParamName);
         }
 
-        [Test]
+        [Fact]
         public void I_throws_KeyNotFoundException_on_invalid_path_on_VisitDescandantAtAndAncestors()
         {
             // ACT & ASSERT
@@ -120,7 +118,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
             var result = Assert.Throws<KeyNotFoundException>(() => startNode.Object.VisitDescandantAtAndAncestors(
                 HierarchyPath.Create("childNode"), visitDescendantAt: d => descendant = d, visitAncestors: a => ancestor = a));
 
-            Assert.That(result.Message.Contains("'childNode'"));
+            Assert.True(result.Message.Contains("'childNode'"));
         }
     }
 }

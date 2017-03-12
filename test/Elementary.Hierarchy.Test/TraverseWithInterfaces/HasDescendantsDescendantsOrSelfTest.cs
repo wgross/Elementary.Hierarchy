@@ -1,11 +1,10 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 {
     using Moq;
-    using NUnit.Framework;
     using System.Collections.Generic;
     using System.Linq;
+    using Xunit;
 
-    [TestFixture]
     public class HasDescendantsDescendantsOrSelfTest
     {
         public interface MockableNodeType : IHasDescendantNodes<MockableNodeType>
@@ -19,8 +18,7 @@
         private Mock<MockableNodeType> leftRightLeaf;
         private Mock<MockableNodeType> rightRightLeaf;
 
-        [SetUp]
-        public void ArrangeAllTests()
+        public HasDescendantsDescendantsOrSelfTest()
         {
             //                rootNode
             //                /      \
@@ -88,7 +86,7 @@
                 });
         }
 
-        [Test]
+        [Fact]
         public void IHasDescendentNodes_leaf_returns_itself_on_DescendantsOrSelf()
         {
             // ACT
@@ -97,16 +95,16 @@
 
             // ASSERT
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual(1, result.Count());
-            Assert.AreSame(this.rightRightLeaf.Object, result.ElementAt(0));
+            Assert.NotNull(result);
+            Assert.Equal(1, result.Count());
+            Assert.Same(this.rightRightLeaf.Object, result.ElementAt(0));
 
             this.rightRightLeaf.Verify(n => n.GetDescendants(false, int.MaxValue), Times.Once());
             this.rightRightLeaf.Verify(n => n.HasChildNodes, Times.Never());
             this.rightRightLeaf.Verify(n => n.ChildNodes, Times.Never());
         }
 
-        [Test]
+        [Fact]
         public void IHasDescendentNodes_leaf_returns_single_child_on_DescendantsOrSelf()
         {
             // ACT
@@ -115,8 +113,8 @@
 
             // ASSERT
 
-            Assert.AreEqual(2, result.Count());
-            CollectionAssert.AreEqual(new[] { this.leftNode.Object, this.leftLeaf.Object }, result);
+            Assert.Equal(2, result.Count());
+            Assert.Equal(new[] { this.leftNode.Object, this.leftLeaf.Object }, result);
 
             this.leftNode.Verify(n => n.GetDescendants(false, int.MaxValue), Times.Once());
             this.leftNode.Verify(n => n.HasChildNodes, Times.Never());
@@ -127,7 +125,7 @@
             this.leftLeaf.Verify(n => n.ChildNodes, Times.Never());
         }
 
-        [Test]
+        [Fact]
         public void IHasDescendentNodes_leaf_returns_left_before_right_child_on_DescendantsOrSelf()
         {
             // ACT
@@ -136,8 +134,8 @@
 
             // ASSERT
 
-            Assert.AreEqual(3, result.Count());
-            CollectionAssert.AreEqual(new[] { this.rightNode.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result);
+            Assert.Equal(3, result.Count());
+            Assert.Equal(new[] { this.rightNode.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result);
 
             this.rightNode.Verify(n => n.GetDescendants(false, int.MaxValue), Times.Once());
             this.rightNode.Verify(n => n.HasChildNodes, Times.Never());
@@ -152,7 +150,7 @@
             this.rightRightLeaf.Verify(n => n.ChildNodes, Times.Never());
         }
 
-        [Test]
+        [Fact]
         public void IHasDescendentNodes_leaf_returns_descendants_breadthFirst_on_DescendantsOrSelf()
         {
             // ACT
@@ -161,8 +159,8 @@
 
             // ASSERT
 
-            Assert.AreEqual(6, result.Count());
-            CollectionAssert.AreEqual(new[] {
+            Assert.Equal(6, result.Count());
+            Assert.Equal(new[] {
                 this.rootNode,
                 this.leftNode,
                 this.rightNode,
@@ -196,7 +194,7 @@
             this.rightRightLeaf.Verify(n => n.ChildNodes, Times.Never());
         }
 
-        [Test]
+        [Fact]
         public void IHasDescendentNodes_leaf_returns_descendants_depthFirst_on_DescendantsOrSelf()
         {
             // ACT
@@ -205,8 +203,8 @@
 
             // ASSERT
 
-            Assert.AreEqual(6, result.Count());
-            CollectionAssert.AreEqual(new[] {
+            Assert.Equal(6, result.Count());
+            Assert.Equal(new[] {
                 this.rootNode,
                 this.leftNode,
                 this.leftLeaf,
@@ -240,7 +238,7 @@
             this.rightRightLeaf.Verify(n => n.ChildNodes, Times.Never());
         }
 
-        [Test]
+        [Fact]
         public void IHasDescendentNodes_DescendantsOrSelfLevel2AreChildren_on_DescendantsOrSelf()
         {
             // ARRANGE
@@ -267,7 +265,7 @@
 
             // ASSERT
 
-            CollectionAssert.AreEqual(children, descendantsOrSelf);
+            Assert.Equal(children, descendantsOrSelf);
 
             this.rootNode.Verify(n => n.GetDescendants(false, 1), Times.Once());
             this.rootNode.Verify(n => n.HasChildNodes, Times.Once());

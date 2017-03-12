@@ -1,12 +1,12 @@
 ﻿using Elementary.Hierarchy.Generic;
-using NUnit.Framework;
 using System;
+using Xunit;
 
 namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 {
     public class GenericNodeDescendantAtOrDefaultTest
     {
-        [Test]
+        [Fact]
         public void D_root_returns_child_on_DescendantAtOrDefault()
         {
             // ARRANGE
@@ -31,12 +31,12 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
             // ASSERT
 
-            Assert.AreEqual("childNode", result1);
-            Assert.AreEqual("childNode", result2);
-            Assert.AreEqual(HierarchyPath.Create("childNode"), foundNodePath);
+            Assert.Equal("childNode", result1);
+            Assert.Equal("childNode", result2);
+            Assert.Equal(HierarchyPath.Create("childNode"), foundNodePath);
         }
 
-        [Test]
+        [Fact]
         public void D_root_returns_itself_on_DescendantAtOrDefault()
         {
             // ARRANGE
@@ -54,12 +54,12 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
             // ASSERT
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual("startNode", result);
-            Assert.AreEqual(HierarchyPath.Create<string>(), foundNodePath);
+            Assert.NotNull(result);
+            Assert.Equal("startNode", result);
+            Assert.Equal(HierarchyPath.Create<string>(), foundNodePath);
         }
 
-        [Test]
+        [Fact]
         public void D_root_returns_grandchild_on_DescendentAtOrDefault()
         {
             // ARRANGE
@@ -89,12 +89,12 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
             // ASSERT
 
-            Assert.AreSame("grandChildNode", result1);
-            Assert.AreSame("grandChildNode", result2);
-            Assert.AreEqual(HierarchyPath.Create("childNode", "grandChildNode"), foundNodePath);
+            Assert.Same("grandChildNode", result1);
+            Assert.Same("grandChildNode", result2);
+            Assert.Equal(HierarchyPath.Create("childNode", "grandChildNode"), foundNodePath);
         }
 
-        [Test]
+        [Fact]
         public void D_root_returns_null_on_invalid_childId_on_DescendantOrDefault()
         {
             // ARRANGE
@@ -119,12 +119,12 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
             // ASSERT
 
-            Assert.IsNull(result1);
-            Assert.IsNull(result2);
-            Assert.AreEqual(HierarchyPath.Create<string>(), foundNodePath);
+            Assert.Null(result1);
+            Assert.Null(result2);
+            Assert.Equal(HierarchyPath.Create<string>(), foundNodePath);
         }
 
-        [Test]
+        [Fact]
         public void D_root_returns_substitute_on_invalid_childId_on_DescendantOrDefault()
         {
             // ARRANGE
@@ -149,9 +149,9 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
             // ASSERT
 
-            Assert.AreEqual("substitute", result1);
-            Assert.AreEqual("substitute", result2);
-            Assert.AreEqual(HierarchyPath.Create<string>(), foundNodePath);
+            Assert.Equal("substitute", result1);
+            Assert.Equal("substitute", result2);
+            Assert.Equal(HierarchyPath.Create<string>(), foundNodePath);
         }
     }
 }

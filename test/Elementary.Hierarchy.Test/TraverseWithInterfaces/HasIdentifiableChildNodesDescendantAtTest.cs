@@ -1,10 +1,9 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 {
     using Moq;
-    using NUnit.Framework;
     using System.Collections.Generic;
+    using Xunit;
 
-    [TestFixture]
     public class HasIdentifiableChildNodesDescendantAtTest
     {
         public interface MockableNodeType : IHasIdentifiableChildNodes<int, MockableNodeType>
@@ -12,13 +11,12 @@
 
         private Mock<MockableNodeType> startNode = new Mock<MockableNodeType>();
 
-        [SetUp]
-        public void ArrangeAllTests()
+        public HasIdentifiableChildNodesDescendantAtTest()
         {
             this.startNode = new Mock<MockableNodeType>();
         }
 
-        [Test]
+        [Fact]
         public void I_root_returns_child_on_DescendantAt()
         {
             // ARRANGE
@@ -35,12 +33,12 @@
 
             // ASSERT
 
-            Assert.IsNotNull(childNode);
-            Assert.AreSame(childNode, result);
+            Assert.NotNull(childNode);
+            Assert.Same(childNode, result);
             this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once());
         }
 
-        [Test]
+        [Fact]
         public void I_root_returns_itself_on_DescendantAt()
         {
             // ACT
@@ -49,10 +47,10 @@
 
             // ASSERT
 
-            Assert.AreSame(startNode.Object, result);
+            Assert.Same(startNode.Object, result);
         }
 
-        [Test]
+        [Fact]
         public void I_root_returns_grandchild_on_DescendentAt()
         {
             // ARRANGE
@@ -76,12 +74,12 @@
 
             // ASSERT
 
-            Assert.AreSame(subChildNode, result);
+            Assert.Same(subChildNode, result);
             this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once());
             childNodeMock.Verify(n => n.TryGetChildNode(2, out subChildNode), Times.Once());
         }
 
-        [Test]
+        [Fact]
         public void I_root_node_throws_on_invalid_childId_on_DescendantAt()
         {
             // ARRANGE
@@ -94,7 +92,7 @@
 
             // ASSERT
 
-            Assert.IsTrue(result.Message.Contains("Key not found:'1'"));
+            Assert.True(result.Message.Contains("Key not found:'1'"));
         }
     }
 }

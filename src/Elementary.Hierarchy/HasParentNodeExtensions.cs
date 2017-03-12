@@ -19,7 +19,6 @@
         public static TNode Parent<TNode>(this TNode startNode)
             where TNode : class, IHasParentNode<TNode>
         {
-            //return startNode.Parent(n => n.HasParentNode ? n.ParentNode : null);
             return startNode.Parent((TNode n, out TNode p) =>
             {
                 p = null;

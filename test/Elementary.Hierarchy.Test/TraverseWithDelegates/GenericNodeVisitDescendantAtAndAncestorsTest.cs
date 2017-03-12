@@ -1,14 +1,14 @@
 ﻿using Elementary.Hierarchy.Generic;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using Xunit;
 
 namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 {
-    [TestFixture]
+    
     public class GenericNodeVisitDescendantAtAndAncestorsTest
     {
-        [Test]
+        [Fact]
         public void D_visit_the_root_node_as_descendant_once_on_VisitDescandantAtAndAncestors()
         {
             // ARRANGE
@@ -27,11 +27,11 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
             // ASSERT
 
-            Assert.AreEqual("startNode", descendant);
-            Assert.IsNull(ancestor);
+            Assert.Equal("startNode", descendant);
+            Assert.Null(ancestor);
         }
 
-        [Test]
+        [Fact]
         public void D_visit_a_roots_child_node_on_VisitDescandantAtAndAncestors()
         {
             // ARRANGE
@@ -56,11 +56,11 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
             // ASSERT
 
-            Assert.AreEqual("childNode", descendant);
-            Assert.AreEqual("startNode", ancestor);
+            Assert.Equal("childNode", descendant);
+            Assert.Equal("startNode", ancestor);
         }
 
-        [Test]
+        [Fact]
         public void D_visit_a_roots_grandchild_node_on_VisitDescandantAtAndAncestors()
         {
             // ARRANGE
@@ -90,11 +90,11 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
             // ASSERT
 
-            Assert.AreEqual("grandChild", descendant);
-            CollectionAssert.AreEqual(new[] { "childNode", "startNode" }, ancestors);
+            Assert.Equal("grandChild", descendant);
+            Assert.Equal(new[] { "childNode", "startNode" }, ancestors);
         }
 
-        [Test]
+        [Fact]
         public void D_throws_ArgumentNullException_on_null_descandantVisitor_VisitDescandantAtAndAncestors()
         {
             // ARRANGE
@@ -112,10 +112,10 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
             // ASSERT
 
-            Assert.AreEqual("visitDescendantAt", result.ParamName);
+            Assert.Equal("visitDescendantAt", result.ParamName);
         }
 
-        [Test]
+        [Fact]
         public void D_throws_ArgumentNullException_on_null_ancestorVisitor_VisitDescandantAtAndAncestors()
         {
             // ARRANGE
@@ -134,10 +134,10 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 
             // ASSERT
 
-            Assert.AreEqual("visitAncestor", result.ParamName);
+            Assert.Equal("visitAncestor", result.ParamName);
         }
 
-        [Test]
+        [Fact]
         public void D_throws_KeyNotFoundException_on_invalid_path_on_VisitDescandantAtAndAncestors()
         {
             // ARRANGE
@@ -160,7 +160,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
             var result = Assert.Throws<KeyNotFoundException>(() => "startNode".VisitDescandantAtAndAncestors(nodeHierarchy,
                 HierarchyPath.Create("childNode"), visitDescendantAt: d => descendant = d, visitAncestor: a => ancestor = a));
 
-            Assert.That(result.Message.Contains("'childNode'"));
+            Assert.True(result.Message.Contains("'childNode'"));
         }
     }
 }

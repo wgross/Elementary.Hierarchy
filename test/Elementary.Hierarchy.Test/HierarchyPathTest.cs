@@ -1,18 +1,16 @@
 ﻿namespace Elementary.Hierarchy.Test
 {
-    using NUnit.Framework;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using static NUnit.Framework.Assert;
-    using static NUnit.Framework.CollectionAssert;
+    using Xunit;
+    using static Xunit.Assert;
 
-    [TestFixture]
     public class HierarchyPathTest
     {
         #region Create
 
-        [Test]
+        [Fact]
         public void Create_empty_hierarchy_path()
         {
             // ACT
@@ -21,14 +19,14 @@
 
             // ASSERT
 
-            IsNotNull(result);
-            IsNotNull(result);
-            IsFalse(result.Items.Any());
-            IsTrue(!result.HasParentNode);
-            //questionable//AreEqual(HierarchyPath.Create<string>().GetHashCode(), result.GetHashCode());
+            NotNull(result);
+            NotNull(result);
+            False(result.Items.Any());
+            True(!result.HasParentNode);
+            //questionable//Equal(HierarchyPath.Create<string>().GetHashCode(), result.GetHashCode());
         }
 
-        [Test]
+        [Fact]
         public void Create_path_with_single_item()
         {
             // ACT
@@ -37,12 +35,12 @@
 
             // ASSERT
 
-            IsNotNull(result);
-            IsTrue(result.Items.Any());
-            AreEqual(new[] { "a" }, result.Items.ToArray());
+            NotNull(result);
+            True(result.Items.Any());
+            Equal(new[] { "a" }, result.Items.ToArray());
         }
 
-        [Test]
+        [Fact]
         public void Create_path_from_item_array()
         {
             // ACT
@@ -51,12 +49,12 @@
 
             // ASSERT
 
-            IsNotNull(result);
-            IsNotNull(result);
-            AreEqual(new[] { "a", "B" }, result.Items.ToArray());
+            NotNull(result);
+            NotNull(result);
+            Equal(new[] { "a", "B" }, result.Items.ToArray());
         }
 
-        [Test]
+        [Fact]
         public void Create_immutable_path_from_item_array()
         {
             // ARRANGE
@@ -70,10 +68,10 @@
 
             // ASSERT
 
-            AreEqual(new[] { "a", "B" }, result.Items.ToArray());
+            Equal(new[] { "a", "B" }, result.Items.ToArray());
         }
 
-        [Test]
+        [Fact]
         public void Create_immutable_path_from_item_enumerable()
         {
             // ARRANGE
@@ -87,14 +85,14 @@
 
             // ASSERT
 
-            AreEqual(new[] { "a", "B" }, result.Items.ToArray());
+            Equal(new[] { "a", "B" }, result.Items.ToArray());
         }
 
         #endregion Create
 
         #region Parent
 
-        [Test]
+        [Fact]
         public void Split_parent_from_path_as_prefix()
         {
             // ARRANGE
@@ -107,30 +105,46 @@
 
             // ASSERT
 
-            AreEqual(new[] { "1", "2" }, result.Items);
+            Equal(new[] { "1", "2" }, result.Items);
         }
 
-        [Test]
-        public void Split_empty_parent_path_from_empty_path()
+        [Fact]
+        public void Split_parent_from_string_root_path_throws_InvalidOperationException()
         {
             // ARRANGE
 
-            var path = HierarchyPath.Create(string.Empty);
+            var path = HierarchyPath.Create<string>();
 
             // ACT
 
-            var result = path.Parent();
+            var result = Throws<InvalidOperationException>(() => path.Parent());
 
             // ASSERT
 
-            IsFalse(result.Items.Any());
+            NotNull(result);
+        }
+
+        [Fact]
+        public void Split_parent_from_int_root_path_throws_InvalidOperationException()
+        {
+            // ARRANGE
+
+            var path = HierarchyPath.Create<int>();
+
+            // ACT
+
+            var result = Throws<InvalidOperationException>(() => path.Parent());
+
+            // ASSERT
+
+            NotNull(result);
         }
 
         #endregion Parent
 
         #region Leaf
 
-        [Test]
+        [Fact]
         public void Split_leaf_from_path()
         {
             // ARRANGE
@@ -143,14 +157,14 @@
 
             // ASSERT
 
-            AreEqual(new[] { "3" }, result.Items);
+            Equal(new[] { "3" }, result.Items);
         }
 
         #endregion Leaf
 
         #region SplitDescendants
 
-        [Test]
+        [Fact]
         public void Split_descendants_under_root_item()
         {
             // ARRANGE
@@ -163,10 +177,10 @@
 
             // ASSERT
 
-            AreEqual(new[] { "2", "3" }, result.Items);
+            Equal(new[] { "2", "3" }, result.Items);
         }
 
-        [Test]
+        [Fact]
         public void Split_empty_descendants_from_empty_path()
         {
             // ARRANGE
@@ -175,15 +189,15 @@
 
             // ACT & ASSERT
 
-            AreSame(path, path.Leaf());
-            AreEqual(Enumerable.Empty<string>().ToArray(), path.SplitDescendants().Items);
+            Same(path, path.Leaf());
+            Equal(Enumerable.Empty<string>().ToArray(), path.SplitDescendants().Items);
         }
 
         #endregion SplitDescendants
 
         #region Parse
 
-        [Test]
+        [Fact]
         public void Parse_string_path_items_from_string_representation()
         {
             // ACT
@@ -192,11 +206,11 @@
 
             // ASSERT
 
-            AreEqual(2, result.Items.Count());
-            AreEqual(new[] { "test", "test2" }, result.Items.ToArray());
+            Equal(2, result.Items.Count());
+            Equal(new[] { "test", "test2" }, result.Items.ToArray());
         }
 
-        [Test]
+        [Fact]
         public void Parse_int_path_items_from_string_representation()
         {
             // ACT
@@ -205,15 +219,15 @@
 
             // ASSERT
 
-            AreEqual(2, result.Items.Count());
-            AreEqual(new[] { 1, 2 }, result.Items.ToArray());
+            Equal(2, result.Items.Count());
+            Equal(new[] { 1, 2 }, result.Items.ToArray());
         }
 
         #endregion Parse
 
         #region TryParse
 
-        [Test]
+        [Fact]
         public void TryParse_string_path_items_from_string_representation()
         {
             // ACT
@@ -222,12 +236,12 @@
 
             // ASSERT
 
-            IsTrue(result);
-            AreEqual(2, resultPath.Items.Count());
-            AreEqual(new[] { "test", "test2" }, resultPath.Items.ToArray());
+            True(result);
+            Equal(2, resultPath.Items.Count());
+            Equal(new[] { "test", "test2" }, resultPath.Items.ToArray());
         }
 
-        [Test]
+        [Fact]
         public void TryParse_int_path_items_from_string_representation()
         {
             // ACT
@@ -237,12 +251,12 @@
 
             // ASSERT
 
-            IsTrue(result);
-            AreEqual(2, resultPath.Items.Count());
-            AreEqual(new[] { 1, 2 }, resultPath.Items.ToArray());
+            True(result);
+            Equal(2, resultPath.Items.Count());
+            Equal(new[] { 1, 2 }, resultPath.Items.ToArray());
         }
 
-        [Test]
+        [Fact]
         public void TryParse_returns_false_for_null_string_representation()
         {
             // ACT
@@ -252,15 +266,15 @@
 
             // ASSERT
 
-            IsFalse(result);
-            IsNull(resultPath);
+            False(result);
+            Null(resultPath);
         }
 
         #endregion TryParse
 
         #region Equals
 
-        [Test]
+        [Fact]
         public void Pathes_are_equal_if_all_items_are_equal()
         {
             // ARRANGE
@@ -275,12 +289,12 @@
 
             // ASSERT
 
-            IsTrue(result1);
-            IsTrue(result2);
-            AreEqual(left.GetHashCode(), right.GetHashCode());
+            True(result1);
+            True(result2);
+            Equal(left.GetHashCode(), right.GetHashCode());
         }
 
-        [Test]
+        [Fact]
         public void Pathes_arent_equal_if_item_number_is_different()
         {
             // ARRANGE
@@ -295,12 +309,12 @@
 
             // ASSERT
 
-            IsFalse(result1);
-            IsFalse(result2);
-            AreNotEqual(left.GetHashCode(), right.GetHashCode());
+            False(result1);
+            False(result2);
+            NotEqual(left.GetHashCode(), right.GetHashCode());
         }
 
-        [Test]
+        [Fact]
         public void Pathes_are_different_if_item_type_is_different()
         {
             // ARRANGE
@@ -315,12 +329,12 @@
 
             // ASSERT
 
-            IsFalse(result1);
-            IsFalse(result2);
-            AreNotEqual(left.GetHashCode(), right.GetHashCode());
+            False(result1);
+            False(result2);
+            NotEqual(left.GetHashCode(), right.GetHashCode());
         }
 
-        [Test]
+        [Fact]
         public void Pathes_are_different_if_item_casing_is_different()
         {
             // ARRANGE
@@ -335,12 +349,12 @@
 
             // ASSERT
 
-            IsFalse(result1);
-            IsFalse(result2);
-            AreNotEqual(left.GetHashCode(), right.GetHashCode());
+            False(result1);
+            False(result2);
+            NotEqual(left.GetHashCode(), right.GetHashCode());
         }
 
-        [Test]
+        [Fact]
         public void Pathes_are_equal_if_equality_comparer_says_so()
         {
             // ARRANGE
@@ -355,13 +369,13 @@
 
             // ASSERT
 
-            IsTrue(result1);
-            IsTrue(result2);
-            AreNotEqual(left.GetHashCode(), right.GetHashCode());
+            True(result1);
+            True(result2);
+            NotEqual(left.GetHashCode(), right.GetHashCode());
         }
 
-        [Test]
-        public void Path_is_equal_compered_with_itself()
+        [Fact]
+        public void Path_is_equal_compared_with_itself()
         {
             // ARRANGE
 
@@ -373,14 +387,14 @@
 
             // ASSERT
 
-            IsTrue(result);
+            True(result);
         }
 
         #endregion Equals
 
         #region ToString
 
-        [Test]
+        [Fact]
         public void Path_creates_string_representation_with_default_separator()
         {
             // ACT
@@ -389,10 +403,10 @@
 
             // ASSERT
 
-            AreEqual("a/b", result);
+            Equal("a/b", result);
         }
 
-        [Test]
+        [Fact]
         public void Path_creates_string_representation_with_custom_separator()
         {
             // ACT
@@ -401,10 +415,10 @@
 
             // ASSERT
 
-            AreEqual("a.b", result);
+            Equal("a.b", result);
         }
 
-        [Test]
+        [Fact]
         public void Path_creates_string_representation_with_null_separator()
         {
             // ACT
@@ -413,10 +427,10 @@
 
             // ASSERT
 
-            AreEqual("ab", result);
+            Equal("ab", result);
         }
 
-        [Test]
+        [Fact]
         public void Path_creates_empty_string_represention_for_empty_path()
         {
             // ACT
@@ -425,14 +439,14 @@
 
             // ASSERT
 
-            AreEqual(string.Empty, result);
+            Equal(string.Empty, result);
         }
 
         #endregion ToString
 
         #region GetHashCode
 
-        [Test]
+        [Fact]
         public void Path_hashcode_is_different_for_permutations()
         {
             // ARRANGE
@@ -442,14 +456,14 @@
 
             // ACT & ASSERT
 
-            AreNotEqual(left.GetHashCode(), right.GetHashCode());
+            NotEqual(left.GetHashCode(), right.GetHashCode());
         }
 
         #endregion GetHashCode
 
         #region Join
 
-        [Test]
+        [Fact]
         public void Join_empty_path_with_leaf_item()
         {
             // ARRAGE
@@ -462,12 +476,12 @@
 
             // ASSERT
 
-            AreEqual(0, root.Items.Count());
-            AreEqual(1, result.Items.Count());
-            AreEqual(2, result.Items.Single());
+            Equal(0, root.Items.Count());
+            Equal(1, result.Items.Count());
+            Equal(2, result.Items.Single());
         }
 
-        [Test]
+        [Fact]
         public void Join_path_with_leaf()
         {
             // ARRAGE
@@ -480,13 +494,13 @@
 
             // ASSERT
 
-            AreEqual(1, key.Items.Count());
-            AreEqual(2, result.Items.Count());
-            AreEqual(2, result.Items.ElementAt(0));
-            AreEqual(3, result.Items.ElementAt(1));
+            Equal(1, key.Items.Count());
+            Equal(2, result.Items.Count());
+            Equal(2, result.Items.ElementAt(0));
+            Equal(3, result.Items.ElementAt(1));
         }
 
-        [Test]
+        [Fact]
         public void Join_path_with_leaf_path()
         {
             // ARRAGE
@@ -500,18 +514,18 @@
 
             // ASSERT
 
-            AreEqual(4, result.Items.Count());
-            AreEqual(1, result.Items.ElementAt(0));
-            AreEqual(2, result.Items.ElementAt(1));
-            AreEqual(3, result.Items.ElementAt(2));
-            AreEqual(4, result.Items.ElementAt(3));
+            Equal(4, result.Items.Count());
+            Equal(1, result.Items.ElementAt(0));
+            Equal(2, result.Items.ElementAt(1));
+            Equal(3, result.Items.ElementAt(2));
+            Equal(4, result.Items.ElementAt(3));
         }
 
         #endregion Join
 
         #region RelativeToAncestor
 
-        [Test]
+        [Fact]
         public void Calculate_relative_path_from_ancestor_to_descendant()
         {
             // ARRANGE
@@ -525,11 +539,11 @@
 
             // ASSERT
 
-            AreEqual(1, result.Items.Count());
-            AreEqual("b", result.Items.First());
+            Equal(1, result.Items.Count());
+            Equal("b", result.Items.First());
         }
 
-        [Test]
+        [Fact]
         public void Relative_path_to_itself_is_empty()
         {
             // ARRANGE
@@ -543,10 +557,10 @@
 
             // ASSERT
 
-            AreEqual(0, result.Items.Count());
+            Equal(0, result.Items.Count());
         }
 
-        [Test]
+        [Fact]
         public void Calculate_relative_path_to_different_branch_throws()
         {
             // ARRANGE
@@ -557,10 +571,10 @@
             // ACT
 
             var ex = Throws<InvalidOperationException>(() => descendantKey.RelativeToAncestor(ancestorKey));
-            IsTrue(ex.Message.Contains("No common key parts"));
+            True(ex.Message.Contains("No common key parts"));
         }
 
-        [Test]
+        [Fact]
         public void Relative_path_to_root_is_itself_path()
         {
             // ASSERT
@@ -572,16 +586,16 @@
 
             // ASSERT
 
-            AreEqual(1, result.Items.Count());
-            AreEqual(descendantKey, result);
-            AreSame(descendantKey, result);
+            Equal(1, result.Items.Count());
+            Equal(descendantKey, result);
+            Same(descendantKey, result);
         }
 
         #endregion RelativeToAncestor
 
         #region IsDescendant
 
-        [Test]
+        [Fact]
         public void Parent_path_is_ancestor_of_descendant_path()
         {
             // ARRANGE
@@ -596,11 +610,11 @@
 
             // ASSERT
 
-            IsTrue(result1);
-            IsFalse(result2);
+            True(result1);
+            False(result2);
         }
 
-        [Test]
+        [Fact]
         public void Sibling_isnt_descendant()
         {
             // ARRANGE
@@ -615,10 +629,24 @@
 
             // ASSERT
 
-            IsFalse(result1);
-            IsFalse(result2);
+            False(result1);
+            False(result2);
         }
 
         #endregion IsDescendant
+
+        #region Root path disambiguisation
+
+        [Fact]
+        public void Root_pathes_are_equal()
+        {
+            // ACT & ASSERT
+
+            Equal(HierarchyPath.Create<string>(), HierarchyPath.Parse("/", separator: "/"));
+            Equal(HierarchyPath.Parse("/", separator: "/"), HierarchyPath.Parse("", separator: "/"));
+            NotEqual(HierarchyPath.Create<string>(), HierarchyPath.Create<string>(""));
+        }
+
+        #endregion Root path disambiguisation
     }
 }

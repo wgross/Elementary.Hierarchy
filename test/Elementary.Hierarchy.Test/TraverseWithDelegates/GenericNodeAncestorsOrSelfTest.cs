@@ -1,14 +1,13 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 {
     using Elementary.Hierarchy.Generic;
-    using NUnit.Framework;
     using System.Collections.Generic;
     using System.Linq;
+    using Xunit;
 
-    [TestFixture]
     public class GenericNodeAncestorsOrSelfTest
     {
-        [Test]
+        [Fact]
         public void D_root_returns_itself_on_AncestorsOrSelf()
         {
             // ARRANGE
@@ -25,11 +24,11 @@
 
             // ASSERT
 
-            Assert.AreEqual(1, result.Count());
-            Assert.AreEqual("startNode", result.ElementAt(0));
+            Assert.Equal(1, result.Count());
+            Assert.Equal("startNode", result.ElementAt(0));
         }
 
-        [Test]
+        [Fact]
         public void D_inner_node_returns_path_to_root_on_AncestorsOrSefl()
         {
             // ARRANGE
@@ -56,10 +55,10 @@
 
             // ASSERT
 
-            Assert.AreEqual(3, result.Count());
-            Assert.AreEqual("startNode", result.ElementAt(0));
-            Assert.AreEqual("parentOfStartNode", result.ElementAt(1));
-            Assert.AreEqual("rootNode", result.ElementAt(2));
+            Assert.Equal(3, result.Count());
+            Assert.Equal("startNode", result.ElementAt(0));
+            Assert.Equal("parentOfStartNode", result.ElementAt(1));
+            Assert.Equal("rootNode", result.ElementAt(2));
         }
     }
 }

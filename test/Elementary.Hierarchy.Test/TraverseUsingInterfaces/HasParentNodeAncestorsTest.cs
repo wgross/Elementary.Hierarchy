@@ -1,11 +1,10 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseUsingInterfaces.TraverseUsingInterfaces
 {
     using Moq;
-    using NUnit.Framework;
     using System.Collections.Generic;
     using System.Linq;
+    using Xunit;
 
-    [TestFixture]
     public class HasParentNodeAncestorsTest
     {
         public interface MockableNodeType : IHasParentNode<MockableNodeType>
@@ -13,18 +12,17 @@
 
         private Mock<MockableNodeType> startNode = null;
 
-        [SetUp]
-        public void ArrangeAllTests()
+        public HasParentNodeAncestorsTest()
         {
             this.startNode = new Mock<MockableNodeType>();
         }
 
-        [Test]
+        [Fact]
         public void Root_returns_null_for_Ancestors()
         {
             // ARRANGE
 
-            this.startNode.SetupGet(n =>n.HasParentNode).Returns(false);
+            this.startNode.SetupGet(n => n.HasParentNode).Returns(false);
 
             // ACT
 
@@ -32,19 +30,19 @@
 
             // ASSERT
 
-            Assert.AreEqual(0, result.Count());
+            Assert.Equal(0, result.Count());
 
-            this.startNode.Verify(n => n.HasParentNode,Times.Once());
+            this.startNode.Verify(n => n.HasParentNode, Times.Once());
             this.startNode.Verify(n => n.ParentNode, Times.Never());
         }
 
-        [Test]
+        [Fact]
         public void Inner_node_returns_path_to_root_node()
         {
             // ARRANGE
 
             var rootNode = new Mock<MockableNodeType>();
-            rootNode.SetupGet(n =>n.HasParentNode).Returns(false);
+            rootNode.SetupGet(n => n.HasParentNode).Returns(false);
 
             var parentOfStartNode = new Mock<MockableNodeType>();
             parentOfStartNode.SetupGet(n => n.HasParentNode).Returns(true);
@@ -59,9 +57,9 @@
 
             // ASSERT
 
-            Assert.AreEqual(2, result.Count());
-            Assert.AreSame(parentOfStartNode.Object, result.ElementAt(0));
-            Assert.AreSame(rootNode.Object, result.ElementAt(1));
+            Assert.Equal(2, result.Count());
+            Assert.Same(parentOfStartNode.Object, result.ElementAt(0));
+            Assert.Same(rootNode.Object, result.ElementAt(1));
         }
     }
 }

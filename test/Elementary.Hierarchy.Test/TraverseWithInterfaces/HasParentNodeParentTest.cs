@@ -1,10 +1,9 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 {
     using Moq;
-    using NUnit.Framework;
     using System;
+    using Xunit;
 
-    [TestFixture]
     public class HasParentNodeParentTest
     {
         public interface MockableNodeType : IHasParentNode<MockableNodeType>
@@ -12,13 +11,12 @@
 
         private Mock<MockableNodeType> startNode = new Mock<MockableNodeType>();
 
-        [SetUp]
-        public void ArrangeAllTests()
+        public HasParentNodeParentTest()
         {
             this.startNode = new Mock<MockableNodeType>();
         }
 
-        [Test]
+        [Fact]
         public void I_Root_throws_InvalidOperationException_on_Parent()
         {
             // ARRANGE
@@ -32,13 +30,13 @@
 
             // ASSERT
 
-            Assert.IsTrue(result.Message.Contains("has no parent"));
+            Assert.True(result.Message.Contains("has no parent"));
 
             startNode.Verify(m => m.HasParentNode, Times.Once());
             startNode.Verify(m => m.ParentNode, Times.Never());
         }
 
-        [Test]
+        [Fact]
         public void I_inner_node_returns_parent_on_Parent()
         {
             // ARRANGE
@@ -66,7 +64,7 @@
 
             // ASSERT
 
-            Assert.AreSame(parentOfStartNode.Object, result);
+            Assert.Same(parentOfStartNode.Object, result);
         }
     }
 }

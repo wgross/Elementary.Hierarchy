@@ -1,15 +1,14 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 {
     using Elementary.Hierarchy.Generic;
-    using NUnit.Framework;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Xunit;
 
-    [TestFixture]
     public class GenericNodeParentTest
     {
-        [Test]
+        [Fact]
         public void D_root_throws_InvalidOperationException__on_Parent()
         {
             // ARRANGE
@@ -26,10 +25,10 @@
 
             // ASSERT
 
-            Assert.IsTrue(result.Message.Contains("has no parent"));
+            Assert.True(result.Message.Contains("has no parent"));
         }
 
-        [Test]
+        [Fact]
         public void D_inner_node_returns_Parent()
         {
             // ARRANGE
@@ -56,9 +55,9 @@
 
             // ASSERT
 
-            Assert.AreEqual(2, result.Count());
-            Assert.AreEqual("parentOfStartNode", result.ElementAt(0));
-            Assert.AreEqual("rootNode", result.ElementAt(1));
+            Assert.Equal(2, result.Count());
+            Assert.Equal("parentOfStartNode", result.ElementAt(0));
+            Assert.Equal("rootNode", result.ElementAt(1));
         }
     }
 }

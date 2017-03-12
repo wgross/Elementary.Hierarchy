@@ -1,9 +1,8 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 {
     using Moq;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
     public class HasIdentifiableChildNodesTryGetDescendantAtTest
     {
         public interface MockableNodeType : IHasIdentifiableChildNodes<int, MockableNodeType>
@@ -11,13 +10,12 @@
 
         private Mock<MockableNodeType> startNode = new Mock<MockableNodeType>();
 
-        [SetUp]
-        public void ArrangeAllTests()
+        public HasIdentifiableChildNodesTryGetDescendantAtTest()
         {
             this.startNode = new Mock<MockableNodeType>();
         }
 
-        [Test]
+        [Fact]
         public void I_root_returns_child_on_TryGetDescendantAt()
         {
             // ARRANGE
@@ -35,13 +33,13 @@
 
             // ASSERT
 
-            Assert.IsTrue(result);
-            Assert.IsNotNull(resultNode);
-            Assert.AreSame(childNode, resultNode);
+            Assert.True(result);
+            Assert.NotNull(resultNode);
+            Assert.Same(childNode, resultNode);
             this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once());
         }
 
-        [Test]
+        [Fact]
         public void I_root_returns_itself_on_TryGetDescendantAt()
         {
             // ACT
@@ -51,11 +49,11 @@
 
             // ASSERT
 
-            Assert.IsTrue(result);
-            Assert.AreSame(startNode.Object, resultNode);
+            Assert.True(result);
+            Assert.Same(startNode.Object, resultNode);
         }
 
-        [Test]
+        [Fact]
         public void I_root_returns_grandchild_on_TryGetDescendentAt()
         {
             // ARRANGE
@@ -80,13 +78,13 @@
 
             // ASSERT
 
-            Assert.IsTrue(result);
-            Assert.AreSame(subChildNode, resultNode);
+            Assert.True(result);
+            Assert.Same(subChildNode, resultNode);
             this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once());
             childNodeMock.Verify(n => n.TryGetChildNode(2, out subChildNode), Times.Once());
         }
 
-        [Test]
+        [Fact]
         public void I_root_node_throws_KeyNotFoundException_on_invalid_childId_on_TryGetDescendantAt()
         {
             // ARRANGE
@@ -100,7 +98,7 @@
 
             // ASSERT
 
-            Assert.IsFalse(result);
+            Assert.False(result);
         }
     }
 }

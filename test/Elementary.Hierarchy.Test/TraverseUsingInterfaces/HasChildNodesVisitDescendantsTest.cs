@@ -1,12 +1,11 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseUsingInterfaces
 {
     using Moq;
-    using NUnit.Framework;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Xunit;
 
-    [TestFixture]
     public class HasChildNodesVisitVisitDescendantsTest
     {
         public interface MockableNodeType : IHasChildNodes<MockableNodeType>
@@ -20,8 +19,7 @@
         private Mock<MockableNodeType> leftRightLeaf;
         private Mock<MockableNodeType> rightRightLeaf;
 
-        [SetUp]
-        public void ArrangeAllTests()
+        public HasChildNodesVisitVisitDescendantsTest()
         {
             //                rootNode
             //                /      \
@@ -62,7 +60,7 @@
 
         #region VisitDescendants
 
-        [Test]
+        [Fact]
         public void VisitDescandantsBreadthFirst()
         {
             // ACT
@@ -74,8 +72,8 @@
             // ASSERT
 
             // Check list of visited nodes
-            Assert.AreEqual(5, result.Count());
-            CollectionAssert.AreEqual(new[]
+            Assert.Equal(5, result.Count());
+            Assert.Equal(new[]
             {
                 this.leftNode,
                 this.rightNode,
@@ -85,11 +83,11 @@
             }.Select(n => n.Object), result.Select(i => i.Item2));
 
             // check presented breadcrumbs
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object }, result.ElementAt(0).Item1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object }, result.ElementAt(1).Item1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object, this.leftNode.Object }, result.ElementAt(2).Item1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object, this.rightNode.Object }, result.ElementAt(3).Item1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object, this.rightNode.Object }, result.ElementAt(4).Item1);
+            Assert.Equal(new[] { this.rootNode.Object }, result.ElementAt(0).Item1);
+            Assert.Equal(new[] { this.rootNode.Object }, result.ElementAt(1).Item1);
+            Assert.Equal(new[] { this.rootNode.Object, this.leftNode.Object }, result.ElementAt(2).Item1);
+            Assert.Equal(new[] { this.rootNode.Object, this.rightNode.Object }, result.ElementAt(3).Item1);
+            Assert.Equal(new[] { this.rootNode.Object, this.rightNode.Object }, result.ElementAt(4).Item1);
 
             this.rootNode.VerifyAll();
             this.leftNode.VerifyAll();
@@ -99,7 +97,7 @@
             this.rightRightLeaf.VerifyAll();
         }
 
-        [Test]
+        [Fact]
         public void VisitDescandantsDepthFirst()
         {
             // ACT
@@ -111,8 +109,8 @@
             // ASSERT
 
             // check visited nodes
-            Assert.AreEqual(5, result.Count());
-            CollectionAssert.AreEqual(new[] {
+            Assert.Equal(5, result.Count());
+            Assert.Equal(new[] {
                 this.leftNode,
                 this.leftLeaf,
                 this.rightNode,
@@ -121,11 +119,11 @@
             }.Select(n => n.Object), result.Select(i => i.Item2));
 
             // check presented breadcrumbs
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object }, result.ElementAt(0).Item1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object, this.leftNode.Object }, result.ElementAt(1).Item1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object }, result.ElementAt(2).Item1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object, this.rightNode.Object }, result.ElementAt(3).Item1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object, this.rightNode.Object }, result.ElementAt(4).Item1);
+            Assert.Equal(new[] { this.rootNode.Object }, result.ElementAt(0).Item1);
+            Assert.Equal(new[] { this.rootNode.Object, this.leftNode.Object }, result.ElementAt(1).Item1);
+            Assert.Equal(new[] { this.rootNode.Object }, result.ElementAt(2).Item1);
+            Assert.Equal(new[] { this.rootNode.Object, this.rightNode.Object }, result.ElementAt(3).Item1);
+            Assert.Equal(new[] { this.rootNode.Object, this.rightNode.Object }, result.ElementAt(4).Item1);
 
             this.rootNode.VerifyAll();
             this.leftNode.VerifyAll();
@@ -139,7 +137,7 @@
 
         #region DescendantsOrSelf
 
-        [Test]
+        [Fact]
         public void VisitDescendantsOrSelfBreadthFirst()
         {
             // ACT
@@ -151,8 +149,8 @@
             // ASSERT
 
             // Check list of visited nodes
-            Assert.AreEqual(6, result.Count());
-            CollectionAssert.AreEqual(new[]
+            Assert.Equal(6, result.Count());
+            Assert.Equal(new[]
             {
                 this.rootNode,
                 this.leftNode,
@@ -163,12 +161,12 @@
             }.Select(n => n.Object), result.Select(i => i.Item2));
 
             // check presented breadcrumbs
-            CollectionAssert.AreEqual(new MockableNodeType[] { }, result.ElementAt(0).Item1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object }, result.ElementAt(1).Item1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object }, result.ElementAt(2).Item1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object, this.leftNode.Object }, result.ElementAt(3).Item1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object, this.rightNode.Object }, result.ElementAt(4).Item1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object, this.rightNode.Object }, result.ElementAt(5).Item1);
+            Assert.Equal(new MockableNodeType[] { }, result.ElementAt(0).Item1);
+            Assert.Equal(new[] { this.rootNode.Object }, result.ElementAt(1).Item1);
+            Assert.Equal(new[] { this.rootNode.Object }, result.ElementAt(2).Item1);
+            Assert.Equal(new[] { this.rootNode.Object, this.leftNode.Object }, result.ElementAt(3).Item1);
+            Assert.Equal(new[] { this.rootNode.Object, this.rightNode.Object }, result.ElementAt(4).Item1);
+            Assert.Equal(new[] { this.rootNode.Object, this.rightNode.Object }, result.ElementAt(5).Item1);
 
             this.rootNode.VerifyAll();
             this.leftNode.VerifyAll();
@@ -178,7 +176,7 @@
             this.rightRightLeaf.VerifyAll();
         }
 
-        [Test]
+        [Fact]
         public void VisitDescandantsOrSelfDepthFirst()
         {
             // ACT
@@ -190,8 +188,8 @@
             // ASSERT
 
             // check visited nodes
-            Assert.AreEqual(6, result.Count());
-            CollectionAssert.AreEqual(new[] {
+            Assert.Equal(6, result.Count());
+            Assert.Equal(new[] {
                 this.rootNode,
                 this.leftNode,
                 this.leftLeaf,
@@ -201,12 +199,12 @@
             }.Select(n => n.Object), result.Select(i => i.Item2));
 
             // check presented breadcrumbs
-            CollectionAssert.AreEqual(new MockableNodeType[] { }, result.ElementAt(0).Item1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object }, result.ElementAt(1).Item1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object, this.leftNode.Object }, result.ElementAt(2).Item1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object }, result.ElementAt(3).Item1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object, this.rightNode.Object }, result.ElementAt(4).Item1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object, this.rightNode.Object }, result.ElementAt(5).Item1);
+            Assert.Equal(new MockableNodeType[] { }, result.ElementAt(0).Item1);
+            Assert.Equal(new[] { this.rootNode.Object }, result.ElementAt(1).Item1);
+            Assert.Equal(new[] { this.rootNode.Object, this.leftNode.Object }, result.ElementAt(2).Item1);
+            Assert.Equal(new[] { this.rootNode.Object }, result.ElementAt(3).Item1);
+            Assert.Equal(new[] { this.rootNode.Object, this.rightNode.Object }, result.ElementAt(4).Item1);
+            Assert.Equal(new[] { this.rootNode.Object, this.rightNode.Object }, result.ElementAt(5).Item1);
 
             this.rootNode.VerifyAll();
             this.leftNode.VerifyAll();

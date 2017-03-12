@@ -1,10 +1,9 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseUsingInterfaces
 {
     using Moq;
-    using NUnit.Framework;
     using System.Collections.Generic;
+    using Xunit;
 
-    [TestFixture]
     public class HasIdentifiableChildNodesDescendantAtTest
     {
         public interface MockableNodeType : IHasIdentifiableChildNodes<int, MockableNodeType>
@@ -12,13 +11,12 @@
 
         private Mock<MockableNodeType> root;
 
-        [SetUp]
-        public void ArrangeAllTests()
+        public HasIdentifiableChildNodesDescendantAtTest()
         {
             this.root = new Mock<MockableNodeType>();
         }
 
-        [Test]
+        [Fact]
         public void Root_returns_child_at_path_position_on_DescendantAt()
         {
             // ARRANGE
@@ -33,12 +31,12 @@
 
             // ASSERT
 
-            Assert.IsNotNull(result);
-            Assert.AreSame(childNode, result);
+            Assert.NotNull(result);
+            Assert.Same(childNode, result);
             this.root.Verify(r => r.TryGetChildNode(1, out childNode), Times.Once());
         }
 
-        [Test]
+        [Fact]
         public void Root_returns_itself_for_empty_path_on_DescendentAt()
         {
             // ACT
@@ -47,10 +45,10 @@
 
             // ASSERT
 
-            Assert.AreSame(this.root.Object, result);
+            Assert.Same(this.root.Object, result);
         }
 
-        [Test]
+        [Fact]
         public void Root_returns_grandchild_at_path_position_on_DescendantAt()
         {
             // ARRANGE
@@ -70,12 +68,12 @@
 
             // ASSERT
 
-            Assert.AreSame(subChildNode, result);
+            Assert.Same(subChildNode, result);
             this.root.Verify(r => r.TryGetChildNode(1, out childNodeObject), Times.Once());
             childNode.Verify(c => c.TryGetChildNode(2, out subChildNode), Times.Once());
         }
 
-        [Test]
+        [Fact]
         public void Root_throws_for_missing_child_on_DescendantAt()
         {
             // ARRANGE
@@ -87,10 +85,10 @@
 
             // ASSERT
 
-            Assert.IsTrue(result.Message.Contains("Key not found:'1'"));
+            Assert.True(result.Message.Contains("Key not found:'1'"));
         }
 
-        [Test]
+        [Fact]
         public void DescendantAtOrDefaultGetsExistingSubnode_IF()
         {
             // ARRANGE
@@ -105,12 +103,12 @@
 
             // ASSERT
 
-            Assert.IsNotNull(result);
-            Assert.AreSame(childNode, result);
+            Assert.NotNull(result);
+            Assert.Same(childNode, result);
             this.root.Verify(r => r.TryGetChildNode(1, out childNode), Times.Once());
         }
 
-        [Test]
+        [Fact]
         public void DescendantAtOrDefaultReturnsNullIfSubnodeDoesntExist_IF()
         {
             // ARRANGE
@@ -125,11 +123,11 @@
 
             // ASSERT
 
-            Assert.IsNull(result);
+            Assert.Null(result);
             this.root.Verify(r => r.TryGetChildNode(1, out childNode), Times.Once());
         }
 
-        [Test]
+        [Fact]
         public void DescendantAtOrDefaultReturnsParentPathIfSubnodeDoesntExist_IF()
         {
             // ARRANGE
@@ -145,13 +143,13 @@
 
             // ASSERT
 
-            Assert.IsNull(result);
-            Assert.IsNotNull(foundPath);
-            Assert.AreEqual((object)HierarchyPath.Create<int>(), (object)foundPath);
+            Assert.Null(result);
+            Assert.NotNull(foundPath);
+            Assert.Equal((object)HierarchyPath.Create<int>(), (object)foundPath);
             this.root.Verify(r => r.TryGetChildNode(1, out childNode), Times.Once);
         }
 
-        [Test]
+        [Fact]
         public void DescendantAtOrDefaultGetsExistingSubnodeAndParentNodePath_IF()
         {
             // ARRANGE
@@ -167,14 +165,14 @@
 
             // ASSERT
 
-            Assert.IsNotNull(childNode);
-            Assert.AreSame(childNode, result);
-            Assert.IsNotNull(foundKey);
-            Assert.AreEqual((object)HierarchyPath.Create<int>(1), (object)foundKey);
+            Assert.NotNull(childNode);
+            Assert.Same(childNode, result);
+            Assert.NotNull(foundKey);
+            Assert.Equal((object)HierarchyPath.Create<int>(1), (object)foundKey);
             this.root.Verify(r => r.TryGetChildNode(1, out childNode), Times.Once());
         }
 
-        [Test]
+        [Fact]
         public void DescendantAtOrDefaultGetsExistingGrandchildNode_IF()
         {
             // ARRANGE
@@ -194,13 +192,13 @@
 
             // ASSERT
 
-            Assert.IsNotNull(grandChildNode);
-            Assert.AreSame(grandChildNode, result);
+            Assert.NotNull(grandChildNode);
+            Assert.Same(grandChildNode, result);
             this.root.Verify(r => r.TryGetChildNode(1, out childNodeObject), Times.Once());
             this.root.Verify(r => r.TryGetChildNode(1, out grandChildNode), Times.Once());
         }
 
-        [Test]
+        [Fact]
         public void DescendantAtOrDefaultGetsExistingGrandchildNodeAndChildNodePath_IF()
         {
             // ARRANGE
@@ -221,16 +219,16 @@
 
             // ASSERT
 
-            Assert.IsNotNull(grandChildNode);
-            Assert.AreSame(grandChildNode, result);
-            Assert.IsNotNull(foundKey);
-            Assert.AreEqual((object)HierarchyPath.Create(1, 2), (object)foundKey);
+            Assert.NotNull(grandChildNode);
+            Assert.Same(grandChildNode, result);
+            Assert.NotNull(foundKey);
+            Assert.Equal((object)HierarchyPath.Create(1, 2), (object)foundKey);
 
             this.root.Verify(r => r.TryGetChildNode(1, out childNodeObject), Times.Once());
             this.root.Verify(r => r.TryGetChildNode(1, out grandChildNode), Times.Once());
         }
 
-        [Test]
+        [Fact]
         public void DescendantAtOrDefaultFailsIfGrandchildNodeDoesnExistReturnsParentPath_IF()
         {
             // ARRANGE
@@ -252,9 +250,9 @@
 
             // ASSERT
 
-            Assert.IsNull(result);
-            Assert.IsNotNull(foundKey);
-            Assert.AreEqual((object)HierarchyPath.Create(1), (object)foundKey);
+            Assert.Null(result);
+            Assert.NotNull(foundKey);
+            Assert.Equal((object)HierarchyPath.Create(1), (object)foundKey);
 
             this.root.Verify(r => r.TryGetChildNode(1, out childNodeObject), Times.Once());
             this.root.Verify(r => r.TryGetChildNode(1, out grandChildNode), Times.Once());

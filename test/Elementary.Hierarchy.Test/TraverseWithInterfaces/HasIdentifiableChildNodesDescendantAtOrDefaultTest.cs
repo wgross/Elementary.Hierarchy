@@ -1,9 +1,8 @@
 ﻿using Moq;
-using NUnit.Framework;
+using Xunit;
 
 namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 {
-    [TestFixture]
     public class HasIdentifiableChildNodesDescendantAtOrDefaultTest
     {
         public interface MockableNodeType : IHasIdentifiableChildNodes<int, MockableNodeType>
@@ -11,13 +10,12 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 
         private Mock<MockableNodeType> startNode = new Mock<MockableNodeType>();
 
-        [SetUp]
-        public void ArrangeAllTests()
+        public HasIdentifiableChildNodesDescendantAtOrDefaultTest()
         {
             this.startNode = new Mock<MockableNodeType>();
         }
 
-        [Test]
+        [Fact]
         public void I_root_returns_child_on_DescendantAtOrDefault()
         {
             // ARRANGE
@@ -37,14 +35,14 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 
             // ASSERT
 
-            Assert.IsNotNull(result1);
-            Assert.AreSame(childNode, result1);
-            Assert.AreSame(childNode, result2);
-            Assert.AreEqual(HierarchyPath.Create(1), foundNodePath);
+            Assert.NotNull(result1);
+            Assert.Same(childNode, result1);
+            Assert.Same(childNode, result2);
+            Assert.Equal(HierarchyPath.Create(1), foundNodePath);
             this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Exactly(2));
         }
 
-        [Test]
+        [Fact]
         public void I_root_returns_itself_on_DescendantAtOrDefault()
         {
             // ACT
@@ -56,15 +54,15 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 
             // ASSERT
 
-            Assert.AreSame(startNode.Object, result1);
-            Assert.AreSame(startNode.Object, result2);
-            Assert.AreEqual(HierarchyPath.Create<int>(), foundNodePath);
+            Assert.Same(startNode.Object, result1);
+            Assert.Same(startNode.Object, result2);
+            Assert.Equal(HierarchyPath.Create<int>(), foundNodePath);
 
             MockableNodeType childNode;
             this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Never());
         }
 
-        [Test]
+        [Fact]
         public void I_root_returns_grandchild_on_DescendantOrDefault()
         {
             // ARRANGE
@@ -91,13 +89,13 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 
             // ASSERT
 
-            Assert.IsNotNull(grandChildNode);
-            Assert.AreSame(grandChildNode, result1);
+            Assert.NotNull(grandChildNode);
+            Assert.Same(grandChildNode, result1);
             this.startNode.Verify(n => n.TryGetChildNode(1, out childNodeObject), Times.Exactly(2));
             this.startNode.Verify(n => n.TryGetChildNode(1, out grandChildNode), Times.Exactly(2));
         }
 
-        [Test]
+        [Fact]
         public void I_root_returns_null_on_invalid_childId_on_DescendantOrDefault()
         {
             // ARRANGE
@@ -117,13 +115,13 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 
             // ASSERT
 
-            Assert.IsNull(result1);
-            Assert.IsNull(result2);
-            Assert.AreEqual(HierarchyPath.Create<int>(), foundNodePath);
+            Assert.Null(result1);
+            Assert.Null(result2);
+            Assert.Equal(HierarchyPath.Create<int>(), foundNodePath);
             this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Exactly(2));
         }
 
-        [Test]
+        [Fact]
         public void I_root_returns_substitute_on_invalid_childId_on_DescendantOrDefault()
         {
             // ARRANGE
@@ -145,9 +143,9 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 
             // ASSERT
 
-            Assert.AreSame(substitute, result1);
-            Assert.AreSame(substitute, result2);
-            Assert.AreEqual(HierarchyPath.Create<int>(), foundNodePath);
+            Assert.Same(substitute, result1);
+            Assert.Same(substitute, result2);
+            Assert.Equal(HierarchyPath.Create<int>(), foundNodePath);
             this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Exactly(2));
         }
     }
