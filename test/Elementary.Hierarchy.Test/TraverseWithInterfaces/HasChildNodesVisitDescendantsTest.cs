@@ -188,16 +188,16 @@
 
         #endregion VisitDescendants
 
-        #region VisitDescendantsOrSelf
+        #region VisitDescendantsAndSelf
 
         [Fact]
-        public void I_visit_complete_tree_breadthFirst_on_VisitDescendantsOrSelf()
+        public void I_visit_complete_tree_breadthFirst_on_VisitDescendantsAndSelf()
         {
             // ACT
 
             var result = new List<Tuple<List<MockableNodeType>, MockableNodeType>>();
 
-            this.rootNode.Object.VisitDescendantsOrSelf((bc, n) => result.Add(Tuple.Create(bc.ToList(), n)));
+            this.rootNode.Object.VisitDescendantsAndSelf((bc, n) => result.Add(Tuple.Create(bc.ToList(), n)));
 
             // ASSERT
 
@@ -230,13 +230,13 @@
         }
 
         [Fact]
-        public void I_visit_complete_tree_depthFirst_on_VisitDescendantsOrSelf()
+        public void I_visit_complete_tree_depthFirst_on_VisitDescendantsAndSelf()
         {
             // ACT
 
             var result = new List<Tuple<List<MockableNodeType>, MockableNodeType>>();
 
-            this.rootNode.Object.VisitDescendantsOrSelf((bc, n) => result.Add(Tuple.Create(bc.ToList(), n)), depthFirst: true);
+            this.rootNode.Object.VisitDescendantsAndSelf((bc, n) => result.Add(Tuple.Create(bc.ToList(), n)), depthFirst: true);
 
             // ASSERT
 
@@ -267,6 +267,6 @@
             this.rightRightLeaf.VerifyAll();
         }
 
-        #endregion VisitDescendantsOrSelf
+        #endregion VisitDescendantsAndSelf
     }
 }

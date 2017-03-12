@@ -315,12 +315,12 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 
             // ACT
 
-            var descendantsOrSelf = this.rootNode.Object.Descendants(maxDepth: 1).ToArray();
+            var descendantsAndSelf = this.rootNode.Object.Descendants(maxDepth: 1).ToArray();
             var children = this.rootNode.Object.Children().ToArray();
 
             // ASSERT
 
-            Assert.Equal(children, descendantsOrSelf);
+            Assert.Equal(children, descendantsAndSelf);
 
             this.rootNode.Verify(n => n.GetDescendants(false, 1), Times.Once());
             this.rootNode.Verify(n => n.HasChildNodes, Times.Once());

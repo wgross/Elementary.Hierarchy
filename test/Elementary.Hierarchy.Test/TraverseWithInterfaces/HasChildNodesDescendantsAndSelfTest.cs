@@ -1,11 +1,11 @@
-﻿namespace Elementary.Hierarchy.Test.TraverseUsingInterfaces
+﻿namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 {
     using Moq;
     using System.Collections.Generic;
     using System.Linq;
     using Xunit;
 
-    public class HasChildNodesDescendantsOrSelfTest
+    public class HasChildNodesDescendantsAndSelfTest
     {
         public interface MockableNodeType : IHasChildNodes<MockableNodeType>
         {
@@ -18,7 +18,7 @@
         private Mock<MockableNodeType> leftRightLeaf;
         private Mock<MockableNodeType> rightRightLeaf;
 
-        public HasChildNodesDescendantsOrSelfTest()
+        public HasChildNodesDescendantsAndSelfTest()
         {
             //                rootNode
             //                /      \
@@ -58,24 +58,23 @@
         }
 
         [Fact]
-        public void LeafReturnsOnlyItself()
+        public void I_leaf_returns_itself_on_DescendantsAndSelf()
         {
             // ACT
 
-            IEnumerable<MockableNodeType> result = this.rightRightLeaf.Object.DescendantsOrSelf().ToArray();
+            IEnumerable<MockableNodeType> result = this.rightRightLeaf.Object.DescendantsAndSelf().ToArray();
 
             // ASSERT
 
             Assert.NotNull(result);
             Assert.Equal(1, result.Count());
 
-            this.rightRightLeaf.Verify(n => n.HasChildNodes, Times.Once);
-            this.rightRightLeaf.Verify(n => n.ChildNodes, Times.Never);
-            this.rightRightLeaf.VerifyAll();
+            this.rightRightLeaf.Verify(n => n.HasChildNodes, Times.Once());
+            this.rightRightLeaf.Verify(n => n.ChildNodes, Times.Never());
         }
 
         [Fact]
-        public void LeafRetunsOnlItselfButClaimsToHaveSubnodes()
+        public void I_inconsistent_leaf_returns_itself_on_DescendantsAndSelf()
         {
             // ARRANGE
 
@@ -87,40 +86,38 @@
 
             // ACT
 
-            IEnumerable<MockableNodeType> result = badLeaf.Object.DescendantsOrSelf().ToArray();
+            IEnumerable<MockableNodeType> result = badLeaf.Object.DescendantsAndSelf().ToArray();
 
             // ASSERT
 
             Assert.Equal(1, result.Count());
             Assert.Same(badLeaf.Object, result.ElementAt(0));
 
-            badLeaf.Verify(n => n.HasChildNodes, Times.Once);
-            badLeaf.Verify(n => n.ChildNodes, Times.Once);
+            badLeaf.Verify(n => n.HasChildNodes, Times.Once());
+            badLeaf.Verify(n => n.ChildNodes, Times.Once());
         }
 
         [Fact]
-        public void EnumerateSingleChildToLeaf()
+        public void I_leaf_returns_single_child_on_DescendantsAndSelf()
         {
             // ACT
 
-            IEnumerable<MockableNodeType> result = this.leftNode.Object.DescendantsOrSelf().ToArray();
+            IEnumerable<MockableNodeType> result = this.leftNode.Object.DescendantsAndSelf().ToArray();
 
             // ASSERT
 
             Assert.Equal(2, result.Count());
-            Assert.Same(this.leftNode.Object, result.ElementAt(0));
-            Assert.Same(this.leftLeaf.Object, result.ElementAt(1));
-
+            Assert.Equal(new[] { this.leftNode.Object, this.leftLeaf.Object }, result);
             this.leftNode.VerifyAll();
             this.leftLeaf.VerifyAll();
         }
 
         [Fact]
-        public void EnumerateTwoChildrenToLeaf()
+        public void I_leaf_returns_left_before_right_child_on_DescendantsAndSelf()
         {
             // ACT
 
-            IEnumerable<MockableNodeType> result = this.rightNode.Object.DescendantsOrSelf();
+            IEnumerable<MockableNodeType> result = this.rightNode.Object.DescendantsAndSelf();
 
             // ASSERT
 
@@ -133,11 +130,11 @@
         }
 
         [Fact]
-        public void EnumerateTreeBreadthFirst()
+        public void I_leaf_returns_descendants_breadthFirst_on_DescendantsAndSelf()
         {
             // ACT
 
-            IEnumerable<MockableNodeType> result = this.rootNode.Object.DescendantsOrSelf().ToArray();
+            IEnumerable<MockableNodeType> result = this.rootNode.Object.DescendantsAndSelf().ToArray();
 
             // ASSERT
 
@@ -160,11 +157,11 @@
         }
 
         [Fact]
-        public void EnumerateTreeDepthFirst()
+        public void I_leaf_returns_descendants_depthFirst_on_DescendantsAndSelf()
         {
             // ACT
 
-            IEnumerable<MockableNodeType> result = this.rootNode.Object.DescendantsOrSelf(depthFirst: true).ToArray();
+            IEnumerable<MockableNodeType> result = this.rootNode.Object.DescendantsAndSelf(depthFirst: true).ToArray();
 
             // ASSERT
 
@@ -187,16 +184,16 @@
         }
 
         [Fact]
-        public void DescendantsOrSelfLevel2AreChildren()
+        public void I_DescendantsAndSelfLevel2AreChildren_on_DescendantsAndSelf()
         {
             // ACT
 
-            var descendantsOrSelf = this.rootNode.Object.DescendantsOrSelf(maxDepth: 2).Skip(1).ToArray();
+            var descendantsAndSelf = this.rootNode.Object.DescendantsAndSelf(maxDepth: 2).Skip(1).ToArray();
             var children = this.rootNode.Object.Children().ToArray();
 
             // ASSERT
 
-            Assert.Equal(children, descendantsOrSelf);
+            Assert.Equal(children, descendantsAndSelf);
         }
     }
 }

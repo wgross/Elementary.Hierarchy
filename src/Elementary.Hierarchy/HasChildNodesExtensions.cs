@@ -4,6 +4,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+
     /// <summary>
     /// Provides extensions to the interface <see cref="IHasChildNodes{TNode}"/>
     /// </summary>
@@ -26,7 +27,7 @@
 
         #endregion Children
 
-        #region Descendants/-OrSelf
+        #region Descendants/-AndSelf
 
         /// <summary>
         /// Traverses the tree downwards from the given <paramref name="startNode"/>. All nodes visited are returned inside the <see cref="IEnumerable{TNode}"/> returned.
@@ -48,7 +49,7 @@
             if (startNode is IHasDescendantNodes<TNode>)
                 return ((IHasDescendantNodes<TNode>)startNode).GetDescendants(depthFirst.GetValueOrDefault(false), maxDepth.GetValueOrDefault(int.MaxValue));
 
-            // startNode's implememtation doesn't provide an optimized accessor to its descendants. 
+            // startNode's implememtation doesn't provide an optimized accessor to its descendants.
             // just rely on the child nodes
 
             return startNode.Descendants(n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>(), depthFirst, maxDepth);
@@ -65,7 +66,7 @@
         /// <param name="depthFirst">enables depth first traversal instead of breadth first</param>
         /// <param name="maxDepth">Specifies the maximum depth of enumeration 0 is always empty, 1 is <paramref name="startNode"/>, 2 children of <paramref name="startNode"/></param>
         /// <typeparam name="TNode">type of the tree nodes. Must implement IHasChildNodes&lt;TNode&gt;</typeparam>
-        public static IEnumerable<TNode> DescendantsOrSelf<TNode>(this TNode startNode, bool? depthFirst = null, int? maxDepth = null)
+        public static IEnumerable<TNode> DescendantsAndSelf<TNode>(this TNode startNode, bool? depthFirst = null, int? maxDepth = null)
             where TNode : IHasChildNodes<TNode>
         {
             if (maxDepth.HasValue && maxDepth.Value < 0)
@@ -74,18 +75,18 @@
             if (startNode is IHasDescendantNodes<TNode>)
                 return Enumerable.Concat(new[] { startNode }, startNode.Descendants(depthFirst, maxDepth - 1));
 
-            // startNode's implememtation doesn't provide an optimized accessor to its descendants. 
+            // startNode's implememtation doesn't provide an optimized accessor to its descendants.
             // just rely on the child nodes
 
-            return startNode.DescendantsOrSelf(n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>(), depthFirst, maxDepth);
+            return startNode.DescendantsAndSelf(n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>(), depthFirst, maxDepth);
         }
 
-        #endregion Descendants/-OrSelf
+        #endregion Descendants/-AndSelf
 
         #region Leaves
 
         /// <summary>
-        /// Traverses the tree (depth first) and returns all nodes which are leaves of the tree. 
+        /// Traverses the tree (depth first) and returns all nodes which are leaves of the tree.
         /// </summary>
         /// <typeparam name="TNode">type of the hierarchy node</typeparam>
         /// <param name="startNode">The node instance to start traversal at</param>
@@ -98,7 +99,7 @@
 
         #endregion Leaves
 
-        #region VisitDescandants/-OrSelf
+        #region VisitDescandants/-AndSelf
 
         /// <summary>
         /// Traverses all descendants and the given <paramref name="startNode"/>. All nodes are presented to the visitor.
@@ -109,10 +110,10 @@
         /// <param name="visitor">delegate to present each node and its path to the <paramref name="startNode"/></param>
         /// <param name="depthFirst">enables deth first traversal, breadth first is default</param>
         /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is the startNode, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
-        public static void VisitDescendantsOrSelf<TNode>(this TNode startNode, Action<IEnumerable<TNode>, TNode> visitor, bool? depthFirst = null, int? maxDepth = null)
+        public static void VisitDescendantsAndSelf<TNode>(this TNode startNode, Action<IEnumerable<TNode>, TNode> visitor, bool? depthFirst = null, int? maxDepth = null)
             where TNode : IHasChildNodes<TNode>
         {
-            startNode.VisitDescendantsOrSelf(n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>(), visitor, depthFirst, maxDepth);
+            startNode.VisitDescendantsAndSelf(n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>(), visitor, depthFirst, maxDepth);
         }
 
         /// <summary>
@@ -130,7 +131,7 @@
             startNode.VisitDescendants(n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>(), visitor, depthFirst, maxDepth);
         }
 
-        #endregion VisitDescandants/-OrSelf
+        #endregion VisitDescandants/-AndSelf
     }
 }
 
@@ -165,7 +166,7 @@ namespace Elementary.Hierarchy.Generic
 
         #endregion Children
 
-        #region Descendants/-OrSelf
+        #region Descendants/-AndSelf
 
         /// <summary>
         /// Traverses the tree downwards from the given <paramref name="startNode"/>. All nodes visited are returned inside the <see cref="IEnumerable{TNode}"/> returned.
@@ -213,7 +214,7 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="depthFirst">specifies if child noded are enumerated depth first or breadth first</param>
         /// <param name="getChildNodes">delegate retrueved the child nodes of the specified TNode instance</param>
         /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is the <paramref name="startNode"/>, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
-        public static IEnumerable<TNode> DescendantsOrSelf<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, bool? depthFirst = null, int? maxDepth = null)
+        public static IEnumerable<TNode> DescendantsAndSelf<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, bool? depthFirst = null, int? maxDepth = null)
         {
             if (getChildNodes == null)
                 throw new ArgumentNullException(nameof(getChildNodes));
@@ -230,7 +231,7 @@ namespace Elementary.Hierarchy.Generic
                 yield return nextNode;
         }
 
-        #endregion Descendants/-OrSelf
+        #endregion Descendants/-AndSelf
 
         #region Leaves
 
@@ -245,12 +246,12 @@ namespace Elementary.Hierarchy.Generic
         public static IEnumerable<TNode> Leaves<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes)
         {
             // all nodes which havn't a child node are leaves of the tree.
-            return startNode.DescendantsOrSelf(getChildNodes: getChildNodes).Where(n => !getChildNodes(n).Any());
+            return startNode.DescendantsAndSelf(getChildNodes: getChildNodes).Where(n => !getChildNodes(n).Any());
         }
 
         #endregion Leaves
 
-        #region VisitDescandants/-OrSelf
+        #region VisitDescandants/-AndSelf
 
         /// <summary>
         /// Traverses all descendants and the given <paramref name="startNode"/>. All nodes are presented to the visitor.
@@ -262,7 +263,7 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="visitor">delegate to present each node and its path to the <paramref name="startNode"/></param>
         /// <param name="depthFirst">enables deth first traversal, breadth first is default</param>
         /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is the <paramref name="startNode"/>, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
-        public static void VisitDescendantsOrSelf<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren, Action<IEnumerable<TNode>, TNode> visitor, bool? depthFirst = null, int? maxDepth = null)
+        public static void VisitDescendantsAndSelf<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren, Action<IEnumerable<TNode>, TNode> visitor, bool? depthFirst = null, int? maxDepth = null)
         {
             if (getChildren == null)
                 throw new ArgumentNullException(nameof(getChildren));
@@ -325,7 +326,7 @@ namespace Elementary.Hierarchy.Generic
             }
         }
 
-        #endregion VisitDescandants/-OrSelf
+        #endregion VisitDescandants/-AndSelf
 
         #region Internal implementation of hierarchy traversal
 

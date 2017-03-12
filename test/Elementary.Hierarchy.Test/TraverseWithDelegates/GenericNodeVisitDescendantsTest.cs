@@ -122,15 +122,15 @@
 
         #endregion VisitDescendants
 
-        #region VisitDescendantsOrSelf
+        #region VisitDescendantsAndSelf
 
         [Fact]
-        public void D_visit_complete_tree_breadthFirst_on_VisitDescendantsOrSelf()
+        public void D_visit_complete_tree_breadthFirst_on_VisitDescendantsAndSelf()
         {
             // ACT
 
             var result = new List<Tuple<List<string>, string>>();
-            "rootNode".VisitDescendantsOrSelf(this.GetChildNodes, (b, n) => result.Add(Tuple.Create(b.ToList(), n)));
+            "rootNode".VisitDescendantsAndSelf(this.GetChildNodes, (b, n) => result.Add(Tuple.Create(b.ToList(), n)));
 
             // ASSERT
 
@@ -151,12 +151,12 @@
         }
 
         [Fact]
-        public void D_visit_complete_tree_depthFirst_on_VisitDescendantsOrSelf()
+        public void D_visit_complete_tree_depthFirst_on_VisitDescendantsAndSelf()
         {
             // ACT
 
             var result = new List<Tuple<List<string>, string>>();
-            "rootNode".VisitDescendantsOrSelf(this.GetChildNodes, (b, n) => result.Add(Tuple.Create(b.ToList(), n)), depthFirst: true);
+            "rootNode".VisitDescendantsAndSelf(this.GetChildNodes, (b, n) => result.Add(Tuple.Create(b.ToList(), n)), depthFirst: true);
 
             // ASSERT
 
@@ -179,6 +179,6 @@
             Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(5).Item1);
         }
 
-        #endregion VisitDescendantsOrSelf
+        #endregion VisitDescendantsAndSelf
     }
 }

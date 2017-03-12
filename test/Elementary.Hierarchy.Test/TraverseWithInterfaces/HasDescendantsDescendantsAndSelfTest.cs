@@ -5,7 +5,7 @@
     using System.Linq;
     using Xunit;
 
-    public class HasDescendantsDescendantsOrSelfTest
+    public class HasDescendantsDescendantsAndSelfTest
     {
         public interface MockableNodeType : IHasDescendantNodes<MockableNodeType>
         {
@@ -18,7 +18,7 @@
         private Mock<MockableNodeType> leftRightLeaf;
         private Mock<MockableNodeType> rightRightLeaf;
 
-        public HasDescendantsDescendantsOrSelfTest()
+        public HasDescendantsDescendantsAndSelfTest()
         {
             //                rootNode
             //                /      \
@@ -87,11 +87,11 @@
         }
 
         [Fact]
-        public void IHasDescendentNodes_leaf_returns_itself_on_DescendantsOrSelf()
+        public void IHasDescendentNodes_leaf_returns_itself_on_DescendantsAndSelf()
         {
             // ACT
 
-            IEnumerable<MockableNodeType> result = this.rightRightLeaf.Object.DescendantsOrSelf().ToArray();
+            IEnumerable<MockableNodeType> result = this.rightRightLeaf.Object.DescendantsAndSelf().ToArray();
 
             // ASSERT
 
@@ -105,11 +105,11 @@
         }
 
         [Fact]
-        public void IHasDescendentNodes_leaf_returns_single_child_on_DescendantsOrSelf()
+        public void IHasDescendentNodes_leaf_returns_single_child_on_DescendantsAndSelf()
         {
             // ACT
 
-            IEnumerable<MockableNodeType> result = this.leftNode.Object.DescendantsOrSelf().ToArray();
+            IEnumerable<MockableNodeType> result = this.leftNode.Object.DescendantsAndSelf().ToArray();
 
             // ASSERT
 
@@ -126,11 +126,11 @@
         }
 
         [Fact]
-        public void IHasDescendentNodes_leaf_returns_left_before_right_child_on_DescendantsOrSelf()
+        public void IHasDescendentNodes_leaf_returns_left_before_right_child_on_DescendantsAndSelf()
         {
             // ACT
 
-            IEnumerable<MockableNodeType> result = this.rightNode.Object.DescendantsOrSelf();
+            IEnumerable<MockableNodeType> result = this.rightNode.Object.DescendantsAndSelf();
 
             // ASSERT
 
@@ -151,11 +151,11 @@
         }
 
         [Fact]
-        public void IHasDescendentNodes_leaf_returns_descendants_breadthFirst_on_DescendantsOrSelf()
+        public void IHasDescendentNodes_leaf_returns_descendants_breadthFirst_on_DescendantsAndSelf()
         {
             // ACT
 
-            IEnumerable<MockableNodeType> result = this.rootNode.Object.DescendantsOrSelf().ToArray();
+            IEnumerable<MockableNodeType> result = this.rootNode.Object.DescendantsAndSelf().ToArray();
 
             // ASSERT
 
@@ -195,11 +195,11 @@
         }
 
         [Fact]
-        public void IHasDescendentNodes_leaf_returns_descendants_depthFirst_on_DescendantsOrSelf()
+        public void IHasDescendentNodes_leaf_returns_descendants_depthFirst_on_DescendantsAndSelf()
         {
             // ACT
 
-            IEnumerable<MockableNodeType> result = this.rootNode.Object.DescendantsOrSelf(depthFirst: true).ToArray();
+            IEnumerable<MockableNodeType> result = this.rootNode.Object.DescendantsAndSelf(depthFirst: true).ToArray();
 
             // ASSERT
 
@@ -239,7 +239,7 @@
         }
 
         [Fact]
-        public void IHasDescendentNodes_DescendantsOrSelfLevel2AreChildren_on_DescendantsOrSelf()
+        public void IHasDescendentNodes_DescendantsAndSelfLevel2AreChildren_on_DescendantsAndSelf()
         {
             // ARRANGE
 
@@ -260,12 +260,12 @@
 
             // ACT
 
-            var descendantsOrSelf = this.rootNode.Object.DescendantsOrSelf(maxDepth: 2).Skip(1).ToArray();
+            var descendantsAndSelf = this.rootNode.Object.DescendantsAndSelf(maxDepth: 2).Skip(1).ToArray();
             var children = this.rootNode.Object.Children().ToArray();
 
             // ASSERT
 
-            Assert.Equal(children, descendantsOrSelf);
+            Assert.Equal(children, descendantsAndSelf);
 
             this.rootNode.Verify(n => n.GetDescendants(false, 1), Times.Once());
             this.rootNode.Verify(n => n.HasChildNodes, Times.Once());
