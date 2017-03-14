@@ -1,8 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Elementary Hierarchy provides interfaces, data structures and algorithms for developing of tree-like/hierarchical data structures.</Description>
-    <Copyright>Copyright © 2016-2017</Copyright>
+    <Copyright>Copyright Ã‚Â© 2016-2017</Copyright>
     <AssemblyTitle>Elementary.Hierarchy</AssemblyTitle>
     <VersionPrefix>1.7.1</VersionPrefix>
     <Authors>Wolfgang Gross</Authors>
@@ -23,9 +22,8 @@
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <Version>1.7.2</Version>
+    <Version>2.0.0</Version>
   </PropertyGroup>
-
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.1' ">
     <PackageReference Include="System.Runtime" Version="4.3.0" />
     <PackageReference Include="System.Collections" Version="4.3.0" />
@@ -33,10 +31,8 @@
     <PackageReference Include="System.Globalization" Version="4.3.0" />
     <PackageReference Include="System.Linq" Version="4.3.0" />
   </ItemGroup>
-
   <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-
 </Project>
