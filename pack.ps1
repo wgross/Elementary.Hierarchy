@@ -1,7 +1,12 @@
-﻿[CmdletBinding(DefaultParameterSetName="local")]
+﻿<#
+.SYNOPSIS
+    Builds and packs the the given dotnet core projects and deplys the packge to a location specifed by the first nuget.config it finds
+    by searching upwards. 
+#>
+[CmdletBinding(DefaultParameterSetName="local")]
 param(
     [Parameter()]
-    [array]$Projects = (((Get-Content -Path (Join-Path -Path $PSScriptRoot -ChildPath scripts.config)) | ConvertFrom-Json).pack.projects),
+    [array]$Projects = $null,
 
     [Parameter(ParameterSetName="local")]
     [switch]$Local,
@@ -12,75 +17,96 @@ param(
 begin {
 
     function Get-NugetConfigItem {
-        param(
-            [Parameter(Mandatory)]
-            [ValidateScript({Test-Path -Path $_})]
-            $Path
-        )
-            
-        # search upwards for first nuget.config
-
-        $currentDirectory = $Path
-        while(-not(Test-Path -Path $currentDirectory\nuget.config)) {
-            $currentDirectory = Split-Path -Path $currentDirectory -Parent
-            
-            if([string]::IsNullOrEmpty($currentDirectory)) { 
-                throw "cant't find nuget.config above $PWD" 
-            }
-        }
-        
-        # if the directory doesn't contains nuget.config and exception had been thrown already
-        # just return what must be there:
-        
-        Get-Item -Path (Join-Path -Path $currentDirectory -ChildPath nuget.config)
-    }
-
-    function packLocal {
+        <#
+        .SYNOPSIS
+            From the given path ascend in the file system and return any nuget.config file found.
+        #>
         [CmdletBinding()]
         param(
             [Parameter(ValueFromPipeline)]
-            $Project,
-
-            [Parameter(Mandatory)]
             [ValidateScript({Test-Path -Path $_})]
-            $LocalPackageDirectory
+            $Path = $PWD
         )
-            
-        $projectFullName = (Join-Path -Path $PSScriptRoot -ChildPath $Project)
+        process {
+            $currentDirectory = (Get-Item -Path $Path).FullName
 
-        "Calling dotnet pack $projectFullName -c Release -o $LocalPackageDirectory" | Write-Verbose
+            while(-not([string]::IsNullOrEmpty($currentDirectory))) {
             
-        dotnet pack $projectFullName -c Release -o $LocalPackageDirectory
+                "Probing directory: $currentDirectory" | Write-Verbose
+
+                Get-Item -Path (Join-Path -Path $currentDirectory -ChildPath nuget.config) -ErrorAction SilentlyContinue
+
+                $currentDirectory =  Split-Path -Path $currentDirectory -Parent
+            }
+        }
+    }
+
+    function Get-PackageSourceValue {
+        <#
+        .SYNOPSIS
+            From a nuget.config file get the package source with the given key.
+            Because the path is expected to be relative it is resolved relative to the directory of the nuget.config
+        #>
+        param(
+            [Parameter(ValueFromPipeline )]
+            [ValidateScript({Test-Path -Path $_})]
+            [string]$Path,
+
+            [Parameter()]
+            [string]$Key  = "local"
+        )
+        process {
+            $packageSoureValue = ((Select-Xml -Path $Path -XPath "//packageSources/add[@key = '$key']").Node.Value)
+            # path should be relative...
+            Resolve-Path -Path (Join-Path -Path (Split-Path -Path $Path -Parent) -ChildPath $packageSoureValue)
+        }
+    }
+
+    function Invoke-DotNetPack {
+        <#
+        .SYNOPSIS
+            For and given project find out find the nearest nuget.config and pack into the local package directory
+        #>
+        [CmdletBinding()]
+        param(
+            [Parameter(ValueFromPipeline)]
+            $Project
+        )
+        process {
+            "Got project to pack: $Project" | Write-Verbose
+
+            # take the fist local package source found
+            $localPackageDirectory = $Project | Get-NugetConfigItem | Get-PackageSourceValue -Key "local" | Select-Object -First 1
+
+            try {
+                
+                Push-Location -Path $Project 
+
+                "Calling: dotnet pack $Project -c Release -o $localPackageDirectory" | Write-Verbose
+            
+                dotnet pack $projectFullName -c Release -o $localPackageDirectory
+             
+             } finally {
+                Pop-Location
+             }
+        }
     }
 }
 process {   
+
+    if(-not($Projects)) {
+        # read from config file
+        $Projects = (((Get-Content -Path (Join-Path -Path $PSScriptRoot -ChildPath scripts.config)) | ConvertFrom-Json).pack.projects)
+    }
+
     switch($PSCmdlet.ParameterSetName) {
 
         "local" {
-
-            # From the local direcory search upwards to the Nuget.Config           
-            
-            $nugetConfigItem = Get-NugetConfigItem -Path $PWD
-
-            "Found nuget.config at $nugetConfigItem" | Write-Verbose
-            
-            # From the Nuget.Config get the path with key 'local'. 
-            # This points to tehdirectory for the local packages 
-
-            $localPackageDirectory = ((Select-Xml -Path ($NugetConfigItem.FullName) -XPath "//packageSources/add[@key = 'local']").Node.Value)
-            $localPackageDirectory = Resolve-Path -Path (Join-Path -Path ($NugetConfigItem.Directory) -ChildPath $localPackageDirectory)
-
-            "Found local package directory: $localPackageDirectory" | Write-Verbose
-
-            # Now pipe all proect pathes in the packLocal cmdlet
-
-            $Projects | packLocal -LocalPackageDirectory $localPackageDirectory
+            $Projects | Invoke-DotNetPack
         }
 
         "global" {
-            
             # What will happen here.. some kind of publishing.. maybe to nuget.org?
-
             throw "global package creation isn't supported yet"
         }
     }
