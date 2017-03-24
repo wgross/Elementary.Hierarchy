@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Elementary Hierarchy provides interfaces, data structures and algorithms for developing of tree-like/hierarchical data structures.</Description>
     <Copyright>Copyright Ã‚Â© 2016-2017</Copyright>

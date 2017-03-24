@@ -1,0 +1,248 @@
+﻿using Elementary.Hierarchy.Collections.Operations;
+using Elementary.Hierarchy.Decorators;
+using Elementary.Hierarchy.Generic;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Elementary.Hierarchy.Collections
+{
+    public class MutableHierarchyEx<TKey, TValue> : IHierarchy<TKey, TValue>
+    {
+        #region Construction and initialization of this instance
+
+        public MutableHierarchyEx()
+            : this(new MutableNode<TKey, TValue>(default(TKey)), pruneOnUnsetValue: false, getDefaultValue: null)
+        {
+        }
+
+        public MutableHierarchyEx(Func<HierarchyPath<TKey>, TValue> getDefaultValue)
+            : this(new MutableNode<TKey, TValue>(default(TKey)), pruneOnUnsetValue: false, getDefaultValue: getDefaultValue)
+        {
+        }
+
+        public MutableHierarchyEx(bool pruneOnUnsetValue)
+            : this(new MutableNode<TKey, TValue>(default(TKey)), pruneOnUnsetValue: pruneOnUnsetValue, getDefaultValue: null)
+        {
+        }
+
+        private MutableHierarchyEx(MutableNode<TKey, TValue> rootNode, bool pruneOnUnsetValue, Func<HierarchyPath<TKey>, TValue> getDefaultValue)
+        {
+            this.getDefaultValue = getDefaultValue;
+            this.rootNode = rootNode;
+
+            if (this.getDefaultValue != null)
+            {
+                rootNode.SetValue(this.getDefaultValue(HierarchyPath.Create<TKey>()));
+            }
+
+            this.pruneOnUnsetValue = pruneOnUnsetValue;
+        }
+
+        private MutableNode<TKey, TValue> rootNode;
+
+        private readonly bool pruneOnUnsetValue;
+
+        private readonly Func<HierarchyPath<TKey>, TValue> getDefaultValue;
+
+        #endregion Construction and initialization of this instance
+
+        #region Hierarchy MutableNode<TKey, TValue> Traversal
+
+        public sealed class Traverser : IHierarchyNode<TKey, TValue>
+        {
+            #region Construction and initialization of this instance
+
+            private readonly ParentNodeDecorator<MutableNode<TKey, TValue>> decorator;
+
+            private readonly Lazy<HierarchyPath<TKey>> path;
+
+            public Traverser(MutableNode<TKey, TValue> node)
+            {
+                this.decorator = new ParentNodeDecorator<MutableNode<TKey, TValue>>(node, hasParentNode: () => false, getParentNode: null);
+                this.path = new Lazy<HierarchyPath<TKey>>(() => HierarchyPath.Create<TKey>(), isThreadSafe: false);
+            }
+
+            public Traverser(Traverser parentTraverser, MutableNode<TKey, TValue> node)
+            {
+                if (parentTraverser == null)
+                    throw new ArgumentNullException(nameof(parentTraverser));
+
+                this.decorator = new ParentNodeDecorator<MutableNode<TKey, TValue>>(node, hasParentNode: () => true, getParentNode: () => parentTraverser.decorator);
+                this.path = new Lazy<HierarchyPath<TKey>>(() => HierarchyPath.Create(this.decorator.AncestorsAndSelf().Reverse().Select(a => a.DecoratedNode.Key)), isThreadSafe: false);
+            }
+
+            public Traverser(Traverser parentTraverser, ParentNodeDecorator<MutableNode<TKey, TValue>> decorator)
+            {
+                if (parentTraverser == null)
+                    throw new ArgumentNullException(nameof(parentTraverser));
+
+                this.decorator = decorator;
+                this.path = new Lazy<HierarchyPath<TKey>>(() => HierarchyPath.Create(this.decorator.AncestorsAndSelf().Reverse().Select(a => a.DecoratedNode.Key)), isThreadSafe: false);
+            }
+
+            #endregion Construction and initialization of this instance
+
+            public HierarchyPath<TKey> Path => this.path.Value;
+
+            public bool HasValue => this.decorator.DecoratedNode.HasValue;
+
+            public TValue Value => (TValue)this.decorator.DecoratedNode.Value;
+
+            public bool HasChildNodes => throw new NotImplementedException();
+
+            public IEnumerable<IHierarchyNode<TKey, TValue>> ChildNodes => this.decorator.ChildNodes.Select(n => new Traverser(this, n));
+
+            public bool HasParentNode => this.decorator.HasParentNode;
+
+            public IHierarchyNode<TKey, TValue> ParentNode => new Traverser(this.decorator.ParentNode.DecoratedNode);
+
+            public override bool Equals(object obj)
+            {
+                if (object.ReferenceEquals(this, obj))
+                    return true;
+
+                var objAsTraverser = obj as Traverser;
+                if (objAsTraverser == null)
+                    return false;
+
+                return this.decorator.Equals(objAsTraverser.decorator);
+            }
+
+            public override int GetHashCode()
+            {
+                return this.decorator.GetHashCode();
+            }
+        }
+
+        /// <summary>
+        /// Starts a traversal of the hierarchy at the root node.
+        /// </summary>
+        /// <returns>A traversable representation of the root node</returns>
+        public IHierarchyNode<TKey, TValue> Traverse(HierarchyPath<TKey> startAt)
+        {
+            Traverser startNode = new Traverser(this.rootNode);
+
+            // Descend along the soecifed path and buidl ap teh chain of ancestors of the start node.
+            // if the start node can't be reached because it doesn't exist in the hierarchy a
+            // KeyNotFound exception is thrown
+
+            this.rootNode.DescendantAt(tryGetChildNode: delegate (MutableNode<TKey, TValue> parent, TKey key, out MutableNode<TKey, TValue> child)
+            {
+                child = null;
+                if (!parent.TryGetChildNode(key, out child))
+                    throw new KeyNotFoundException($"node '{startAt}'  doesn't exist");
+                startNode = new Traverser(startNode, child);
+                return true;
+            }, path: startAt);
+
+            // Travesal was successul.
+            // just return wwhat is now in 'startNode'
+            return startNode;
+        }
+
+        #endregion Hierarchy MutableNode<TKey, TValue> Traversal
+
+        #region Add/Set a hierarchy nodes value
+
+        /// <summary>
+        /// Set the value of the specified node of the hierarchy.
+        /// if the node doesn't exist, it is created.
+        /// </summary>
+        /// <param name="hierarchyPath"></param>
+        /// <returns></returns>
+        public TValue this[HierarchyPath<TKey> hierarchyPath]
+        {
+            set
+            {
+                this.GetOrCreateNode(hierarchyPath).SetValue(value);
+            }
+        }
+
+        /// <summary>
+        /// Adds a value to the immutable hierarchy at the specified position.
+        /// </summary>
+        /// <param name="path">Specifies where to set the value</param>
+        /// <param name="value">the value to keep</param>
+        /// <returns>returns this</returns>
+        public void Add(HierarchyPath<TKey> path, TValue value)
+        {
+            var nodeToSetValueAt = this.GetOrCreateNode(path);
+
+            if (nodeToSetValueAt.HasValue)
+                throw new ArgumentException($"MutableNode<TKey, TValue> at '{path}' already has a value", nameof(path));
+
+            nodeToSetValueAt.SetValue(value);
+        }
+
+        private MutableNode<TKey, TValue> GetOrCreateNode(HierarchyPath<TKey> hierarchyPath)
+        {
+            GetOrCreateNodeHierarchyWriter<TKey, MutableNode<TKey, TValue>> writer = null;
+            if (this.getDefaultValue == null)
+                writer = new GetOrCreateNodeHierarchyWriter<TKey, MutableNode<TKey, TValue>>(create: key => new MutableNode<TKey, TValue>(key));
+            else throw new NotSupportedException("default value");
+
+            writer.Visit(this.rootNode, hierarchyPath);
+
+            return writer.DescandantAt;
+        }
+
+        #endregion Add/Set a hierarchy nodes value
+
+        /// <summary>
+        /// Retrieves the nodes value from the immutable hierarchy.
+        /// </summary>
+        /// <param name="hierarchyPath">path to the value</param>
+        /// <param name="value">found value</param>
+        /// <returns>zre, if value could be found, false otherwise</returns>
+        public bool TryGetValue(HierarchyPath<TKey> hierarchyPath, out TValue value)
+        {
+            MutableNode<TKey, TValue> descendantNode;
+            if (this.rootNode.TryGetDescendantAt(hierarchyPath, out descendantNode))
+                return descendantNode.TryGetValue(out value);
+
+            value = default(TValue);
+            return false;
+        }
+
+        /// <summary>
+        /// Removes the value from the specified node in hierarchy.
+        /// </summary>
+        /// <param name="hierarchyPath"></param>
+        /// <returns>true if value was removed, false otherwise</returns>
+        public bool Remove(HierarchyPath<TKey> hierarchyPath, int? maxDepth = null)
+        {
+            if (maxDepth != null)
+                throw new NotSupportedException(nameof(maxDepth));
+
+            var writer = new RemoveValueHierarchyWriter<TKey, TValue, MutableNode<TKey, TValue>>(this.pruneOnUnsetValue);
+            writer.ClearValue(this.rootNode, hierarchyPath);
+
+            return writer.ValueWasCleared;
+        }
+
+        public bool RemoveNode(HierarchyPath<TKey> hierarchyPath, bool recurse)
+        {
+            if (hierarchyPath.IsRoot)
+            {
+                if (!recurse && this.rootNode.HasChildNodes)
+                {
+                    // is recurse is not set, the root node can be exhanged if the root has no child nodes
+
+                    return false;
+                }
+
+                this.rootNode = new MutableNode<TKey, TValue>(default(TKey));
+                return true;
+            }
+            else
+            {
+                // this isn't a special case.
+                // use the hierachy writer for inner nodes
+                var writer = new RemoveNodeHierarchyWriter<TKey, MutableNode<TKey, TValue>>(recurse);
+                var result = writer.Visit(this.rootNode, hierarchyPath);
+                return writer.HasRemovedNode;
+            }
+        }
+    }
+}
