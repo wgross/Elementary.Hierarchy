@@ -88,9 +88,13 @@
         public void I_root_return_incomplete_list_on_DescendAlongPath()
         {
             // ARRANGE
-            this.startNode
-                .Setup(n => n.HasChildNodes).Returns(false);
 
+            var childNode = new Mock<MockableNodeType>().Object;
+
+            this.startNode
+                .Setup(n => n.TryGetChildNode(1, out childNode))
+                .Returns(false);
+            
             // ACT
 
             MockableNodeType[] result = this.startNode.Object.DescendAlongPath(HierarchyPath.Create(1)).ToArray();
@@ -100,8 +104,8 @@
             Assert.True(result.Any());
             Assert.Equal(new[] { this.startNode.Object }, result);
 
-            MockableNodeType childNode;
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once());
+            startNode.Verify(n => n.TryGetChildNode(It.IsAny<int>(), out childNode), Times.Once());
+            startNode.VerifyAll();
         }
     }
 }

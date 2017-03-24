@@ -6,7 +6,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 {
     public class RemoveNodeHierarchyWriterTest
     {
-        public interface NodeType : IHierarchyNodeWriter<NodeType>, IHasIdentifiableChildNodes<string, NodeType>
+        public interface NodeType : IHierarchyNodeWriter<NodeType>, IHasIdentifiableChildNodes<string, NodeType>, IHasChildNodes<NodeType>
         {
         }
 

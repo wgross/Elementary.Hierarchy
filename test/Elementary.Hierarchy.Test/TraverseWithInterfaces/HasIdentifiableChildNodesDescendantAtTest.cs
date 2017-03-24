@@ -83,9 +83,13 @@
         public void I_root_node_throws_on_invalid_childId_on_DescendantAt()
         {
             // ARRANGE
-            this.startNode
-                .Setup(n => n.HasChildNodes).Returns(false);
 
+            var childNode = new Mock<MockableNodeType>().Object;
+
+            this.startNode
+                .Setup(n => n.TryGetChildNode(1, out childNode))
+                .Returns(false);
+            
             // ACT
 
             KeyNotFoundException result = Assert.Throws<KeyNotFoundException>(() => { this.startNode.Object.DescendantAt(HierarchyPath.Create(1)); });
@@ -93,6 +97,9 @@
             // ASSERT
 
             Assert.True(result.Message.Contains("Key not found:'1'"));
+
+            startNode.Verify(n => n.TryGetChildNode(It.IsAny<int>(), out childNode), Times.Once());
+            startNode.VerifyAll();
         }
     }
 }

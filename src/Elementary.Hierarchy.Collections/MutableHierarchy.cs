@@ -22,7 +22,7 @@
         /// Internal node class: holds a value and child nodes.
         /// </summary>
         [DebuggerDisplay("id={id},hasValue={HasValue},value={value}")]
-        public sealed class Node : IHasIdentifiableChildNodes<TKey, Node>
+        public sealed class Node : IHasIdentifiableChildNodes<TKey, Node>, IHasChildNodes<Node>
         {
             /// <summary>
             /// Null value marker

@@ -7,7 +7,8 @@ namespace Elementary.Hierarchy.Collections.Operations
             IHierarchyValueWriter<TValue>,
             IHierarchyValueReader<TValue>,
             IHierarchyNodeWriter<TNode>,
-            IHasIdentifiableChildNodes<TKey, TNode>
+            IHasIdentifiableChildNodes<TKey, TNode>,
+            IHasChildNodes<TNode>
     {
         private readonly bool pruneAfterClear;
 

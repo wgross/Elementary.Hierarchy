@@ -3,7 +3,7 @@
 namespace Elementary.Hierarchy.Collections.Operations
 {
     public class RemoveNodeHierarchyWriter<TKey, TNode>
-        where TNode : class, IHierarchyNodeWriter<TNode>, IHasIdentifiableChildNodes<TKey, TNode>
+        where TNode : class, IHierarchyNodeWriter<TNode>, IHasIdentifiableChildNodes<TKey, TNode>, IHasChildNodes<TNode>
     {
         private bool recurse;
 

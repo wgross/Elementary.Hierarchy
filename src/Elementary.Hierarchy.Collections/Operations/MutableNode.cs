@@ -10,7 +10,8 @@ namespace Elementary.Hierarchy.Collections.Operations
         IHierarchyNodeWriter<MutableNode<TKey, TValue>>,
         IHierarchyValueReader<TValue>,
         IHierarchyValueWriter<TValue>,
-        IHasIdentifiableChildNodes<TKey, MutableNode<TKey, TValue>>
+        IHasIdentifiableChildNodes<TKey, MutableNode<TKey, TValue>>,
+        IHasChildNodes<MutableNode<TKey,TValue>>
     {
         #region Construction and initialization of this instance
 

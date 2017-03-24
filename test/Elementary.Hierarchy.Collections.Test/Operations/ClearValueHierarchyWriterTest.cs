@@ -10,7 +10,8 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
             IHierarchyNodeWriter<NodeType>,
             IHierarchyValueReader<int>,
             IHierarchyValueWriter<int>,
-            IHasIdentifiableChildNodes<string, NodeType>
+            IHasIdentifiableChildNodes<string, NodeType>,
+            IHasChildNodes<NodeType>
         {
         }
 

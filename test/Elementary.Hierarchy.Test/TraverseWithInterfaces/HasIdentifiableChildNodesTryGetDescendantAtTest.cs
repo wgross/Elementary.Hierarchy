@@ -88,8 +88,11 @@
         public void I_root_node_throws_KeyNotFoundException_on_invalid_childId_on_TryGetDescendantAt()
         {
             // ARRANGE
+            var childNode = new Mock<MockableNodeType>().Object;
+
             this.startNode
-                .Setup(n => n.HasChildNodes).Returns(false);
+                .Setup(n => n.TryGetChildNode(1, out childNode))
+                .Returns(false);
 
             // ACT
 
@@ -99,6 +102,9 @@
             // ASSERT
 
             Assert.False(result);
+
+            startNode.Verify(n => n.TryGetChildNode(It.IsAny<int>(), out childNode), Times.Once());
+            startNode.VerifyAll();
         }
     }
 }
