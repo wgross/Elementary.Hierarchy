@@ -8,6 +8,7 @@ namespace Elementary.Hierarchy.Collections.Operations
     [DebuggerDisplay("key={key},value={value}")]
     public class MutableNode<TKey, TValue> :
         IHierarchyNodeWriter<MutableNode<TKey, TValue>>,
+        IHierarchyValueReader<TValue>,
         IHierarchyValueWriter<TValue>,
         IHasIdentifiableChildNodes<TKey, MutableNode<TKey, TValue>>
     {

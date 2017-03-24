@@ -5,6 +5,7 @@ namespace Elementary.Hierarchy.Collections.Operations
     public class RemoveValueHierarchyWriter<TKey, TValue, TNode>
         where TNode :
             IHierarchyValueWriter<TValue>,
+            IHierarchyValueReader<TValue>,
             IHierarchyNodeWriter<TNode>,
             IHasIdentifiableChildNodes<TKey, TNode>
     {

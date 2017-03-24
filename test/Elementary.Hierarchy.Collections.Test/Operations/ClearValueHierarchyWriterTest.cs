@@ -8,6 +8,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
     {
         public interface NodeType :
             IHierarchyNodeWriter<NodeType>,
+            IHierarchyValueReader<int>,
             IHierarchyValueWriter<int>,
             IHasIdentifiableChildNodes<string, NodeType>
         {

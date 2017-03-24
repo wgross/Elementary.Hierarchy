@@ -7,7 +7,7 @@ using System.Linq;
 namespace Elementary.Hierarchy.Collections.Traversal
 {
     public class HierarchyTraverser<TKey, TValue, TNode> : IHierarchyNode<TKey, TValue>
-        where TNode : IHierarchyValueWriter<TValue>, IHasIdentifiableChildNodes<TKey, TNode>, IHasChildNodes<TNode>
+        where TNode : IHierarchyValueReader<TValue>, IHasIdentifiableChildNodes<TKey, TNode>, IHasChildNodes<TNode>
     {
         private readonly ParentNodeDecorator<TNode> decorator;
 

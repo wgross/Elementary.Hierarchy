@@ -11,7 +11,7 @@ namespace Elementary.Hierarchy.Collections.Test.Traversal
     {
         public interface NodeType :
             IHasChildNodes<NodeType>,
-            IHierarchyValueWriter<int>,
+            IHierarchyValueReader<int>,
             IHasIdentifiableChildNodes<string, NodeType>
         { }
 
