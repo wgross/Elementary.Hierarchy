@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace Elementary.Hierarchy.Collections.Test.Operations
+namespace Elementary.Hierarchy.Collections.Test.Nodes
 {
     public class ImmutableNodeTest
     {

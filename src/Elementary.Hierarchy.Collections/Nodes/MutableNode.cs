@@ -11,7 +11,23 @@ namespace Elementary.Hierarchy.Collections.Nodes
         IHasIdentifiableChildNodes<TKey, MutableNode<TKey, TValue>>,
         IHasChildNodes<MutableNode<TKey, TValue>>
     {
+        #region Some factory methods for disambiguization
+
+        public static MutableNode<TKey, TValue> CreateRoot()
+        {
+            return new MutableNode<TKey, TValue>();
+        }
+
+        #endregion Some factory methods for disambiguization
+
         #region Construction and initialization of this instance
+
+        /// <summary>
+        /// Ctor to create a hierachy root node withot a value
+        /// </summary>
+        private MutableNode()
+        {
+        }
 
         public MutableNode(TKey key)
             : base(key)
@@ -46,8 +62,6 @@ namespace Elementary.Hierarchy.Collections.Nodes
         #endregion IHasChildNodes members
 
         #region IHasIdentifiableChildren members
-
-        public TKey Key { get; private set; }
 
         public bool TryGetChildNode(TKey id, out MutableNode<TKey, TValue> childNode)
         {
@@ -87,16 +101,24 @@ namespace Elementary.Hierarchy.Collections.Nodes
 
         public MutableNode<TKey, TValue> ReplaceChild(MutableNode<TKey, TValue> childToReplace, MutableNode<TKey, TValue> newChild)
         {
+            if (!childToReplace.TryGetKey(out var childToReplaceKey))
+                throw new ArgumentException("child node must have a key", nameof(childToReplace));
+
+            if (!newChild.TryGetKey(out var newChildKey))
+                throw new ArgumentException("child node must have a key", nameof(newChild));
+
+            if (!EqualityComparer<TKey>.Default.Equals(childToReplaceKey, newChildKey))
+                throw new InvalidOperationException($"Key of child to replace (key='{childToReplaceKey}') and new child (key='{newChildKey}') must be equal");
+
             for (int i = 0; i < this.childNodes.Length; i++)
             {
-                if (EqualityComparer<TKey>.Default.Equals(this.childNodes[i].Key, newChild.Key))
+                if (this.childNodes[i].Equals(childToReplace))
                 {
-                    //substitute the existing child node with the new one.
                     this.childNodes[i] = newChild;
                     return this;
                 }
             }
-            throw new InvalidOperationException($"The node (id={newChild.Key}) doesn't substutite any of the existing child nodes in (id={this.Key})");
+            throw new InvalidOperationException($"The node (id={newChildKey}) doesn't substutite any of the existing child nodes in (id=<null>)");
         }
 
         #endregion IHierarchyNodeWriter members

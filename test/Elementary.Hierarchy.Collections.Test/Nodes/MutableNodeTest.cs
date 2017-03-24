@@ -3,17 +3,17 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace Elementary.Hierarchy.Collections.Test.Operations
+namespace Elementary.Hierarchy.Collections.Test.Nodes
 {
     public class MutableNodeTest
     {
         [Fact]
-        public void MutableNode_Adds_child_to_current_instance()
+        public void MutableNode_adds_child_to_current_instance()
         {
             // ARRANGE
 
-            var node = new MutableNode<string, int>(null);
             var child = new MutableNode<string, int>("a");
+            var node = MutableNode<string, int>.CreateRoot();
 
             // ACT
 
@@ -29,14 +29,12 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
         }
 
         [Fact]
-        public void MutableNode_Removes_child_from_current_instance()
+        public void MutableNode_removes_child_from_current_instance()
         {
             // ARRANGE
 
-            var node = new MutableNode<string, int>(null);
             var child = new MutableNode<string, int>("a");
-
-            node.AddChild(child);
+            var node = MutableNode<string, int>.CreateRoot().AddChild(child);
 
             // ACT
 
@@ -51,15 +49,13 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
         }
 
         [Fact]
-        public void MutableNode_Replaces_child_in_current_instance()
+        public void MutableNode_replaces_child_in_current_instance()
         {
             // ARRANGE
 
-            var node = new MutableNode<string, int>(null);
             var child = new MutableNode<string, int>("a");
+            var node = MutableNode<string, int>.CreateRoot().AddChild(child);
             var secondChild = new MutableNode<string, int>("a");
-
-            node.AddChild(child);
 
             // ACT
 
@@ -75,15 +71,13 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
         }
 
         [Fact]
-        public void MutableNode_fails_on_Replace_of_unkown_child()
+        public void MutableNode_fails_on_Replace_if_key_are_different()
         {
             // ARRANGE
 
-            var node = new MutableNode<string, int>(null);
             var child = new MutableNode<string, int>("a");
+            var node = MutableNode<string, int>.CreateRoot().AddChild(child);
             var secondChild = new MutableNode<string, int>("b");
-
-            node.AddChild(child);
 
             // ACT
 
@@ -91,11 +85,30 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ASSERT
 
-            Assert.Equal($"The node (id={secondChild.Key}) doesn't substutite any of the existing child nodes in (id={node.Key})", result.Message);
+            Assert.Equal("Key of child to replace (key='a') and new child (key='b') must be equal", result.Message);
             Assert.True(node.HasChildNodes);
             Assert.Same(child, node.ChildNodes.Single());
             Assert.True(node.TryGetChildNode("a", out var addedChild));
             Assert.Same(child, addedChild);
+        }
+
+        [Fact]
+        public void MutableNode_fails_on_Replace_if_child_is_unkown()
+        {
+            // ARRANGE
+
+            var child = new MutableNode<string, int>("a");
+            var node = MutableNode<string, int>.CreateRoot();
+            var secondChild = new MutableNode<string, int>("b");
+
+            // ACT
+
+            var result = Assert.Throws<InvalidOperationException>(() => node.ReplaceChild(child, secondChild));
+
+            // ASSERT
+
+            Assert.Equal("Key of child to replace (key='a') and new child (key='b') must be equal", result.Message);
+            Assert.False(node.HasChildNodes);
         }
     }
 }

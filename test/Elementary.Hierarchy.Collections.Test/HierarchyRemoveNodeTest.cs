@@ -254,7 +254,7 @@ namespace Elementary.Hierarchy.Collections.Test
             Assert.True(result);
         }
 
-        [Theory, ClassData(typeof(HierarchyVariantSourceWithoutDefaultValue))]
+        [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
         public void IHierarchy_RemoveNode_unknown_node_returns_false(IHierarchy<string, string> hierarchy)
         {
             // ACT

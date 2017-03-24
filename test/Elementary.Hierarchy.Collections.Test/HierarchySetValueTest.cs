@@ -4,7 +4,7 @@ namespace Elementary.Hierarchy.Collections.Test
 {
     public class HierarchySetValueTest
     {
-        [Theory, ClassData(typeof(HierarchyVariantSourceWithoutDefaultValue))]
+        [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
         public void IHierarchy_Set_value_at_root_node(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
@@ -21,7 +21,7 @@ namespace Elementary.Hierarchy.Collections.Test
             Assert.Same(test, value);
         }
 
-        [Theory, ClassData(typeof(HierarchyVariantSourceWithoutDefaultValue))]
+        [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
         public void IHierarchy_Set_value_at_root_node_twice_overwrites_value(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
@@ -39,7 +39,7 @@ namespace Elementary.Hierarchy.Collections.Test
             Assert.Same(test2, value);
         }
 
-        [Theory, ClassData(typeof(HierarchyVariantSourceWithoutDefaultValue))]
+        [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
         public void IHierarchy_Set_child_sets_value_at_child_node(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
@@ -61,7 +61,7 @@ namespace Elementary.Hierarchy.Collections.Test
             Assert.Same(test1, value);
         }
 
-        [Theory, ClassData(typeof(HierarchyVariantSourceWithoutDefaultValue))]
+        [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
         public void IHierarchy_Set_child_twice_throws_ArgumentException(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
@@ -84,7 +84,7 @@ namespace Elementary.Hierarchy.Collections.Test
             Assert.Same(test1, value2);
         }
 
-        [Theory, ClassData(typeof(HierarchyVariantSourceWithoutDefaultValue))]
+        [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
         public void IHierarchy_Set_value_at_child_sibling(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
@@ -110,7 +110,7 @@ namespace Elementary.Hierarchy.Collections.Test
             Assert.Same(test2, value3);
         }
 
-        [Theory, ClassData(typeof(HierarchyVariantSourceWithoutDefaultValue))]
+        [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
         public void IHierarchy_Set_value_at_grandchild(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE

@@ -12,24 +12,24 @@ namespace Elementary.Hierarchy.Collections
         #region Construction and initialization of this instance
 
         public MutableHierarchyEx()
-            : this(new MutableNode<TKey, TValue>(default(TKey)), pruneOnUnsetValue: false, getDefaultValue: null)
+            : this(pruneOnUnsetValue: false, getDefaultValue: null)
         {
         }
 
         public MutableHierarchyEx(Func<HierarchyPath<TKey>, TValue> getDefaultValue)
-            : this(new MutableNode<TKey, TValue>(default(TKey)), pruneOnUnsetValue: false, getDefaultValue: getDefaultValue)
+            : this(pruneOnUnsetValue: false, getDefaultValue: getDefaultValue)
         {
         }
 
         public MutableHierarchyEx(bool pruneOnUnsetValue)
-            : this(new MutableNode<TKey, TValue>(default(TKey)), pruneOnUnsetValue: pruneOnUnsetValue, getDefaultValue: null)
+            : this(pruneOnUnsetValue: pruneOnUnsetValue, getDefaultValue: null)
         {
         }
 
-        private MutableHierarchyEx(MutableNode<TKey, TValue> rootNode, bool pruneOnUnsetValue, Func<HierarchyPath<TKey>, TValue> getDefaultValue)
+        private MutableHierarchyEx(bool pruneOnUnsetValue, Func<HierarchyPath<TKey>, TValue> getDefaultValue)
         {
+            this.rootNode = MutableNode<TKey, TValue>.CreateRoot();
             this.getDefaultValue = getDefaultValue;
-            this.rootNode = rootNode;
 
             if (this.getDefaultValue != null)
             {
@@ -167,7 +167,7 @@ namespace Elementary.Hierarchy.Collections
                     return false;
                 }
 
-                this.rootNode = new MutableNode<TKey, TValue>(default(TKey));
+                this.rootNode = MutableNode<TKey, TValue>.CreateRoot();
                 return true;
             }
             else

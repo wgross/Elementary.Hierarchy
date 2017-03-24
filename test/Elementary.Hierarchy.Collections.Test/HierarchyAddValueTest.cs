@@ -5,7 +5,7 @@ namespace Elementary.Hierarchy.Collections.Test
 {
     public class HierarchyAddValueTest
     {
-        [Theory, ClassData(typeof(HierarchyVariantSourceWithoutDefaultValue))]
+        [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
         public void IHierarchy_root_node_has_no_value_on_TryGetValue(IHierarchy<string, string> hierarchy)
         {
             // ACT & ASSERT
@@ -13,25 +13,17 @@ namespace Elementary.Hierarchy.Collections.Test
             Assert.False(hierarchy.TryGetValue(HierarchyPath.Create<string>(), out var value));
         }
 
-        [Theory, ClassData(typeof(HierarchyVariantSourceWithoutDefaultValue))]
-        public void IHierarchy_Rootnode_has_no_value_on_Traverse(IHierarchy<string, string> hierarchy)
-        {
-            // ACT & ASSERT
-
-            Assert.False(hierarchy.Traverse(HierarchyPath.Create<string>()).HasValue);
-        }
-
-        [Theory, ClassData(typeof(HierarchyVariantSourceWithDefaultValue))]
-        public void IHierarchy_Rootnode_has_default_value(IHierarchy<string, string> hierarchy)
+        [Theory, ClassData(typeof(AllHierarchyVariantWithDefaultValue))]
+        public void IHierarchy_root_node_has_default_value_on_TryGetValue(IHierarchy<string, string> hierarchy)
         {
             // ACT & ASSERT
 
             Assert.True(hierarchy.TryGetValue(HierarchyPath.Create<string>(), out var value));
-            Assert.Equal(HierarchyVariantSourceWithDefaultValue.DefaultValue, value);
+            Assert.Equal(AllHierarchyVariantWithDefaultValue.DefaultValue, value);
         }
 
-        [Theory, ClassData(typeof(HierarchyVariantSourceWithoutDefaultValue))]
-        public void IHierarchy_Add_value_to_root_node(IHierarchy<string, string> hierarchy)
+        [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
+        public void IHierarchy_adds_value_to_root_node(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
 
@@ -48,8 +40,8 @@ namespace Elementary.Hierarchy.Collections.Test
             Assert.Same(test, value);
         }
 
-        [Theory, ClassData(typeof(HierarchyVariantSourceWithoutDefaultValue))]
-        public void IHierarchy_Add_same_value_to_root_twice_throws_ArgumentException(IHierarchy<string, string> hierarchy)
+        [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
+        public void IHierarchy_adds_same_value_to_root_twice_throws_ArgumentException(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
 
@@ -71,8 +63,8 @@ namespace Elementary.Hierarchy.Collections.Test
             Assert.Equal("path", result.ParamName);
         }
 
-        [Theory, ClassData(typeof(HierarchyVariantSourceWithoutDefaultValue))]
-        public void IHierarchy_Add_child_sets_value_at_child_node(IHierarchy<string, string> hierarchy)
+        [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
+        public void IHierarchy_adds_child_sets_value_at_child_node(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
 
@@ -93,8 +85,8 @@ namespace Elementary.Hierarchy.Collections.Test
             Assert.Same(test1, value2);
         }
 
-        [Theory, ClassData(typeof(HierarchyVariantSourceWithoutDefaultValue))]
-        public void IHierarchy_Add_child_value_twice_throws_ArgumentException(IHierarchy<string, string> hierarchy)
+        [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
+        public void IHierarchy_adds_child_value_twice_throws_ArgumentException(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
 
@@ -118,8 +110,8 @@ namespace Elementary.Hierarchy.Collections.Test
             Assert.Equal("path", result.ParamName);
         }
 
-        [Theory, ClassData(typeof(HierarchyVariantSourceWithoutDefaultValue))]
-        public void IHierarchy_Add_child_sibling(IHierarchy<string, string> hierarchy)
+        [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
+        public void IHierarchy_adds_child_sibling(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
 
@@ -144,8 +136,8 @@ namespace Elementary.Hierarchy.Collections.Test
             Assert.Same(test2, value3);
         }
 
-        [Theory, ClassData(typeof(HierarchyVariantSourceWithoutDefaultValue))]
-        public void IHierarchy_Add_child_sibling_value_twice_throws_ArgumentException(IHierarchy<string, string> hierarchy)
+        [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
+        public void IHierarchy_adds_child_sibling_value_twice_throws_ArgumentException(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
 
@@ -171,8 +163,8 @@ namespace Elementary.Hierarchy.Collections.Test
             Assert.Equal("path", result.ParamName);
         }
 
-        [Theory, ClassData(typeof(HierarchyVariantSourceWithoutDefaultValue))]
-        public void IHierarchy_Add_grandchild_under_existing_nodes_returns_hierachy_with_same_values(IHierarchy<string, string> hierarchy)
+        [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
+        public void IHierarchy_adds_grandchild_under_existing_nodes_returns_hierachy_with_same_values(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
 
@@ -201,8 +193,8 @@ namespace Elementary.Hierarchy.Collections.Test
             Assert.Same(test3, value4);
         }
 
-        [Theory, ClassData(typeof(HierarchyVariantSourceWithDefaultValue))]
-        public void IHierarchy_Add_grandchild_as_first_node_returns_new_hierachy_with_same_values(IHierarchy<string, string> hierarchy)
+        [Theory, ClassData(typeof(AllHierarchyVariantWithDefaultValue))]
+        public void IHierarchy_adds_grandchild_as_first_node_returns_new_hierachy_with_same_values(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
 
@@ -215,9 +207,9 @@ namespace Elementary.Hierarchy.Collections.Test
             // ASSERT
             // new hierarchy contains the root date and the new node.
             Assert.True(hierarchy.TryGetValue(HierarchyPath.Create<string>(), out var value1));
-            Assert.Same(HierarchyVariantSourceWithDefaultValue.DefaultValue, value1);
+            Assert.Same(AllHierarchyVariantWithDefaultValue.DefaultValue, value1);
             Assert.True(hierarchy.TryGetValue(HierarchyPath.Create("a"), out var value2));
-            Assert.Same(HierarchyVariantSourceWithDefaultValue.DefaultValue, value2);
+            Assert.Same(AllHierarchyVariantWithDefaultValue.DefaultValue, value2);
             Assert.True(hierarchy.TryGetValue(HierarchyPath.Create("a", "c"), out var value3));
             Assert.Same(test3, value3);
         }
