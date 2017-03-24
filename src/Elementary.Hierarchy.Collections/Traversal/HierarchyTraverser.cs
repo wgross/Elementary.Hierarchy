@@ -1,4 +1,4 @@
-﻿using Elementary.Hierarchy.Collections.Operations;
+﻿using Elementary.Hierarchy.Collections.Nodes;
 using Elementary.Hierarchy.Decorators;
 using System;
 using System.Collections.Generic;
@@ -16,6 +16,7 @@ namespace Elementary.Hierarchy.Collections.Traversal
         public HierarchyTraverser(TNode node)
         {
             this.decorator = new ParentNodeDecorator<TNode>(node, hasParentNode: () => false, getParentNode: null);
+            this.Path = HierarchyPath.Create<TKey>();
         }
 
         public HierarchyTraverser(HierarchyTraverser<TKey, TValue, TNode> parentTraverser, TNode node)
@@ -50,7 +51,12 @@ namespace Elementary.Hierarchy.Collections.Traversal
 
         #endregion Override object behavior
 
-        public HierarchyPath<TKey> Path => throw new NotImplementedException();
+        public HierarchyPath<TKey> Path
+        {
+            get;
+
+            private set;
+        }
 
         public bool HasValue => throw new NotImplementedException();
 

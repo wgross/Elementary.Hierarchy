@@ -1,4 +1,4 @@
-﻿using Elementary.Hierarchy.Collections.Operations;
+﻿using Elementary.Hierarchy.Collections.Nodes;
 using System;
 using System.Linq;
 using Xunit;
@@ -61,7 +61,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
             // ARRANGE
 
             var child = new ImmutableNode<string, int>("a");
-            var node = new ImmutableNode<string, int>(null,1).AddChild(child);
+            var node = new ImmutableNode<string, int>(null, 1).AddChild(child);
             var secondChild = new ImmutableNode<string, int>("a");
 
             // ACT
@@ -100,70 +100,6 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
             Assert.Same(child, node.ChildNodes.Single());
             Assert.True(node.TryGetChildNode("a", out var addedChild));
             Assert.Same(child, addedChild);
-        }
-
-        [Fact]
-        public void ImmutableNode_has_no_value_by_default()
-        {
-            // ARRANGE
-
-            var node = new ImmutableNode<string, int>(null);
-
-            // ASSERT
-
-            Assert.False(node.TryGetValue(out var value));
-        }
-
-        [Fact]
-        public void ImmutableNode_stores_value()
-        {
-            // ARRANGE
-
-            var node = new ImmutableNode<string, int>(null);
-
-            // ACT
-
-            node.SetValue(1);
-
-            // ASSERT
-
-            Assert.True(node.TryGetValue(out var value));
-            Assert.Equal(1, value);
-        }
-
-        [Fact]
-        public void ImmutableNode_clears_set_value()
-        {
-            // ARRANGE
-
-            var node = new ImmutableNode<string, int>(null);
-            node.SetValue(1);
-
-            // ACT
-
-            var result = node.RemoveValue();
-
-            // ASSERT
-
-            Assert.True(result);
-            Assert.False(node.TryGetValue(out var value));
-        }
-
-        [Fact]
-        public void ImmutableNode_clears_unset_value()
-        {
-            // ARRANGE
-
-            var node = new ImmutableNode<string, int>(null);
-
-            // ACT
-
-            var result = node.RemoveValue();
-
-            // ASSERT
-
-            Assert.False(result);
-            Assert.False(node.TryGetValue(out var value));
         }
     }
 }

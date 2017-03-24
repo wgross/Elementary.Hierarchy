@@ -3,39 +3,33 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Elementary.Hierarchy.Collections.Operations
+namespace Elementary.Hierarchy.Collections.Nodes
 {
     [DebuggerDisplay("key={key},value={value}")]
-    public class MutableNode<TKey, TValue> :
+    public class MutableNode<TKey, TValue> : KeyValueNode<TKey, TValue>,
         IHierarchyNodeWriter<MutableNode<TKey, TValue>>,
-        IHierarchyValueReader<TValue>,
-        IHierarchyValueWriter<TValue>,
         IHasIdentifiableChildNodes<TKey, MutableNode<TKey, TValue>>,
-        IHasChildNodes<MutableNode<TKey,TValue>>
+        IHasChildNodes<MutableNode<TKey, TValue>>
     {
         #region Construction and initialization of this instance
 
         public MutableNode(TKey key)
-        {
-            this.Key = key;
-        }
+            : base(key)
+        { }
 
         public MutableNode(TKey key, TValue value)
-        {
-            this.Key = key;
-            this.value = (object)value;
-        }
+            : base(key, value)
+        { }
 
         public MutableNode(TKey key, IEnumerable<MutableNode<TKey, TValue>> childNodes)
+            : base(key)
         {
-            this.Key = key;
             this.childNodes = childNodes.ToArray();
         }
 
         public MutableNode(TKey key, TValue value, IEnumerable<MutableNode<TKey, TValue>> childNodes)
+            : base(key, value)
         {
-            this.Key = key;
-            this.value = (object)value;
             this.childNodes = childNodes.ToArray();
         }
 
@@ -44,8 +38,6 @@ namespace Elementary.Hierarchy.Collections.Operations
         #region IHasChildNodes members
 
         private MutableNode<TKey, TValue>[] childNodes = new MutableNode<TKey, TValue>[0];
-        private static readonly object UnsetValue = new object();
-        private object value = UnsetValue;
 
         public bool HasChildNodes => this.childNodes.Any();
 
@@ -59,7 +51,13 @@ namespace Elementary.Hierarchy.Collections.Operations
 
         public bool TryGetChildNode(TKey id, out MutableNode<TKey, TValue> childNode)
         {
-            childNode = this.childNodes.SingleOrDefault(n => EqualityComparer<TKey>.Default.Equals(n.Key, id));
+            childNode = this.childNodes.SingleOrDefault(n =>
+            {
+                if (n.TryGetKey(out var key))
+                    return EqualityComparer<TKey>.Default.Equals(key, id);
+                else // this is unexpected. ChildNodes always have keys.
+                    throw new InvalidOperationException("child must have a key");
+            });
             return childNode != null;
         }
 
@@ -102,38 +100,5 @@ namespace Elementary.Hierarchy.Collections.Operations
         }
 
         #endregion IHierarchyNodeWriter members
-
-        #region IHierachyValueWriter members
-
-        public void SetValue(TValue value)
-        {
-            this.value = (object)value;
-        }
-
-        public bool TryGetValue(out TValue value)
-        {
-            value = default(TValue);
-
-            if (this.value == UnsetValue)
-                return false;
-
-            value = (TValue)this.value;
-            return true;
-        }
-
-        public bool RemoveValue()
-        {
-            if (this.value == UnsetValue)
-                return false;
-
-            this.value = UnsetValue;
-            return true;
-        }
-
-        public bool HasValue => this.value != UnsetValue;
-
-        public TValue Value => (TValue)this.value;
-
-        #endregion IHierachyValueWriter members
     }
 }

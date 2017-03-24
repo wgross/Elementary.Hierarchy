@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Elementary.Hierarchy.Collections.Nodes;
+using System;
 using System.Linq;
 
 namespace Elementary.Hierarchy.Collections.Operations

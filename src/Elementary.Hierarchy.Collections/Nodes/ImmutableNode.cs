@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Elementary.Hierarchy.Collections.Operations
+namespace Elementary.Hierarchy.Collections.Nodes
 {
     [DebuggerDisplay("key={key},value={value}")]
-    public class ImmutableNode<TKey, TValue> :
+    public class ImmutableNode<TKey, TValue> : KeyValueNode<TKey, TValue>,
         IHierarchyNodeWriter<ImmutableNode<TKey, TValue>>,
         IHierarchyValueWriter<TValue>,
         IHasIdentifiableChildNodes<TKey, ImmutableNode<TKey, TValue>>
@@ -24,12 +24,6 @@ namespace Elementary.Hierarchy.Collections.Operations
             this.value = (object)value;
         }
 
-        public ImmutableNode(TKey key, IEnumerable<ImmutableNode<TKey, TValue>> childNodes)
-        {
-            this.Key = key;
-            this.childNodes = childNodes.ToArray();
-        }
-
         public ImmutableNode(TKey key, TValue value, IEnumerable<ImmutableNode<TKey, TValue>> childNodes)
         {
             this.Key = key;
@@ -38,6 +32,21 @@ namespace Elementary.Hierarchy.Collections.Operations
         }
 
         #endregion Construction and initialization of this instance
+
+        #region Construction and initialization of clones of this instance
+
+        private ImmutableNode(TKey key, ImmutableNode<TKey, TValue>[] childNodes)
+        {
+            this.Key = key;
+            this.childNodes = childNodes.ToArray();
+        }
+
+        private ImmutableNode(ImmutableNode<TKey, TValue>[] childNodes)
+        {
+            this.childNodes = childNodes;
+        }
+
+        #endregion Construction and initialization of clones of this instance
 
         #region IHasChildNodes members
 
@@ -73,18 +82,12 @@ namespace Elementary.Hierarchy.Collections.Operations
             newChildNodes[this.childNodes.Length] = newChild;
 
             // create new node with new child node.
-            return new ImmutableNode<TKey, TValue>(this.Key, newChildNodes)
-            {
-                value = this.value
-            };
+            return this.CreateClone(newChildNodes);
         }
 
         public ImmutableNode<TKey, TValue> RemoveChild(ImmutableNode<TKey, TValue> child)
         {
-            return new ImmutableNode<TKey, TValue>(this.Key, this.ChildNodes.Except(new[] { child }).ToArray())
-            {
-                value = this.value
-            };
+            return this.CreateClone(this.ChildNodes.Except(new[] { child }).ToArray());
         }
 
         public ImmutableNode<TKey, TValue> ReplaceChild(ImmutableNode<TKey, TValue> childToReplace, ImmutableNode<TKey, TValue> newChild)
@@ -107,10 +110,7 @@ namespace Elementary.Hierarchy.Collections.Operations
 
             if (hasReplaced)
             {
-                return new ImmutableNode<TKey, TValue>(this.Key, newNodesChildren)
-                {
-                    value = this.value
-                };
+                return this.CreateClone(newNodesChildren);
             }
 
             // a replacemen was not done.
@@ -118,39 +118,19 @@ namespace Elementary.Hierarchy.Collections.Operations
             throw new InvalidOperationException($"The node (id={newChild.Key}) doesn't substutite any of the existing child nodes in (id={this.Key})");
         }
 
+        private ImmutableNode<TKey, TValue> CreateClone(ImmutableNode<TKey, TValue>[] childNodes)
+        {
+            // create new node with new child node.
+            var newNode = this.TryGetKey(out var key)
+                ? new ImmutableNode<TKey, TValue>(key, childNodes)
+                : new ImmutableNode<TKey, TValue>(childNodes);
+
+            if (this.TryGetValue(out var value))
+                newNode.SetValue(value);
+
+            return newNode;
+        }
+
         #endregion IHierarchyNodeWriter members
-
-        #region IHierachyValueWriter members
-
-        public void SetValue(TValue value)
-        {
-            this.value = (object)value;
-        }
-
-        public bool TryGetValue(out TValue value)
-        {
-            value = default(TValue);
-
-            if (this.value == UnsetValue)
-                return false;
-
-            value = (TValue)this.value;
-            return true;
-        }
-
-        public bool RemoveValue()
-        {
-            if (this.value == UnsetValue)
-                return false;
-
-            this.value = UnsetValue;
-            return true;
-        }
-
-        public bool HasValue => this.value != UnsetValue;
-
-        public TValue Value => (TValue)this.value;
-
-        #endregion IHierachyValueWriter members
     }
 }

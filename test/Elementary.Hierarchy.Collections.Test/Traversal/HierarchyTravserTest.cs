@@ -1,4 +1,4 @@
-﻿using Elementary.Hierarchy.Collections.Operations;
+﻿using Elementary.Hierarchy.Collections.Nodes;
 using Elementary.Hierarchy.Collections.Traversal;
 using Moq;
 using System;
@@ -14,6 +14,8 @@ namespace Elementary.Hierarchy.Collections.Test.Traversal
             IHierarchyValueReader<int>,
             IHasIdentifiableChildNodes<string, NodeType>
         { }
+
+        #region IHasChildNodes and IHasParnetNode interfaces are implemented
 
         [Fact]
         public void HierarchyTraverser_provides_IHasChildNodes_and_IHasParentNode()
@@ -84,6 +86,51 @@ namespace Elementary.Hierarchy.Collections.Test.Traversal
         }
 
         [Fact]
+        public void HierarchyTraverser_for_start_node_returns_root_path()
+        {
+            // ARRANGE
+
+            var startNode = new Mock<NodeType>();
+            var traverser = new HierarchyTraverser<string, int, NodeType>(startNode.Object);
+
+            // ACT
+
+            var result = traverser.Path;
+
+            // ASSERT
+
+            Assert.Equal(HierarchyPath.Create<string>(), result);
+        }
+
+        [Fact]
+        public void HierarchyTraverser_for_inner_node_returns_inner_nodes_key()
+        {
+            // ARRANGE
+
+            var childNode = new Mock<NodeType>();
+            var startNode = new Mock<NodeType>();
+            startNode
+                .Setup(n => n.HasChildNodes)
+                .Returns(true);
+            startNode
+                .Setup(n => n.ChildNodes)
+                .Returns(new[] { childNode.Object });
+            var traverser = new HierarchyTraverser<string, int, NodeType>(startNode.Object);
+
+            // ACT
+
+            var result = traverser.Path;
+
+            // ASSERT
+
+            Assert.Equal(HierarchyPath.Create<string>(), result);
+        }
+
+        #endregion IHasChildNodes and IHasParnetNode interfaces are implemented
+
+        #region Equals and GetHashCode delegate behavior to inner node
+
+        [Fact]
         public void HierarchyTraverser_are_equal_if_same()
         {
             // ARRANGE
@@ -118,5 +165,7 @@ namespace Elementary.Hierarchy.Collections.Test.Traversal
             Assert.True(result);
             Assert.Equal(a.GetHashCode(), b.GetHashCode());
         }
+
+        #endregion Equals and GetHashCode delegate behavior to inner node
     }
 }

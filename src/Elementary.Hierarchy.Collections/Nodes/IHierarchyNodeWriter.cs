@@ -1,4 +1,4 @@
-﻿namespace Elementary.Hierarchy.Collections.Operations
+﻿namespace Elementary.Hierarchy.Collections.Nodes
 {
     /// <summary>
     ///

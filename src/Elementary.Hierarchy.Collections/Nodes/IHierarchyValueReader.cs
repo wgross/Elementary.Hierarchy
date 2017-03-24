@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Elementary.Hierarchy.Collections.Operations
+namespace Elementary.Hierarchy.Collections.Nodes
 {
     public interface IHierarchyValueReader<TValue>
     {

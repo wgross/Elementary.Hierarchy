@@ -1,9 +1,9 @@
-﻿using Elementary.Hierarchy.Collections.Operations;
-using Elementary.Hierarchy.Decorators;
+﻿using Elementary.Hierarchy.Collections.Nodes;
+using Elementary.Hierarchy.Collections.Operations;
+using Elementary.Hierarchy.Collections.Traversal;
 using Elementary.Hierarchy.Generic;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Elementary.Hierarchy.Collections
 {
@@ -49,79 +49,13 @@ namespace Elementary.Hierarchy.Collections
 
         #region Hierarchy MutableNode<TKey, TValue> Traversal
 
-        public sealed class Traverser : IHierarchyNode<TKey, TValue>
-        {
-            #region Construction and initialization of this instance
-
-            private readonly ParentNodeDecorator<MutableNode<TKey, TValue>> decorator;
-
-            private readonly Lazy<HierarchyPath<TKey>> path;
-
-            public Traverser(MutableNode<TKey, TValue> node)
-            {
-                this.decorator = new ParentNodeDecorator<MutableNode<TKey, TValue>>(node, hasParentNode: () => false, getParentNode: null);
-                this.path = new Lazy<HierarchyPath<TKey>>(() => HierarchyPath.Create<TKey>(), isThreadSafe: false);
-            }
-
-            public Traverser(Traverser parentTraverser, MutableNode<TKey, TValue> node)
-            {
-                if (parentTraverser == null)
-                    throw new ArgumentNullException(nameof(parentTraverser));
-
-                this.decorator = new ParentNodeDecorator<MutableNode<TKey, TValue>>(node, hasParentNode: () => true, getParentNode: () => parentTraverser.decorator);
-                this.path = new Lazy<HierarchyPath<TKey>>(() => HierarchyPath.Create(this.decorator.AncestorsAndSelf().Reverse().Select(a => a.DecoratedNode.Key)), isThreadSafe: false);
-            }
-
-            public Traverser(Traverser parentTraverser, ParentNodeDecorator<MutableNode<TKey, TValue>> decorator)
-            {
-                if (parentTraverser == null)
-                    throw new ArgumentNullException(nameof(parentTraverser));
-
-                this.decorator = decorator;
-                this.path = new Lazy<HierarchyPath<TKey>>(() => HierarchyPath.Create(this.decorator.AncestorsAndSelf().Reverse().Select(a => a.DecoratedNode.Key)), isThreadSafe: false);
-            }
-
-            #endregion Construction and initialization of this instance
-
-            public HierarchyPath<TKey> Path => this.path.Value;
-
-            public bool HasValue => this.decorator.DecoratedNode.HasValue;
-
-            public TValue Value => (TValue)this.decorator.DecoratedNode.Value;
-
-            public bool HasChildNodes => throw new NotImplementedException();
-
-            public IEnumerable<IHierarchyNode<TKey, TValue>> ChildNodes => this.decorator.ChildNodes.Select(n => new Traverser(this, n));
-
-            public bool HasParentNode => this.decorator.HasParentNode;
-
-            public IHierarchyNode<TKey, TValue> ParentNode => new Traverser(this.decorator.ParentNode.DecoratedNode);
-
-            public override bool Equals(object obj)
-            {
-                if (object.ReferenceEquals(this, obj))
-                    return true;
-
-                var objAsTraverser = obj as Traverser;
-                if (objAsTraverser == null)
-                    return false;
-
-                return this.decorator.Equals(objAsTraverser.decorator);
-            }
-
-            public override int GetHashCode()
-            {
-                return this.decorator.GetHashCode();
-            }
-        }
-
         /// <summary>
         /// Starts a traversal of the hierarchy at the root node.
         /// </summary>
         /// <returns>A traversable representation of the root node</returns>
         public IHierarchyNode<TKey, TValue> Traverse(HierarchyPath<TKey> startAt)
         {
-            Traverser startNode = new Traverser(this.rootNode);
+            var startNode = new HierarchyTraverser<TKey, TValue, MutableNode<TKey, TValue>>(this.rootNode);
 
             // Descend along the soecifed path and buidl ap teh chain of ancestors of the start node.
             // if the start node can't be reached because it doesn't exist in the hierarchy a
@@ -132,7 +66,8 @@ namespace Elementary.Hierarchy.Collections
                 child = null;
                 if (!parent.TryGetChildNode(key, out child))
                     throw new KeyNotFoundException($"node '{startAt}'  doesn't exist");
-                startNode = new Traverser(startNode, child);
+                // instead of the node return a traverser for all nodes
+                startNode = new HierarchyTraverser<TKey, TValue, MutableNode<TKey, TValue>>(startNode, child);
                 return true;
             }, path: startAt);
 
