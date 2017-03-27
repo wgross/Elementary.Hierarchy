@@ -24,7 +24,9 @@ namespace Elementary.Hierarchy.Collections.Traversal
             if (parentTraverser == null)
                 throw new ArgumentNullException(nameof(parentTraverser));
 
-            this.InnerNode.TryGetKey(out var key);
+            if (!this.InnerNode.TryGetKey(out var key))
+                throw new ArgumentException("child node must have a key", nameof(node));
+
             this.Path = this.ParentNode.Path.Join(key);
         }
 

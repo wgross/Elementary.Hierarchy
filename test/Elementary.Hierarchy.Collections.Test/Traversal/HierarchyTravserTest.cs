@@ -26,12 +26,16 @@ namespace Elementary.Hierarchy.Collections.Test.Traversal
             var startNode = new Mock<NodeType>();
             var traverser = new HierarchyTraverser<string, int, NodeType>(startNode.Object);
 
+            // ACT
+
+            var result = Assert.Throws<InvalidOperationException>(() => traverser.ParentNode);
+
             // ASSERT
 
             Assert.False(traverser.HasChildNodes);
             Assert.False(traverser.ChildNodes.Any());
             Assert.False(traverser.HasParentNode);
-            Assert.Throws<InvalidOperationException>(() => traverser.ParentNode);
+            Assert.Equal("node has no parent", result.Message);
         }
 
         [Fact]
@@ -39,7 +43,11 @@ namespace Elementary.Hierarchy.Collections.Test.Traversal
         {
             // ARRANGE
 
+            string key = "a";
             var childNode = new Mock<NodeType>();
+            childNode
+                .Setup(n => n.TryGetKey(out key))
+                .Returns(true);
             var startNode = new Mock<NodeType>();
             startNode
                 .Setup(n => n.HasChildNodes)
@@ -58,6 +66,43 @@ namespace Elementary.Hierarchy.Collections.Test.Traversal
 
             Assert.Equal(1, result.Length);
             Assert.True(traverser.HasChildNodes);
+
+            startNode.VerifyAll();
+            childNode.VerifyAll();
+        }
+
+        [Fact]
+        public void HierarchyTraverser_fails_child_node_without_key()
+        {
+            // ARRANGE
+
+            string key = "a";
+            var childNode = new Mock<NodeType>();
+            childNode
+                .Setup(n => n.TryGetKey(out key))
+                .Returns(false);
+            var startNode = new Mock<NodeType>();
+            startNode
+                .Setup(n => n.HasChildNodes)
+                .Returns(true);
+            startNode
+                .Setup(n => n.ChildNodes)
+                .Returns(new[] { childNode.Object });
+
+            var traverser = new HierarchyTraverser<string, int, NodeType>(startNode.Object);
+
+            // ACT
+
+            var result = Assert.Throws<ArgumentException>(() => traverser.ChildNodes.ToArray());
+
+            // ASSERT
+
+            Assert.Equal("node", result.ParamName);
+            Assert.True(result.Message.Contains("child node must have a key"));
+            Assert.True(traverser.HasChildNodes);
+
+            startNode.VerifyAll();
+            childNode.VerifyAll();
         }
 
         [Fact]
@@ -65,7 +110,12 @@ namespace Elementary.Hierarchy.Collections.Test.Traversal
         {
             // ARRANGE
 
+            string key = "a";
             var childNode = new Mock<NodeType>();
+            childNode
+                .Setup(n => n.TryGetKey(out key))
+                .Returns(true);
+
             var startNode = new Mock<NodeType>();
             startNode
                 .Setup(n => n.HasChildNodes)

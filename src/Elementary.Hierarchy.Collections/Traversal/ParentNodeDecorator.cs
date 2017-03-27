@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Elementary.Hierarchy.Collections.Traversal
@@ -67,7 +68,7 @@ namespace Elementary.Hierarchy.Collections.Traversal
         /// <summary>
         /// Allows access to the parent node decorator if available
         /// </summary>
-        public TOuterNode ParentNode => this.parentNode;
+        public TOuterNode ParentNode => this.parentNode ?? throw new InvalidOperationException("node has no parent");
 
         /// <summary>
         /// Allows access to the child nodes of the decorated node instance.
