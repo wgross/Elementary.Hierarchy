@@ -8,8 +8,8 @@ namespace Elementary.Hierarchy.Collections.Nodes
     [DebuggerDisplay("key={key},value={value}")]
     public class ImmutableNode<TKey, TValue> : KeyValueNode<TKey, TValue>,
         IHierarchyNodeWriter<ImmutableNode<TKey, TValue>>,
-        IHierarchyValueWriter<TValue>,
-        IHasIdentifiableChildNodes<TKey, ImmutableNode<TKey, TValue>>
+        IHasIdentifiableChildNodes<TKey, ImmutableNode<TKey, TValue>>,
+        IHasChildNodes<ImmutableNode<TKey, TValue>>
     {
         #region Construction and initialization of this instance
 
@@ -25,7 +25,7 @@ namespace Elementary.Hierarchy.Collections.Nodes
         { }
 
         public ImmutableNode(TKey key, TValue value, IEnumerable<ImmutableNode<TKey, TValue>> childNodes)
-            : base(key,value)
+            : base(key, value)
         {
             this.childNodes = childNodes.ToArray();
         }
@@ -35,6 +35,7 @@ namespace Elementary.Hierarchy.Collections.Nodes
         #region Construction and initialization of clones of this instance
 
         private ImmutableNode(TKey key, ImmutableNode<TKey, TValue>[] childNodes)
+            : base(key)
         {
             this.childNodes = childNodes.ToArray();
         }
@@ -92,6 +93,9 @@ namespace Elementary.Hierarchy.Collections.Nodes
 
         public ImmutableNode<TKey, TValue> ReplaceChild(ImmutableNode<TKey, TValue> childToReplace, ImmutableNode<TKey, TValue> newChild)
         {
+            if (object.ReferenceEquals(childToReplace, newChild))
+                return this; // nothing to do
+
             if (!childToReplace.TryGetKey(out var childToReplaceKey))
                 throw new ArgumentException("child node must have a key", nameof(childToReplace));
 

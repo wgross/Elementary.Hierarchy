@@ -107,6 +107,9 @@ namespace Elementary.Hierarchy.Collections.Nodes
 
         public MutableNode<TKey, TValue> ReplaceChild(MutableNode<TKey, TValue> childToReplace, MutableNode<TKey, TValue> newChild)
         {
+            if (object.ReferenceEquals(childToReplace, newChild))
+                return this; // nothing to do
+
             if (!childToReplace.TryGetKey(out var childToReplaceKey))
                 throw new ArgumentException("child node must have a key", nameof(childToReplace));
 
@@ -124,7 +127,7 @@ namespace Elementary.Hierarchy.Collections.Nodes
                     return this;
                 }
             }
-            
+
             throw new InvalidOperationException($"The node (id={newChildKey}) doesn't substutite any of the existing child nodes");
         }
 

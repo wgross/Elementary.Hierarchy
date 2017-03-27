@@ -8,9 +8,10 @@ namespace Elementary.Hierarchy.Collections.Test
         public IEnumerator<object[]> GetEnumerator()
 
         {
-            //yield return new object[] { new ImmutableHierarchy<string, string>() };
-            //yield return new object[] { new MutableHierarchy<string, string>() };
+            yield return new object[] { new ImmutableHierarchy<string, string>() };
+            yield return new object[] { new MutableHierarchy<string, string>() };
             yield return new object[] { new MutableHierarchyEx<string, string>() };
+            yield return new object[] { new ImmutableHierarchyEx<string, string>() };
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -23,9 +24,10 @@ namespace Elementary.Hierarchy.Collections.Test
         public IEnumerator<object[]> GetEnumerator()
 
         {
-            //yield return new object[] { new ImmutableHierarchy<string, string>(getDefaultValue: k => DefaultValue) };
-            //yield return new object[] { new MutableHierarchy<string, string>(getDefaultValue: k => DefaultValue) };
+            yield return new object[] { new ImmutableHierarchy<string, string>(getDefaultValue: k => DefaultValue) };
+            yield return new object[] { new MutableHierarchy<string, string>(getDefaultValue: k => DefaultValue) };
             yield return new object[] { new MutableHierarchyEx<string, string>(getDefaultValue: k => DefaultValue) };
+            yield return new object[] { new ImmutableHierarchyEx<string, string>(getDefaultValue: k => DefaultValue) };
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

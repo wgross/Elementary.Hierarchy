@@ -17,9 +17,9 @@ namespace Elementary.Hierarchy.Collections.Operations
 
         public TNode DescandantAt { get; private set; }
 
-        public GetOrCreateNodeHierarchyWriter(Func<TKey, TNode> create)
+        public GetOrCreateNodeHierarchyWriter(Func<TKey, TNode> createNode)
         {
-            createNode = create;
+            this.createNode = createNode;
         }
 
         public TNode Visit(TNode node, HierarchyPath<TKey> path)
