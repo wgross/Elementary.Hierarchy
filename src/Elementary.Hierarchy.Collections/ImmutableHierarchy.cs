@@ -335,6 +335,11 @@
             {
                 return this.node.GetHashCode();
             }
+
+            public bool TryGetChildNode(TKey id, out IHierarchyNode<TKey, TValue> childNode)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         /// <summary>

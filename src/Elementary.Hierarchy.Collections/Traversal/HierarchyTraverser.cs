@@ -6,8 +6,12 @@ using System.Linq;
 
 namespace Elementary.Hierarchy.Collections.Traversal
 {
-    public class HierarchyTraverser<TKey, TValue, TNode> : IHierarchyNode<TKey, TValue>
-        where TNode : IHierarchyValueReader<TValue>, IHasIdentifiableChildNodes<TKey, TNode>, IHasChildNodes<TNode>
+    public class HierarchyTraverser<TKey, TValue, TNode> :
+        IHierarchyNode<TKey, TValue>
+        where TNode :
+            IHierarchyValueReader<TValue>,
+            IHierarchyKeyReader<TKey>,
+            IHasIdentifiableChildNodes<TKey, TNode>, IHasChildNodes<TNode>
     {
         private readonly ParentNodeDecorator<TNode> decorator;
 
@@ -25,7 +29,8 @@ namespace Elementary.Hierarchy.Collections.Traversal
                 throw new ArgumentNullException(nameof(parentTraverser));
 
             this.decorator = new ParentNodeDecorator<TNode>(node, hasParentNode: () => true, getParentNode: () => parentTraverser.decorator);
-            //    this.path = new Lazy<HierarchyPath<TKey>>(() => HierarchyPath.Create(this.decorator.AncestorsAndSelf().Reverse().Select(a => a.Node.Key)), isThreadSafe: false);
+            this.decorator.DecoratedNode.TryGetKey(out var key);
+            this.Path = this.ParentNode.Path.Join(key);
         }
 
         #endregion Construction and initialization of this instance
@@ -51,6 +56,15 @@ namespace Elementary.Hierarchy.Collections.Traversal
 
         #endregion Override object behavior
 
+        public bool TryGetChildNode(TKey id, out IHierarchyNode<TKey, TValue> childNode)
+        {
+            childNode = null;
+            if (!this.decorator.DecoratedNode.TryGetChildNode(id, out var innerChildNode))
+                return false;
+            childNode = new HierarchyTraverser<TKey, TValue, TNode>(this, innerChildNode);
+            return true;
+        }
+
         public HierarchyPath<TKey> Path
         {
             get;
@@ -58,9 +72,18 @@ namespace Elementary.Hierarchy.Collections.Traversal
             private set;
         }
 
-        public bool HasValue => throw new NotImplementedException();
+        public bool HasValue => this.decorator.DecoratedNode.TryGetValue(out var _);
 
-        public TValue Value => throw new NotImplementedException();
+        public TValue Value
+        {
+            get
+            {
+                if (!this.decorator.DecoratedNode.TryGetValue(out var value))
+                    throw new InvalidOperationException("node has no value");
+
+                return value;
+            }
+        }
 
         public bool HasChildNodes => this.decorator.HasChildNodes;
 

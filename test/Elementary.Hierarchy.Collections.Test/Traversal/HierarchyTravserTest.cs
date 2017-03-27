@@ -12,10 +12,11 @@ namespace Elementary.Hierarchy.Collections.Test.Traversal
         public interface NodeType :
             IHasChildNodes<NodeType>,
             IHierarchyValueReader<int>,
+            IHierarchyKeyReader<string>,
             IHasIdentifiableChildNodes<string, NodeType>
         { }
 
-        #region IHasChildNodes and IHasParnetNode interfaces are implemented
+        #region IHasChildNodes and IHasParentNode interfaces are implemented
 
         [Fact]
         public void HierarchyTraverser_provides_IHasChildNodes_and_IHasParentNode()
@@ -126,7 +127,7 @@ namespace Elementary.Hierarchy.Collections.Test.Traversal
             Assert.Equal(HierarchyPath.Create<string>(), result);
         }
 
-        #endregion IHasChildNodes and IHasParnetNode interfaces are implemented
+        #endregion IHasChildNodes and IHasParentNode interfaces are implemented
 
         #region Equals and GetHashCode delegate behavior to inner node
 
@@ -167,5 +168,57 @@ namespace Elementary.Hierarchy.Collections.Test.Traversal
         }
 
         #endregion Equals and GetHashCode delegate behavior to inner node
+
+        [Fact]
+        public void HierarchyTravrser_HasValue_returns_false_if_value_missing()
+        {
+            // ARRANGE
+
+            int value = 1;
+            var node = new Mock<NodeType>();
+            node
+                .Setup(n => n.TryGetValue(out value))
+                .Returns(false);
+
+            var traverser = new HierarchyTraverser<string, int, NodeType>(node.Object);
+
+            // ACT
+
+            var result = traverser.HasValue;
+
+            // ASSERT
+
+            Assert.False(result);
+            Assert.Throws<InvalidOperationException>(() => traverser.Value);
+
+            node.Verify(n => n.TryGetValue(out value), Times.Exactly(2));
+            node.VerifyAll();
+        }
+
+        [Fact]
+        public void HierarchyTravrser_Value_returns_value()
+        {
+            // ARRANGE
+
+            int value = 1;
+            var node = new Mock<NodeType>();
+            node
+                .Setup(n => n.TryGetValue(out value))
+                .Returns(true);
+
+            var traverser = new HierarchyTraverser<string, int, NodeType>(node.Object);
+
+            // ACT
+
+            var result = traverser.Value;
+
+            // ASSERT
+
+            Assert.Equal(1, result);
+            Assert.True(traverser.HasValue);
+
+            node.Verify(n => n.TryGetValue(out value), Times.Exactly(2));
+            node.VerifyAll();
+        }
     }
 }

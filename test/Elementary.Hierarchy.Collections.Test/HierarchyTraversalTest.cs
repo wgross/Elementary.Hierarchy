@@ -7,24 +7,44 @@ namespace Elementary.Hierarchy.Collections.Test
     public class HierarchyTraversalTest
     {
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
-        public void IHierarchy_root_node_has_no_value_on_Traverse(IHierarchy<string, string> hierarchy)
+        public void IHierarchy_root_node_has_no_parent_on_traversal(IHierarchy<string, string> hierarchy)
         {
+            // ACT
+
+            var traverser = hierarchy.Traverse(HierarchyPath.Create<string>());
+
             // ACT & ASSERT
 
-            Assert.False(hierarchy.Traverse(HierarchyPath.Create<string>()).HasValue);
+            Assert.False(traverser.HasParentNode);
+        }
+
+        [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
+        public void IHierarchy_root_node_has_no_value_on_traversal(IHierarchy<string, string> hierarchy)
+        {
+            // ACT
+
+            var traverser = hierarchy.Traverse(HierarchyPath.Create<string>());
+
+            // ACT & ASSERT
+
+            Assert.False(traverser.HasValue);
         }
 
         [Theory, ClassData(typeof(AllHierarchyVariantWithDefaultValue))]
         public void IHierarchy_root_node_has_default_value_on_traversal(IHierarchy<string, string> hierarchy)
         {
-            // ACT & ASSERT
+            // ACT
 
-            Assert.True(hierarchy.Traverse(HierarchyPath.Create<string>()).HasValue);
+            var traverser = hierarchy.Traverse(HierarchyPath.Create<string>());
+
+            // ASSERT
+
+            Assert.True(traverser.HasValue);
             Assert.Equal(AllHierarchyVariantWithDefaultValue.DefaultValue, hierarchy.Traverse(HierarchyPath.Create<string>()).Value);
         }
 
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
-        public void IHierarchy_node_knows_its_path(IHierarchy<string, string> hierarchy)
+        public void IHierarchy_root_node_has_empty_path_on_traversal(IHierarchy<string, string> hierarchy)
         {
             // ACT
 
@@ -32,12 +52,11 @@ namespace Elementary.Hierarchy.Collections.Test
 
             // ASSERT
 
-            Assert.NotNull(result);
             Assert.Equal(HierarchyPath.Create<string>(), result.Path);
         }
 
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
-        public void IHierarchy_hierarchy_has_no_children_if_root_has_no_children(IHierarchy<string, string> hierarchy)
+        public void IHierarchy_root_node_has_no_children_on_traversal(IHierarchy<string, string> hierarchy)
         {
             // ACT
 
@@ -49,7 +68,7 @@ namespace Elementary.Hierarchy.Collections.Test
         }
 
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
-        public void IHierarchy_get_a_nodes_value(IHierarchy<string, string> hierarchy)
+        public void IHierarchy_get_root_nodes_value_on_traversal(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
 
@@ -65,7 +84,7 @@ namespace Elementary.Hierarchy.Collections.Test
         }
 
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
-        public void IHierarchy_Get_children_of_root_node(IHierarchy<string, string> hierarchy)
+        public void IHierarchy_get_children_of_root_node_on_traversal(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
 
@@ -82,7 +101,7 @@ namespace Elementary.Hierarchy.Collections.Test
         }
 
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
-        public void IHierarchy_child_node_knows_its_path(IHierarchy<string, string> hierarchy)
+        public void IHierarchy_child_node_knows_its_path_on_traversal(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
 
@@ -98,6 +117,23 @@ namespace Elementary.Hierarchy.Collections.Test
         }
 
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
+        public void IHierarchy_grandchild_node_knows_its_path_on_traversal(IHierarchy<string, string> hierarchy)
+        {
+            // ARRANGE
+
+            hierarchy.Add(HierarchyPath.Create("a","b"), "v1");
+
+
+            // ACT
+
+            var result = hierarchy.Traverse(HierarchyPath.Create<string>()).Children().Single().Children().Single().Path;
+
+            // ASSERT
+
+            Assert.Equal(HierarchyPath.Create("a","b"), result);
+        }
+
+        [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
         public void IHierarchy_root_has_no_parent(IHierarchy<string, string> hierarchy)
         {
             // ACT
@@ -110,7 +146,7 @@ namespace Elementary.Hierarchy.Collections.Test
         }
 
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
-        public void IHierarchy_children_of_root_have_root_as_parent(IHierarchy<string, string> hierarchy)
+        public void IHierarchy_child_of_root_has_root_as_parent_on_traversal(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
 
@@ -128,13 +164,13 @@ namespace Elementary.Hierarchy.Collections.Test
         }
 
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
-        public void IHierarchy_Start_traversal_at_child_of_root(IHierarchy<string, string> hierarchy)
+        public void IHierarchy_start_at_child_of_root_on_traversal(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
 
             hierarchy.Add(HierarchyPath.Create("a"), "v1");
 
-            var node_a = hierarchy.Traverse(HierarchyPath.Create<string>()).Children().First();
+            var node_a = hierarchy.Traverse(HierarchyPath.Create<string>()).Children().Single();
 
             // ACT
 
@@ -161,12 +197,14 @@ namespace Elementary.Hierarchy.Collections.Test
             // ASSERT
 
             Assert.NotNull(result);
-            Assert.Equal(new[] {
-                    HierarchyPath.Create("a","b"),
-                    HierarchyPath.Create("a"),
-                    HierarchyPath.Create<string>(),
-                },
-                result.Ancestors().Select(n => n.Path));
+            Assert.Equal(new[]
+            {
+                HierarchyPath.Create("a", "b", "c"),
+                HierarchyPath.Create("a","b"),
+                HierarchyPath.Create("a"),
+                HierarchyPath.Create<string>(),
+            },
+            result.AncestorsAndSelf().Select(n => n.Path).ToArray());
         }
 
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]

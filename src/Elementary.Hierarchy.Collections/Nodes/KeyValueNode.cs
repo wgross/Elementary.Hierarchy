@@ -1,6 +1,4 @@
-﻿using Elementary.Hierarchy.Collections.Operations;
-
-namespace Elementary.Hierarchy.Collections.Nodes
+﻿namespace Elementary.Hierarchy.Collections.Nodes
 {
     public class KeyValueNode
     {
@@ -13,8 +11,9 @@ namespace Elementary.Hierarchy.Collections.Nodes
     /// </summary>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TValue"></typeparam>
-    public class KeyValueNode<TKey, TValue> : KeyValueNode, 
-        IHierarchyValueReader<TValue>, 
+    public class KeyValueNode<TKey, TValue> : KeyValueNode,
+        IHierarchyKeyReader<TKey>,
+        IHierarchyValueReader<TValue>,
         IHierarchyValueWriter<TValue>
     {
         private readonly object key = NoValue;
@@ -34,6 +33,8 @@ namespace Elementary.Hierarchy.Collections.Nodes
             this.value = value;
         }
 
+        #region IHierarchyKeyReader members
+
         public bool TryGetKey(out TKey key)
         {
             key = default(TKey);
@@ -44,6 +45,8 @@ namespace Elementary.Hierarchy.Collections.Nodes
             key = (TKey)this.key;
             return true;
         }
+
+        #endregion IHierarchyKeyReader members
 
         #region IHierarchyValueReader members
 

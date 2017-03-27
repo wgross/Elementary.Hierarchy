@@ -6,6 +6,7 @@
     /// <typeparam name="TKey">type of the path items</typeparam>
     /// <typeparam name="TValue">type of the value</typeparam>
     public interface IHierarchyNode<TKey, TValue> :
+        IHasIdentifiableChildNodes<TKey, IHierarchyNode<TKey, TValue>>,
         IHasChildNodes<IHierarchyNode<TKey, TValue>>,
         IHasParentNode<IHierarchyNode<TKey, TValue>>
     {
