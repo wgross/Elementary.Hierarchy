@@ -6,7 +6,7 @@
     /// </summary>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TNode"></typeparam>
-    public interface IHasIdentifiableChildNodes<TKey, TNode> : IHasChildNodes<TNode>
+    public interface IHasIdentifiableChildNodes<TKey, TNode> //: IHasChildNodes<TNode>
     {
         /// <summary>
         /// Tries to find a child node indetified by <paramref name="id"/>

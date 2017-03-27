@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>Elementary Hierarchy provides interfaces, data structures and algorithms for developing of tree-like/hierarchical data structures.</Description>
+    <Copyright>Copyright Ã‚Â© 2016-2017</Copyright>
+    <AssemblyTitle>Elementary.Hierarchy</AssemblyTitle>
+    <VersionPrefix>1.7.1</VersionPrefix>
+    <Authors>Wolfgang Gross</Authors>
+    <TargetFrameworks>netstandard1.1;net461</TargetFrameworks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AssemblyName>Elementary.Hierarchy</AssemblyName>
+    <PackageId>Elementary.Hierarchy</PackageId>
+    <PackageTags>framework;tree;traversal;hierarchy</PackageTags>
+    <PackageReleaseNotes>1.7.1: added net461 as target platform, fixed assemblies wrong file version</PackageReleaseNotes>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/wgross/Elementary.Hierarchy/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/wgross/Elementary.Hierarchy</RepositoryUrl>
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <Version>2.0.0</Version>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.1' ">
+    <PackageReference Include="System.Runtime" Version="4.3.0" />
+    <PackageReference Include="System.Collections" Version="4.3.0" />
+    <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
+    <PackageReference Include="System.Globalization" Version="4.3.0" />
+    <PackageReference Include="System.Linq" Version="4.3.0" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+</Project>

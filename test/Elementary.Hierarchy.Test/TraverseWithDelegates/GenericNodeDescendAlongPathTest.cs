@@ -1,14 +1,13 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 {
     using Elementary.Hierarchy.Generic;
-    using NUnit.Framework;
     using System;
     using System.Linq;
+    using Xunit;
 
-    [TestFixture]
     public class GenericNodeDescendAlongPathTest
     {
-        [Test]
+        [Fact]
         public void D_root_returns_itself_for_empty_path_on_DescendAlongPath()
         {
             // ARRANGE
@@ -30,11 +29,11 @@
 
             // ASSERT
 
-            Assert.AreEqual(1, result.Count());
-            Assert.AreEqual("startNode", result.ElementAt(0));
+            Assert.Equal(1, result.Count());
+            Assert.Equal("startNode", result.ElementAt(0));
         }
 
-        [Test]
+        [Fact]
         public void D_root_returns_child_on_DescendAlongPath()
         {
             // ARRANGE
@@ -56,11 +55,11 @@
 
             // ASSERT
 
-            Assert.IsNotNull(result);
-            CollectionAssert.AreEqual(new[] { "startNode", "childNode" }, result);
+            Assert.NotNull(result);
+            Assert.Equal(new[] { "startNode", "childNode" }, result);
         }
 
-        [Test]
+        [Fact]
         public void D_root_returns_child_and_grandchild_on_DescendAlongPath()
         {
             // ARRANGE
@@ -87,10 +86,10 @@
 
             // ASSERT
 
-            CollectionAssert.AreEqual(new[] { "startNode", "childNode", "grandChildNode" }, result);
+            Assert.Equal(new[] { "startNode", "childNode", "grandChildNode" }, result);
         }
 
-        [Test]
+        [Fact]
         public void D_root_return_incomplete_list_on_DescendAlongPath()
         {
             // ARRANGE
@@ -112,8 +111,8 @@
 
             // ASSERT
 
-            Assert.IsTrue(result.Any());
-            CollectionAssert.AreEqual(new[] { "startNode" }, result);
+            Assert.True(result.Any());
+            Assert.Equal(new[] { "startNode" }, result);
         }
     }
 }

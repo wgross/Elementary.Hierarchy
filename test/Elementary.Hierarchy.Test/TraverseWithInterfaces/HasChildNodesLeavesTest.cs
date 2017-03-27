@@ -1,11 +1,10 @@
 ﻿using Moq;
-using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 {
-    [TestFixture]
     public class HasChildNodesLeavesTest
     {
         public interface MockableNodeType : IHasChildNodes<MockableNodeType>
@@ -18,8 +17,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
         private Mock<MockableNodeType> leftRightLeaf;
         private Mock<MockableNodeType> rightRightLeaf;
 
-        [SetUp]
-        public void ArrangeAllTests()
+        public HasChildNodesLeavesTest()
         {
             //                rootNode
             //                /      \
@@ -58,7 +56,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
                 .Setup(n => n.ChildNodes).Returns(new[] { this.leftNode.Object, this.rightNode.Object });
         }
 
-        [Test]
+        [Fact]
         public void I_empty_root_returns_itself_on_Leaves()
         {
             // ACT
@@ -67,12 +65,12 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 
             // ASSERT
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual(1, result.Count());
-            Assert.AreSame(this.leftLeaf.Object, result.ElementAt(0));
+            Assert.NotNull(result);
+            Assert.Equal(1, result.Count());
+            Assert.Same(this.leftLeaf.Object, result.ElementAt(0));
         }
 
-        [Test]
+        [Fact]
         public void I_root_returns_its_descendant_leaves_on_Leaves()
         {
             // ACT
@@ -81,9 +79,9 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 
             // ASSERT
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual(3, result.Count());
-            Assert.AreEqual(new[] { this.leftLeaf.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result.ToArray());
+            Assert.NotNull(result);
+            Assert.Equal(3, result.Count());
+            Assert.Equal(new[] { this.leftLeaf.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result.ToArray());
         }
     }
 }

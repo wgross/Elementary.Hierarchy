@@ -1,12 +1,11 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 {
     using Moq;
-    using NUnit.Framework;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Xunit;
 
-    [TestFixture]
     public class HasDescendantsDescendantsTest
     {
         public interface MockableNodeType : IHasDescendantNodes<MockableNodeType>
@@ -19,8 +18,7 @@
         private Mock<MockableNodeType> leftRightLeaf;
         private Mock<MockableNodeType> rightRightLeaf;
 
-        [SetUp]
-        public void ArrangeAllTests()
+        public HasDescendantsDescendantsTest()
         {
             //                rootNode
             //                /      \
@@ -95,7 +93,7 @@
                 });
         }
 
-        [Test]
+        [Fact]
         public void IHasDescendants_leaf_returns_no_children_on_Descendants()
         {
             // ACT
@@ -104,8 +102,8 @@
 
             // ASSERT
 
-            Assert.IsNotNull(result);
-            Assert.IsFalse(result.Any());
+            Assert.NotNull(result);
+            Assert.False(result.Any());
 
             this.rightRightLeaf.Verify(n => n.GetDescendants(false, int.MaxValue), Times.Once());
             this.rightRightLeaf.Verify(n => n.HasChildNodes, Times.Never());
@@ -113,7 +111,7 @@
             this.rightRightLeaf.VerifyAll();
         }
 
-        [Test]
+        [Fact]
         public void IHasDescendants_node_returns_single_child_on_Descendants()
         {
             // ACT
@@ -122,14 +120,14 @@
 
             // ASSERT
 
-            Assert.AreEqual(1, result.Count());
-            Assert.AreSame(this.leftLeaf.Object, result.ElementAt(0));
+            Assert.Equal(1, result.Count());
+            Assert.Same(this.leftLeaf.Object, result.ElementAt(0));
 
             this.leftNode.VerifyAll();
             this.leftLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never());
         }
 
-        [Test]
+        [Fact]
         public void IHasDescendants_node_returns_left_child_first_on_Descendants()
         {
             // ACT
@@ -138,15 +136,15 @@
 
             // ASSERT
 
-            Assert.AreEqual(2, result.Count());
-            CollectionAssert.AreEqual(new[] { this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result);
+            Assert.Equal(2, result.Count());
+            Assert.Equal(new[] { this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result);
 
             this.rightNode.VerifyAll();
             this.leftRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never());
             this.rightRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never());
         }
 
-        [Test]
+        [Fact]
         public void IHasDescendants_root_returns_descendants_breadthFirst_on_Descendants()
         {
             // ACT
@@ -155,8 +153,8 @@
 
             // ASSERT
 
-            Assert.AreEqual(5, result.Count());
-            CollectionAssert.AreEqual(new[]
+            Assert.Equal(5, result.Count());
+            Assert.Equal(new[]
             {
                 this.leftNode.Object,
                 this.rightNode.Object,
@@ -173,7 +171,7 @@
             this.rightRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never());
         }
 
-        [Test]
+        [Fact]
         public void IHasDescendants_root_returns_descendants_depthFirst_on_Descendants()
         {
             // ACT
@@ -182,8 +180,8 @@
 
             // ASSERT
 
-            Assert.AreEqual(5, result.Count());
-            CollectionAssert.AreEqual(new[] {
+            Assert.Equal(5, result.Count());
+            Assert.Equal(new[] {
                 this.leftNode,
                 this.leftLeaf,
                 this.rightNode,
@@ -199,7 +197,7 @@
             this.rightRightLeaf.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never());
         }
 
-        [Test]
+        [Fact]
         public void IHasDescendants_root_returns_children_as_level1_descendants_on_Descendants()
         {
             // ARRANGE
@@ -220,14 +218,14 @@
 
             // ASSERT
 
-            Assert.AreEqual(2, descendants.Count());
-            Assert.AreEqual(2, children.Count());
-            CollectionAssert.AreEqual(children, descendants);
+            Assert.Equal(2, descendants.Count());
+            Assert.Equal(2, children.Count());
+            Assert.Equal(children, descendants);
 
             this.rootNode.Verify(n => n.GetDescendants(false, 1), Times.Once());
         }
 
-        [Test]
+        [Fact]
         public void IHasDescendants_root_throws_ArgumentException_on_level0_on_Descendants()
         {
             // ACT
@@ -237,12 +235,12 @@
 
             // ASSERT
 
-            Assert.IsTrue(ex.Message.Contains("must be > 0"));
-            Assert.AreEqual("maxDepth", ex.ParamName);
-            Assert.IsFalse(result.Any());
+            Assert.True(ex.Message.Contains("must be > 0"));
+            Assert.Equal("maxDepth", ex.ParamName);
+            Assert.False(result.Any());
         }
 
-        [Test]
+        [Fact]
         public void IHasDescendants_root_returns_all_descendants_on_highLevel_breadthFirst_on_Descendants()
         {
             // ACT
@@ -251,11 +249,11 @@
 
             // ASSERT
 
-            CollectionAssert.AreEqual(new[] { this.leftNode.Object, this.rightNode.Object, this.leftLeaf.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result);
+            Assert.Equal(new[] { this.leftNode.Object, this.rightNode.Object, this.leftLeaf.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result);
             this.rootNode.Verify(n => n.GetDescendants(false, 3), Times.Once());
         }
 
-        [Test]
+        [Fact]
         public void IHasDescendants_root_returns_all_descendants_on_highLevel_depthFirst_on_Descendants()
         {
             // ACT
@@ -264,7 +262,7 @@
 
             // ASSERT
 
-            CollectionAssert.AreEqual(new[] {
+            Assert.Equal(new[] {
                 this.leftNode.Object,
                 this.leftLeaf.Object,
                 this.rightNode.Object,
