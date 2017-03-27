@@ -5,6 +5,12 @@ using System.Linq;
 
 namespace Elementary.Hierarchy.Collections.Nodes
 {
+    /// <summary>
+    /// A mutable node allows to change the hierarchy strcture (child nodes) in place.
+    /// It inherits teh capability to store a key and a value from the <see cref="KeyValueNode{TKey, TValue}"/>
+    /// </summary>
+    /// <typeparam name="TKey"></typeparam>
+    /// <typeparam name="TValue"></typeparam>
     [DebuggerDisplay("key={key},value={value}")]
     public class MutableNode<TKey, TValue> : KeyValueNode<TKey, TValue>,
         IHierarchyNodeWriter<MutableNode<TKey, TValue>>,
