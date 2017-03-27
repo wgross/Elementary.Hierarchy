@@ -86,7 +86,7 @@ namespace Elementary.Hierarchy.Decorators
         }
 
         /// <summary>
-        /// Delegates the calculation of the hashcode to teh undeliying node instance.
+        /// Delegates the calculation of the hashcode to teh underlying node instance.
         /// </summary>
         /// <returns></returns>
         public override int GetHashCode()

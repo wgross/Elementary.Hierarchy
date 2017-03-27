@@ -1,13 +1,18 @@
 ﻿namespace Elementary.Hierarchy.Collections.Nodes
 {
+    /// <summary>
+    /// Diambiguises the contant value <see cref="NoValue"/>.
+    /// It shouös be the same indepenently from the type parameters of <see cref="KeyValueNode{TKey, TValue}"/>
+    /// </summary>
     public class KeyValueNode
     {
         public static readonly object NoValue = new object();
     }
 
     /// <summary>
-    /// Stores a pari of key and value.
-    /// Neither key nor value must be given. Both can be 'unset'
+    /// Stores a Key and a value.
+    /// Neither key nor value must be given. Both can remain 'unset'.
+    /// this isn the base class for all Hierarchy node types.
     /// </summary>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TValue"></typeparam>
@@ -18,6 +23,8 @@
     {
         private readonly object key = NoValue;
         private object value = NoValue;
+
+        #region Construction and initialization of this instance
 
         public KeyValueNode()
         { }
@@ -32,6 +39,8 @@
             this.key = key;
             this.value = value;
         }
+
+        #endregion Construction and initialization of this instance
 
         #region IHierarchyKeyReader members
 
