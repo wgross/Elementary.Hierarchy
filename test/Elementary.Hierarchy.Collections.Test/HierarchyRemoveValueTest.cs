@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using Xunit;
+﻿using Xunit;
 
 namespace Elementary.Hierarchy.Collections.Test
 {
-    
     public class HierarchyRemoveValueTest
     {
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
