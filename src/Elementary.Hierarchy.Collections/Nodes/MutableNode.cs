@@ -124,7 +124,8 @@ namespace Elementary.Hierarchy.Collections.Nodes
                     return this;
                 }
             }
-            throw new InvalidOperationException($"The node (id={newChildKey}) doesn't substutite any of the existing child nodes in (id=<null>)");
+            
+            throw new InvalidOperationException($"The node (id={newChildKey}) doesn't substutite any of the existing child nodes");
         }
 
         #endregion IHierarchyNodeWriter members

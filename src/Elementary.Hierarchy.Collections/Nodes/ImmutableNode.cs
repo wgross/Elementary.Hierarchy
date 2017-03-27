@@ -13,21 +13,20 @@ namespace Elementary.Hierarchy.Collections.Nodes
     {
         #region Construction and initialization of this instance
 
+        public ImmutableNode()
+        { }
+
         public ImmutableNode(TKey key)
-        {
-            this.Key = key;
-        }
+            : base(key)
+        { }
 
         public ImmutableNode(TKey key, TValue value)
-        {
-            this.Key = key;
-            this.value = (object)value;
-        }
+            : base(key, value)
+        { }
 
         public ImmutableNode(TKey key, TValue value, IEnumerable<ImmutableNode<TKey, TValue>> childNodes)
+            : base(key,value)
         {
-            this.Key = key;
-            this.value = (object)value;
             this.childNodes = childNodes.ToArray();
         }
 
@@ -37,7 +36,6 @@ namespace Elementary.Hierarchy.Collections.Nodes
 
         private ImmutableNode(TKey key, ImmutableNode<TKey, TValue>[] childNodes)
         {
-            this.Key = key;
             this.childNodes = childNodes.ToArray();
         }
 
@@ -51,8 +49,6 @@ namespace Elementary.Hierarchy.Collections.Nodes
         #region IHasChildNodes members
 
         private ImmutableNode<TKey, TValue>[] childNodes = new ImmutableNode<TKey, TValue>[0];
-        private static readonly object UnsetValue = new object();
-        private object value = UnsetValue;
 
         public bool HasChildNodes => this.childNodes.Any();
 
@@ -62,11 +58,15 @@ namespace Elementary.Hierarchy.Collections.Nodes
 
         #region IHasIdentifiableChildren members
 
-        public TKey Key { get; private set; }
-
         public bool TryGetChildNode(TKey id, out ImmutableNode<TKey, TValue> childNode)
         {
-            childNode = this.childNodes.SingleOrDefault(n => EqualityComparer<TKey>.Default.Equals(n.Key, id));
+            childNode = this.childNodes.SingleOrDefault(n =>
+            {
+                if (n.TryGetKey(out var key))
+                    return EqualityComparer<TKey>.Default.Equals(key, id);
+                else // this is unexpected. ChildNodes always have keys.
+                    throw new InvalidOperationException("child must have a key");
+            });
             return childNode != null;
         }
 
@@ -92,12 +92,21 @@ namespace Elementary.Hierarchy.Collections.Nodes
 
         public ImmutableNode<TKey, TValue> ReplaceChild(ImmutableNode<TKey, TValue> childToReplace, ImmutableNode<TKey, TValue> newChild)
         {
+            if (!childToReplace.TryGetKey(out var childToReplaceKey))
+                throw new ArgumentException("child node must have a key", nameof(childToReplace));
+
+            if (!newChild.TryGetKey(out var newChildKey))
+                throw new ArgumentException("child node must have a key", nameof(newChild));
+
+            if (!EqualityComparer<TKey>.Default.Equals(childToReplaceKey, newChildKey))
+                throw new InvalidOperationException($"Key of child to replace (key='{childToReplaceKey}') and new child (key='{newChildKey}') must be equal");
+
             var newNodesChildren = new ImmutableNode<TKey, TValue>[this.childNodes.Length];
             bool hasReplaced = false;
 
             for (int i = 0; i < this.childNodes.Length; i++)
             {
-                if (EqualityComparer<TKey>.Default.Equals(this.childNodes[i].Key, newChild.Key))
+                if (this.childNodes[i].Equals(childToReplace))
                 {
                     newNodesChildren[i] = newChild;
                     hasReplaced = true;
@@ -113,9 +122,7 @@ namespace Elementary.Hierarchy.Collections.Nodes
                 return this.CreateClone(newNodesChildren);
             }
 
-            // a replacemen was not done.
-
-            throw new InvalidOperationException($"The node (id={newChild.Key}) doesn't substutite any of the existing child nodes in (id={this.Key})");
+            throw new InvalidOperationException($"The node (id={newChildKey}) doesn't substutite any of the existing child nodes");
         }
 
         private ImmutableNode<TKey, TValue> CreateClone(ImmutableNode<TKey, TValue>[] childNodes)

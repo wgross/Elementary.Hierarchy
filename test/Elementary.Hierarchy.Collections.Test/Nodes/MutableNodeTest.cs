@@ -71,7 +71,7 @@ namespace Elementary.Hierarchy.Collections.Test.Nodes
         }
 
         [Fact]
-        public void MutableNode_fails_on_Replace_if_key_are_different()
+        public void MutableNode_fails_on_Replace_if_keys_are_different()
         {
             // ARRANGE
 
@@ -93,7 +93,7 @@ namespace Elementary.Hierarchy.Collections.Test.Nodes
         }
 
         [Fact]
-        public void MutableNode_fails_on_Replace_if_child_is_unkown()
+        public void MutableNode_fails_on_replacing_unknown_child()
         {
             // ARRANGE
 

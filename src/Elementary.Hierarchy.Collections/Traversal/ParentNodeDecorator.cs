@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Elementary.Hierarchy.Collections.Traversal
@@ -16,60 +15,64 @@ namespace Elementary.Hierarchy.Collections.Traversal
         IHasChildNodes<TOuterNode>,
         IHasParentNode<TOuterNode>
         where TInnerNode : IHasChildNodes<TInnerNode>
-        where TOuterNode : IHasChildNodes<TOuterNode>, IHasParentNode<TOuterNode>
+        where TOuterNode : class, IHasChildNodes<TOuterNode>, IHasParentNode<TOuterNode>
     {
-        private readonly TInnerNode decoratedNode;
-        private readonly Func<bool> hasParentNode;
-        private readonly Func<TOuterNode> getParentNode;
+        private readonly TOuterNode parentNode;
+        private readonly TInnerNode innerNode;
 
         /// <summary>
-        /// Creates a decorator of the given node.
+        /// Creates a decorator of the given root node.
         /// </summary>
         /// <param name="decoratedNode"></param>
         public ParentNodeDecorator(TInnerNode decoratedNode)
-            : this(decoratedNode, hasParentNode: null, getParentNode: null)
+            : this(decoratedNode, parentNode: null)
         { }
 
         /// <summary>
-        /// Creates a decorator of the given node. The delegates <paramref name="getParentNode"/> and <paramref name="hasParentNode"/>
+        /// Creates a decorator of the given inner node.
+        /// The decorrator receoves in addition the parentnode
         /// are used for paranet node traversal.
         /// </summary>
-        /// <param name="decoratedNode"></param>
-        /// <param name="hasParentNode">returns true, if a parent ode is known. If set null, a parent node is unkown</param>
-        /// <param name="getParentNode">returns a decorator of the parent node. If null, <see cref="InvalidOperationException"/> is thrown</param>
-        public ParentNodeDecorator(TInnerNode decoratedNode, Func<bool> hasParentNode, Func<TOuterNode> getParentNode)
+        /// <param name="decoratedNode">node which is decorated with a parent</param>
+        /// <param name="parentNode">parent node of this hierarchy node</param>
+        public ParentNodeDecorator(TInnerNode decoratedNode, TOuterNode parentNode)
         {
-            this.decoratedNode = decoratedNode;
-            this.hasParentNode = hasParentNode ?? (() => false);
-            this.getParentNode = getParentNode ?? (() => throw new InvalidOperationException("no parent"));
+            this.innerNode = decoratedNode;
+            this.parentNode = parentNode;
         }
 
         /// <summary>
         /// Allows access to the decorated node instance.
         /// </summary>
-        public TInnerNode InnerNode => this.decoratedNode;
+        public TInnerNode InnerNode => this.innerNode;
 
+        /// <summary>
+        /// This mothod has tobe implemented to implement the decoration of a child node of this instances inner node
+        /// to an instance of the outer node.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
         protected abstract TOuterNode DecorateChildNode(TInnerNode node);
 
         /// <summary>
         /// Indecates if the node has child nodes
         /// </summary>
-        public bool HasChildNodes => this.decoratedNode.HasChildNodes;
+        public bool HasChildNodes => this.innerNode.HasChildNodes;
 
         /// <summary>
         /// Indicates of this node has a parent node.
         /// </summary>
-        public bool HasParentNode => this.hasParentNode();
+        public bool HasParentNode => this.parentNode != null;
 
         /// <summary>
         /// Allows access to the parent node decorator if available
         /// </summary>
-        public TOuterNode ParentNode => this.getParentNode();
+        public TOuterNode ParentNode => this.parentNode;
 
         /// <summary>
         /// Allows access to the child nodes of the decorated node instance.
         /// </summary>
-        public IEnumerable<TOuterNode> ChildNodes => this.decoratedNode.ChildNodes.Select(c => this.DecorateChildNode(c));
+        public IEnumerable<TOuterNode> ChildNodes => this.innerNode.ChildNodes.Select(c => this.DecorateChildNode(c));
 
         /// <summary>
         /// The test of equality is delegated to the decorated node instance.
@@ -87,7 +90,7 @@ namespace Elementary.Hierarchy.Collections.Traversal
                 return false;
 
             // Traversers are equals if the point to the same node
-            return this.decoratedNode.Equals(objAsTraverser.InnerNode);
+            return this.innerNode.Equals(objAsTraverser.InnerNode);
         }
 
         /// <summary>
@@ -96,7 +99,7 @@ namespace Elementary.Hierarchy.Collections.Traversal
         /// <returns></returns>
         public override int GetHashCode()
         {
-            return this.decoratedNode.GetHashCode();
+            return this.innerNode.GetHashCode();
         }
     }
 }

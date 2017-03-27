@@ -13,13 +13,13 @@ namespace Elementary.Hierarchy.Collections.Traversal
         #region Construction and initialization of this instance
 
         public HierarchyTraverser(TNode node)
-            : base(node, hasParentNode: () => false, getParentNode: null)
+            : base(decoratedNode: node)
         {
             this.Path = HierarchyPath.Create<TKey>();
         }
 
         public HierarchyTraverser(HierarchyTraverser<TKey, TValue, TNode> parentTraverser, TNode node)
-            : base(node, hasParentNode: () => true, getParentNode: () => parentTraverser)
+            : base(decoratedNode: node, parentNode: parentTraverser)
         {
             if (parentTraverser == null)
                 throw new ArgumentNullException(nameof(parentTraverser));
@@ -53,15 +53,6 @@ namespace Elementary.Hierarchy.Collections.Traversal
 
         public bool HasValue => this.InnerNode.TryGetValue(out var _);
 
-        public TValue Value
-        {
-            get
-            {
-                if (!this.InnerNode.TryGetValue(out var value))
-                    throw new InvalidOperationException("node has no value");
-
-                return value;
-            }
-        }
+        public TValue Value => this.InnerNode.TryGetValue(out var value) ? value : throw new InvalidOperationException("node has no value");
     }
 }

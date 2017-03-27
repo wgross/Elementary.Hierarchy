@@ -8,12 +8,13 @@ namespace Elementary.Hierarchy.Collections.Test.Nodes
     public class ImmutableNodeTest
     {
         [Fact]
-        public void ImmutableNode_Adds_child_to_current_instance()
+        public void ImmutableNode_adds_child_to_clone_of_current_instance()
         {
             // ARRANGE
 
             var child = new ImmutableNode<string, int>("a");
-            var node = new ImmutableNode<string, int>(null, 1);
+            var node = new ImmutableNode<string, int>();
+            node.SetValue(1);
 
             // ACT
 
@@ -25,6 +26,7 @@ namespace Elementary.Hierarchy.Collections.Test.Nodes
             Assert.NotSame(node, result);
             Assert.False(node.HasChildNodes);
             Assert.True(result.HasChildNodes);
+            Assert.True(result.HasValue);
             Assert.Equal(1, result.Value);
             Assert.Same(child, result.ChildNodes.Single());
             Assert.False(node.TryGetChildNode("a", out var addedChild1));
@@ -33,7 +35,7 @@ namespace Elementary.Hierarchy.Collections.Test.Nodes
         }
 
         [Fact]
-        public void ImmutableNode_Removes_child_from_current_instance()
+        public void ImmutableNode_removes_child_from_clone_of_current_instance()
         {
             // ARRANGE
 
@@ -56,12 +58,13 @@ namespace Elementary.Hierarchy.Collections.Test.Nodes
         }
 
         [Fact]
-        public void ImmutableNode_Replaces_child_in_current_instance()
+        public void ImmutableNode_replaces_child_in_clone_current_instance()
         {
             // ARRANGE
 
             var child = new ImmutableNode<string, int>("a");
-            var node = new ImmutableNode<string, int>(null, 1).AddChild(child);
+            var node = new ImmutableNode<string, int>().AddChild(child);
+            node.SetValue(1);
             var secondChild = new ImmutableNode<string, int>("a");
 
             // ACT
@@ -81,7 +84,29 @@ namespace Elementary.Hierarchy.Collections.Test.Nodes
         }
 
         [Fact]
-        public void ImmutableNode_fails_on_Replace_of_unknown_child()
+        public void ImmutableNode_fails_on_Replace_if_keys_are_different()
+        {
+            // ARRANGE
+
+            var child = new ImmutableNode<string, int>("a");
+            var node = new ImmutableNode<string, int>().AddChild(child);
+            var secondChild = new ImmutableNode<string, int>("b");
+
+            // ACT
+
+            var result = Assert.Throws<InvalidOperationException>(() => node.ReplaceChild(child, secondChild));
+
+            // ASSERT
+
+            Assert.Equal("Key of child to replace (key='a') and new child (key='b') must be equal", result.Message);
+            Assert.True(node.HasChildNodes);
+            Assert.Same(child, node.ChildNodes.Single());
+            Assert.True(node.TryGetChildNode("a", out var addedChild));
+            Assert.Same(child, addedChild);
+        }
+
+        [Fact]
+        public void ImmutableNode_fails_on_replacing_unknown_child()
         {
             // ARRANGE
 
@@ -95,7 +120,7 @@ namespace Elementary.Hierarchy.Collections.Test.Nodes
 
             // ASSERT
 
-            Assert.Equal($"The node (id={secondChild.Key}) doesn't substutite any of the existing child nodes in (id={node.Key})", result.Message);
+            Assert.Equal("Key of child to replace (key='a') and new child (key='b') must be equal", result.Message);
             Assert.True(node.HasChildNodes);
             Assert.Same(child, node.ChildNodes.Single());
             Assert.True(node.TryGetChildNode("a", out var addedChild));

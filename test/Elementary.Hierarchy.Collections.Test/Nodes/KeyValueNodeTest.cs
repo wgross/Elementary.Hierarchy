@@ -27,9 +27,9 @@ namespace Elementary.Hierarchy.Collections.Test.Nodes
 
             // ACT & ASSERT
 
-            Assert.False(node.TryGetKey(out var key));
+            Assert.True(node.TryGetKey(out var key));
             Assert.Equal("key", key);
-            Assert.False(node.TryGetValue(out var value));
+            Assert.True (node.TryGetValue(out var value));
             Assert.Equal(1, value);
         }
 
