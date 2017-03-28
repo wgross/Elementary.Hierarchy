@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.4</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LiteDB" Version="3.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Elementary.Hierarchy.Collections\Elementary.Hierarchy.Collections.csproj" />
+    <ProjectReference Include="..\Elementary.Hierarchy\Elementary.Hierarchy.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -6,7 +6,7 @@ namespace Elementary.Hierarchy.Collections.Test.Nodes
     public class KeyValueNodeTest
     {
         [Fact]
-        public void KeyValueNode_empty_node_has_no_value_and_no_key()
+        public void KeyValueNode_is_empty_by_default()
         {
             // ARRANGE
 
@@ -51,7 +51,7 @@ namespace Elementary.Hierarchy.Collections.Test.Nodes
         }
 
         [Fact]
-        public void KeyValueNode_clears_set_value()
+        public void KeyValueNode_removes_stored_value()
         {
             // ARRANGE
 

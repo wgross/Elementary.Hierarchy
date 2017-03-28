@@ -12,19 +12,21 @@
     /// <summary>
     /// Stores a Key and a value.
     /// Neither key nor value must be given. Both can remain 'unset'.
-    /// this isn the base class for all Hierarchy node types.
+    /// The key can't be changed afterwards.
+    /// This is the base class for all hierarchy node types.
     /// </summary>
-    /// <typeparam name="TKey"></typeparam>
-    /// <typeparam name="TValue"></typeparam>
+    /// <typeparam name="TKey">type of the key</typeparam>
+    /// <typeparam name="TValue">type of the value</typeparam>
     public class KeyValueNode<TKey, TValue> : KeyValueNode,
         IHierarchyKeyReader<TKey>,
         IHierarchyValueReader<TValue>,
         IHierarchyValueWriter<TValue>
     {
-        private readonly object key = NoValue;
         private object value = NoValue;
 
         #region Construction and initialization of this instance
+
+        private readonly object key = NoValue;
 
         public KeyValueNode()
         { }
