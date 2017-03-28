@@ -1,18 +1,18 @@
-﻿using Elementary.Hierarchy.Collections.Litedb.Nodes;
+﻿using Elementary.Hierarchy.Collections.LiteDb.Nodes;
 using LiteDB;
 using System;
 using Xunit;
 
 namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
 {
-    public class BsonMutableNodeTest
+    public class BsonKeyValueNodeTest
     {
         [Fact]
-        public void BsonMutableNode_is_empty_by_default()
+        public void BsonKeyValueNode_is_empty_by_default()
         {
             // ARRANGE
 
-            var node = new BsonMutableNode<Guid, int>(new BsonDocument());
+            var node = new BsonKeyValueNode<Guid, int>(new BsonDocument());
 
             // ACT & ASSERT
 
@@ -25,7 +25,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
         {
             // ARRANGE
 
-            var node = new BsonMutableNode<string, int>(new BsonDocument(), "key", 1);
+            var node = new BsonKeyValueNode<string, int>(new BsonDocument(), "key", 1);
 
             // ACT & ASSERT
 
@@ -43,7 +43,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
             var bsonDocument = new BsonDocument();
             bsonDocument.Set("key", BsonValue.Null);
 
-            var node = new BsonMutableNode<string, int>(bsonDocument);
+            var node = new BsonKeyValueNode<string, int>(bsonDocument);
 
             // ACT & ASSERT
 
@@ -55,7 +55,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
         {
             // ARRANGE
 
-            var node = new BsonMutableNode<string, int>(new BsonDocument());
+            var node = new BsonKeyValueNode<string, int>(new BsonDocument());
 
             // ACT
 
@@ -72,7 +72,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
         {
             // ARRANGE
 
-            var node = new BsonMutableNode<string, int>(new BsonDocument());
+            var node = new BsonKeyValueNode<string, int>(new BsonDocument());
             node.SetValue(1);
 
             // ACT
@@ -90,7 +90,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
         {
             // ARRANGE
 
-            var node = new BsonMutableNode<string, int>(new BsonDocument());
+            var node = new BsonKeyValueNode<string, int>(new BsonDocument());
 
             // ACT
 

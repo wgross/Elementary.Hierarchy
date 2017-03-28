@@ -1,114 +1,213 @@
-﻿//using Elementary.Hierarchy.Collections.Nodes;
-//using System;
-//using System.Linq;
-//using Xunit;
+﻿using Elementary.Hierarchy.Collections.LiteDb.Nodes;
+using LiteDB;
+using System;
+using System.IO;
+using System.Linq;
+using Xunit;
 
-//namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
-//{
-//    public class LiteDbLiteDbMutableNodeTest
-//    {
-//        [Fact]
-//        public void LiteDbMutableNode_adds_child_to_current_instance()
-//        {
-//            // ARRANGE
+namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
+{
+    public class LiteDbLiteDbMutableNodeTest
+    {
+        private readonly LiteDatabase database;
+        private readonly LiteCollection<BsonDocument> nodes;
+        private readonly BsonDocument rootDocument;
 
-//            var child = new LiteDbMutableNode<string, int>("a");
-//            var node = LiteDbMutableNode<string, int>.CreateRoot();
+        public LiteDbLiteDbMutableNodeTest()
+        {
+            this.database = new LiteDatabase(new MemoryStream());
+            this.rootDocument = new BsonDocument();
+            this.nodes = this.database.GetCollection("nodes");
+            this.nodes.Insert(this.rootDocument);
+        }
 
-//            // ACT
+        [Fact]
+        public void LiteDbMutableNode_adds_child_to_current_instance()
+        {
+            // ARRANGE
 
-//            var result = node.AddChild(child);
+            var child = new LiteDbMutableNode<int>(this.nodes, new BsonDocument(), "a");
+            var node = new LiteDbMutableNode<int>(this.nodes, this.rootDocument);
 
-//            // ASSERT
+            // ACT
 
-//            Assert.Same(node, result);
-//            Assert.True(node.HasChildNodes);
-//            Assert.Same(child, result.ChildNodes.Single());
-//            Assert.True(node.TryGetChildNode("a", out var addedChild));
-//            Assert.Same(child, addedChild);
-//        }
+            var result = node.AddChild(child);
 
-//        [Fact]
-//        public void LiteDbMutableNode_removes_child_from_current_instance()
-//        {
-//            // ARRANGE
+            // ASSERT
 
-//            var child = new LiteDbMutableNode<string, int>("a");
-//            var node = LiteDbMutableNode<string, int>.CreateRoot().AddChild(child);
+            Assert.Same(node, result);
+            Assert.True(result.HasChildNodes);
+            Assert.True(result.TryGetChildNode("a", out var addedChild));
 
-//            // ACT
+            // check db
 
-//            var result = node.RemoveChild(child);
+            var rootDoc = this.nodes.Find(Query.EQ("key", null)).Single();
 
-//            // ASSERT
+            Assert.NotNull(rootDoc);
+            Assert.True(rootDoc.TryGetValue("cn", out var childNodesDoc));
+            Assert.Equal(1, childNodesDoc.AsDocument.Count);
+            Assert.True(childNodesDoc.AsDocument.TryGetValue("a", out var childDocId));
 
-//            Assert.Same(node, result);
-//            Assert.False(node.HasChildNodes);
-//            Assert.False(result.ChildNodes.Any());
-//            Assert.False(node.TryGetChildNode("a", out var addedChild));
-//        }
+            var childDoc = this.nodes.FindById(childDocId);
 
-//        [Fact]
-//        public void LiteDbMutableNode_replaces_child_in_current_instance()
-//        {
-//            // ARRANGE
+            Assert.NotNull(childDoc);
+            Assert.True(childDoc.TryGetValue("key", out var childKey));
+            Assert.Equal("a", childKey.AsString);
+        }
 
-//            var child = new LiteDbMutableNode<string, int>("a");
-//            var node = LiteDbMutableNode<string, int>.CreateRoot().AddChild(child);
-//            var secondChild = new LiteDbMutableNode<string, int>("a");
+        [Fact]
+        public void LiteDbMutableNode_removes_child_from_current_instance()
+        {
+            // ARRANGE
 
-//            // ACT
+            var child = new LiteDbMutableNode<int>(this.nodes, new BsonDocument(), "a");
+            var node = new LiteDbMutableNode<int>(this.nodes, this.rootDocument).AddChild(child);
 
-//            var result = node.ReplaceChild(child, secondChild);
+            // ACT
 
-//            // ASSERT
+            var result = node.RemoveChild(child);
 
-//            Assert.Same(node, result);
-//            Assert.True(node.HasChildNodes);
-//            Assert.Same(secondChild, result.ChildNodes.Single());
-//            Assert.True(node.TryGetChildNode("a", out var addedChild));
-//            Assert.Same(secondChild, addedChild);
-//        }
+            // ASSERT
 
-//        [Fact]
-//        public void LiteDbMutableNode_fails_on_Replace_if_keys_are_different()
-//        {
-//            // ARRANGE
+            Assert.NotNull(result);
+            Assert.False(result.HasChildNodes);
+            Assert.False(result.TryGetChildNode("a", out var addedChild));
 
-//            var child = new LiteDbMutableNode<string, int>("a");
-//            var node = LiteDbMutableNode<string, int>.CreateRoot().AddChild(child);
-//            var secondChild = new LiteDbMutableNode<string, int>("b");
+            // check db
 
-//            // ACT
+            var rootDoc = this.nodes.Find(Query.EQ("key", null)).Single();
 
-//            var result = Assert.Throws<InvalidOperationException>(() => node.ReplaceChild(child, secondChild));
+            Assert.NotNull(rootDoc);
+            Assert.True(rootDoc.TryGetValue("cn", out var childNodesDoc));
+            Assert.Equal(0, childNodesDoc.AsDocument.Count);
+            Assert.False(childNodesDoc.AsDocument.TryGetValue("a", out var childDocId));
+            Assert.False(this.nodes.Find(Query.EQ("key", "a")).Any());
+        }
 
-//            // ASSERT
+        [Fact]
+        public void LiteDbMutableNode_replaces_child_from_current_instance()
+        {
+            // ARRANGE
 
-//            Assert.Equal("Key of child to replace (key='a') and new child (key='b') must be equal", result.Message);
-//            Assert.True(node.HasChildNodes);
-//            Assert.Same(child, node.ChildNodes.Single());
-//            Assert.True(node.TryGetChildNode("a", out var addedChild));
-//            Assert.Same(child, addedChild);
-//        }
+            var child = new LiteDbMutableNode<int>(this.nodes, new BsonDocument(), "a");
+            child.SetValue(1);
+            var node = new LiteDbMutableNode<int>(this.nodes, this.rootDocument).AddChild(child);
+            var secondChild = new LiteDbMutableNode<int>(this.nodes, new BsonDocument(), "a");
+            secondChild.SetValue(2);
 
-//        [Fact]
-//        public void LiteDbMutableNode_fails_on_replacing_unknown_child()
-//        {
-//            // ARRANGE
+            // ACT
 
-//            var child = new LiteDbMutableNode<string, int>("a");
-//            var node = LiteDbMutableNode<string, int>.CreateRoot();
-//            var secondChild = new LiteDbMutableNode<string, int>("b");
+            var result = node.ReplaceChild(child, secondChild);
 
-//            // ACT
+            // ASSERT
 
-//            var result = Assert.Throws<InvalidOperationException>(() => node.ReplaceChild(child, secondChild));
+            Assert.NotNull(result);
+            Assert.True(result.HasChildNodes);
+            Assert.True(result.TryGetChildNode("a", out var addedChild));
 
-//            // ASSERT
+            // check db
 
-//            Assert.Equal("Key of child to replace (key='a') and new child (key='b') must be equal", result.Message);
-//            Assert.False(node.HasChildNodes);
-//        }
-//    }
-//}
+            var rootDoc = this.nodes.Find(Query.EQ("key", null)).Single();
+
+            Assert.NotNull(rootDoc);
+            Assert.True(rootDoc.TryGetValue("cn", out var childNodesDoc));
+            Assert.Equal(1, childNodesDoc.AsDocument.Count);
+            Assert.True(childNodesDoc.AsDocument.TryGetValue("a", out var childDocId));
+
+            var childDoc = this.nodes.FindById(childDocId);
+
+            Assert.NotNull(childDoc);
+            Assert.True(childDoc.TryGetValue("key", out var childKey));
+            Assert.Equal("a", childKey.AsString);
+            Assert.True(childDoc.TryGetValue("value", out var childValue));
+            Assert.Equal(2, childValue.AsInt32);
+            Assert.NotEqual(child.BsonDocument.Get("_id").AsObjectId, childDoc.Get("_id").AsObjectId);
+            Assert.Equal(secondChild.BsonDocument.Get("_id").AsObjectId, childDoc.Get("_id").AsObjectId);
+        }
+
+        [Fact]
+        public void LiteDbMutableNode_fails_on_Replace_if_keys_are_different()
+        {
+            // ARRANGE
+
+            var child = new LiteDbMutableNode<int>(this.nodes, new BsonDocument(), "a");
+            child.SetValue(1);
+            var node = new LiteDbMutableNode<int>(this.nodes, this.rootDocument).AddChild(child);
+            var secondChild = new LiteDbMutableNode<int>(this.nodes, new BsonDocument(), "b");
+            secondChild.SetValue(2);
+
+            // ACT
+
+            var result = Assert.Throws<InvalidOperationException>(() => node.ReplaceChild(child, secondChild));
+
+            // ASSERT
+
+            Assert.Equal("Key of child to replace (key='a') and new child (key='b') must be equal", result.Message);
+            Assert.True(node.HasChildNodes);
+            Assert.True(node.TryGetChildNode("a", out var addedChild));
+
+            // check db
+
+            var rootDoc = this.nodes.Find(Query.EQ("key", null)).Single();
+
+            Assert.NotNull(rootDoc);
+            Assert.True(rootDoc.TryGetValue("cn", out var childNodesDoc));
+            Assert.Equal(1, childNodesDoc.AsDocument.Count);
+            Assert.True(childNodesDoc.AsDocument.TryGetValue("a", out var childDocId));
+
+            var childDoc = this.nodes.FindById(childDocId);
+
+            Assert.NotNull(childDoc);
+            Assert.True(childDoc.TryGetValue("key", out var childKey));
+            Assert.Equal("a", childKey.AsString);
+            Assert.True(childDoc.TryGetValue("value", out var childValue));
+            Assert.Equal(1, childValue.AsInt32);
+            Assert.Equal(child.BsonDocument.Get("_id").AsObjectId, childDoc.Get("_id").AsObjectId);
+            Assert.NotEqual(secondChild.BsonDocument.Get("_id").AsObjectId, childDoc.Get("_id").AsObjectId);
+        }
+
+        [Fact]
+        public void LiteDbMutableNode_fails_on_replacing_unknown_child()
+        {
+            // ARRANGE
+
+            var child = new LiteDbMutableNode<int>(this.nodes, new BsonDocument(), "a");
+            child.SetValue(1);
+            var node = new LiteDbMutableNode<int>(this.nodes, this.rootDocument).AddChild(child);
+            var secondChild = new LiteDbMutableNode<int>(this.nodes, new BsonDocument(), "a");
+            secondChild.SetValue(2);
+            var thirdChild = new LiteDbMutableNode<int>(this.nodes, new BsonDocument(), "a");
+            thirdChild.SetValue(3);
+
+            // ACT
+
+            var result = Assert.Throws<InvalidOperationException>(() => node.ReplaceChild(thirdChild, secondChild));
+
+            // ASSERT
+
+            Assert.Equal("The node (id='a') doesn't replace any of the existing child nodes", result.Message);
+            Assert.True(node.HasChildNodes);
+            Assert.True(node.TryGetChildNode("a", out var addedChild));
+
+            // check db
+
+            var rootDoc = this.nodes.Find(Query.EQ("key", null)).Single();
+
+            Assert.NotNull(rootDoc);
+            Assert.True(rootDoc.TryGetValue("cn", out var childNodesDoc));
+            Assert.Equal(1, childNodesDoc.AsDocument.Count);
+            Assert.True(childNodesDoc.AsDocument.TryGetValue("a", out var childDocId));
+
+            var childDoc = this.nodes.FindById(childDocId);
+
+            Assert.NotNull(childDoc);
+            Assert.True(childDoc.TryGetValue("key", out var childKey));
+            Assert.Equal("a", childKey.AsString);
+            Assert.True(childDoc.TryGetValue("value", out var childValue));
+            Assert.Equal(1, childValue.AsInt32);
+            Assert.Equal(child.BsonDocument.Get("_id").AsObjectId, childDoc.Get("_id").AsObjectId);
+            Assert.NotEqual(secondChild.BsonDocument.Get("_id").AsObjectId, childDoc.Get("_id").AsObjectId);
+            Assert.NotEqual(thirdChild.BsonDocument.Get("_id").AsObjectId, childDoc.Get("_id").AsObjectId);
+        }
+    }
+}

@@ -7,9 +7,9 @@ using System.Linq;
 
 namespace Elementary.Hierarchy.Collections.LiteDb
 {
-    public class LiteDbHierarchy<TKey, TValue> : IHierarchy<TKey, TValue>
+    public class LiteDbHierarchy<TValue> : IHierarchy<string, TValue>
     {
-        private class Node : IHierarchyNode<TKey, TValue>, IHasIdentifiableChildNodes<TKey, IHierarchyNode<TKey, TValue>>
+        private class Node : IHierarchyNode<string, TValue>, IHasIdentifiableChildNodes<string, IHierarchyNode<string, TValue>>
         {
             private readonly LiteCollection<BsonDocument> nodes;
             private BsonDocument currentNode;
@@ -32,14 +32,14 @@ namespace Elementary.Hierarchy.Collections.LiteDb
 
             #region IHasChildNodes Members
 
-            public IEnumerable<IHierarchyNode<TKey, TValue>> ChildNodes
+            public IEnumerable<IHierarchyNode<string, TValue>> ChildNodes
                 => Wrap(this.nodes.Find(Query.EQ("parent", this.currentNode.Get("_id"))));
 
             public bool HasChildNodes => this.nodes.Exists(Query.EQ("parent", this.currentNode.Get("_id")));
 
             #endregion IHasChildNodes Members
 
-            public HierarchyPath<TKey> Path
+            public HierarchyPath<string> Path
             {
                 get
                 {
@@ -57,7 +57,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb
 
             public bool HasParentNode => this.nodes.Exists(Query.EQ("_id", this.ParentId));
 
-            public IHierarchyNode<TKey, TValue> ParentNode => Wrap(this.nodes.FindOne(Query.EQ("_id", this.ParentId)));
+            public IHierarchyNode<string, TValue> ParentNode => Wrap(this.nodes.FindOne(Query.EQ("_id", this.ParentId)));
 
             #endregion IHasParentNode Members
 
@@ -65,7 +65,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb
 
             public BsonValue Key => this.currentNode.Get("key");
 
-            public bool TryGetChildNode(TKey key, out IHierarchyNode<TKey, TValue> childNode)
+            public bool TryGetChildNode(string key, out IHierarchyNode<string, TValue> childNode)
             {
                 childNode = null;
                 var node = this.nodes
@@ -91,7 +91,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb
 
         private LiteDatabase database;
         private readonly LiteCollection<BsonDocument> nodes;
-        private LiteDbMutableNode<TKey, TValue> rootNode;
+        private LiteDbMutableNode<TValue> rootNode;
 
         public LiteDbHierarchy(LiteDatabase database)
         {
@@ -101,7 +101,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb
 
         #region IHierarchy Members
 
-        public TValue this[HierarchyPath<TKey> hierarchyPath]
+        public TValue this[HierarchyPath<string> hierarchyPath]
         {
             set
             {
@@ -109,32 +109,32 @@ namespace Elementary.Hierarchy.Collections.LiteDb
             }
         }
 
-        public void Add(HierarchyPath<TKey> path, TValue value)
+        public void Add(HierarchyPath<string> path, TValue value)
         {
             var nodeToSetValueAt = this.GetOrCreateNode(path);
 
             if (nodeToSetValueAt.HasValue)
-                throw new ArgumentException($"{nameof(LiteDbHierarchy<TKey, TValue>)} at '{path}' already has a value", nameof(path));
+                throw new ArgumentException($"{nameof(LiteDbHierarchy<TValue>)} at '{path}' already has a value", nameof(path));
 
             nodeToSetValueAt.SetValue(value);
         }
 
-        public bool Remove(HierarchyPath<TKey> hierarchyPath, int? maxDepth = default(int?))
+        public bool Remove(HierarchyPath<string> hierarchyPath, int? maxDepth = default(int?))
         {
             throw new NotImplementedException();
         }
 
-        public bool RemoveNode(HierarchyPath<TKey> hierarchyPath, bool recurse)
+        public bool RemoveNode(HierarchyPath<string> hierarchyPath, bool recurse)
         {
             throw new NotImplementedException();
         }
 
-        public IHierarchyNode<TKey, TValue> Traverse(HierarchyPath<TKey> startAt)
+        public IHierarchyNode<string, TValue> Traverse(HierarchyPath<string> startAt)
         {
             return null;
         }
 
-        public bool TryGetValue(HierarchyPath<TKey> hierarchyPath, out TValue value)
+        public bool TryGetValue(HierarchyPath<string> hierarchyPath, out TValue value)
         {
             value = default(TValue);
             return false;
@@ -144,7 +144,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb
 
         #region LiteDb access implementations
 
-        private LiteDbMutableNode<TKey, TValue> GetOrCreateRootNode()
+        private LiteDbMutableNode<TValue> GetOrCreateRootNode()
         {
             if (this.rootNode != null)
                 return this.rootNode;
@@ -161,21 +161,17 @@ namespace Elementary.Hierarchy.Collections.LiteDb
 
             // create a node representing the document and return it
 
-            this.rootNode = new LiteDbMutableNode<TKey, TValue>(OnDocumentChanged);
+            this.rootNode = new LiteDbMutableNode<TValue>(this.nodes, rootDocument);
             return this.rootNode;
         }
 
-        private LiteDbMutableNode<TKey, TValue> GetOrCreateNode(HierarchyPath<TKey> hierarchyPath)
+        private LiteDbMutableNode<TValue> GetOrCreateNode(HierarchyPath<string> hierarchyPath)
         {
-            var writer = new GetOrCreateNodeHierarchyWriter<TKey, LiteDbMutableNode<TKey, TValue>>(createNode: key => new LiteDbMutableNode<TKey, TValue>(OnDocumentChanged, key));
+            var writer = new GetOrCreateNodeHierarchyWriter<string, LiteDbMutableNode<TValue>>(createNode: key => new LiteDbMutableNode<TValue>(this.nodes, new BsonDocument(), key));
 
             writer.Visit(this.GetOrCreateRootNode(), hierarchyPath);
 
             return writer.DescandantAt;
-        }
-
-        private void OnDocumentChanged()
-        {
         }
     }
 

@@ -2,52 +2,113 @@
 using LiteDB;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
 {
-    public class LiteDbMutableNode<TKey, TValue> : KeyValueNode<TKey, TValue>,
-        IHierarchyNodeWriter<LiteDbMutableNode<TKey, TValue>>,
-        IHasIdentifiableChildNodes<TKey, LiteDbMutableNode<TKey, TValue>>,
-        IHasChildNodes<LiteDbMutableNode<TKey, TValue>>
+    public class LiteDbMutableNode<TValue> : BsonKeyValueNode<string, TValue>,
+        IHierarchyNodeWriter<LiteDbMutableNode<TValue>>,
+        IHasIdentifiableChildNodes<string, LiteDbMutableNode<TValue>>
     {
+        private readonly LiteCollection<BsonDocument> nodes;
+
         #region Construction and initialization of this instance
 
-        private Action onDocumentChanged;
-
-        public LiteDbMutableNode(Action onDocumentChanged, TKey key)
-            : base(key)
+        public LiteDbMutableNode(LiteCollection<BsonDocument> nodes, BsonDocument bsonDocument)
+            : base(bsonDocument)
         {
+            this.nodes = nodes;
+            if (!this.TryGetId(out var id))
+                this.BsonDocument.Set("_id", ObjectId.NewObjectId());
         }
 
-        public LiteDbMutableNode(Action onDocumentChanged)
+        public LiteDbMutableNode(LiteCollection<BsonDocument> nodes, BsonDocument bsonDocument, string key)
+            : base(bsonDocument, key)
         {
-            this.onDocumentChanged = onDocumentChanged;
+            this.nodes = nodes;
+
+            if (!this.TryGetId(out var id))
+                this.BsonDocument.Set("_id", ObjectId.NewObjectId());
         }
 
         #endregion Construction and initialization of this instance
 
-        public bool HasChildNodes => throw new NotImplementedException();
-
-        public IEnumerable<LiteDbMutableNode<TKey, TValue>> ChildNodes => throw new NotImplementedException();
-
-        public LiteDbMutableNode<TKey, TValue> AddChild(LiteDbMutableNode<TKey, TValue> newChild)
+        private BsonDocument BsonDocumentChildNodes
         {
-            throw new NotImplementedException();
+            get
+            {
+                if (!this.BsonDocument.TryGetValue("cn", out var childNodes))
+                {
+                    this.BsonDocument.Add("cn", childNodes = new BsonDocument());
+                }
+                return childNodes.AsDocument;
+            }
         }
 
-        public LiteDbMutableNode<TKey, TValue> RemoveChild(LiteDbMutableNode<TKey, TValue> child)
+        #region Identified KeyValue Node
+
+        public bool TryGetId(out BsonValue id)
         {
-            throw new NotImplementedException();
+            return this.BsonDocument.TryGetValue("_id", out id);
         }
 
-        public LiteDbMutableNode<TKey, TValue> ReplaceChild(LiteDbMutableNode<TKey, TValue> childToReplace, LiteDbMutableNode<TKey, TValue> newChild)
+        #endregion Identified KeyValue Node
+
+        public bool HasChildNodes => this.BsonDocumentChildNodes.Any();
+
+        public bool HasValue { get; internal set; }
+
+        public LiteDbMutableNode<TValue> AddChild(LiteDbMutableNode<TValue> newChild)
         {
-            throw new NotImplementedException();
+            newChild.TryGetKey(out var childKey);
+
+            this.BsonDocumentChildNodes.Set(childKey, this.nodes.Insert(newChild.BsonDocument));
+
+            this.nodes.Update(this.BsonDocument);
+            return this;
         }
 
-        public bool TryGetChildNode(TKey id, out LiteDbMutableNode<TKey, TValue> childNode)
+        public LiteDbMutableNode<TValue> RemoveChild(LiteDbMutableNode<TValue> childToRemove)
         {
-            throw new NotImplementedException();
+            if (childToRemove.TryGetKey(out var childKey))
+                if (this.BsonDocumentChildNodes.TryGetValue(childKey, out var childId))
+                    if (this.nodes.Delete(childId))
+                        if (this.BsonDocumentChildNodes.Remove(childKey))
+                            this.nodes.Update(this.BsonDocument);
+
+            return this;
+        }
+
+        public LiteDbMutableNode<TValue> ReplaceChild(LiteDbMutableNode<TValue> childToReplace, LiteDbMutableNode<TValue> newChild)
+        {
+            if (object.ReferenceEquals(childToReplace, newChild))
+                return this; // nothing to do
+
+            newChild.TryGetKey(out var newChildKey);
+            childToReplace.TryGetKey(out var childToReplaceKey);
+
+            if (!EqualityComparer<string>.Default.Equals(childToReplaceKey, newChildKey))
+                throw new InvalidOperationException($"Key of child to replace (key='{childToReplaceKey}') and new child (key='{newChildKey}') must be equal");
+
+            if (this.BsonDocumentChildNodes.TryGetValue(newChildKey, out var childId))
+            {
+                if (!childToReplace.TryGetId(out var childToReplaceId) || !childId.Equals(childToReplaceId))
+                    throw new InvalidOperationException($"The node (id='{newChildKey}') doesn't replace any of the existing child nodes");
+
+                this.BsonDocumentChildNodes.Set(newChildKey, this.nodes.Insert(newChild.BsonDocument));
+                this.nodes.Update(this.BsonDocument);
+            }
+            return this;
+        }
+
+        public bool TryGetChildNode(string key, out LiteDbMutableNode<TValue> childNode)
+        {
+            childNode = null;
+            if (!this.BsonDocumentChildNodes.TryGetValue(key, out var childNodeId))
+                return false;
+
+            childNode = new LiteDbMutableNode<TValue>(this.nodes, this.nodes.FindById(childNodeId), key);
+            return true;
         }
     }
 }

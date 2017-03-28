@@ -1,7 +1,6 @@
 ﻿using LiteDB;
 using System;
 using System.IO;
-using Treesor.PSDriveProvider.Services;
 using Xunit;
 
 namespace Elementary.Hierarchy.Collections.LiteDb.Test
@@ -10,13 +9,13 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test
     {
         private LiteDatabase database;
         private MemoryStream databaseStream;
-        private LiteDbHierarchy<string, Guid> hierarchy;
+        private LiteDbHierarchy<Guid> hierarchy;
 
         public LiteDbHierarchyTest()
         {
             this.databaseStream = new MemoryStream();
             this.database = new LiteDatabase(this.databaseStream);
-            this.hierarchy = new LiteDbHierarchy<string, Guid>(this.database);
+            this.hierarchy = new LiteDbHierarchy<Guid>(this.database);
         }
 
         [Fact]
