@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
 {
-    public class LiteDbMutableNode<TValue> : BsonKeyValueNode<string, TValue>,
+    public class LiteDbMutableNode<TValue> : BsonKeyValueNode<TValue>,
         IHierarchyNodeWriter<LiteDbMutableNode<TValue>>,
         IHasIdentifiableChildNodes<string, LiteDbMutableNode<TValue>>
     {
@@ -15,7 +15,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
         #region Construction and initialization of this instance
 
         public LiteDbMutableNode(LiteCollection<BsonDocument> nodes, BsonDocument bsonDocument)
-            : base(bsonDocument)
+            : base(nodes, bsonDocument)
         {
             this.nodes = nodes;
             if (!this.TryGetId(out var id))
@@ -23,7 +23,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
         }
 
         public LiteDbMutableNode(LiteCollection<BsonDocument> nodes, BsonDocument bsonDocument, string key)
-            : base(bsonDocument, key)
+            : base(nodes, bsonDocument, key)
         {
             this.nodes = nodes;
 
@@ -32,7 +32,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
         }
 
         public LiteDbMutableNode(LiteCollection<BsonDocument> nodes, BsonDocument bsonDocument, string key, TValue value)
-            : base(bsonDocument, key, value)
+            : base(nodes, bsonDocument, key, value)
         {
             this.nodes = nodes;
 
@@ -54,18 +54,9 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
             }
         }
 
-        #region Identified KeyValue Node
-
-        public bool TryGetId(out BsonValue id)
-        {
-            return this.BsonDocument.TryGetValue("_id", out id);
-        }
-
-        #endregion Identified KeyValue Node
-
         public bool HasChildNodes => this.BsonDocumentChildNodes.Any();
 
-        public bool HasValue { get; internal set; }
+        public bool HasValue => this.TryGetValue(out var _);
 
         public LiteDbMutableNode<TValue> AddChild(LiteDbMutableNode<TValue> newChild)
         {
@@ -123,32 +114,5 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
             childNode = new LiteDbMutableNode<TValue>(this.nodes, this.nodes.FindById(childNodeId), key);
             return true;
         }
-
-        #region Equals and GetHashCode delegate behavior to _id of inner node
-
-        public override bool Equals(object obj)
-        {
-            if (object.ReferenceEquals(obj, this))
-                return true;
-
-            var objAsLiteDbMutableNode = obj as LiteDbMutableNode<TValue>;
-            if (objAsLiteDbMutableNode == null)
-                return false;
-
-            if (this.TryGetId(out var thisId) && objAsLiteDbMutableNode.TryGetId(out var objId))
-                return thisId.Equals(objId);
-
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            if (this.TryGetId(out var id))
-                return id.GetHashCode();
-
-            throw new InvalidOperationException("any node must have an _id");
-        }
-
-        #endregion Equals and GetHashCode delegate behavior to _id of inner node
     }
 }

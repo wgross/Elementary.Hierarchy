@@ -293,53 +293,6 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
 
         #endregion Replace Child
 
-        #region Equals and GetHashCode delegate behavior to _id of inner node
-
-        [Fact]
-        public void LiteDbMutableNode_are_equal_if_documents_are_same()
-        {
-            // ARRANGE
-            // nodes share doucment but not the data
-
-            var bsonDocument = new BsonDocument();
-            var node1 = new LiteDbMutableNode<int>(this.nodes, bsonDocument, "key", 1);
-            var node2 = new LiteDbMutableNode<int>(this.nodes, bsonDocument, "key2", 2);
-
-            // ACT
-
-            var result = node1.Equals(node2);
-
-            // ACT & ASSERT
-
-            Assert.True(result);
-            Assert.Equal(node1.GetHashCode(), node2.GetHashCode());
-        }
-
-        [Fact]
-        public void LiteDbMutableNode_are_equal_if_ids_are_same()
-        {
-            // ARRANGE
-            // nodes share doucment but not the data
-
-            var id = ObjectId.NewObjectId();
-            var bsonDocument1 = new BsonDocument();
-            bsonDocument1.Set("_id", id);
-            var bsonDocument2 = new BsonDocument();
-            bsonDocument2.Set("_id", id);
-
-            var node1 = new LiteDbMutableNode<int>(this.nodes, bsonDocument1, "key", 1);
-            var node2 = new LiteDbMutableNode<int>(this.nodes, bsonDocument2, "key2", 2);
-
-            // ACT
-
-            var result = node1.Equals(node2);
-
-            // ACT & ASSERT
-
-            Assert.True(result);
-            Assert.Equal(node1.GetHashCode(), node2.GetHashCode());
-        }
-
-        #endregion Equals and GetHashCode delegate behavior to _id of inner node
+        
     }
 }

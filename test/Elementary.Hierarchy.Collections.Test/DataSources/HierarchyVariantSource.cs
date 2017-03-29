@@ -1,5 +1,8 @@
-﻿using System.Collections;
+﻿using Elementary.Hierarchy.Collections.LiteDb;
+using LiteDB;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Elementary.Hierarchy.Collections.Test
 {
@@ -12,6 +15,7 @@ namespace Elementary.Hierarchy.Collections.Test
             yield return new object[] { new MutableHierarchy<string, string>() };
             yield return new object[] { new MutableHierarchyEx<string, string>() };
             yield return new object[] { new ImmutableHierarchyEx<string, string>() };
+            yield return new object[] { new LiteDbHierarchy<string>(new LiteDatabase(new MemoryStream()).GetCollection("nodes")) };
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
