@@ -31,6 +31,15 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
                 this.BsonDocument.Set("_id", ObjectId.NewObjectId());
         }
 
+        public LiteDbMutableNode(LiteCollection<BsonDocument> nodes, BsonDocument bsonDocument, string key, TValue value)
+            : base(bsonDocument, key, value)
+        {
+            this.nodes = nodes;
+
+            if (!this.TryGetId(out var id))
+                this.BsonDocument.Set("_id", ObjectId.NewObjectId());
+        }
+
         #endregion Construction and initialization of this instance
 
         private BsonDocument BsonDocumentChildNodes
@@ -60,9 +69,13 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
 
         public LiteDbMutableNode<TValue> AddChild(LiteDbMutableNode<TValue> newChild)
         {
-            newChild.TryGetKey(out var childKey);
+            if (!newChild.TryGetKey(out var newChildKey))
+                throw new InvalidOperationException("Child node must have a key");
 
-            this.BsonDocumentChildNodes.Set(childKey, this.nodes.Insert(newChild.BsonDocument));
+            if (this.BsonDocumentChildNodes.TryGetValue(newChildKey, out var newChildId))
+                throw new InvalidOperationException($"Node contains child node(id='{newChildId}') with same key='{newChildKey}'");
+
+            this.BsonDocumentChildNodes.Set(newChildKey, this.nodes.Insert(newChild.BsonDocument));
 
             this.nodes.Update(this.BsonDocument);
             return this;
@@ -110,5 +123,32 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
             childNode = new LiteDbMutableNode<TValue>(this.nodes, this.nodes.FindById(childNodeId), key);
             return true;
         }
+
+        #region Equals and GetHashCode delegate behavior to _id of inner node
+
+        public override bool Equals(object obj)
+        {
+            if (object.ReferenceEquals(obj, this))
+                return true;
+
+            var objAsLiteDbMutableNode = obj as LiteDbMutableNode<TValue>;
+            if (objAsLiteDbMutableNode == null)
+                return false;
+
+            if (this.TryGetId(out var thisId) && objAsLiteDbMutableNode.TryGetId(out var objId))
+                return thisId.Equals(objId);
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            if (this.TryGetId(out var id))
+                return id.GetHashCode();
+
+            throw new InvalidOperationException("any node must have an _id");
+        }
+
+        #endregion Equals and GetHashCode delegate behavior to _id of inner node
     }
 }
