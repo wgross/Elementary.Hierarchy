@@ -98,7 +98,9 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
 
         public bool RemoveValue()
         {
-            return this.bsonDocument.Remove("value");
+            if (this.bsonDocument.Remove("value"))
+                return this.nodes.Update(this.bsonDocument);
+            return false;
         }
 
         #region Equals and GetHashCode delegate behavior to _id of inner node

@@ -146,6 +146,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
             // ARRANGE
 
             var node = new BsonKeyValueNode<int>(this.nodes, new BsonDocument());
+            this.nodes.Insert(node.BsonDocument);
             node.SetValue(1);
 
             // ACT
@@ -156,6 +157,14 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
 
             Assert.True(result);
             Assert.False(node.TryGetValue(out var value));
+
+            // check db: removes uses update which doesn
+
+            var nodeDoc = this.nodes.FindAll().Single();
+
+            Assert.True(nodeDoc.TryGetValue("_id", out var nodeDocId));
+            Assert.False(nodeDoc.TryGetValue("key", out var nodeDocKey));
+            Assert.False(nodeDoc.TryGetValue("value", out var valueBson));
         }
 
         [Fact]

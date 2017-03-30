@@ -37,7 +37,13 @@ namespace Elementary.Hierarchy.Collections.LiteDb
 
         public bool Remove(HierarchyPath<string> hierarchyPath, int? maxDepth = default(int?))
         {
-            throw new NotImplementedException();
+            if (maxDepth != null)
+                throw new NotSupportedException(nameof(maxDepth));
+
+            var writer = new RemoveValueHierarchyWriter<string, TValue, LiteDbMutableNode<TValue>>();
+            writer.ClearValue(this.GetOrCreateRootNode(), hierarchyPath);
+
+            return writer.ValueWasCleared;
         }
 
         public bool RemoveNode(HierarchyPath<string> hierarchyPath, bool recurse)

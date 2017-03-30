@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Elementary.Hierarchy.Collections.Test.Operations
 {
-    public class ClearValueHierarchyWriterTest
+    public class RemoveValueAndPruneHierarchyWriterTest
     {
         public interface NodeType :
             IHierarchyNodeWriter<NodeType>,
@@ -17,7 +17,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
         }
 
         [Fact]
-        public void ClearValueHierarchyWriter_removes_value_from_startNode()
+        public void RemoveValueAndPruneHierarchyWriter_removes_value_from_startNode()
         {
             // ARRANGE
 
@@ -26,7 +26,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
                 .Setup(n => n.RemoveValue())
                 .Returns(true);
 
-            var writer = new RemoveValueHierarchyWriter<string, int, NodeType>(pruneAfterClear: false);
+            var writer = new RemoveValueAndPruneHierarchyWriter<string, int, NodeType>();
 
             // ACT
 
@@ -40,7 +40,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
         }
 
         [Fact]
-        public void ClearValueHierarchyWriter_removes_value_from_childNode()
+        public void RemoveValueAndPruneHierarchyWriter_removes_value_from_childNode()
         {
             // ARRANGE
 
@@ -56,7 +56,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
                 .Setup(n => n.TryGetChildNode("a", out childNode))
                 .Returns(true);
 
-            var writer = new RemoveValueHierarchyWriter<string, int, NodeType>(pruneAfterClear: false);
+            var writer = new RemoveValueAndPruneHierarchyWriter<string, int, NodeType>();
 
             // ACT
 
@@ -73,7 +73,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
         }
 
         [Fact]
-        public void ClearValueHierarchyWriter_removes_value_from_grandChildNode()
+        public void RemoveValueAndPruneHierarchyWriter_removes_value_from_grandChildNode()
         {
             // ARRANGE
 
@@ -96,7 +96,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
                 .Setup(n => n.TryGetChildNode("a", out childNode))
                 .Returns(true);
 
-            var writer = new RemoveValueHierarchyWriter<string, int, NodeType>(pruneAfterClear: false);
+            var writer = new RemoveValueAndPruneHierarchyWriter<string, int, NodeType>();
 
             // ACT
 
@@ -115,7 +115,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
         }
 
         [Fact]
-        public void ClearValueHierarchyWriter_doesnt_removes_value_from_startNode_if_no_value_was_set()
+        public void RemoveValueAndPruneHierarchyWriter_doesnt_removes_value_from_startNode_if_no_value_was_set()
         {
             // ARRANGE
 
@@ -124,7 +124,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
                 .Setup(n => n.RemoveValue())
                 .Returns(false);
 
-            var writer = new RemoveValueHierarchyWriter<string, int, NodeType>(pruneAfterClear: false);
+            var writer = new RemoveValueAndPruneHierarchyWriter<string, int, NodeType>();
 
             // ACT
 
@@ -138,7 +138,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
         }
 
         [Fact]
-        public void ClearValueHierarchyWriter_doesnt_remove_value_from_startNode_child_if_no_value_was_set()
+        public void RemoveValueAndPruneHierarchyWriter_doesnt_remove_value_from_startNode_child_if_no_value_was_set()
         {
             // ARRANGE
 
@@ -157,7 +157,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
                 .Setup(n => n.TryGetChildNode("a", out childNode))
                 .Returns(true);
 
-            var writer = new RemoveValueHierarchyWriter<string, int, NodeType>(pruneAfterClear: false);
+            var writer = new RemoveValueAndPruneHierarchyWriter<string, int, NodeType>();
 
             // ACT
 
@@ -172,7 +172,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
         }
 
         [Fact]
-        public void ClearValueHierarchyWriter_prunes_hierarchy_if_no_descendant_has_value()
+        public void RemoveValueAndPruneHierarchyWriter_prunes_hierarchy_if_no_descendant_has_value()
         {
             // ARRANGE
 
@@ -190,7 +190,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
                 .Setup(n => n.RemoveChild(childNode))
                 .Returns(startNode.Object); // node is changed in place
 
-            var writer = new RemoveValueHierarchyWriter<string, int, NodeType>(pruneAfterClear: true);
+            var writer = new RemoveValueAndPruneHierarchyWriter<string, int, NodeType>();
 
             // ACT
 
@@ -206,7 +206,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
         }
 
         [Fact]
-        public void ClearValueHierarchyWriter_prunes_hierarchy_if_no_descendant_has_value_and_no_value_was_removed()
+        public void RemoveValueAndPruneHierarchyWriter_prunes_hierarchy_if_no_descendant_has_value_and_no_value_was_removed()
         {
             // ARRANGE
 
@@ -224,7 +224,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
                 .Setup(n => n.RemoveChild(childNode))
                 .Returns(startNode.Object); // node is changed in place
 
-            var writer = new RemoveValueHierarchyWriter<string, int, NodeType>(pruneAfterClear: true);
+            var writer = new RemoveValueAndPruneHierarchyWriter<string, int, NodeType>();
 
             // ACT
 
@@ -240,7 +240,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
         }
 
         [Fact]
-        public void ClearValueHierarchyWriter_doesnt_prune_hierarchy_if_descendant_has_value()
+        public void RemoveValueAndPruneHierarchyWriter_doesnt_prune_hierarchy_if_descendant_has_value()
         {
             // ARRANGE
 
@@ -268,7 +268,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
                 .Setup(n => n.TryGetChildNode("a", out childNode))
                 .Returns(true);
 
-            var writer = new RemoveValueHierarchyWriter<string, int, NodeType>(pruneAfterClear: true);
+            var writer = new RemoveValueAndPruneHierarchyWriter<string, int, NodeType>();
 
             // ACT
 
@@ -288,7 +288,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
         }
 
         [Fact]
-        public void ClearValueHierarchyWriter_doesnt_prune_hierarchy_if_value_wasnt_removed_and_descendant_has_value()
+        public void RemoveValueAndPruneHierarchyWriter_doesnt_prune_hierarchy_if_value_wasnt_removed_and_descendant_has_value()
         {
             // ARRANGE
 
@@ -316,7 +316,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
                 .Setup(n => n.TryGetChildNode("a", out childNode))
                 .Returns(true);
 
-            var writer = new RemoveValueHierarchyWriter<string, int, NodeType>(pruneAfterClear: true);
+            var writer = new RemoveValueAndPruneHierarchyWriter<string, int, NodeType>();
 
             // ACT
 

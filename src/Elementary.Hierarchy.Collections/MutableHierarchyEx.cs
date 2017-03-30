@@ -130,7 +130,7 @@ namespace Elementary.Hierarchy.Collections
             if (maxDepth != null)
                 throw new NotSupportedException(nameof(maxDepth));
 
-            var writer = new RemoveValueHierarchyWriter<TKey, TValue, MutableNode<TKey, TValue>>(this.pruneOnUnsetValue);
+            var writer = new RemoveValueAndPruneHierarchyWriter<TKey, TValue, MutableNode<TKey, TValue>>();
             writer.ClearValue(this.rootNode, hierarchyPath);
 
             return writer.ValueWasCleared;

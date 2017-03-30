@@ -5,7 +5,7 @@ namespace Elementary.Hierarchy.Collections.Test
     public class HierarchyRemoveValueTest
     {
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
-        public void IHierarchy_Remove_value_from_root_returns_true(IHierarchy<string, string> hierarchy)
+        public void IHierarchy_removes_value_from_root(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
             string test = "test";
@@ -26,11 +26,11 @@ namespace Elementary.Hierarchy.Collections.Test
 
             Assert.False(hierarchy.TryGetValue(HierarchyPath.Create<string>(), out value));
             Assert.True(hierarchy.TryGetValue(HierarchyPath.Create("a"), out value));
-            Assert.Same(test1, value);
+            Assert.Equal(test1, value);
         }
 
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
-        public void IHierarchy_Remove_value_twice_from_root_returns_false(IHierarchy<string, string> hierarchy)
+        public void IHierarchy_remove_value_twice_from_root_returns_false(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
             string test = "test";
@@ -50,7 +50,7 @@ namespace Elementary.Hierarchy.Collections.Test
         }
 
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
-        public void IHierarchy_Remove_value_from_child_returns_true(IHierarchy<string, string> hierarchy)
+        public void IHierarchy_remove_value_from_child_returns_true(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
 
@@ -74,14 +74,14 @@ namespace Elementary.Hierarchy.Collections.Test
 
             // new node has no value
             Assert.True(hierarchy.TryGetValue(HierarchyPath.Create<string>(), out value));
-            Assert.Same(test, value);
+            Assert.Equal(test, value);
             Assert.False(hierarchy.TryGetValue(HierarchyPath.Create("a"), out value));
             Assert.True(hierarchy.TryGetValue(HierarchyPath.Create("a", "b"), out value));
-            Assert.Same(test2, value);
+            Assert.Equal(test2, value);
         }
 
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
-        public void IHierarchy_Remove_value_from_root_recursive_returns_true(IHierarchy<string, string> hierarchy)
+        public void IHierarchy_removes_value_from_root_recursive_returns_true(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
 
@@ -111,7 +111,7 @@ namespace Elementary.Hierarchy.Collections.Test
         }
 
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
-        public void IHierarchy_Remove_false_if_no_value_was_removed(IHierarchy<string, string> hierarchy)
+        public void IHierarchy_removes_false_if_no_value_was_removed(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
 
@@ -135,7 +135,7 @@ namespace Elementary.Hierarchy.Collections.Test
         }
 
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
-        public void IHierarchy_Remove_value_from_child_twice_returns_false(IHierarchy<string, string> hierarchy)
+        public void IHierarchy_removes_value_from_child_twice_returns_false(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
             string test = "test";
@@ -157,7 +157,7 @@ namespace Elementary.Hierarchy.Collections.Test
         }
 
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
-        public void IHierarchy_Remove_value_from_unknown_node_returns_false(IHierarchy<string, string> hierarchy)
+        public void IHierarchy_removes_value_from_unknown_node_returns_false(IHierarchy<string, string> hierarchy)
         {
             // ACT & ASSERT
 

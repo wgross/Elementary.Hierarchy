@@ -162,7 +162,7 @@ namespace Elementary.Hierarchy.Collections
             bool isLocked = false;
             try
             {
-                var writer = new RemoveValueHierarchyWriter<TKey, TValue, ImmutableNode<TKey, TValue>>(this.pruneOnUnsetValue);
+                var writer = new RemoveValueAndPruneHierarchyWriter<TKey, TValue, ImmutableNode<TKey, TValue>>();
                 writer.ClearValue(this.rootNode, hierarchyPath);
 
                 return writer.ValueWasCleared;
