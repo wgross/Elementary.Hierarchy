@@ -293,6 +293,85 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
 
         #endregion Replace Child
 
-        
+        #region Remove all child nodes
+
+        [Fact]
+        public void LiteDbMutableNode_removes_all_childnodes_recursively()
+        {
+            // ARRANGE
+
+            var child = new LiteDbMutableNode<int>(this.nodes, new BsonDocument(), "a");
+            var secondChild = new LiteDbMutableNode<int>(this.nodes, new BsonDocument(), "b");
+            var node = new LiteDbMutableNode<int>(this.nodes, this.rootDocument).AddChild(child).AddChild(secondChild);
+            var grandChild = new LiteDbMutableNode<int>(this.nodes, new BsonDocument(), "c");
+            child.AddChild(grandChild);
+
+            // ACT
+
+            var result = node.RemoveAllChildNodes(recurse: true);
+
+            // ASSERT
+            // node has a child now
+
+            Assert.True(result);
+            Assert.False(node.HasChildNodes);
+            Assert.False(node.TryGetChildNode("a", out var addedChild));
+
+            // check db
+            // only the node is there
+
+            var rootDoc = this.nodes.FindAll().Single();
+
+            Assert.NotNull(rootDoc);
+            Assert.True(rootDoc.TryGetValue("cn", out var childNodesDoc));
+            Assert.Equal(0, childNodesDoc.AsDocument.Count);
+        }
+
+        [Fact]
+        public void LiteDbMutableNode_fails_on_removing_if_node_has_child_nodes()
+        {
+            // ARRANGE
+
+            var child = new LiteDbMutableNode<int>(this.nodes, new BsonDocument(), "a");
+            var secondChild = new LiteDbMutableNode<int>(this.nodes, new BsonDocument(), "b");
+            var node = new LiteDbMutableNode<int>(this.nodes, this.rootDocument).AddChild(child).AddChild(secondChild);
+            var grandChild = new LiteDbMutableNode<int>(this.nodes, new BsonDocument(), "c");
+            child.AddChild(grandChild);
+
+            // ACT
+
+            var result = node.RemoveAllChildNodes(recurse: false);
+
+            // ASSERT
+            // node has a child now
+
+            Assert.False(result);
+            Assert.True(node.HasChildNodes);
+
+            // check db
+            // all nodes are still there
+
+            Assert.Equal(4, this.nodes.FindAll().Count());
+        }
+
+        [Fact]
+        public void LiteDbMutableNode_RemoveAllChildNodes_returns_false_if_no_nodes_have_been_deleted()
+        {
+            // ARRANGE
+
+            var node = new LiteDbMutableNode<int>(this.nodes, this.rootDocument);
+
+            // ACT
+
+            var result = node.RemoveAllChildNodes(recurse: false);
+
+            // ASSERT
+            // node has a child now
+
+            Assert.False(result);
+            Assert.False(node.HasChildNodes);
+        }
+
+        #endregion Remove all child nodes
     }
 }

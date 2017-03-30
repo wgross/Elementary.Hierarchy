@@ -48,7 +48,15 @@ namespace Elementary.Hierarchy.Collections.LiteDb
 
         public bool RemoveNode(HierarchyPath<string> hierarchyPath, bool recurse)
         {
-            throw new NotImplementedException();
+            if (hierarchyPath.IsRoot)
+            {
+                if (this.GetOrCreateRootNode().HasChildNodes && !recurse)
+                    return false;
+
+                this.Remove(hierarchyPath);
+                return true; // even if it has no value.
+            }
+            return this.GetOrCreateRootNode().RemoveAllChildNodes(recurse);
         }
 
         public IHierarchyNode<string, TValue> Traverse(HierarchyPath<string> startAt)

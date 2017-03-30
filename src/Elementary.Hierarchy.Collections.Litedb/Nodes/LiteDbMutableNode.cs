@@ -54,6 +54,27 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
             }
         }
 
+        public bool RemoveAllChildNodes(bool recurse)
+        {
+            if (this.HasChildNodes && !recurse)
+                return false;
+
+            var childNodeInfos = this.BsonDocumentChildNodes
+                .Aggregate(new List<KeyValuePair<string, BsonValue>>(), (l, kv) => { l.Add(kv); return l; });
+
+            bool? somethingHasBeenDeleted = null;
+            foreach (var childNodeInfo in childNodeInfos)
+                if (this.TryGetChildNode(childNodeInfo.Key, out var childNode))
+                    if (childNode.RemoveAllChildNodes(recurse: true))
+                        if (this.nodes.Delete(childNodeInfo.Value))
+                            somethingHasBeenDeleted = this.BsonDocumentChildNodes.Remove(childNodeInfo.Key);
+
+            if (!somethingHasBeenDeleted.HasValue)
+                return false;
+
+            return this.nodes.Update(this.BsonDocument) && !this.HasChildNodes;
+        }
+
         public bool HasChildNodes => this.BsonDocumentChildNodes.Any();
 
         public bool HasValue => this.TryGetValue(out var _);
