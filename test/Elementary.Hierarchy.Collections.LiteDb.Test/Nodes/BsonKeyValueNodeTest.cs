@@ -1,6 +1,5 @@
 ﻿using Elementary.Hierarchy.Collections.LiteDb.Nodes;
 using LiteDB;
-using System;
 using System.IO;
 using System.Linq;
 using Xunit;
@@ -11,7 +10,6 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
     {
         private LiteDatabase database;
         private MemoryStream databaseStream;
-        private LiteDbHierarchy<Guid> hierarchy;
         private readonly LiteCollection<BsonDocument> nodes;
 
         public BsonKeyValueNodeTest()

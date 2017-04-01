@@ -35,25 +35,13 @@ namespace Elementary.Hierarchy.Collections.Nodes
         {
         }
 
+        /// <summary>
+        /// Ctor to create an inner mode having a key
+        /// </summary>
+        /// <param name="key"></param>
         public MutableNode(TKey key)
             : base(key)
         { }
-
-        public MutableNode(TKey key, TValue value)
-            : base(key, value)
-        { }
-
-        public MutableNode(TKey key, IEnumerable<MutableNode<TKey, TValue>> childNodes)
-            : base(key)
-        {
-            this.childNodes = childNodes.ToArray();
-        }
-
-        public MutableNode(TKey key, TValue value, IEnumerable<MutableNode<TKey, TValue>> childNodes)
-            : base(key, value)
-        {
-            this.childNodes = childNodes.ToArray();
-        }
 
         #endregion Construction and initialization of this instance
 
