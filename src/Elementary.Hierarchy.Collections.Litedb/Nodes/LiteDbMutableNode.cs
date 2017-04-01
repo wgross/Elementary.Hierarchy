@@ -31,15 +31,6 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
                 this.BsonDocument.Set("_id", ObjectId.NewObjectId());
         }
 
-        public LiteDbMutableNode(LiteCollection<BsonDocument> nodes, BsonDocument bsonDocument, string key, TValue value)
-            : base(nodes, bsonDocument, key, value)
-        {
-            this.nodes = nodes;
-
-            if (!this.TryGetId(out var id))
-                this.BsonDocument.Set("_id", ObjectId.NewObjectId());
-        }
-
         #endregion Construction and initialization of this instance
 
         private BsonDocument BsonDocumentChildNodes
