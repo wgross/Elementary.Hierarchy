@@ -47,23 +47,39 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
 
         public bool RemoveAllChildNodes(bool recurse)
         {
-            if (this.HasChildNodes && !recurse)
-                return false;
+            if (!this.HasChildNodes)
+                return false; // obviously removal of childnodes is not necessary
 
+            if (this.HasChildNodes && !recurse)
+                return false; // removal of child nodes isn't allowed
+
+            return EnsureChildNodesAreDeleted();
+        }
+
+        public bool EnsureChildNodesAreDeleted()
+        {
             var childNodeInfos = this.BsonDocumentChildNodes
                 .Aggregate(new List<KeyValuePair<string, BsonValue>>(), (l, kv) => { l.Add(kv); return l; });
 
-            bool? somethingHasBeenDeleted = null;
+            bool? childNodsHaveBeenDeleted = null;
             foreach (var childNodeInfo in childNodeInfos)
+            {
                 if (this.TryGetChildNode(childNodeInfo.Key, out var childNode))
-                    if (childNode.RemoveAllChildNodes(recurse: true))
-                        if (this.nodes.Delete(childNodeInfo.Value))
-                            somethingHasBeenDeleted = this.BsonDocumentChildNodes.Remove(childNodeInfo.Key);
+                {
+                    if (childNode.EnsureChildNodesAreDeleted()) // descend int the tree further to clean up.
+                        if (this.nodes.Delete(childNodeInfo.Value)) // the child node committed the removal of its child nodes->delete the child document
+                            childNodsHaveBeenDeleted = this.BsonDocumentChildNodes.Remove(childNodeInfo.Key) || childNodsHaveBeenDeleted.GetValueOrDefault(false); // remove the child id from ths document
+                }
+            }
 
-            if (!somethingHasBeenDeleted.HasValue)
-                return false;
+            // this node requires an update if the strcuture has changed.
 
-            return this.nodes.Update(this.BsonDocument) && !this.HasChildNodes;
+            if (childNodsHaveBeenDeleted.GetValueOrDefault(false))
+                return this.nodes.Update(this.BsonDocument);
+
+            // at the end the question is: are there child nodes left or not.
+
+            return !this.HasChildNodes;
         }
 
         public bool HasChildNodes => this.BsonDocumentChildNodes.Any();

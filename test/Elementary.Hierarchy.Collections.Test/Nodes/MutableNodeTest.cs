@@ -96,10 +96,11 @@ namespace Elementary.Hierarchy.Collections.Test.Nodes
         public void MutableNode_fails_on_replacing_unknown_child()
         {
             // ARRANGE
+            // none of the child nodes are added to the root node. 
 
             var child = new MutableNode<string, int>("a");
             var node = MutableNode<string, int>.CreateRoot();
-            var secondChild = new MutableNode<string, int>("b");
+            var secondChild = new MutableNode<string, int>("a");
 
             // ACT
 
@@ -107,7 +108,7 @@ namespace Elementary.Hierarchy.Collections.Test.Nodes
 
             // ASSERT
 
-            Assert.Equal("Key of child to replace (key='a') and new child (key='b') must be equal", result.Message);
+            Assert.Equal("The node (id=a) doesn't substutite any of the existing child nodes", result.Message);
             Assert.False(node.HasChildNodes);
         }
     }

@@ -18,10 +18,9 @@
     <PackageReference Include="LiteDB" Version="3.1.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
     <PackageReference Include="Moq" Version="4.7.1" />
-    <PackageReference Include="dotnet-test-nunit" Version="3.4.0-beta-2" />
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
-    <PackageReference Include="xunit" Version="2.2.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
+    <PackageReference Include="xunit" Version="2.3.0-beta1-build3643" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.0-beta1-build1309" />
   </ItemGroup>
 
   <ItemGroup>

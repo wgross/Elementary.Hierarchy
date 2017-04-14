@@ -296,9 +296,14 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
         #region Remove all child nodes
 
         [Fact]
-        public void LiteDbMutableNode_removes_all_childnodes_recursively()
+        public void LiteDbMutableNode_removes_all_childnodes_recursivly()
         {
             // ARRANGE
+            //           <node>
+            //           /   \
+            //          a     b
+            //         /
+            //        c
 
             var child = new LiteDbMutableNode<int>(this.nodes, new BsonDocument(), "a");
             var secondChild = new LiteDbMutableNode<int>(this.nodes, new BsonDocument(), "b");
@@ -311,7 +316,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
             var result = node.RemoveAllChildNodes(recurse: true);
 
             // ASSERT
-            // node has a child now
+            // descdants hav been removed
 
             Assert.True(result);
             Assert.False(node.HasChildNodes);
