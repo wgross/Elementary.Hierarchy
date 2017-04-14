@@ -8,7 +8,8 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
 {
     public class LiteDbMutableNode<TValue> : BsonKeyValueNode<TValue>,
         IHierarchyNodeWriter<LiteDbMutableNode<TValue>>,
-        IHasIdentifiableChildNodes<string, LiteDbMutableNode<TValue>>
+        IHasIdentifiableChildNodes<string, LiteDbMutableNode<TValue>>,
+        IHasChildNodes<LiteDbMutableNode<TValue>>
     {
         private readonly LiteCollection<BsonDocument> nodes;
 
@@ -85,6 +86,13 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
         public bool HasChildNodes => this.BsonDocumentChildNodes.Any();
 
         public bool HasValue => this.TryGetValue(out var _);
+
+        public IEnumerable<LiteDbMutableNode<TValue>> ChildNodes => this.BsonDocumentChildNodes.Select(kv =>
+        {
+            return this.TryGetChildNode(kv.Key, out var node)
+                ? node
+                : throw new InvalidOperationException($"Db is inconsistent: a node(key='{kv.Key}',id='{kv.Value}') is missing");
+        });
 
         public LiteDbMutableNode<TValue> AddChild(LiteDbMutableNode<TValue> newChild)
         {

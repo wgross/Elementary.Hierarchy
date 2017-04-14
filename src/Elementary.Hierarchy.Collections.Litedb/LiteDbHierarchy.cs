@@ -1,5 +1,6 @@
 ﻿using Elementary.Hierarchy.Collections.LiteDb.Nodes;
 using Elementary.Hierarchy.Collections.Operations;
+using Elementary.Hierarchy.Collections.Traversal;
 using LiteDB;
 using System;
 
@@ -59,9 +60,13 @@ namespace Elementary.Hierarchy.Collections.LiteDb
             return this.GetOrCreateRootNode().RemoveAllChildNodes(recurse);
         }
 
+        /// <summary>
+        /// Starts a traversal of the hierarchy at the specified hierachy node.
+        /// </summary>
+        /// <returns>A traversable representation of the root node</returns>
         public IHierarchyNode<string, TValue> Traverse(HierarchyPath<string> startAt)
         {
-            return null;
+            return ((IHierarchyNode<string, TValue>)new HierarchyTraverser<string, TValue, LiteDbMutableNode<TValue>>(this.rootNode)).DescendantAt(startAt);
         }
 
         public bool TryGetValue(HierarchyPath<string> hierarchyPath, out TValue value)
