@@ -106,7 +106,7 @@ namespace Elementary.Hierarchy.Collections.Test
             Assert.True(result.Message.Contains("already has a value"));
             Assert.True(result.Message.Contains("'a'"));
             Assert.True(hierarchy.TryGetValue(HierarchyPath.Create("a"), out var value));
-            Assert.Same(test1, value);
+            Assert.Equal(test1, value);
             Assert.Equal("path", result.ParamName);
         }
 

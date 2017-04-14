@@ -56,9 +56,9 @@ namespace Elementary.Hierarchy.Collections.Test
             // ASSERT
             // hierarchy contains the root date and the new node.
             Assert.True(hierarchy.TryGetValue(HierarchyPath.Create<string>(), out var value));
-            Assert.Same(test, value);
+            Assert.Equal(test, value);
             Assert.True(hierarchy.TryGetValue(HierarchyPath.Create("a"), out value));
-            Assert.Same(test1, value);
+            Assert.Equal(test1, value);
         }
 
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
@@ -79,9 +79,9 @@ namespace Elementary.Hierarchy.Collections.Test
             // ASSERT
             // hierarchy contains the root date and the new node.
             Assert.True(hierarchy.TryGetValue(HierarchyPath.Create<string>(), out var value1));
-            Assert.Same(test, value1);
+            Assert.Equal(test, value1);
             Assert.True(hierarchy.TryGetValue(HierarchyPath.Create("a"), out var value2));
-            Assert.Same(test1, value2);
+            Assert.Equal(test1, value2);
         }
 
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
@@ -103,11 +103,11 @@ namespace Elementary.Hierarchy.Collections.Test
             // ASSERT
             // new hierarchy contains the root date and the new node.
             Assert.True(hierarchy.TryGetValue(HierarchyPath.Create<string>(), out var value1));
-            Assert.Same(test, value1);
+            Assert.Equal(test, value1);
             Assert.True(hierarchy.TryGetValue(HierarchyPath.Create("a"), out var value2));
-            Assert.Same(test1, value2);
+            Assert.Equal(test1, value2);
             Assert.True(hierarchy.TryGetValue(HierarchyPath.Create("b"), out var value3));
-            Assert.Same(test2, value3);
+            Assert.Equal(test2, value3);
         }
 
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
@@ -131,13 +131,13 @@ namespace Elementary.Hierarchy.Collections.Test
             // ASSERT
             // hierarchy contains the root date and the new node.
             Assert.True(hierarchy.TryGetValue(HierarchyPath.Create<string>(), out var value1));
-            Assert.Same(test, value1);
+            Assert.Equal(test, value1);
             Assert.True(hierarchy.TryGetValue(HierarchyPath.Create("a"), out var value2));
-            Assert.Same(test1, value2);
+            Assert.Equal(test1, value2);
             Assert.True(hierarchy.TryGetValue(HierarchyPath.Create("b"), out var value3));
-            Assert.Same(test2, value3);
+            Assert.Equal(test2, value3);
             Assert.True(hierarchy.TryGetValue(HierarchyPath.Create("a", "c"), out var value4));
-            Assert.Same(test3, value4);
+            Assert.Equal(test3, value4);
         }
     }
 }

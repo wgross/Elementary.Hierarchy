@@ -21,7 +21,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb
         {
             set
             {
-                throw new NotImplementedException();
+                this.GetOrCreateNode(hierarchyPath).SetValue(value);
             }
         }
 
