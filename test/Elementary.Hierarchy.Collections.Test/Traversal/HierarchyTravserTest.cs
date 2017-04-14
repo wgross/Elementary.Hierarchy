@@ -234,14 +234,13 @@ namespace Elementary.Hierarchy.Collections.Test.Traversal
 
             // ACT
 
-            var result = traverser.HasValue;
+            var result = traverser.TryGetValue(out value);
 
             // ASSERT
 
             Assert.False(result);
-            Assert.Throws<InvalidOperationException>(() => traverser.Value);
 
-            node.Verify(n => n.TryGetValue(out value), Times.Exactly(2));
+            node.Verify(n => n.TryGetValue(out value), Times.Exactly(1));
             node.VerifyAll();
         }
 
@@ -260,14 +259,14 @@ namespace Elementary.Hierarchy.Collections.Test.Traversal
 
             // ACT
 
-            var result = traverser.Value;
+            var result = traverser.TryGetValue(out value);
 
             // ASSERT
 
-            Assert.Equal(1, result);
-            Assert.True(traverser.HasValue);
+            Assert.True(result);
+            Assert.Equal(1, value);
 
-            node.Verify(n => n.TryGetValue(out value), Times.Exactly(2));
+            node.Verify(n => n.TryGetValue(out value), Times.Exactly(1));
             node.VerifyAll();
         }
     }

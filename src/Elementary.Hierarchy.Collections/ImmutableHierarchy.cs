@@ -314,10 +314,6 @@
 
             public HierarchyPath<TKey> Path => this.path.Value;
 
-            public bool HasValue => this.node.HasValue;
-
-            public TValue Value => (TValue)this.node.value;
-
             public override bool Equals(object obj)
             {
                 if (object.ReferenceEquals(this, obj))
@@ -339,6 +335,16 @@
             public bool TryGetChildNode(TKey id, out IHierarchyNode<TKey, TValue> childNode)
             {
                 throw new NotImplementedException();
+            }
+
+            public bool TryGetValue(out TValue value)
+            {
+                value = default(TValue);
+                if (!this.node.HasValue)
+                    return false;
+
+                value = (TValue)this.node.value;
+                return true;
             }
         }
 

@@ -27,7 +27,7 @@ namespace Elementary.Hierarchy.Collections.Test
 
             // ACT & ASSERT
 
-            Assert.False(traverser.HasValue);
+            Assert.False(traverser.TryGetValue(out var value));
         }
 
         [Theory, ClassData(typeof(AllHierarchyVariantWithDefaultValue))]
@@ -39,8 +39,8 @@ namespace Elementary.Hierarchy.Collections.Test
 
             // ASSERT
 
-            Assert.True(traverser.HasValue);
-            Assert.Equal(AllHierarchyVariantWithDefaultValue.DefaultValue, hierarchy.Traverse(HierarchyPath.Create<string>()).Value);
+            Assert.True(traverser.TryGetValue(out var value));
+            Assert.Equal(AllHierarchyVariantWithDefaultValue.DefaultValue, value);
         }
 
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
@@ -76,11 +76,11 @@ namespace Elementary.Hierarchy.Collections.Test
 
             // ACT
 
-            var result = hierarchy.Traverse(HierarchyPath.Create<string>()).Value;
+            var result = hierarchy.Traverse(HierarchyPath.Create<string>()).TryGetValue(out var result_value);
 
             // ASSERT
 
-            Assert.Equal("v1", result);
+            Assert.Equal("v1", result_value);
         }
 
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
@@ -121,8 +121,7 @@ namespace Elementary.Hierarchy.Collections.Test
         {
             // ARRANGE
 
-            hierarchy.Add(HierarchyPath.Create("a","b"), "v1");
-
+            hierarchy.Add(HierarchyPath.Create("a", "b"), "v1");
 
             // ACT
 
@@ -130,7 +129,7 @@ namespace Elementary.Hierarchy.Collections.Test
 
             // ASSERT
 
-            Assert.Equal(HierarchyPath.Create("a","b"), result);
+            Assert.Equal(HierarchyPath.Create("a", "b"), result);
         }
 
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]

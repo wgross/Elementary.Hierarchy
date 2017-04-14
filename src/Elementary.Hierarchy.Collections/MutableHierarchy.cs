@@ -264,6 +264,16 @@
             {
                 throw new NotImplementedException();
             }
+
+            public bool TryGetValue(out TValue value)
+            {
+                value = default(TValue);
+                if (!this.node.HasValue)
+                    return false;
+
+                value = (TValue)this.node.value;
+                return true;
+            }
         }
 
         /// <summary>

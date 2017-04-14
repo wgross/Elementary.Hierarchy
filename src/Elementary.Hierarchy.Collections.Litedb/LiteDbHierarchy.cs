@@ -66,7 +66,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb
         /// <returns>A traversable representation of the root node</returns>
         public IHierarchyNode<string, TValue> Traverse(HierarchyPath<string> startAt)
         {
-            return ((IHierarchyNode<string, TValue>)new HierarchyTraverser<string, TValue, LiteDbMutableNode<TValue>>(this.rootNode)).DescendantAt(startAt);
+            return ((IHierarchyNode<string, TValue>)new HierarchyTraverser<string, TValue, LiteDbMutableNode<TValue>>(this.GetOrCreateRootNode())).DescendantAt(startAt);
         }
 
         public bool TryGetValue(HierarchyPath<string> hierarchyPath, out TValue value)

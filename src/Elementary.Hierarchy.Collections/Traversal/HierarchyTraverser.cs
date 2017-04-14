@@ -8,7 +8,8 @@ namespace Elementary.Hierarchy.Collections.Traversal
         where TNode :
             IHierarchyValueReader<TValue>,
             IHierarchyKeyReader<TKey>,
-            IHasIdentifiableChildNodes<TKey, TNode>, IHasChildNodes<TNode>
+            IHasIdentifiableChildNodes<TKey, TNode>,
+            IHasChildNodes<TNode>
     {
         #region Construction and initialization of this instance
 
@@ -46,15 +47,16 @@ namespace Elementary.Hierarchy.Collections.Traversal
             return true;
         }
 
+        public bool TryGetValue(out TValue value)
+        {
+            return this.InnerNode.TryGetValue(out value);
+        }
+
         public HierarchyPath<TKey> Path
         {
             get;
 
             private set;
         }
-
-        public bool HasValue => this.InnerNode.TryGetValue(out var _);
-
-        public TValue Value => this.InnerNode.TryGetValue(out var value) ? value : throw new InvalidOperationException("node has no value");
     }
 }
