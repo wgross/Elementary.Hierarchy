@@ -10,14 +10,14 @@ namespace Elementary.Hierarchy.Collections.Operations
     /// </summary>
     /// <typeparam name="TNode"></typeparam>
     /// <typeparam name="TKey">type of the path items</typeparam>
-    public class GetOrCreateNodeHierarchyWriter<TKey, TNode>
+    public class GetOrCreateNodeWriter<TKey, TNode>
         where TNode : IHierarchyNodeWriter<TNode>, IHasIdentifiableChildNodes<TKey, TNode>
     {
         private readonly Func<TKey, TNode> createNode;
 
         public TNode DescandantAt { get; private set; }
 
-        public GetOrCreateNodeHierarchyWriter(Func<TKey, TNode> createNode)
+        public GetOrCreateNodeWriter(Func<TKey, TNode> createNode)
         {
             this.createNode = createNode;
         }

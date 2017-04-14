@@ -32,12 +32,9 @@ namespace Elementary.Hierarchy.Collections.LiteDb
 
         public void Add(HierarchyPath<string> path, TValue value)
         {
-            var nodeToSetValueAt = this.GetOrCreateNode(path);
-
-            if (nodeToSetValueAt.HasValue)
-                throw new ArgumentException($"{nameof(LiteDbHierarchy<TValue>)} at '{path}' already has a value", nameof(path));
-
-            nodeToSetValueAt.SetValue(value);
+            new GetOrCreateNodeValueWriter<string, TValue, LiteDbMutableNode<TValue>>(
+                createNode: key => new LiteDbMutableNode<TValue>(this.nodes, new BsonDocument(), key))
+                .AddValue(this.GetOrCreateRootNode(), path, value);
         }
 
         public bool Remove(HierarchyPath<string> hierarchyPath, int? maxDepth = default(int?))
@@ -103,7 +100,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb
 
         private LiteDbMutableNode<TValue> GetOrCreateNode(HierarchyPath<string> hierarchyPath)
         {
-            var writer = new GetOrCreateNodeHierarchyWriter<string, LiteDbMutableNode<TValue>>(createNode: key => new LiteDbMutableNode<TValue>(this.nodes, new BsonDocument(), key));
+            var writer = new GetOrCreateNodeWriter<string, LiteDbMutableNode<TValue>>(createNode: key => new LiteDbMutableNode<TValue>(this.nodes, new BsonDocument(), key));
 
             writer.Visit(this.GetOrCreateRootNode(), hierarchyPath);
 

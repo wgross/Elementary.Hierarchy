@@ -17,7 +17,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
             // ARRANGE
 
             var startNode = new Mock<NodeType>();
-            var writer = new GetOrCreateNodeHierarchyWriter<string, NodeType>(id => null);
+            var writer = new GetOrCreateNodeWriter<string, NodeType>(id => null);
 
             // ACT
 
@@ -44,7 +44,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
                 .Setup(n => n.ReplaceChild(childNode, childNode))
                 .Returns(startNode.Object);
 
-            var writer = new GetOrCreateNodeHierarchyWriter<string, NodeType>(id => null);
+            var writer = new GetOrCreateNodeWriter<string, NodeType>(id => null);
 
             // ACT
 
@@ -77,7 +77,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
                 .Setup(n => n.AddChild(childNode))
                 .Returns(startNode.Object);
 
-            var writer = new GetOrCreateNodeHierarchyWriter<string, NodeType>(id => childNode);
+            var writer = new GetOrCreateNodeWriter<string, NodeType>(id => childNode);
 
             // ACT
 

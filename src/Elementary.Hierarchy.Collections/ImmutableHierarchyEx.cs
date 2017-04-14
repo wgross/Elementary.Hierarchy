@@ -201,9 +201,9 @@ namespace Elementary.Hierarchy.Collections
 
         private ImmutableNode<TKey, TValue> GetOrCreateNode(HierarchyPath<TKey> hierarchyPath)
         {
-            GetOrCreateNodeHierarchyWriter<TKey, ImmutableNode<TKey, TValue>> writer = null;
+            GetOrCreateNodeWriter<TKey, ImmutableNode<TKey, TValue>> writer = null;
             if (this.getDefaultValue == null)
-                writer = new GetOrCreateNodeHierarchyWriter<TKey, ImmutableNode<TKey, TValue>>(createNode: key => new ImmutableNode<TKey, TValue>(key));
+                writer = new GetOrCreateNodeWriter<TKey, ImmutableNode<TKey, TValue>>(createNode: key => new ImmutableNode<TKey, TValue>(key));
             else throw new NotSupportedException("default value");
 
             // if the root node has changed, it substitutes the existing root node.

@@ -147,9 +147,9 @@ namespace Elementary.Hierarchy.Collections
         private MutableNode<TKey, TValue> GetOrCreateNode(HierarchyPath<TKey> hierarchyPath)
 
         {
-            GetOrCreateNodeHierarchyWriter<TKey, MutableNode<TKey, TValue>> writer = null;
+            GetOrCreateNodeWriter<TKey, MutableNode<TKey, TValue>> writer = null;
             if (this.getDefaultValue == null)
-                writer = new GetOrCreateNodeHierarchyWriter<TKey, MutableNode<TKey, TValue>>(createNode: key => new MutableNode<TKey, TValue>(key));
+                writer = new GetOrCreateNodeWriter<TKey, MutableNode<TKey, TValue>>(createNode: key => new MutableNode<TKey, TValue>(key));
             else throw new NotSupportedException("default value");
 
             writer.Visit(this.rootNode, hierarchyPath);
