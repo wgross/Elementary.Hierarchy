@@ -49,7 +49,7 @@ namespace Elementary.Hierarchy.Collections
 
         #endregion Construction and initialization of this instance
 
-        #region Traversal
+        #region IHierarchy Members
 
         /// <summary>
         /// Starts a traversal of the hierarchy at the specified hierachy node.
@@ -59,10 +59,6 @@ namespace Elementary.Hierarchy.Collections
         {
             return ((IHierarchyNode<TKey, TValue>)new HierarchyTraverser<TKey, TValue, ImmutableNode<TKey, TValue>>(this.rootNode)).DescendantAt(startAt);
         }
-
-        #endregion Traversal
-
-        #region Add/Set a hierarchy nodes value
 
         /// <summary>
         /// Set the value of the specified node of the hierarchy.
@@ -114,24 +110,6 @@ namespace Elementary.Hierarchy.Collections
                     this.writeLock.Exit();
             }
         }
-
-        private ImmutableNode<TKey, TValue> GetOrCreateNode(HierarchyPath<TKey> hierarchyPath)
-        {
-            GetOrCreateNodeHierarchyWriter<TKey, ImmutableNode<TKey, TValue>> writer = null;
-            if (this.getDefaultValue == null)
-                writer = new GetOrCreateNodeHierarchyWriter<TKey, ImmutableNode<TKey, TValue>>(createNode: key => new ImmutableNode<TKey, TValue>(key));
-            else throw new NotSupportedException("default value");
-
-            // if the root node has changed, it substitutes the existing root node.
-
-            var resultRootNode = writer.Visit(this.rootNode, hierarchyPath);
-            if (!object.ReferenceEquals(this.rootNode, resultRootNode))
-                this.rootNode = resultRootNode;
-
-            return writer.DescandantAt;
-        }
-
-        #endregion Add/Set a hierarchy nodes value
 
         /// <summary>
         /// Retrieves the nodes value from the immutable hierarchy.
@@ -217,6 +195,24 @@ namespace Elementary.Hierarchy.Collections
                 if (isLocked)
                     this.writeLock.Exit();
             }
+        }
+
+        #endregion IHierarchy Members
+
+        private ImmutableNode<TKey, TValue> GetOrCreateNode(HierarchyPath<TKey> hierarchyPath)
+        {
+            GetOrCreateNodeHierarchyWriter<TKey, ImmutableNode<TKey, TValue>> writer = null;
+            if (this.getDefaultValue == null)
+                writer = new GetOrCreateNodeHierarchyWriter<TKey, ImmutableNode<TKey, TValue>>(createNode: key => new ImmutableNode<TKey, TValue>(key));
+            else throw new NotSupportedException("default value");
+
+            // if the root node has changed, it substitutes the existing root node.
+
+            var resultRootNode = writer.Visit(this.rootNode, hierarchyPath);
+            if (!object.ReferenceEquals(this.rootNode, resultRootNode))
+                this.rootNode = resultRootNode;
+
+            return writer.DescandantAt;
         }
     }
 }

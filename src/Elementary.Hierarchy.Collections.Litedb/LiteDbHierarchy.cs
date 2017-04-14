@@ -8,6 +8,8 @@ namespace Elementary.Hierarchy.Collections.LiteDb
 {
     public class LiteDbHierarchy<TValue> : IHierarchy<string, TValue>
     {
+        #region Construction and initialization of this instance
+
         private readonly LiteCollection<BsonDocument> nodes;
         private LiteDbMutableNode<TValue> rootNode;
 
@@ -15,6 +17,8 @@ namespace Elementary.Hierarchy.Collections.LiteDb
         {
             this.nodes = nodes;
         }
+
+        #endregion Construction and initialization of this instance
 
         #region IHierarchy Members
 
@@ -105,7 +109,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb
 
             return writer.DescandantAt;
         }
-    }
 
-    #endregion LiteDb access implementations
+        #endregion LiteDb access implementations
+    }
 }

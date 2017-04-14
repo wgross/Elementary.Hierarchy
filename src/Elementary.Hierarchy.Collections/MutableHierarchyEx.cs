@@ -45,7 +45,7 @@ namespace Elementary.Hierarchy.Collections
 
         #endregion Construction and initialization of this instance
 
-        #region Hierarchy MutableNode<TKey, TValue> Traversal
+        #region IHierarchy Members
 
         /// <summary>
         /// Starts a traversal of the hierarchy at the specified hierachy node.
@@ -55,10 +55,6 @@ namespace Elementary.Hierarchy.Collections
         {
             return ((IHierarchyNode<TKey, TValue>)new HierarchyTraverser<TKey, TValue, MutableNode<TKey, TValue>>(this.rootNode)).DescendantAt(startAt);
         }
-
-        #endregion Hierarchy MutableNode<TKey, TValue> Traversal
-
-        #region Add/Set a hierarchy nodes value
 
         /// <summary>
         /// Set the value of the specified node of the hierarchy.
@@ -89,20 +85,6 @@ namespace Elementary.Hierarchy.Collections
 
             nodeToSetValueAt.SetValue(value);
         }
-
-        private MutableNode<TKey, TValue> GetOrCreateNode(HierarchyPath<TKey> hierarchyPath)
-        {
-            GetOrCreateNodeHierarchyWriter<TKey, MutableNode<TKey, TValue>> writer = null;
-            if (this.getDefaultValue == null)
-                writer = new GetOrCreateNodeHierarchyWriter<TKey, MutableNode<TKey, TValue>>(createNode: key => new MutableNode<TKey, TValue>(key));
-            else throw new NotSupportedException("default value");
-
-            writer.Visit(this.rootNode, hierarchyPath);
-
-            return writer.DescandantAt;
-        }
-
-        #endregion Add/Set a hierarchy nodes value
 
         /// <summary>
         /// Retrieves the nodes value from the immutable hierarchy.
@@ -158,6 +140,21 @@ namespace Elementary.Hierarchy.Collections
                 var result = writer.Visit(this.rootNode, hierarchyPath);
                 return writer.HasRemovedNode;
             }
+        }
+
+        #endregion IHierarchy Members
+
+        private MutableNode<TKey, TValue> GetOrCreateNode(HierarchyPath<TKey> hierarchyPath)
+
+        {
+            GetOrCreateNodeHierarchyWriter<TKey, MutableNode<TKey, TValue>> writer = null;
+            if (this.getDefaultValue == null)
+                writer = new GetOrCreateNodeHierarchyWriter<TKey, MutableNode<TKey, TValue>>(createNode: key => new MutableNode<TKey, TValue>(key));
+            else throw new NotSupportedException("default value");
+
+            writer.Visit(this.rootNode, hierarchyPath);
+
+            return writer.DescandantAt;
         }
     }
 }
