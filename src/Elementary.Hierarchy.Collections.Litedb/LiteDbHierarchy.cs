@@ -99,15 +99,6 @@ namespace Elementary.Hierarchy.Collections.LiteDb
             return this.rootNode;
         }
 
-        private LiteDbMutableNode<TValue> GetOrCreateNode(HierarchyPath<string> hierarchyPath)
-        {
-            var writer = new GetOrCreateNodeWriter<string, LiteDbMutableNode<TValue>>(createNode: key => new LiteDbMutableNode<TValue>(this.nodes, new BsonDocument(), key));
-
-            this.rootNode = writer.GetOrCreate(this.GetOrCreateRootNode(), hierarchyPath, out var descendantAt);
-
-            return descendantAt;
-        }
-
         #endregion LiteDb access implementations
     }
 }

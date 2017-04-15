@@ -146,16 +146,5 @@ namespace Elementary.Hierarchy.Collections
 
         #endregion IHierarchy Members
 
-        private MutableNode<TKey, TValue> GetOrCreateNode(HierarchyPath<TKey> hierarchyPath)
-        {
-            GetOrCreateNodeWriter<TKey, MutableNode<TKey, TValue>> writer = null;
-            if (this.getDefaultValue == null)
-                writer = new GetOrCreateNodeWriter<TKey, MutableNode<TKey, TValue>>(createNode: key => new MutableNode<TKey, TValue>(key));
-            else throw new NotSupportedException("default value");
-
-            this.rootNode = writer.GetOrCreate(this.rootNode, hierarchyPath, out var descandantAt);
-
-            return descandantAt;
-        }
     }
 }
