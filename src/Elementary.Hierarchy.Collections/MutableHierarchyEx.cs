@@ -78,12 +78,11 @@ namespace Elementary.Hierarchy.Collections
         /// <returns>returns this</returns>
         public void Add(HierarchyPath<TKey> path, TValue value)
         {
-            var nodeToSetValueAt = this.GetOrCreateNode(path);
+            if (this.getDefaultValue != null)
+                throw new NotSupportedException("default value");
 
-            if (nodeToSetValueAt.HasValue)
-                throw new ArgumentException($"MutableNode<TKey, TValue> at '{path}' already has a value", nameof(path));
-
-            nodeToSetValueAt.SetValue(value);
+            new SetOrAddNodeValueWriter<TKey, TValue, MutableNode<TKey, TValue>>(createNode: key => new MutableNode<TKey, TValue>(key))
+                .AddValue(this.rootNode, path, value);
         }
 
         /// <summary>
@@ -145,7 +144,6 @@ namespace Elementary.Hierarchy.Collections
         #endregion IHierarchy Members
 
         private MutableNode<TKey, TValue> GetOrCreateNode(HierarchyPath<TKey> hierarchyPath)
-
         {
             GetOrCreateNodeWriter<TKey, MutableNode<TKey, TValue>> writer = null;
             if (this.getDefaultValue == null)

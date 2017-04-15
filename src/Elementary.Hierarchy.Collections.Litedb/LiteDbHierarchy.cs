@@ -32,7 +32,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb
 
         public void Add(HierarchyPath<string> path, TValue value)
         {
-            new GetOrCreateNodeValueWriter<string, TValue, LiteDbMutableNode<TValue>>(
+            new SetOrAddNodeValueWriter<string, TValue, LiteDbMutableNode<TValue>>(
                 createNode: key => new LiteDbMutableNode<TValue>(this.nodes, new BsonDocument(), key))
                 .AddValue(this.GetOrCreateRootNode(), path, value);
         }

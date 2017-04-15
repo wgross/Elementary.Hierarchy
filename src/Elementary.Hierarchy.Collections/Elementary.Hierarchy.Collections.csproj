@@ -25,7 +25,7 @@
     <DebugSymbols>True</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="Operations\GetOrCreateNodeValueWriter.cs" />
+    <None Include="Operations\SetOrAddNodeValueWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Elementary.Hierarchy\Elementary.Hierarchy.csproj" />

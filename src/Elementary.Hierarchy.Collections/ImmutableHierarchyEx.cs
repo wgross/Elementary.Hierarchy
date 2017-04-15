@@ -95,14 +95,16 @@ namespace Elementary.Hierarchy.Collections
             bool isLocked = false;
             try
             {
+                if (this.getDefaultValue != null)
+                    throw new NotSupportedException("default value");
+
                 this.writeLock.Enter(ref isLocked);
 
-                var nodeToSetValueAt = this.GetOrCreateNode(path);
+                var writer = new SetOrAddNodeValueWriter<TKey, TValue, ImmutableNode<TKey, TValue>>(createNode: key => new ImmutableNode<TKey, TValue>(key));
 
-                if (nodeToSetValueAt.HasValue)
-                    throw new ArgumentException($"ImmutableNode<TKey, TValue> at '{path}' already has a value", nameof(path));
+                // if the root node has changed, it substitutes the existing root node.
 
-                nodeToSetValueAt.SetValue(value);
+                this.rootNode = writer.AddValue(this.rootNode, path, value);
             }
             finally
             {
