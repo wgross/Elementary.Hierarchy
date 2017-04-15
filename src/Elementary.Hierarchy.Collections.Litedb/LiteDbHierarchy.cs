@@ -22,11 +22,13 @@ namespace Elementary.Hierarchy.Collections.LiteDb
 
         #region IHierarchy Members
 
-        public TValue this[HierarchyPath<string> hierarchyPath]
+        public TValue this[HierarchyPath<string> path]
         {
             set
             {
-                this.GetOrCreateNode(hierarchyPath).SetValue(value);
+                new SetOrAddNodeValueWriter<string, TValue, LiteDbMutableNode<TValue>>(
+                    createNode: key => new LiteDbMutableNode<TValue>(this.nodes, new BsonDocument(), key))
+                    .SetValue(this.GetOrCreateRootNode(), path, value);
             }
         }
 

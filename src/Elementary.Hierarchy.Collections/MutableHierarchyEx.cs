@@ -60,13 +60,17 @@ namespace Elementary.Hierarchy.Collections
         /// Set the value of the specified node of the hierarchy.
         /// if the node doesn't exist, it is created.
         /// </summary>
-        /// <param name="hierarchyPath"></param>
+        /// <param name="path"></param>
         /// <returns></returns>
-        public TValue this[HierarchyPath<TKey> hierarchyPath]
+        public TValue this[HierarchyPath<TKey> path]
         {
             set
             {
-                this.GetOrCreateNode(hierarchyPath).SetValue(value);
+                if (this.getDefaultValue != null)
+                    throw new NotSupportedException("default value");
+
+                new SetOrAddNodeValueWriter<TKey, TValue, MutableNode<TKey, TValue>>(createNode: key => new MutableNode<TKey, TValue>(key))
+                    .SetValue(this.rootNode, path, value);
             }
         }
 

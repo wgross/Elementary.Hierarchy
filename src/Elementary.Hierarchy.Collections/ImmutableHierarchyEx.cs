@@ -64,17 +64,25 @@ namespace Elementary.Hierarchy.Collections
         /// Set the value of the specified node of the hierarchy.
         /// if the node doesn't exist, it is created.
         /// </summary>
-        /// <param name="hierarchyPath"></param>
+        /// <param name="path"></param>
         /// <returns></returns>
-        public TValue this[HierarchyPath<TKey> hierarchyPath]
+        public TValue this[HierarchyPath<TKey> path]
         {
             set
             {
                 bool isLocked = false;
                 try
                 {
+                    if (this.getDefaultValue != null)
+                        throw new NotSupportedException("default value");
+
                     this.writeLock.Enter(ref isLocked);
-                    this.GetOrCreateNode(hierarchyPath).SetValue(value);
+
+                    var writer = new SetOrAddNodeValueWriter<TKey, TValue, ImmutableNode<TKey, TValue>>(createNode: key => new ImmutableNode<TKey, TValue>(key));
+
+                    // if the root node has changed, it substitutes the existing root node.
+
+                    this.rootNode = writer.AddValue(this.rootNode, path, value);
                 }
                 finally
                 {
