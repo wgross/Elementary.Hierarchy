@@ -104,9 +104,9 @@ namespace Elementary.Hierarchy.Collections.LiteDb
         {
             var writer = new GetOrCreateNodeWriter<string, LiteDbMutableNode<TValue>>(createNode: key => new LiteDbMutableNode<TValue>(this.nodes, new BsonDocument(), key));
 
-            writer.Visit(this.GetOrCreateRootNode(), hierarchyPath);
+            this.rootNode = writer.GetOrCreate(this.GetOrCreateRootNode(), hierarchyPath, out var descendantAt);
 
-            return writer.DescandantAt;
+            return descendantAt;
         }
 
         #endregion LiteDb access implementations

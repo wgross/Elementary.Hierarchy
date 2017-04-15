@@ -21,12 +21,12 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.Visit(startNode.Object, HierarchyPath.Create<string>());
+            var result = writer.GetOrCreate(startNode.Object, HierarchyPath.Create<string>(), out var descendantAt);
 
             // ASSERT
 
             Assert.Same(result, startNode.Object);
-            Assert.Same(startNode.Object, writer.DescandantAt);
+            Assert.Same(startNode.Object, descendantAt);
         }
 
         [Fact]
@@ -48,12 +48,12 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.Visit(startNode.Object, HierarchyPath.Create("a"));
+            var result = writer.GetOrCreate(startNode.Object, HierarchyPath.Create("a"), out var descendentAt);
 
             // ASSERT
 
             Assert.Same(result, startNode.Object);
-            Assert.Same(childNode, writer.DescandantAt);
+            Assert.Same(childNode, descendentAt);
 
             startNode.Verify(n => n.TryGetChildNode("a", out childNode), Times.Once());
             startNode.Verify(n => n.ReplaceChild(childNode, childNode), Times.Once());
@@ -81,12 +81,12 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.Visit(startNode.Object, HierarchyPath.Create("a"));
+            var result = writer.GetOrCreate(startNode.Object, HierarchyPath.Create("a"), out var descendantAt);
 
             // ASSERT
 
             Assert.Same(result, startNode.Object);
-            Assert.Same(childNode, writer.DescandantAt);
+            Assert.Same(childNode, descendantAt);
 
             startNode.Verify(n => n.AddChild(It.IsAny<NodeType>()), Times.Once());
         }

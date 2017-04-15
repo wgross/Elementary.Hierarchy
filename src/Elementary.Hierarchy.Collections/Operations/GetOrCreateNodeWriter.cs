@@ -15,26 +15,24 @@ namespace Elementary.Hierarchy.Collections.Operations
     {
         private readonly Func<TKey, TNode> createNode;
 
-        public TNode DescandantAt { get; private set; }
-
         public GetOrCreateNodeWriter(Func<TKey, TNode> createNode)
         {
             this.createNode = createNode;
         }
 
-        public TNode Visit(TNode node, HierarchyPath<TKey> path)
+        public TNode GetOrCreate(TNode node, HierarchyPath<TKey> path, out TNode descendantAt)
         {
             if (path.IsRoot)
             {
-                this.DescandantAt = node;
+                descendantAt = node;
                 return node;
             }
             else
             {
                 if (node.TryGetChildNode(path.Items.First(), out var child))
-                    return node.ReplaceChild(child, this.Visit(child, path.SplitDescendants()));
+                    return node.ReplaceChild(child, this.GetOrCreate(child, path.SplitDescendants(), out descendantAt));
                 else
-                    return node.AddChild(this.Visit(this.createNode(path.Items.First()), path.SplitDescendants()));
+                    return node.AddChild(this.GetOrCreate(this.createNode(path.Items.First()), path.SplitDescendants(), out descendantAt));
             }
         }
     }

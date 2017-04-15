@@ -41,7 +41,6 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
             startNode.VerifyAll();
 
             Assert.Same(result, startNode.Object);
-            Assert.Same(startNode.Object, writer.DescandantAt);
         }
 
         [Fact]
@@ -76,7 +75,6 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
             childNode.VerifyAll();
 
             Assert.Same(startNode.Object, result);
-            Assert.Same(childNode.Object, writer.DescandantAt);
         }
 
         [Fact]
@@ -114,7 +112,6 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             Assert.True(result.Message.Contains("NodeType at 'a' already has a value"));
             Assert.Equal("path", result.ParamName);
-            Assert.Same(childNode.Object, writer.DescandantAt);
         }
 
         #endregion AddValue
@@ -140,7 +137,6 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
             startNode.VerifyAll();
 
             Assert.Same(result, startNode.Object);
-            Assert.Same(startNode.Object, writer.DescandantAt);
         }
 
         [Fact]
@@ -175,7 +171,6 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
             childNode.VerifyAll();
 
             Assert.Same(startNode.Object, result);
-            Assert.Same(childNode.Object, writer.DescandantAt);
         }
 
         [Fact]
@@ -212,7 +207,6 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
             childNode.VerifyAll();
 
             Assert.Same(startNode.Object, result);
-            Assert.Same(childNode.Object, writer.DescandantAt);
         }
 
         #endregion SetVAlue

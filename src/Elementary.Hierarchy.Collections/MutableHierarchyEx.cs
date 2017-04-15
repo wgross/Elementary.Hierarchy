@@ -154,9 +154,9 @@ namespace Elementary.Hierarchy.Collections
                 writer = new GetOrCreateNodeWriter<TKey, MutableNode<TKey, TValue>>(createNode: key => new MutableNode<TKey, TValue>(key));
             else throw new NotSupportedException("default value");
 
-            writer.Visit(this.rootNode, hierarchyPath);
+            this.rootNode = writer.GetOrCreate(this.rootNode, hierarchyPath, out var descandantAt);
 
-            return writer.DescandantAt;
+            return descandantAt;
         }
     }
 }

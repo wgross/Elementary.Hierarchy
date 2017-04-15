@@ -30,16 +30,17 @@ namespace Elementary.Hierarchy.Collections.Operations
         /// <returns><paramref name="startNode"/>or its susbtitute</returns>
         public TNode AddValue(TNode startNode, HierarchyPath<TKey> path, TValue value)
         {
-            var tmp = base.Visit(startNode, path);
-            if (this.DescandantAt.TryGetValue(out var _))
+            var thisNode = base.GetOrCreate(startNode, path, out var descendantAt);
+            if (descendantAt.TryGetValue(out var _))
                 throw new ArgumentException($"{typeof(TNode).Name} at '{path}' already has a value", nameof(path));
 
-            this.DescandantAt.SetValue(value);
-            return tmp;
+            descendantAt.SetValue(value);
+
+            return thisNode;
         }
 
         /// <summary>
-        /// Sets the value at thespecfied node.
+        /// Sets the value at the specfied node.
         /// </summary>
         /// <param name="startNode">node to start to descend along the path</param>
         /// <param name="path">path to follow from start node</param>
@@ -47,9 +48,9 @@ namespace Elementary.Hierarchy.Collections.Operations
         /// <returns><paramref name="startNode"/>or its susbtitute</returns>
         public TNode SetValue(TNode startNode, HierarchyPath<TKey> path, TValue value)
         {
-            var tmp = base.Visit(startNode, path);
-            this.DescandantAt.SetValue(value);
-            return tmp;
+            var thisNode = base.GetOrCreate(startNode, path, out var descendantAt);
+            descendantAt.SetValue(value);
+            return thisNode;
         }
     }
 }
