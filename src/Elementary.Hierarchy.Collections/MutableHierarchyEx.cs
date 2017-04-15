@@ -97,8 +97,7 @@ namespace Elementary.Hierarchy.Collections
         /// <returns>zre, if value could be found, false otherwise</returns>
         public bool TryGetValue(HierarchyPath<TKey> hierarchyPath, out TValue value)
         {
-            MutableNode<TKey, TValue> descendantNode;
-            if (this.rootNode.TryGetDescendantAt(hierarchyPath, out descendantNode))
+            if (this.rootNode.TryGetDescendantAt(hierarchyPath, out var descendantNode))
                 return descendantNode.TryGetValue(out value);
 
             value = default(TValue);

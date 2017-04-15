@@ -74,8 +74,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb
 
         public bool TryGetValue(HierarchyPath<string> hierarchyPath, out TValue value)
         {
-            LiteDbMutableNode<TValue> descendantNode;
-            if (this.GetOrCreateRootNode().TryGetDescendantAt(hierarchyPath, out descendantNode))
+            if (this.GetOrCreateRootNode().TryGetDescendantAt(hierarchyPath, out var descendantNode))
                 return descendantNode.TryGetValue(out value);
 
             value = default(TValue);
