@@ -4,7 +4,7 @@ param(
     $Path = $PWD,
 
     [Parameter(Position=1)]
-    [ValidateSet("git_clean-xfd")]
+    [ValidateSet("git_clean-xfd","lockFiles")]
     [string[]]$Method,
 
     [Parameter()]
@@ -37,4 +37,10 @@ process {
             }
         }
     } 
+
+    if($Method -contains "lockFiles") {
+        $Path | Get-DotNetProjectItem -Process {
+            Get-ChildItem -Path $_.Directory -Filter project.assets.json -File -Recurse | Remove-Item
+        }
+    }
 }
