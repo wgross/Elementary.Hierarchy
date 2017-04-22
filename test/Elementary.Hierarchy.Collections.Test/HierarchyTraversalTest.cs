@@ -30,19 +30,6 @@ namespace Elementary.Hierarchy.Collections.Test
             Assert.False(traverser.TryGetValue(out var value));
         }
 
-        [Theory, ClassData(typeof(AllHierarchyVariantWithDefaultValue))]
-        public void IHierarchy_root_node_has_default_value_on_traversal(IHierarchy<string, string> hierarchy)
-        {
-            // ACT
-
-            var traverser = hierarchy.Traverse(HierarchyPath.Create<string>());
-
-            // ASSERT
-
-            Assert.True(traverser.TryGetValue(out var value));
-            Assert.Equal(AllHierarchyVariantWithDefaultValue.DefaultValue, value);
-        }
-
         [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
         public void IHierarchy_root_node_has_empty_path_on_traversal(IHierarchy<string, string> hierarchy)
         {

@@ -11,30 +11,13 @@ namespace Elementary.Hierarchy.Collections
         #region Construction and initialization of this instance
 
         public ImmutableHierarchyEx()
-            : this(pruneOnUnsetValue: false, getDefaultValue: null)
+            : this(pruneOnUnsetValue: false)
         {
         }
 
-        public ImmutableHierarchyEx(Func<HierarchyPath<TKey>, TValue> getDefaultValue)
-            : this(pruneOnUnsetValue: false, getDefaultValue: getDefaultValue)
-        {
-        }
-
-        public ImmutableHierarchyEx(bool pruneOnUnsetValue)
-            : this(pruneOnUnsetValue: pruneOnUnsetValue, getDefaultValue: null)
-        {
-        }
-
-        private ImmutableHierarchyEx(bool pruneOnUnsetValue, Func<HierarchyPath<TKey>, TValue> getDefaultValue)
+        private ImmutableHierarchyEx(bool pruneOnUnsetValue)
         {
             this.rootNode = new ImmutableNode<TKey, TValue>();
-            this.getDefaultValue = getDefaultValue;
-
-            if (this.getDefaultValue != null)
-            {
-                rootNode.SetValue(this.getDefaultValue(HierarchyPath.Create<TKey>()));
-            }
-
             this.pruneOnUnsetValue = pruneOnUnsetValue;
         }
 
@@ -44,8 +27,6 @@ namespace Elementary.Hierarchy.Collections
         private SpinLock writeLock = new SpinLock();
 
         private readonly bool pruneOnUnsetValue;
-
-        private readonly Func<HierarchyPath<TKey>, TValue> getDefaultValue;
 
         #endregion Construction and initialization of this instance
 
@@ -73,9 +54,6 @@ namespace Elementary.Hierarchy.Collections
                 bool isLocked = false;
                 try
                 {
-                    if (this.getDefaultValue != null)
-                        throw new NotSupportedException("default value");
-
                     this.writeLock.Enter(ref isLocked);
 
                     var writer = new SetOrAddNodeValueWriter<TKey, TValue, ImmutableNode<TKey, TValue>>(createNode: key => new ImmutableNode<TKey, TValue>(key));
@@ -103,9 +81,6 @@ namespace Elementary.Hierarchy.Collections
             bool isLocked = false;
             try
             {
-                if (this.getDefaultValue != null)
-                    throw new NotSupportedException("default value");
-
                 this.writeLock.Enter(ref isLocked);
 
                 var writer = new SetOrAddNodeValueWriter<TKey, TValue, ImmutableNode<TKey, TValue>>(createNode: key => new ImmutableNode<TKey, TValue>(key));

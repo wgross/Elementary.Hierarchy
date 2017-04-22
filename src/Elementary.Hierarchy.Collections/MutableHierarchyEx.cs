@@ -10,38 +10,19 @@ namespace Elementary.Hierarchy.Collections
         #region Construction and initialization of this instance
 
         public MutableHierarchyEx()
-            : this(pruneOnUnsetValue: false, getDefaultValue: null)
+            : this(pruneOnUnsetValue: false)
         {
         }
 
-        public MutableHierarchyEx(Func<HierarchyPath<TKey>, TValue> getDefaultValue)
-            : this(pruneOnUnsetValue: false, getDefaultValue: getDefaultValue)
-        {
-        }
-
-        public MutableHierarchyEx(bool pruneOnUnsetValue)
-            : this(pruneOnUnsetValue: pruneOnUnsetValue, getDefaultValue: null)
-        {
-        }
-
-        private MutableHierarchyEx(bool pruneOnUnsetValue, Func<HierarchyPath<TKey>, TValue> getDefaultValue)
+        private MutableHierarchyEx(bool pruneOnUnsetValue)
         {
             this.rootNode = MutableNode<TKey, TValue>.CreateRoot();
-            this.getDefaultValue = getDefaultValue;
-
-            if (this.getDefaultValue != null)
-            {
-                rootNode.SetValue(this.getDefaultValue(HierarchyPath.Create<TKey>()));
-            }
-
             this.pruneOnUnsetValue = pruneOnUnsetValue;
         }
 
         private MutableNode<TKey, TValue> rootNode;
 
         private readonly bool pruneOnUnsetValue;
-
-        private readonly Func<HierarchyPath<TKey>, TValue> getDefaultValue;
 
         #endregion Construction and initialization of this instance
 
@@ -66,9 +47,6 @@ namespace Elementary.Hierarchy.Collections
         {
             set
             {
-                if (this.getDefaultValue != null)
-                    throw new NotSupportedException("default value");
-
                 new SetOrAddNodeValueWriter<TKey, TValue, MutableNode<TKey, TValue>>(createNode: key => new MutableNode<TKey, TValue>(key))
                     .SetValue(this.rootNode, path, value);
             }
@@ -82,9 +60,6 @@ namespace Elementary.Hierarchy.Collections
         /// <returns>returns this</returns>
         public void Add(HierarchyPath<TKey> path, TValue value)
         {
-            if (this.getDefaultValue != null)
-                throw new NotSupportedException("default value");
-
             new SetOrAddNodeValueWriter<TKey, TValue, MutableNode<TKey, TValue>>(createNode: key => new MutableNode<TKey, TValue>(key))
                 .AddValue(this.rootNode, path, value);
         }
@@ -145,6 +120,5 @@ namespace Elementary.Hierarchy.Collections
         }
 
         #endregion IHierarchy Members
-
     }
 }
