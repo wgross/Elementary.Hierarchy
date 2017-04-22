@@ -18,7 +18,7 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Elementary.Hierarchy.Collections.Litedb\Elementary.Hierarchy.Collections.Litedb.csproj" />
+    <ProjectReference Include="..\..\src\Elementary.Hierarchy.Collections.Litedb\Elementary.Hierarchy.Collections.LiteDb.csproj" />
     <ProjectReference Include="..\..\src\Elementary.Hierarchy.Collections\Elementary.Hierarchy.Collections.csproj" />
     <ProjectReference Include="..\..\src\Elementary.Hierarchy\Elementary.Hierarchy.csproj" />
   </ItemGroup>

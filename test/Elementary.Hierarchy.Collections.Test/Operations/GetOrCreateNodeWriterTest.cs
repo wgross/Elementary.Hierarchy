@@ -1,11 +1,12 @@
 ﻿using Elementary.Hierarchy.Collections.Nodes;
 using Elementary.Hierarchy.Collections.Operations;
 using Moq;
+using System;
 using Xunit;
 
 namespace Elementary.Hierarchy.Collections.Test.Operations
 {
-    public class GetOrCreateHierarchyWriterTest
+    public class GetOrCreateNodeWriterTest
     {
         public interface NodeType : IHierarchyNodeWriter<NodeType>, IHasIdentifiableChildNodes<string, NodeType>
         {
@@ -77,7 +78,13 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
                 .Setup(n => n.AddChild(childNode))
                 .Returns(startNode.Object);
 
-            var writer = new GetOrCreateNodeWriter<string, NodeType>(id => childNode);
+            Func<string, NodeType> createChildCallback = id =>
+            {
+                Assert.Equal("a", id);
+                return childNode;
+            };
+
+            var writer = new GetOrCreateNodeWriter<string, NodeType>(createChildCallback);
 
             // ACT
 

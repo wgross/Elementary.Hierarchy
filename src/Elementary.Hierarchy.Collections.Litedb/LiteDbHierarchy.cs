@@ -3,6 +3,7 @@ using Elementary.Hierarchy.Collections.Operations;
 using Elementary.Hierarchy.Collections.Traversal;
 using LiteDB;
 using System;
+using System.Linq;
 
 namespace Elementary.Hierarchy.Collections.LiteDb
 {

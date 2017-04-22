@@ -8,7 +8,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elementary.Hierarchy", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elementary.Hierarchy.Collections", "src\Elementary.Hierarchy.Collections\Elementary.Hierarchy.Collections.csproj", "{305CD6B8-0510-4C24-8BAF-198BAC798352}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elementary.Hierarchy.Collections.Litedb", "src\Elementary.Hierarchy.Collections.Litedb\Elementary.Hierarchy.Collections.Litedb.csproj", "{FCB169C8-6C39-4292-927C-C1291B896627}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elementary.Hierarchy.Collections.LiteDb", "src\Elementary.Hierarchy.Collections.Litedb\Elementary.Hierarchy.Collections.LiteDb.csproj", "{FCB169C8-6C39-4292-927C-C1291B896627}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elementary.Hierarchy.Collections.Test", "test\Elementary.Hierarchy.Collections.Test\Elementary.Hierarchy.Collections.Test.csproj", "{8E124EFB-4407-4BD0-831F-28704D8C57E3}"
 EndProject

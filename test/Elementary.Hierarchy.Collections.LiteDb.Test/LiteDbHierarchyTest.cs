@@ -162,7 +162,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test
         }
 
         [Fact]
-        public void LiteDbHierarchy_removes_root_non_recursive_fails_if_child_node_is_present()
+        public void LiteDbHierarchy_removing_root_non_recursive_fails_if_child_node_is_present()
         {
             // ARRANGE
 
