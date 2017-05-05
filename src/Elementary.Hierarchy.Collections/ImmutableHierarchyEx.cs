@@ -167,7 +167,7 @@ namespace Elementary.Hierarchy.Collections
                     // this isn't a special case.
                     // use the hierachy writer for inner nodes
                     var writer = new RemoveNodeHierarchyWriter<TKey, ImmutableNode<TKey, TValue>>(recurse);
-                    var resultRootNode = writer.Visit(this.rootNode, hierarchyPath);
+                    var resultRootNode = writer.RemoveNode(this.rootNode, hierarchyPath);
                     if (!object.ReferenceEquals(resultRootNode, rootNode))
                         this.rootNode = resultRootNode;
 

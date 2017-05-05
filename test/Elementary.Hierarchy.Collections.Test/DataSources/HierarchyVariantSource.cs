@@ -6,7 +6,7 @@ using System.IO;
 
 namespace Elementary.Hierarchy.Collections.Test
 {
-    public class AllHierarchyVariantsWithoutDefaultValue : IEnumerable<object[]>
+    public class InstancesOfAllHierarchyVariants : IEnumerable<object[]>
     {
         public IEnumerator<object[]> GetEnumerator()
 

@@ -11,8 +11,10 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
         {
         }
 
+        #region RemoveNode
+
         [Fact]
-        public void RemoveNodeHierarchyWriter_startNode_cant_be_removed_because_parnet_is_unkown()
+        public void RemoveNodeHierarchyWriter_startNode_cant_be_removed_because_parent_is_unkown()
         {
             // ARRANGE
 
@@ -21,7 +23,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.Visit(startNodeMock.Object, HierarchyPath.Create<string>());
+            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create<string>());
 
             // ASSERT
 
@@ -49,7 +51,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.Visit(startNodeMock.Object, HierarchyPath.Create("a"));
+            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a"));
 
             // ASSERT
 
@@ -61,7 +63,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
         }
 
         [Fact]
-        public void RemoveNodeHierachyWriter_does_nothinh_for_wrong_path()
+        public void RemoveNodeHierachyWriter_does_nothing_for_wrong_path()
         {
             // ARRANGE
 
@@ -77,7 +79,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.Visit(startNodeMock.Object, HierarchyPath.Create("a"));
+            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a"));
 
             // ASSERT
 
@@ -115,7 +117,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.Visit(startNodeMock.Object, HierarchyPath.Create("a", "b"));
+            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a", "b"));
 
             // ASSERT
 
@@ -142,7 +144,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.Visit(startNodeMock.Object, HierarchyPath.Create<string>());
+            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create<string>());
 
             // ASSERT
 
@@ -176,7 +178,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.Visit(startNodeMock.Object, HierarchyPath.Create("a"));
+            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a"));
 
             // ASSERT
 
@@ -213,7 +215,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.Visit(startNodeMock.Object, HierarchyPath.Create("a"));
+            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a"));
 
             // ASSERT
 
@@ -226,25 +228,69 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
             childNodeMock.VerifyAll();
         }
 
+        #endregion RemoveNode
+
+        #region RemoveChildNodes
+
         [Fact]
-        public void RemoveNodeHierachyWriter_removes_startNode_with_children_if_recursion_is_enabled()
+        public void RemoveNodeHierachyWriter_removes_childNodes_of_given_node()
+        {
+            // ARRANGE
+
+            var childNodeMock = new Mock<NodeType>();
+            var childNode = childNodeMock.Object;
+
+            var startNodeMock = new Mock<NodeType>();
+            startNodeMock
+                .Setup(n => n.RemoveChild(childNode))
+                .Returns(startNodeMock.Object);
+            startNodeMock
+                .Setup(n => n.HasChildNodes)
+                .Returns(true);
+            startNodeMock
+                .Setup(n => n.ChildNodes)
+                .Returns(new[] { childNodeMock.Object });
+
+            var writer = new RemoveNodeHierarchyWriter<string, NodeType>();
+
+            // ACT
+
+            var result = writer.RemoveChildNodes(startNodeMock.Object);
+
+            // ASSERT
+
+            Assert.Same(result, startNodeMock.Object);
+            Assert.True(writer.HasRemovedNode);
+
+            startNodeMock.Verify(n => n.RemoveChild(childNodeMock.Object), Times.Once());
+            startNodeMock.VerifyAll();
+        }
+
+        [Fact]
+        public void RemoveNodeHierachyWriter_ignores_if_node_childNodes_exist()
         {
             // ARRANGE
 
             var startNodeMock = new Mock<NodeType>();
+            startNodeMock
+                .Setup(n => n.HasChildNodes)
+                .Returns(false);
 
-            var writer = new RemoveNodeHierarchyWriter<string, NodeType>(recurse: true);
+            var writer = new RemoveNodeHierarchyWriter<string, NodeType>();
 
             // ACT
 
-            var result = writer.Visit(startNodeMock.Object, HierarchyPath.Create<string>());
+            var result = writer.RemoveChildNodes(startNodeMock.Object);
 
             // ASSERT
 
-            Assert.Null(result);
+            Assert.Same(result, startNodeMock.Object);
             Assert.False(writer.HasRemovedNode);
 
+            startNodeMock.Verify(n => n.RemoveChild(It.IsAny<NodeType>()), Times.Never());
             startNodeMock.VerifyAll();
         }
+
+        #endregion RemoveChildNodes
     }
 }

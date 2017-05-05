@@ -19,7 +19,7 @@ namespace Elementary.Hierarchy.Collections.Operations
 
         public bool HasRemovedNode { get; private set; } = false;
 
-        public TNode Visit(TNode node, HierarchyPath<TKey> path)
+        public TNode RemoveNode(TNode node, HierarchyPath<TKey> path)
         {
             TNode returnedNode = node;
 
@@ -30,9 +30,9 @@ namespace Elementary.Hierarchy.Collections.Operations
 
                 if (node.TryGetChildNode(path.Items.First(), out var childNode))
                 {
-                    if (this.Visit(childNode, path.SplitDescendants()) == null)
+                    if (this.RemoveNode(childNode, path.SplitDescendants()) == null)
                     {
-                        returnedNode = node.RemoveChild(childNode);
+                        returnedNode = this.RemoveChildNode(returnedNode, childNode);
                         this.HasRemovedNode = true;
                     }
                 }
@@ -53,6 +53,26 @@ namespace Elementary.Hierarchy.Collections.Operations
             }
 
             return returnedNode;
+        }
+
+        public TNode RemoveChildNodes(TNode node)
+        {
+            var returnedNode = node;
+            if (node.HasChildNodes)
+            {
+                foreach (var childNode in node.ChildNodes.ToArray())
+                {
+                    returnedNode = this.RemoveChildNode(returnedNode, childNode);
+                    this.HasRemovedNode = true;
+                }
+            }
+
+            return returnedNode;
+        }
+
+        virtual protected TNode RemoveChildNode(TNode node, TNode childNode)
+        {
+            return node.RemoveChild(childNode);
         }
     }
 }
