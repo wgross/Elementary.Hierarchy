@@ -7,16 +7,16 @@ using System.Threading;
 
 namespace Elementary.Hierarchy.Collections
 {
-    public class ImmutableHierarchyEx<TKey, TValue> : IHierarchy<TKey, TValue>
+    public class ImmutableHierarchy <TKey, TValue> : IHierarchy<TKey, TValue>
     {
         #region Construction and initialization of this instance
 
-        public ImmutableHierarchyEx()
+        public ImmutableHierarchy()
             : this(pruneOnUnsetValue: false)
         {
         }
 
-        private ImmutableHierarchyEx(bool pruneOnUnsetValue)
+        private ImmutableHierarchy(bool pruneOnUnsetValue)
         {
             this.rootNode = new ImmutableNode<TKey, TValue>();
             this.pruneOnUnsetValue = pruneOnUnsetValue;

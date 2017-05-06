@@ -6,16 +6,16 @@ using System.Collections.Generic;
 
 namespace Elementary.Hierarchy.Collections
 {
-    public class MutableHierarchyEx<TKey, TValue> : IHierarchy<TKey, TValue>
+    public class MutableHierarchy<TKey, TValue> : IHierarchy<TKey, TValue>
     {
         #region Construction and initialization of this instance
 
-        public MutableHierarchyEx()
+        public MutableHierarchy()
             : this(pruneOnUnsetValue: false)
         {
         }
 
-        private MutableHierarchyEx(bool pruneOnUnsetValue)
+        private MutableHierarchy(bool pruneOnUnsetValue)
         {
             this.rootNode = MutableNode<TKey, TValue>.CreateRoot();
             this.pruneOnUnsetValue = pruneOnUnsetValue;
