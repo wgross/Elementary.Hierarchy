@@ -10,22 +10,23 @@ namespace Elementary.Hierarchy.Collections.Test
     {
         #region DataSources
 
-        public static IEnumerable<object[]> RemoveNodeWithChildNodes
+        public static IEnumerable<object[]> DontRemoveNodeWithChildNodes
         {
             get
             {
                 // mutable hierarchies
-                yield return new object[] { "", "a", new MutableHierarchy<string, string>() }; // root with direct subnode
-                yield return new object[] { "a", "a/b", new MutableHierarchy<string, string>() }; // sub node with direct subnode
-                yield return new object[] { "a", "a/b/c", new MutableHierarchy<string, string>() }; // subnode with indirect subnode
-                // mutable hierarchies
-                yield return new object[] { "", "a", new MutableHierarchyEx<string, string>() }; // root with direct subnode
-                yield return new object[] { "a", "a/b", new MutableHierarchyEx<string, string>() }; // sub node with direct subnode
-                yield return new object[] { "a", "a/b/c", new MutableHierarchyEx<string, string>() }; // subnode with indirect subnode
+                yield return new object[]
+                {
+                    "",                                         // node wichih will be removed
+                    "a",                                        // child node which make removal fails
+                    new MutableHierarchyEx<string, string>()    // hierarchy instance to test at
+                };
+                yield return new object[] { "a", "a/b", new MutableHierarchyEx<string, string>() };
+                yield return new object[] { "a", "a/b/c", new MutableHierarchyEx<string, string>() };
                 // immutable hierarchies
-                yield return new object[] { "", "a", new ImmutableHierarchy<string, string>() }; // root with direct subnode
-                yield return new object[] { "a", "a/b", new ImmutableHierarchy<string, string>() }; // root with direct subnode
-                yield return new object[] { "a", "a/b/c", new ImmutableHierarchy<string, string>() }; // root with direct subnode
+                yield return new object[] { "", "a", new ImmutableHierarchyEx<string, string>() };
+                yield return new object[] { "a", "a/b", new ImmutableHierarchyEx<string, string>() };
+                yield return new object[] { "a", "a/b/c", new ImmutableHierarchyEx<string, string>() };
                 // liteDB
                 yield return new object[] { "", "a", new LiteDbHierarchy<string>(new LiteDatabase(new MemoryStream()).GetCollection("nodes")) };
                 yield return new object[] { "a", "a/b", new LiteDbHierarchy<string>(new LiteDatabase(new MemoryStream()).GetCollection("nodes")) };
@@ -33,44 +34,44 @@ namespace Elementary.Hierarchy.Collections.Test
             }
         }
 
-        public static IEnumerable<object[]> Two
+        public static IEnumerable<object[]> RemoveNodeWithoutChildNodes
         {
             get
             {
-                // mutable hierarchies
-                yield return new object[] { "a", true, new MutableHierarchy<string, string>() };
-                yield return new object[] { "a", false, new MutableHierarchy<string, string>() };
-                yield return new object[] { "a/b", true, new MutableHierarchy<string, string>() };
-                yield return new object[] { "a/b", false, new MutableHierarchy<string, string>() };
                 // mutable hierarchies
                 yield return new object[] { "a", true, new MutableHierarchyEx<string, string>() };
                 yield return new object[] { "a", false, new MutableHierarchyEx<string, string>() };
                 yield return new object[] { "a/b", true, new MutableHierarchyEx<string, string>() };
                 yield return new object[] { "a/b", false, new MutableHierarchyEx<string, string>() };
                 // immutable hierarchies
-                yield return new object[] { "a", true, new ImmutableHierarchy<string, string>() };
-                yield return new object[] { "a", false, new ImmutableHierarchy<string, string>() };
-                yield return new object[] { "a/b", true, new ImmutableHierarchy<string, string>() };
-                yield return new object[] { "a/b", false, new ImmutableHierarchy<string, string>() };
+                yield return new object[] { "a", true, new ImmutableHierarchyEx<string, string>() };
+                yield return new object[] { "a", false, new ImmutableHierarchyEx<string, string>() };
+                yield return new object[] { "a/b", true, new ImmutableHierarchyEx<string, string>() };
+                yield return new object[] { "a/b", false, new ImmutableHierarchyEx<string, string>() };
+                // liteDb
+                yield return new object[] { "a", true, new LiteDbHierarchy<string>(new LiteDatabase(new MemoryStream()).GetCollection("nodes")) };
+                yield return new object[] { "a", false, new LiteDbHierarchy<string>(new LiteDatabase(new MemoryStream()).GetCollection("nodes")) };
+                yield return new object[] { "a/b", true, new LiteDbHierarchy<string>(new LiteDatabase(new MemoryStream()).GetCollection("nodes")) };
+                yield return new object[] { "a/b", false, new LiteDbHierarchy<string>(new LiteDatabase(new MemoryStream()).GetCollection("nodes")) };
             }
         }
 
-        public static IEnumerable<object[]> Three
+        public static IEnumerable<object[]> RemoveNodeRecursively
         {
             get
             {
-                // mutable hierarchies
-                yield return new object[] { "", new MutableHierarchy<string, string>() };
-                yield return new object[] { "a", new MutableHierarchy<string, string>() };
-                yield return new object[] { "a/b", new MutableHierarchy<string, string>() };
                 // mutable hierarchies
                 yield return new object[] { "", new MutableHierarchyEx<string, string>() };
                 yield return new object[] { "a", new MutableHierarchyEx<string, string>() };
                 yield return new object[] { "a/b", new MutableHierarchyEx<string, string>() };
                 // immutable hierarchies
-                yield return new object[] { "", new ImmutableHierarchy<string, string>() };
-                yield return new object[] { "a", new ImmutableHierarchy<string, string>() };
-                yield return new object[] { "a/b", new ImmutableHierarchy<string, string>() };
+                yield return new object[] { "", new ImmutableHierarchyEx<string, string>() };
+                yield return new object[] { "a", new ImmutableHierarchyEx<string, string>() };
+                yield return new object[] { "a/b", new ImmutableHierarchyEx<string, string>() };
+                // liteDb
+                yield return new object[] { "", new LiteDbHierarchy<string>(new LiteDatabase(new MemoryStream()).GetCollection("nodes")) };
+                yield return new object[] { "a", new LiteDbHierarchy<string>(new LiteDatabase(new MemoryStream()).GetCollection("nodes")) };
+                yield return new object[] { "a/b", new LiteDbHierarchy<string>(new LiteDatabase(new MemoryStream()).GetCollection("nodes")) };
             }
         }
 
@@ -79,18 +80,14 @@ namespace Elementary.Hierarchy.Collections.Test
             get
             {
                 // mutable hierarchies
-                yield return new object[] { "", true, new MutableHierarchy<string, string>() };
-                yield return new object[] { "", false, new MutableHierarchy<string, string>() };
-                yield return new object[] { "a", true, new MutableHierarchy<string, string>() };
-                yield return new object[] { "a", false, new MutableHierarchy<string, string>() };
-                // mutable hierarchies
                 yield return new object[] { "a", true, new MutableHierarchyEx<string, string>() };
                 yield return new object[] { "a", false, new MutableHierarchyEx<string, string>() };
                 // immutable hierarchies
-                yield return new object[] { "", true, new ImmutableHierarchy<string, string>() };
-                yield return new object[] { "", false, new ImmutableHierarchy<string, string>() };
-                yield return new object[] { "a", true, new ImmutableHierarchy<string, string>() };
-                yield return new object[] { "a", false, new ImmutableHierarchy<string, string>() };
+                yield return new object[] { "a", true, new ImmutableHierarchyEx<string, string>() };
+                yield return new object[] { "a", false, new ImmutableHierarchyEx<string, string>() };
+                // liteDb
+                yield return new object[] { "a", true, new LiteDbHierarchy<string>(new LiteDatabase(new MemoryStream()).GetCollection("nodes")) };
+                yield return new object[] { "a", false, new LiteDbHierarchy<string>(new LiteDatabase(new MemoryStream()).GetCollection("nodes")) };
             }
         }
 
@@ -105,21 +102,9 @@ namespace Elementary.Hierarchy.Collections.Test
             }
         }
 
-        public static IEnumerable<object[]> RemoveRootNodes
-        {
-            get
-            {
-                yield return new object[] { new MutableHierarchy<string, string>() };
-                yield return new object[] { new MutableHierarchyEx<string, string>() };
-                yield return new object[] { new ImmutableHierarchy<string, string>() };
-                yield return new object[] { new ImmutableHierarchy<string, string>() };
-                yield return new object[] { new LiteDbHierarchy<string>(new LiteDatabase(new MemoryStream()).GetCollection("nodes")) };
-            }
-        }
-
         #endregion DataSources
 
-        [Theory, MemberData(nameof(RemoveRootNodes))]
+        [Theory, ClassData(typeof(InstancesOfAllHierarchyVariants))]
         public void IHierarchy_removes_root_by_removing_its_value(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
@@ -136,14 +121,10 @@ namespace Elementary.Hierarchy.Collections.Test
 
             // value is removed
             Assert.False(hierarchy.TryGetValue(HierarchyPath.Create<string>(), out var value));
-
-            // node is still there
-            // Assert.NotNull(hierarchy.Traverse(HierarchyPath.Create<string>()));
-            // Assert.False(hierarchy.Traverse(HierarchyPath.Create<string>()).HasValue);
         }
 
-        [Theory, MemberData(nameof(RemoveNodeWithChildNodes))]
-        public void IHierarchy_RemoveNode_non_recursive_fails_if_a_childnode_is_present(string nodePath, string subNodePath, IHierarchy<string, string> hierarchy)
+        [Theory, MemberData(nameof(DontRemoveNodeWithChildNodes))]
+        public void IHierarchy_RemoveNode_non_recursive_fails_if_childnode_is_present(string nodePath, string subNodePath, IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
 
@@ -170,33 +151,34 @@ namespace Elementary.Hierarchy.Collections.Test
             Assert.Equal(test1, value);
         }
 
-        [Theory, MemberData(nameof(Two))]
-        public void IHierarchy_RemoveNode_removes_leaf_from_hierarchy_completely(string pathToDelete, bool recurse, IHierarchy<string, string> hierarchy)
+        [Theory, MemberData(nameof(RemoveNodeWithoutChildNodes))]
+        public void IHierarchy_RemoveNode_removes_leaf_from_hierarchy(string pathToDelete, bool recurse, IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
 
-            var node = HierarchyPath.Parse(pathToDelete, "/");
+            var path = HierarchyPath.Parse(pathToDelete, "/");
 
-            hierarchy.Add(node, pathToDelete);
+            hierarchy.Add(path, pathToDelete);
 
             // ACT
+            // the value of recurse doen't make difference
 
-            var result = hierarchy.RemoveNode(node, recurse: recurse);
+            var result = hierarchy.RemoveNode(path, recurse: recurse);
 
             // ASSERT
+            // result must be true always
 
             Assert.True(result);
 
             // node has no value
-            string value;
-            Assert.False(hierarchy.TryGetValue(node, out value));
+            Assert.False(hierarchy.TryGetValue(path, out var _));
 
             // nodes are no longer present
-            Assert.Throws<KeyNotFoundException>(() => hierarchy.Traverse(node));
+            Assert.Throws<KeyNotFoundException>(() => hierarchy.Traverse(path));
         }
 
-        [Theory, MemberData(nameof(Three))]
-        public void IHierarchy_RemoveNode_removes_inner_node_from_hierarchy_completely_and_all_descendants(string nodeToDelete, IHierarchy<string, string> hierarchy)
+        [Theory, MemberData(nameof(RemoveNodeRecursively))]
+        public void IHierarchy_RemoveNode_removes_inner_node_from_hierarchy_and_descendants(string nodeToDelete, IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
 
@@ -229,6 +211,7 @@ namespace Elementary.Hierarchy.Collections.Test
         public void IHierarchy_RemoveNode_twice_returns_false(string path, bool recurse, IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
+
             string test = "test";
 
             hierarchy.Add(HierarchyPath.Parse(path, "/"), test);
@@ -247,6 +230,7 @@ namespace Elementary.Hierarchy.Collections.Test
         public void IHierarchy_RemoveNode_twice_returns_true_for_root_node(string path, bool recurse, IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
+
             string test = "test";
 
             hierarchy.Add(HierarchyPath.Parse(path, "/"), test);
@@ -261,7 +245,7 @@ namespace Elementary.Hierarchy.Collections.Test
             Assert.True(result);
         }
 
-        [Theory, ClassData(typeof(AllHierarchyVariantsWithoutDefaultValue))]
+        [Theory, ClassData(typeof(InstancesOfAllHierarchyVariants))]
         public void IHierarchy_RemoveNode_unknown_node_returns_false(IHierarchy<string, string> hierarchy)
         {
             // ACT

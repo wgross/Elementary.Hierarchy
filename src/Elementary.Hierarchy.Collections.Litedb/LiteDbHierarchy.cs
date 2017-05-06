@@ -2,8 +2,6 @@
 using Elementary.Hierarchy.Collections.Operations;
 using Elementary.Hierarchy.Collections.Traversal;
 using LiteDB;
-using System;
-using System.Linq;
 
 namespace Elementary.Hierarchy.Collections.LiteDb
 {
@@ -40,28 +38,31 @@ namespace Elementary.Hierarchy.Collections.LiteDb
                 .AddValue(this.GetOrCreateRootNode(), path, value);
         }
 
-        public bool Remove(HierarchyPath<string> hierarchyPath, int? maxDepth = default(int?))
+        public bool Remove(HierarchyPath<string> hierarchyPath)
         {
-            if (maxDepth != null)
-                throw new NotSupportedException(nameof(maxDepth));
-
             var writer = new RemoveValueHierarchyWriter<string, TValue, LiteDbMutableNode<TValue>>();
             writer.ClearValue(this.GetOrCreateRootNode(), hierarchyPath);
 
             return writer.ValueWasCleared;
         }
 
-        public bool RemoveNode(HierarchyPath<string> hierarchyPath, bool recurse)
+        public bool RemoveNode(HierarchyPath<string> path, bool recurse)
         {
-            if (hierarchyPath.IsRoot)
-            {
-                if (this.GetOrCreateRootNode().HasChildNodes && !recurse)
-                    return false;
+            // this isn't a special case.
+            // use the hierachy writer for inner nodes
 
-                this.Remove(hierarchyPath);
-                return true; // even if it has no value.
+            var writer = new RemoveNodeRecursivlyWriter<TValue, LiteDbMutableNode<TValue>>(recurse);
+            if (null == writer.RemoveNode(this.GetOrCreateRootNode(), path, out var nodeWasRemoved))
+            {
+                // getting null as the result of the deletions measns to delete the root node.
+                // this is not done be the visitor
+
+                if (nodeWasRemoved) // deletion is allowed
+                    if (nodeWasRemoved = this.rootNode.RemoveNode(recurse))
+                        this.rootNode = null;
             }
-            return this.GetOrCreateRootNode().RemoveAllChildNodes(recurse);
+
+            return nodeWasRemoved;
         }
 
         /// <summary>

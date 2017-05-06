@@ -55,7 +55,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test
         }
 
         [Fact]
-        public void LiteDbHierarchy_removes_value_from_root()
+        public void LiteDbHierarchy_removes_root_value()
         {
             // ARRANGE
 
@@ -64,6 +64,8 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test
 
             hierarchy.Add(HierarchyPath.Create<string>(), setValue_root);
             hierarchy.Add(HierarchyPath.Create("a"), setValue_a);
+
+            var arrangeRootDoc = this.nodes.FindOne(Query.EQ("key", null));
 
             // ACT
             // remove value from root
@@ -80,10 +82,11 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test
 
             // check db
 
-            var rootDoc = this.nodes.FindOne(Query.EQ("key", null));
+            var assertRootDoc = this.nodes.FindOne(Query.EQ("key", null));
 
-            Assert.False(rootDoc.TryGetValue("value", out var rootDocValue));
-            Assert.True(rootDoc.TryGetValue("cn", out var childNodesValue));
+            Assert.Equal(arrangeRootDoc.Get("_id"), assertRootDoc.Get("_id"));
+            Assert.False(assertRootDoc.TryGetValue("value", out var rootDocValue));
+            Assert.True(assertRootDoc.TryGetValue("cn", out var childNodesValue));
             Assert.True(childNodesValue.AsDocument.TryGetValue("a", out var aDocId));
 
             var aDoc = this.nodes.FindById(aDocId);
@@ -131,23 +134,25 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test
             Assert.False(aDoc.TryGetValue("value", out var aDocValue));
         }
 
-        [Fact]
-        public void LiteDbHierarchy_removes_root_by_removing_its_value()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void LiteDbHierarchy_removes_root_node(bool recurse)
         {
             // ARRANGE
 
             hierarchy.Add(HierarchyPath.Create<string>(), Guid.NewGuid());
 
-            var originalRootDoc = this.nodes.FindOne(Query.EQ("key", null));
-            originalRootDoc.TryGetValue("_id", out var originalRootDocId);
+            var arrangeRootDoc = this.nodes.FindOne(Query.EQ("key", null));
+            arrangeRootDoc.TryGetValue("_id", out var originalRootDocId);
 
             // ACT
-            // remove value from root
+            // remove root node 'physically'
 
-            var result = hierarchy.RemoveNode(HierarchyPath.Create<string>(), recurse: false);
+            var result = hierarchy.RemoveNode(HierarchyPath.Create<string>(), recurse: recurse);
 
             // ASSERT
-            // root has no value, /a still has a value
+            // root has no value, /a has no value
 
             Assert.True(result);
             Assert.False(hierarchy.TryGetValue(HierarchyPath.Create<string>(), out var value_root));
@@ -157,7 +162,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test
             var rootDoc = this.nodes.FindOne(Query.EQ("key", null));
 
             Assert.True(rootDoc.TryGetValue("_id", out var rootDocId));
-            Assert.Equal(originalRootDocId, rootDocId);
+            Assert.NotEqual(originalRootDocId, rootDocId);
             Assert.False(rootDoc.TryGetValue("value", out var rootDocValue));
         }
 
@@ -194,6 +199,42 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test
             Assert.Equal(originalRootDocId, rootDocId);
             Assert.True(rootDoc.TryGetValue("value", out var rootDocValue));
             Assert.Equal(setValue_root, rootDocValue.RawValue);
+        }
+
+        [Fact]
+        public void LiteDbHierarchy_removing_root_recursive_removes_childnode()
+        {
+            // ARRANGE
+
+            hierarchy.Add(HierarchyPath.Create<string>(), Guid.NewGuid());
+            hierarchy.Add(HierarchyPath.Create("a"), Guid.NewGuid());
+
+            var arrangeRootDoc = this.nodes.FindOne(Query.EQ("key", null));
+            arrangeRootDoc.TryGetValue("_id", out var arrangeRootDocId);
+            var arrangeChildDocId = arrangeRootDoc.Get("cn").AsDocument.Get("a").AsObjectId;
+            var arrangeChildDoc = this.nodes.FindById(arrangeChildDocId);
+
+            // ACT
+            // remove value from root
+
+            var result = hierarchy.RemoveNode(HierarchyPath.Create<string>(), recurse: true);
+
+            // ASSERT
+            // root has no value, /a has no value
+
+            Assert.True(result);
+            Assert.False(hierarchy.TryGetValue(HierarchyPath.Create<string>(), out var value));
+            Assert.False(hierarchy.TryGetValue(HierarchyPath.Create<string>("a"), out value));
+
+            // check db
+
+            var rootDoc = this.nodes.FindOne(Query.EQ("key", null));
+
+            Assert.True(rootDoc.TryGetValue("_id", out var rootDocId));
+            Assert.NotEqual(arrangeRootDocId, rootDocId);
+            Assert.False(rootDoc.TryGetValue("value", out var rootDocValue));
+            Assert.Equal(BsonValue.Null, rootDoc.Get("cn"));
+            Assert.Null(this.nodes.FindById(arrangeChildDocId));
         }
     }
 }

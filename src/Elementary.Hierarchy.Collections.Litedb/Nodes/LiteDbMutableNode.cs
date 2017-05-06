@@ -46,6 +46,18 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
             }
         }
 
+        public bool RemoveNode(bool recurse)
+        {
+            if (this.HasChildNodes && !recurse)
+                return false; // removal of child nodes isn't allowed
+
+            if (this.EnsureChildNodesAreDeleted())
+                if (this.TryGetId(out var id))
+                    return this.nodes.Delete(id);
+
+            return false;
+        }
+
         public bool RemoveAllChildNodes(bool recurse)
         {
             if (!this.HasChildNodes)

@@ -30,7 +30,7 @@
         /// <param name="hierarchyPath">specifed the position of the start node for removal of values</param>
         /// <param name="maxDepth">dept of value removal. 1 removes ath te specified position only, > 1 removes at descendants, 0 removes nothing</param>
         /// <returns>true if at least one level was removed, false otherwise</returns>
-        bool Remove(HierarchyPath<TKey> hierarchyPath, int? maxDepth = null);
+        bool Remove(HierarchyPath<TKey> hierarchyPath);
 
         /// <summary>
         /// Retrieves a value from the hierarchy.
