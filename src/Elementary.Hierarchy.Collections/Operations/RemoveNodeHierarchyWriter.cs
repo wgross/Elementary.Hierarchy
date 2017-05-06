@@ -30,10 +30,22 @@ namespace Elementary.Hierarchy.Collections.Operations
 
                 if (node.TryGetChildNode(path.Items.First(), out var childNode))
                 {
-                    if (this.RemoveNode(childNode, path.SplitDescendants()) == null)
+                    var returnedChildNode = this.RemoveNode(childNode, path.SplitDescendants());
+                    if (returnedChildNode == null)
                     {
-                        returnedNode = this.RemoveChildNode(returnedNode, childNode);
+                        // a value of null measn this node has to be removed
+                        returnedNode = this.RemoveChildNode(node, childNode);
                         this.HasRemovedNode = true;
+                    }
+                    else if (!object.ReferenceEquals(childNode, returnedChildNode))
+                    {
+                        // a changed child node value requires to substitute the old child with the new
+                        returnedNode = node.ReplaceChild(childNode, returnedChildNode);
+                    }
+                    else
+                    {
+                        // an unchanged child node keeps this node unchanged as well
+                        returnedNode = node;
                     }
                 }
             }
