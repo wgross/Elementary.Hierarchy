@@ -1,7 +1,6 @@
 ﻿using Elementary.Hierarchy.Collections.Nodes;
 using Elementary.Hierarchy.Collections.Operations;
 using Elementary.Hierarchy.Collections.Traversal;
-using System;
 using System.Threading;
 
 namespace Elementary.Hierarchy.Collections
@@ -116,11 +115,8 @@ namespace Elementary.Hierarchy.Collections
         /// </summary>
         /// <param name="hierarchyPath"></param>
         /// <returns>true if value was removed, false otherwise</returns>
-        public bool Remove(HierarchyPath<TKey> hierarchyPath, int? maxDepth = null)
+        public bool Remove(HierarchyPath<TKey> hierarchyPath)
         {
-            if (maxDepth != null)
-                throw new NotSupportedException(nameof(maxDepth));
-
             bool isLocked = false;
             try
             {

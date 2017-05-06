@@ -95,7 +95,7 @@ namespace Elementary.Hierarchy.Collections.Test
 
             // ACT
 
-            var result = hierarchy.Remove(HierarchyPath.Create<string>(), maxDepth: 2);
+            var result = hierarchy.Remove(HierarchyPath.Create<string>());
 
             // ASSERT
 
@@ -107,7 +107,7 @@ namespace Elementary.Hierarchy.Collections.Test
             Assert.False(hierarchy.TryGetValue(HierarchyPath.Create<string>(), out value));
             Assert.False(hierarchy.TryGetValue(HierarchyPath.Create("a"), out value));
             Assert.True(hierarchy.TryGetValue(HierarchyPath.Create("a", "b"), out value));
-            Assert.Same(test2, value);
+            Assert.Equal(test2, value);
         }
 
         [Theory, ClassData(typeof(InstancesOfAllHierarchyVariants))]
@@ -121,7 +121,7 @@ namespace Elementary.Hierarchy.Collections.Test
 
             // ACT
 
-            var result = hierarchy.Remove(HierarchyPath.Create<string>(), maxDepth: 2);
+            var result = hierarchy.Remove(HierarchyPath.Create<string>());
 
             // ASSERT
 
@@ -131,7 +131,7 @@ namespace Elementary.Hierarchy.Collections.Test
 
             // new node has no value
             Assert.True(hierarchy.TryGetValue(HierarchyPath.Create("a", "b"), out value));
-            Assert.Same(test2, value);
+            Assert.Equal(test2, value);
         }
 
         [Theory, ClassData(typeof(InstancesOfAllHierarchyVariants))]

@@ -14,7 +14,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
         #region RemoveNode
 
         [Fact]
-        public void RemoveNodeHierarchyWriter_startNode_cant_be_removed_because_parent_is_unkown()
+        public void RemoveNodeHierarchyWriter_removes_startNode()
         {
             // ARRANGE
 
@@ -28,7 +28,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
             // ASSERT
 
             Assert.Null(result);
-            Assert.False(nodeRemoved);
+            Assert.True(nodeRemoved);
         }
 
         [Fact]

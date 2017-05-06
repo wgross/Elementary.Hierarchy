@@ -25,7 +25,7 @@ namespace Elementary.Hierarchy.Collections.Operations
             }
             else if (node.TryGetChildNode(path.Items.First(), out var childNode))
             {
-                return RewriteHierarchyAfterRemoveNode(node, path, out hasRemovedNode, childNode);
+                return RewriteParentNodeAfterChildNodeRemoved(node, childNode, path, out hasRemovedNode);
             }
             else
             {
@@ -36,25 +36,27 @@ namespace Elementary.Hierarchy.Collections.Operations
             }
         }
 
-        private TNode RewriteHierarchyAfterRemoveNode(TNode node, HierarchyPath<TKey> path, out bool nodeRemoved, TNode childNode)
+        private TNode RewriteParentNodeAfterChildNodeRemoved(TNode parentNode, TNode childNode, HierarchyPath<TKey> remainingPath, out bool nodeRemoved)
         {
             // traverse the tree further down along the path
+            // depending on the result of the removal operations this node has to be rewritten
 
-            var returnedChildNode = this.RemoveNode(childNode, path.SplitDescendants(), out nodeRemoved);
+            var returnedChildNode = this.RemoveNode(childNode, remainingPath.SplitDescendants(), out nodeRemoved);
+
             if (returnedChildNode == null)
             {
-                // a value of null means this node has to be removed
-                return this.RemoveChildNode(node, childNode);
+                // a value of null means the child node has to be removed from this (parent) node.
+                return this.RemoveChildNode(parentNode, childNode);
             }
-            else if (!object.ReferenceEquals(childNode, returnedChildNode))
+            else if (object.ReferenceEquals(childNode, returnedChildNode))
             {
-                // a changed child node value requires to substitute the old child with the new
-                return node.ReplaceChild(childNode, returnedChildNode);
+                // child node hasn't changhe: keep this node unchanged as well
+                return parentNode;
             }
             else
             {
-                // an unchanged child node keeps this node unchanged as well
-                return node;
+                // a changed child node value requires to substitute the old child with the new
+                return parentNode.ReplaceChild(childNode, returnedChildNode);
             }
         }
 

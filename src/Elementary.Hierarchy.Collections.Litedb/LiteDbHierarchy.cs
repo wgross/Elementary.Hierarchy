@@ -2,7 +2,6 @@
 using Elementary.Hierarchy.Collections.Operations;
 using Elementary.Hierarchy.Collections.Traversal;
 using LiteDB;
-using System;
 
 namespace Elementary.Hierarchy.Collections.LiteDb
 {
@@ -39,11 +38,8 @@ namespace Elementary.Hierarchy.Collections.LiteDb
                 .AddValue(this.GetOrCreateRootNode(), path, value);
         }
 
-        public bool Remove(HierarchyPath<string> hierarchyPath, int? maxDepth = default(int?))
+        public bool Remove(HierarchyPath<string> hierarchyPath)
         {
-            if (maxDepth != null)
-                throw new NotSupportedException(nameof(maxDepth));
-
             var writer = new RemoveValueHierarchyWriter<string, TValue, LiteDbMutableNode<TValue>>();
             writer.ClearValue(this.GetOrCreateRootNode(), hierarchyPath);
 
