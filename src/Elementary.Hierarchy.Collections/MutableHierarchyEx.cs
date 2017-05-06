@@ -1,6 +1,8 @@
 ﻿using Elementary.Hierarchy.Collections.Nodes;
 using Elementary.Hierarchy.Collections.Operations;
 using Elementary.Hierarchy.Collections.Traversal;
+using System;
+using System.Collections.Generic;
 
 namespace Elementary.Hierarchy.Collections
 {
@@ -44,6 +46,13 @@ namespace Elementary.Hierarchy.Collections
         /// <returns></returns>
         public TValue this[HierarchyPath<TKey> path]
         {
+            get
+            {
+                if (this.TryGetValue(path, out var value))
+                    return value;
+
+                throw new KeyNotFoundException($"path '{path}' doesn't exist or has no value");
+            }
             set
             {
                 new SetOrAddNodeValueWriter<TKey, TValue, MutableNode<TKey, TValue>>(createNode: key => new MutableNode<TKey, TValue>(key))
@@ -66,12 +75,15 @@ namespace Elementary.Hierarchy.Collections
         /// <summary>
         /// Retrieves the nodes value from the immutable hierarchy.
         /// </summary>
-        /// <param name="hierarchyPath">path to the value</param>
+        /// <param name="path">path to the value</param>
         /// <param name="value">found value</param>
         /// <returns>zre, if value could be found, false otherwise</returns>
-        public bool TryGetValue(HierarchyPath<TKey> hierarchyPath, out TValue value)
+        public bool TryGetValue(HierarchyPath<TKey> path, out TValue value)
         {
-            if (this.rootNode.TryGetDescendantAt(hierarchyPath, out var descendantNode))
+            if (path == null)
+                throw new ArgumentNullException(nameof(path));
+
+            if (this.rootNode.TryGetDescendantAt(path, out var descendantNode))
                 return descendantNode.TryGetValue(out value);
 
             value = default(TValue);
@@ -81,19 +93,19 @@ namespace Elementary.Hierarchy.Collections
         /// <summary>
         /// Removes the value from the specified node in hierarchy.
         /// </summary>
-        /// <param name="hierarchyPath"></param>
+        /// <param name="path"></param>
         /// <returns>true if value was removed, false otherwise</returns>
-        public bool Remove(HierarchyPath<TKey> hierarchyPath)
+        public bool Remove(HierarchyPath<TKey> path)
         {
             var writer = new RemoveValueAndPruneHierarchyWriter<TKey, TValue, MutableNode<TKey, TValue>>();
-            writer.ClearValue(this.rootNode, hierarchyPath);
+            writer.ClearValue(this.rootNode, path);
 
             return writer.ValueWasCleared;
         }
 
-        public bool RemoveNode(HierarchyPath<TKey> hierarchyPath, bool recurse)
+        public bool RemoveNode(HierarchyPath<TKey> path, bool recurse)
         {
-            if (hierarchyPath.IsRoot)
+            if (path.IsRoot)
             {
                 if (!recurse && this.rootNode.HasChildNodes)
                 {
@@ -110,7 +122,7 @@ namespace Elementary.Hierarchy.Collections
                 // this isn't a special case.
                 // use the hierachy writer for inner nodes
                 var writer = new RemoveNodeHierarchyWriter<TKey, MutableNode<TKey, TValue>>(recurse);
-                var result = writer.RemoveNode(this.rootNode, hierarchyPath, out var nodeWasRemoved);
+                var result = writer.RemoveNode(this.rootNode, path, out var nodeWasRemoved);
                 return nodeWasRemoved;
             }
         }

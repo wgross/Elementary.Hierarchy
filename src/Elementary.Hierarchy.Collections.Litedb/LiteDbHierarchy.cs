@@ -2,6 +2,8 @@
 using Elementary.Hierarchy.Collections.Operations;
 using Elementary.Hierarchy.Collections.Traversal;
 using LiteDB;
+using System;
+using System.Collections.Generic;
 
 namespace Elementary.Hierarchy.Collections.LiteDb
 {
@@ -23,6 +25,13 @@ namespace Elementary.Hierarchy.Collections.LiteDb
 
         public TValue this[HierarchyPath<string> path]
         {
+            get
+            {
+                if (this.TryGetValue(path, out var value))
+                    return value;
+
+                throw new KeyNotFoundException($"path '{path}' doesn't exist or has no value");
+            }
             set
             {
                 new SetOrAddNodeValueWriter<string, TValue, LiteDbMutableNode<TValue>>(
@@ -38,10 +47,10 @@ namespace Elementary.Hierarchy.Collections.LiteDb
                 .AddValue(this.GetOrCreateRootNode(), path, value);
         }
 
-        public bool Remove(HierarchyPath<string> hierarchyPath)
+        public bool Remove(HierarchyPath<string> path)
         {
             var writer = new RemoveValueHierarchyWriter<string, TValue, LiteDbMutableNode<TValue>>();
-            writer.ClearValue(this.GetOrCreateRootNode(), hierarchyPath);
+            writer.ClearValue(this.GetOrCreateRootNode(), path);
 
             return writer.ValueWasCleared;
         }
@@ -74,9 +83,12 @@ namespace Elementary.Hierarchy.Collections.LiteDb
             return ((IHierarchyNode<string, TValue>)new HierarchyTraverser<string, TValue, LiteDbMutableNode<TValue>>(this.GetOrCreateRootNode())).DescendantAt(startAt);
         }
 
-        public bool TryGetValue(HierarchyPath<string> hierarchyPath, out TValue value)
+        public bool TryGetValue(HierarchyPath<string> path, out TValue value)
         {
-            if (this.GetOrCreateRootNode().TryGetDescendantAt(hierarchyPath, out var descendantNode))
+            if (path == null)
+                throw new ArgumentNullException(nameof(path));
+
+            if (this.GetOrCreateRootNode().TryGetDescendantAt(path, out var descendantNode))
                 return descendantNode.TryGetValue(out value);
 
             value = default(TValue);
