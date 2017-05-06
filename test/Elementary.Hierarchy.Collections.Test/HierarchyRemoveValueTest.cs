@@ -81,36 +81,6 @@ namespace Elementary.Hierarchy.Collections.Test
         }
 
         [Theory, ClassData(typeof(InstancesOfAllHierarchyVariants))]
-        public void IHierarchy_removes_value_from_root_recursive_returns_true(IHierarchy<string, string> hierarchy)
-        {
-            // ARRANGE
-
-            string test = "test";
-            string test1 = "test1";
-            string test2 = "test2";
-
-            hierarchy.Add(HierarchyPath.Create<string>(), test);
-            hierarchy.Add(HierarchyPath.Create("a"), test1);
-            hierarchy.Add(HierarchyPath.Create("a", "b"), test2);
-
-            // ACT
-
-            var result = hierarchy.Remove(HierarchyPath.Create<string>());
-
-            // ASSERT
-
-            Assert.True(result);
-
-            string value;
-
-            // new node has no value
-            Assert.False(hierarchy.TryGetValue(HierarchyPath.Create<string>(), out value));
-            Assert.False(hierarchy.TryGetValue(HierarchyPath.Create("a"), out value));
-            Assert.True(hierarchy.TryGetValue(HierarchyPath.Create("a", "b"), out value));
-            Assert.Equal(test2, value);
-        }
-
-        [Theory, ClassData(typeof(InstancesOfAllHierarchyVariants))]
         public void IHierarchy_removes_false_if_no_value_was_removed(IHierarchy<string, string> hierarchy)
         {
             // ARRANGE

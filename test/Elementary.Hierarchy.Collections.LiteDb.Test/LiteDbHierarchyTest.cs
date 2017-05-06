@@ -137,22 +137,22 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
-        public void LiteDbHierarchy_removes_root_by_removing_its_value(bool recurse)
+        public void LiteDbHierarchy_removes_root_node(bool recurse)
         {
             // ARRANGE
 
             hierarchy.Add(HierarchyPath.Create<string>(), Guid.NewGuid());
 
-            var originalRootDoc = this.nodes.FindOne(Query.EQ("key", null));
-            originalRootDoc.TryGetValue("_id", out var originalRootDocId);
+            var arrangeRootDoc = this.nodes.FindOne(Query.EQ("key", null));
+            arrangeRootDoc.TryGetValue("_id", out var originalRootDocId);
 
             // ACT
-            // remove value from root
+            // remove root node 'physically'
 
             var result = hierarchy.RemoveNode(HierarchyPath.Create<string>(), recurse: recurse);
 
             // ASSERT
-            // root has no value, /a still has a value
+            // root has no value, /a has no value
 
             Assert.True(result);
             Assert.False(hierarchy.TryGetValue(HierarchyPath.Create<string>(), out var value_root));
@@ -162,7 +162,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test
             var rootDoc = this.nodes.FindOne(Query.EQ("key", null));
 
             Assert.True(rootDoc.TryGetValue("_id", out var rootDocId));
-            Assert.Equal(originalRootDocId, rootDocId);
+            Assert.NotEqual(originalRootDocId, rootDocId);
             Assert.False(rootDoc.TryGetValue("value", out var rootDocValue));
         }
 
@@ -231,9 +231,9 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test
             var rootDoc = this.nodes.FindOne(Query.EQ("key", null));
 
             Assert.True(rootDoc.TryGetValue("_id", out var rootDocId));
-            Assert.Equal(arrangeRootDocId, rootDocId);
+            Assert.NotEqual(arrangeRootDocId, rootDocId);
             Assert.False(rootDoc.TryGetValue("value", out var rootDocValue));
-            Assert.False(rootDoc.Get("cn").AsDocument.Any());
+            Assert.Equal(BsonValue.Null, rootDoc.Get("cn"));
             Assert.Null(this.nodes.FindById(arrangeChildDocId));
         }
     }

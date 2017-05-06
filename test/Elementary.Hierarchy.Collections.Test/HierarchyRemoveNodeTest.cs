@@ -83,10 +83,11 @@ namespace Elementary.Hierarchy.Collections.Test
                 yield return new object[] { "a", true, new MutableHierarchyEx<string, string>() };
                 yield return new object[] { "a", false, new MutableHierarchyEx<string, string>() };
                 // immutable hierarchies
-                yield return new object[] { "", true, new ImmutableHierarchyEx<string, string>() };
-                yield return new object[] { "", false, new ImmutableHierarchyEx<string, string>() };
                 yield return new object[] { "a", true, new ImmutableHierarchyEx<string, string>() };
                 yield return new object[] { "a", false, new ImmutableHierarchyEx<string, string>() };
+                // liteDb
+                yield return new object[] { "a", true, new LiteDbHierarchy<string>(new LiteDatabase(new MemoryStream()).GetCollection("nodes")) };
+                yield return new object[] { "a", false, new LiteDbHierarchy<string>(new LiteDatabase(new MemoryStream()).GetCollection("nodes")) };
             }
         }
 
@@ -123,7 +124,7 @@ namespace Elementary.Hierarchy.Collections.Test
         }
 
         [Theory, MemberData(nameof(DontRemoveNodeWithChildNodes))]
-        public void IHierarchy_RemoveNode_non_recursive_fails_if_a_childnode_is_present(string nodePath, string subNodePath, IHierarchy<string, string> hierarchy)
+        public void IHierarchy_RemoveNode_non_recursive_fails_if_childnode_is_present(string nodePath, string subNodePath, IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
 
@@ -151,7 +152,7 @@ namespace Elementary.Hierarchy.Collections.Test
         }
 
         [Theory, MemberData(nameof(RemoveNodeWithoutChildNodes))]
-        public void IHierarchy_RemoveNode_removes_leaf_from_hierarchy_completely(string pathToDelete, bool recurse, IHierarchy<string, string> hierarchy)
+        public void IHierarchy_RemoveNode_removes_leaf_from_hierarchy(string pathToDelete, bool recurse, IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
 
@@ -177,7 +178,7 @@ namespace Elementary.Hierarchy.Collections.Test
         }
 
         [Theory, MemberData(nameof(RemoveNodeRecursively))]
-        public void IHierarchy_RemoveNode_removes_inner_node_from_hierarchy_completely_and_all_descendants(string nodeToDelete, IHierarchy<string, string> hierarchy)
+        public void IHierarchy_RemoveNode_removes_inner_node_from_hierarchy_and_descendants(string nodeToDelete, IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
 
@@ -210,6 +211,7 @@ namespace Elementary.Hierarchy.Collections.Test
         public void IHierarchy_RemoveNode_twice_returns_false(string path, bool recurse, IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
+
             string test = "test";
 
             hierarchy.Add(HierarchyPath.Parse(path, "/"), test);
@@ -228,6 +230,7 @@ namespace Elementary.Hierarchy.Collections.Test
         public void IHierarchy_RemoveNode_twice_returns_true_for_root_node(string path, bool recurse, IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
+
             string test = "test";
 
             hierarchy.Add(HierarchyPath.Parse(path, "/"), test);

@@ -48,28 +48,21 @@ namespace Elementary.Hierarchy.Collections.LiteDb
 
         public bool RemoveNode(HierarchyPath<string> path, bool recurse)
         {
-            if (path.IsRoot)
+            // this isn't a special case.
+            // use the hierachy writer for inner nodes
+
+            var writer = new RemoveNodeRecursivlyWriter<TValue, LiteDbMutableNode<TValue>>(recurse);
+            if (null == writer.RemoveNode(this.GetOrCreateRootNode(), path, out var nodeWasRemoved))
             {
-                if (!recurse && this.rootNode.HasChildNodes)
-                {
-                    // is recurse is not set, the root node can be removed if the root has child nodes
+                // getting null as the result of the deletions measns to delete the root node.
+                // this is not done be the visitor
 
-                    return false;
-                }
-
-                var writer = new RemoveNodeRecursivlyWriter<TValue, LiteDbMutableNode<TValue>>(recurse);
-                var result = writer.RemoveChildNodes(this.GetOrCreateRootNode(), out var childNodesWereRemoved);
-
-                return this.GetOrCreateRootNode().RemoveValue() || childNodesWereRemoved;
+                if (nodeWasRemoved) // deletion is allowed
+                    if (nodeWasRemoved = this.rootNode.RemoveNode(recurse))
+                        this.rootNode = null;
             }
-            else
-            {
-                // this isn't a special case.
-                // use the hierachy writer for inner nodes
-                var writer = new RemoveNodeRecursivlyWriter<TValue, LiteDbMutableNode<TValue>>(recurse);
-                var result = writer.RemoveNode(this.rootNode, path, out var nodeWasRemoved);
-                return nodeWasRemoved;
-            }
+
+            return nodeWasRemoved;
         }
 
         /// <summary>
