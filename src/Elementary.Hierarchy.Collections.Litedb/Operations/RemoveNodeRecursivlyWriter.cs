@@ -9,18 +9,20 @@ namespace Elementary.Hierarchy.Collections.Operations
             IHasIdentifiableChildNodes<string, TNode>,
             IHasChildNodes<TNode>
     {
-        protected override TNode RemoveChildNode(TNode node, TNode childNode)
-        {
-            if (childNode.EnsureChildNodesAreDeleted())
-                return (TNode)node.RemoveChild(childNode);
-            else return (TNode)node;
-        }
-
-        //protected override TNode RemoveNode(TNode node, bool recurse, out bool hasRemovedNode)
+        
+        //protected override TNode RemoveDestinationNode(TNode node, bool recurse, out bool hasRemovedNode)
         //{
-        //    if (hasRemovedNode = node.RemoveNode(recurse))
+        //    if (node.RemoveNode(recurse))
+        //    {
+        //        hasRemovedNode = true;
         //        return null;
-        //    else return node;
+
+        //    }
+        //    else
+        //    {
+        //        hasRemovedNode = false;
+        //        return node;
+        //    }
         //}
     }
 }

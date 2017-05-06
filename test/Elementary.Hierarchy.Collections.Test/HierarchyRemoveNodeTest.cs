@@ -181,36 +181,34 @@ namespace Elementary.Hierarchy.Collections.Test
         public void IHierarchy_RemoveNode_removes_inner_node_from_hierarchy_and_descendants(string nodeToDelete, IHierarchy<string, string> hierarchy)
         {
             // ARRANGE
+            // node
+            //    \
+            //     subNode
 
-            var node = HierarchyPath.Parse(nodeToDelete, "/");
-            hierarchy.Add(node, node.ToString());
+            var nodePath = HierarchyPath.Parse(nodeToDelete, "/");
+            hierarchy.Add(nodePath, nodePath.ToString());
 
             // add subnode with value
-            var subNode1 = node.Join("subNode");
-            hierarchy.Add(subNode1, subNode1.ToString());
+            var subNode = nodePath.Join("subNode");
+            hierarchy.Add(subNode, subNode.ToString());
 
             // ACT
+            // remove node and subNode
 
-            var result = hierarchy.RemoveNode(node, recurse: true);
+            var result = hierarchy.RemoveNode(nodePath, recurse: true);
 
             // ASSERT
+            // node could be removed
 
             Assert.True(result);
 
-            // new node has no value
-            string value;
-            Assert.False(hierarchy.TryGetValue(node, out value));
-            Assert.False(hierarchy.TryGetValue(subNode1, out value));
+            // values of node and subNode can't be read anymore
+            Assert.False(hierarchy.TryGetValue(nodePath, out var valueNode));
+            Assert.False(hierarchy.TryGetValue(subNode, out var valueSubNode));
 
             // nodes are no longer present
-            if (!node.IsRoot) Assert.Throws<KeyNotFoundException>(() => hierarchy.Traverse(node));
-            Assert.Throws<KeyNotFoundException>(() => hierarchy.Traverse(subNode1));
-        }
-
-        [Fact]
-        public void bug()
-        {
-            IHierarchy_RemoveNode_removes_inner_node_from_hierarchy_and_descendants("a/b", new LiteDbHierarchy<string>(new LiteDatabase(new MemoryStream()).GetCollection("nodes")));
+            if (!nodePath.IsRoot) Assert.Throws<KeyNotFoundException>(() => hierarchy.Traverse(nodePath));
+            Assert.Throws<KeyNotFoundException>(() => hierarchy.Traverse(subNode));
         }
 
         [Theory, MemberData(nameof(RemoveInnerNodeTwice))]

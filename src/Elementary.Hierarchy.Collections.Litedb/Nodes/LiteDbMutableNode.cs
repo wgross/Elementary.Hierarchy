@@ -51,7 +51,9 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
             if (!recurse && this.HasChildNodes)
                 return false; // removal of child nodes isn't allowed
 
-            if (this.EnsureChildNodesAreDeleted())
+            // removal of child nodes is allowed.
+
+            if (this.RemoveAllChildNodesRecursivly() || !this.HasChildNodes) // child node have been removed or they have never existed
                 if (this.TryGetId(out var id))
                     return this.nodes.Delete(id);
 
@@ -60,39 +62,40 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
 
         public bool RemoveAllChildNodes(bool recurse)
         {
-            if (!this.HasChildNodes)
-                return false; // obviously removal of childnodes is not necessary
-
-            if (this.HasChildNodes && !recurse)
+            if (!recurse && this.HasChildNodes)
                 return false; // removal of child nodes isn't allowed
 
-            return EnsureChildNodesAreDeleted();
+            return RemoveAllChildNodesRecursivly();
         }
 
-        public bool EnsureChildNodesAreDeleted()
+        public bool RemoveAllChildNodesRecursivly()
         {
-            var childNodeInfos = this.BsonDocumentChildNodes
-                .Aggregate(new List<KeyValuePair<string, BsonValue>>(), (l, kv) => { l.Add(kv); return l; });
+            var childNodeInfos = this.BsonDocumentChildNodes.Aggregate(new List<KeyValuePair<string, BsonValue>>(), (l, kv) => { l.Add(kv); return l; });
 
-            bool? childNodsHaveBeenDeleted = null;
+            bool? removeAllChildNodesFinished = null;
             foreach (var childNodeInfo in childNodeInfos)
             {
                 if (this.TryGetChildNode(childNodeInfo.Key, out var childNode))
                 {
-                    if (childNode.EnsureChildNodesAreDeleted()) // descend int the tree further to clean up.
-                        if (this.nodes.Delete(childNodeInfo.Value)) // the child node committed the removal of its child nodes->delete the child document
-                            childNodsHaveBeenDeleted = this.BsonDocumentChildNodes.Remove(childNodeInfo.Key) || childNodsHaveBeenDeleted.GetValueOrDefault(false); // remove the child id from ths document
+                    // descend int the tree further to clean up.
+                    // this part is successful of deletions wen well and not childnode are left.
+
+                    removeAllChildNodesFinished = (childNode.RemoveAllChildNodesRecursivly() && (!childNode.HasChildNodes)) && removeAllChildNodesFinished.GetValueOrDefault(true);
+
+                    // then delete this child node.
+                    // this parts is successful if deletion is successuf and the references coud be removed from this node
+
+                    removeAllChildNodesFinished = (this.nodes.Delete(childNodeInfo.Value) && this.BsonDocumentChildNodes.Remove(childNodeInfo.Key)) || removeAllChildNodesFinished.GetValueOrDefault(false);
                 }
             }
 
             // this node requires an update if the strcuture has changed.
 
-            if (childNodsHaveBeenDeleted.GetValueOrDefault(false))
+            if (removeAllChildNodesFinished.GetValueOrDefault(false))
                 return this.nodes.Update(this.BsonDocument);
 
-            // at the end the question is: are there child nodes left or not.
-
-            return !this.HasChildNodes;
+            // desn't seem to have worked
+            return false;
         }
 
         public bool HasChildNodes => this.BsonDocumentChildNodes.Any();
@@ -124,7 +127,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
         {
             if (childToRemove.TryGetKey(out var childKey))
                 if (this.BsonDocumentChildNodes.TryGetValue(childKey, out var childId))
-                    if (this.nodes.Delete(childId))
+                    if (childToRemove.RemoveNode(recurse: true))
                         if (this.BsonDocumentChildNodes.Remove(childKey))
                             this.nodes.Update(this.BsonDocument);
 

@@ -10,7 +10,7 @@ namespace Elementary.Hierarchy.Collections.Operations
         {
             if (path.IsRoot)
             {
-                return RemoveNode(node, recurse, out hasRemovedNode);
+                return RemoveDestinationNode(node, recurse, out hasRemovedNode);
             }
             else if (node.TryGetChildNode(path.Items.First(), out var childNode))
             {
@@ -49,7 +49,7 @@ namespace Elementary.Hierarchy.Collections.Operations
             }
         }
 
-        virtual protected TNode RemoveNode(TNode node, bool recurse, out bool hasRemovedNode)
+        virtual protected TNode RemoveDestinationNode(TNode node, bool recurse, out bool hasRemovedNode)
         {
             // the traversal reached its destination, this is the node to delete
 
