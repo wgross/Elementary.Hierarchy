@@ -62,17 +62,17 @@ namespace Elementary.Hierarchy.Collections.LiteDb
                 }
 
                 var writer = new RemoveNodeRecursivlyWriter<TValue, LiteDbMutableNode<TValue>>(recurse);
-                var result = writer.RemoveChildNodes(this.GetOrCreateRootNode());
+                var result = writer.RemoveChildNodes(this.GetOrCreateRootNode(), out var childNodesWereRemoved);
 
-                return this.GetOrCreateRootNode().RemoveValue() || writer.HasRemovedNode;
+                return this.GetOrCreateRootNode().RemoveValue() || childNodesWereRemoved;
             }
             else
             {
                 // this isn't a special case.
                 // use the hierachy writer for inner nodes
                 var writer = new RemoveNodeRecursivlyWriter<TValue, LiteDbMutableNode<TValue>>(recurse);
-                var result = writer.RemoveNode(this.rootNode, path);
-                return writer.HasRemovedNode;
+                var result = writer.RemoveNode(this.rootNode, path, out var nodeWasRemoved);
+                return nodeWasRemoved;
             }
         }
 

@@ -23,12 +23,12 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create<string>());
+            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create<string>(), out var nodeRemoved);
 
             // ASSERT
 
             Assert.Null(result);
-            Assert.False(writer.HasRemovedNode);
+            Assert.False(nodeRemoved);
         }
 
         [Fact]
@@ -51,12 +51,12 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a"));
+            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a"), out var nodeRemoved);
 
             // ASSERT
 
             Assert.Same(result, startNodeMock.Object);
-            Assert.True(writer.HasRemovedNode);
+            Assert.True(nodeRemoved);
 
             startNodeMock.Verify(n => n.RemoveChild(childNode), Times.Once());
             startNodeMock.VerifyAll();
@@ -79,12 +79,12 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a"));
+            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a"), out var nodeRemoved);
 
             // ASSERT
 
             Assert.Same(result, startNodeMock.Object);
-            Assert.False(writer.HasRemovedNode);
+            Assert.False(nodeRemoved);
 
             startNodeMock.Verify(n => n.RemoveChild(childNode), Times.Never());
             startNodeMock.VerifyAll();
@@ -117,12 +117,12 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a", "b"));
+            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a", "b"), out var nodeRemoved);
 
             // ASSERT
 
             Assert.Same(result, startNodeMock.Object);
-            Assert.True(writer.HasRemovedNode);
+            Assert.True(nodeRemoved);
 
             startNodeMock.Verify(n => n.RemoveChild(childNode), Times.Never());
             startNodeMock.VerifyAll();
@@ -144,12 +144,12 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create<string>());
+            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create<string>(), out var nodeRemoved);
 
             // ASSERT
 
             Assert.Equal(startNodeMock.Object, result);
-            Assert.False(writer.HasRemovedNode);
+            Assert.False(nodeRemoved);
 
             startNodeMock.VerifyAll();
         }
@@ -178,12 +178,12 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a"));
+            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a"), out var nodeRemoved);
 
             // ASSERT
 
             Assert.Same(result, startNodeMock.Object);
-            Assert.False(writer.HasRemovedNode);
+            Assert.False(nodeRemoved);
 
             startNodeMock.Verify(n => n.RemoveChild(childNode), Times.Never());
             startNodeMock.VerifyAll();
@@ -215,12 +215,12 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a"));
+            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a"), out var nodeRemoved);
 
             // ASSERT
 
             Assert.Same(result, startNodeMock.Object);
-            Assert.True(writer.HasRemovedNode);
+            Assert.True(nodeRemoved);
 
             startNodeMock.Verify(n => n.RemoveChild(childNode), Times.Once());
             startNodeMock.VerifyAll();
@@ -255,12 +255,12 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.RemoveChildNodes(startNodeMock.Object);
+            var result = writer.RemoveChildNodes(startNodeMock.Object, out var childNodesWereRemoved);
 
             // ASSERT
 
             Assert.Same(result, startNodeMock.Object);
-            Assert.True(writer.HasRemovedNode);
+            Assert.True(childNodesWereRemoved);
 
             startNodeMock.Verify(n => n.RemoveChild(childNodeMock.Object), Times.Once());
             startNodeMock.VerifyAll();
@@ -280,12 +280,12 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.RemoveChildNodes(startNodeMock.Object);
+            var result = writer.RemoveChildNodes(startNodeMock.Object, out var childNodesWereRemoved);
 
             // ASSERT
 
             Assert.Same(result, startNodeMock.Object);
-            Assert.False(writer.HasRemovedNode);
+            Assert.False(childNodesWereRemoved);
 
             startNodeMock.Verify(n => n.RemoveChild(It.IsAny<NodeType>()), Times.Never());
             startNodeMock.VerifyAll();

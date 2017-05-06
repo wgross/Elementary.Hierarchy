@@ -114,8 +114,8 @@ namespace Elementary.Hierarchy.Collections
                 // this isn't a special case.
                 // use the hierachy writer for inner nodes
                 var writer = new RemoveNodeHierarchyWriter<TKey, MutableNode<TKey, TValue>>(recurse);
-                var result = writer.RemoveNode(this.rootNode, hierarchyPath);
-                return writer.HasRemovedNode;
+                var result = writer.RemoveNode(this.rootNode, hierarchyPath, out var nodeWasRemoved);
+                return nodeWasRemoved;
             }
         }
 
