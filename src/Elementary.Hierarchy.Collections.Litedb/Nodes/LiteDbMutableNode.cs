@@ -48,7 +48,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
 
         public bool RemoveNode(bool recurse)
         {
-            if (this.HasChildNodes && !recurse)
+            if (!recurse && this.HasChildNodes)
                 return false; // removal of child nodes isn't allowed
 
             if (this.EnsureChildNodesAreDeleted())

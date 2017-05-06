@@ -6,26 +6,15 @@ namespace Elementary.Hierarchy.Collections.Operations
     public class RemoveNodeHierarchyWriter<TKey, TNode>
         where TNode : class, IHierarchyNodeWriter<TNode>, IHasIdentifiableChildNodes<TKey, TNode>, IHasChildNodes<TNode>
     {
-        private bool recurse;
-
-        public RemoveNodeHierarchyWriter()
-            : this(false)
-        { }
-
-        public RemoveNodeHierarchyWriter(bool recurse)
-        {
-            this.recurse = recurse;
-        }
-
-        public TNode RemoveNode(TNode node, HierarchyPath<TKey> path, out bool hasRemovedNode)
+        public TNode RemoveNode(TNode node, HierarchyPath<TKey> path, bool recurse, out bool hasRemovedNode)
         {
             if (path.IsRoot)
             {
-                return RemoveNode(node, out hasRemovedNode);
+                return RemoveNode(node, recurse, out hasRemovedNode);
             }
             else if (node.TryGetChildNode(path.Items.First(), out var childNode))
             {
-                return RewriteParentNodeAfterChildNodeRemoved(node, childNode, path, out hasRemovedNode);
+                return RewriteParentNodeAfterChildNodeRemoved(node, childNode, path, recurse, out hasRemovedNode);
             }
             else
             {
@@ -36,12 +25,12 @@ namespace Elementary.Hierarchy.Collections.Operations
             }
         }
 
-        private TNode RewriteParentNodeAfterChildNodeRemoved(TNode parentNode, TNode childNode, HierarchyPath<TKey> remainingPath, out bool nodeRemoved)
+        private TNode RewriteParentNodeAfterChildNodeRemoved(TNode parentNode, TNode childNode, HierarchyPath<TKey> remainingPath, bool recurse,  out bool nodeRemoved)
         {
             // traverse the tree further down along the path
             // depending on the result of the removal operations this node has to be rewritten
 
-            var returnedChildNode = this.RemoveNode(childNode, remainingPath.SplitDescendants(), out nodeRemoved);
+            var returnedChildNode = this.RemoveNode(childNode, remainingPath.SplitDescendants(), recurse, out nodeRemoved);
 
             if (returnedChildNode == null)
             {
@@ -60,11 +49,11 @@ namespace Elementary.Hierarchy.Collections.Operations
             }
         }
 
-        private TNode RemoveNode(TNode node, out bool hasRemovedNode)
+        virtual protected TNode RemoveNode(TNode node, bool recurse, out bool hasRemovedNode)
         {
             // the traversal reached its destination, this is the node to delete
 
-            if (this.recurse)
+            if (recurse)
             {
                 hasRemovedNode = true;
                 return null; // recursive deletion is always allowed: just return null to commit.

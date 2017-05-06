@@ -60,8 +60,8 @@ namespace Elementary.Hierarchy.Collections.LiteDb
             // this isn't a special case.
             // use the hierachy writer for inner nodes
 
-            var writer = new RemoveNodeRecursivlyWriter<TValue, LiteDbMutableNode<TValue>>(recurse);
-            if (null == writer.RemoveNode(this.GetOrCreateRootNode(), path, out var nodeWasRemoved))
+            var writer = new RemoveNodeRecursivlyWriter<TValue, LiteDbMutableNode<TValue>>();
+            if (null == writer.RemoveNode(this.GetOrCreateRootNode(), path, recurse, out var nodeWasRemoved))
             {
                 // getting null as the result of the deletions measns to delete the root node.
                 // this is not done be the visitor

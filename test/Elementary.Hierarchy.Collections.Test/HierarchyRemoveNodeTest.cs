@@ -207,6 +207,12 @@ namespace Elementary.Hierarchy.Collections.Test
             Assert.Throws<KeyNotFoundException>(() => hierarchy.Traverse(subNode1));
         }
 
+        [Fact]
+        public void bug()
+        {
+            IHierarchy_RemoveNode_removes_inner_node_from_hierarchy_and_descendants("a/b", new LiteDbHierarchy<string>(new LiteDatabase(new MemoryStream()).GetCollection("nodes")));
+        }
+
         [Theory, MemberData(nameof(RemoveInnerNodeTwice))]
         public void IHierarchy_RemoveNode_twice_returns_false(string path, bool recurse, IHierarchy<string, string> hierarchy)
         {
