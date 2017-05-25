@@ -6,16 +6,16 @@ using System.Collections.Generic;
 
 namespace Elementary.Hierarchy.Collections
 {
-    public class MutableHierarchyEx<TKey, TValue> : IHierarchy<TKey, TValue>
+    public class MutableHierarchy<TKey, TValue> : IHierarchy<TKey, TValue>
     {
         #region Construction and initialization of this instance
 
-        public MutableHierarchyEx()
+        public MutableHierarchy()
             : this(pruneOnUnsetValue: false)
         {
         }
 
-        private MutableHierarchyEx(bool pruneOnUnsetValue)
+        private MutableHierarchy(bool pruneOnUnsetValue)
         {
             this.rootNode = MutableNode<TKey, TValue>.CreateRoot();
             this.pruneOnUnsetValue = pruneOnUnsetValue;
@@ -121,8 +121,8 @@ namespace Elementary.Hierarchy.Collections
             {
                 // this isn't a special case.
                 // use the hierachy writer for inner nodes
-                var writer = new RemoveNodeHierarchyWriter<TKey, MutableNode<TKey, TValue>>(recurse);
-                var result = writer.RemoveNode(this.rootNode, path, out var nodeWasRemoved);
+                var writer = new RemoveNodeHierarchyWriter<TKey, MutableNode<TKey, TValue>>();
+                var result = writer.RemoveNode(this.rootNode, path, recurse, out var nodeWasRemoved);
                 return nodeWasRemoved;
             }
         }

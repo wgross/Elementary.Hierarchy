@@ -23,7 +23,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create<string>(), out var nodeRemoved);
+            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create<string>(), false, out var nodeRemoved);
 
             // ASSERT
 
@@ -51,7 +51,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a"), out var nodeRemoved);
+            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a"), false, out var nodeRemoved);
 
             // ASSERT
 
@@ -79,7 +79,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a"), out var nodeRemoved);
+            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a"), false, out var nodeRemoved);
 
             // ASSERT
 
@@ -117,7 +117,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a", "b"), out var nodeRemoved);
+            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a", "b"), false, out var nodeRemoved);
 
             // ASSERT
 
@@ -144,7 +144,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create<string>(), out var nodeRemoved);
+            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create<string>(), false, out var nodeRemoved);
 
             // ASSERT
 
@@ -178,7 +178,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ACT
 
-            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a"), out var nodeRemoved);
+            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a"), false, out var nodeRemoved);
 
             // ASSERT
 
@@ -211,11 +211,11 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
                 .Setup(n => n.RemoveChild(childNode))
                 .Returns(startNodeMock.Object);
 
-            var writer = new RemoveNodeHierarchyWriter<string, NodeType>(recurse: true);
+            var writer = new RemoveNodeHierarchyWriter<string, NodeType>();
 
             // ACT
 
-            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a"), out var nodeRemoved);
+            var result = writer.RemoveNode(startNodeMock.Object, HierarchyPath.Create("a"), true, out var nodeRemoved);
 
             // ASSERT
 

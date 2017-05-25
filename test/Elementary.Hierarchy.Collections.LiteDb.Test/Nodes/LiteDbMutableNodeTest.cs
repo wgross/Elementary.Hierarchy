@@ -316,18 +316,17 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
             //         /
             //        c
 
-            var child = new LiteDbMutableNode<int>(this.nodes, new BsonDocument(), "a");
+            var grandChild = new LiteDbMutableNode<int>(this.nodes, new BsonDocument(), "c");
+            var child = new LiteDbMutableNode<int>(this.nodes, new BsonDocument(), "a").AddChild(grandChild);
             var secondChild = new LiteDbMutableNode<int>(this.nodes, new BsonDocument(), "b");
             var node = new LiteDbMutableNode<int>(this.nodes, this.rootDocument).AddChild(child).AddChild(secondChild);
-            var grandChild = new LiteDbMutableNode<int>(this.nodes, new BsonDocument(), "c");
-            child.AddChild(grandChild);
 
             // ACT
 
             var result = node.RemoveAllChildNodes(recurse: true);
 
             // ASSERT
-            // descdants hav been removed
+            // descendants have been removed
 
             Assert.True(result);
             Assert.False(node.HasChildNodes);

@@ -9,15 +9,20 @@ namespace Elementary.Hierarchy.Collections.Operations
             IHasIdentifiableChildNodes<string, TNode>,
             IHasChildNodes<TNode>
     {
-        public RemoveNodeRecursivlyWriter(bool recurse)
-            : base(recurse)
-        { }
+        
+        //protected override TNode RemoveDestinationNode(TNode node, bool recurse, out bool hasRemovedNode)
+        //{
+        //    if (node.RemoveNode(recurse))
+        //    {
+        //        hasRemovedNode = true;
+        //        return null;
 
-        protected override TNode RemoveChildNode(TNode node, TNode childNode)
-        {
-            if (childNode.EnsureChildNodesAreDeleted())
-                return (TNode)node.RemoveChild(childNode);
-            else return (TNode)node;
-        }
+        //    }
+        //    else
+        //    {
+        //        hasRemovedNode = false;
+        //        return node;
+        //    }
+        //}
     }
 }
