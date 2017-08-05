@@ -22,6 +22,9 @@
         public static IEnumerable<TNode> Children<TNode>(this TNode startNode)
             where TNode : IHasChildNodes<TNode>
         {
+             if (startNode is IHasDescendantNodes<TNode>)
+                return ((IHasDescendantNodes<TNode>)startNode).GetDescendants(depthFirst: false,maxDepth: 1);
+
             return startNode.Children(n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>());
         }
 

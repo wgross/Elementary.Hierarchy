@@ -11,12 +11,12 @@
         public interface MockableNodeType : IHasChildNodes<MockableNodeType>
         { }
 
-        private Mock<MockableNodeType> rootNode;
-        private Mock<MockableNodeType> leftNode;
-        private Mock<MockableNodeType> rightNode;
-        private Mock<MockableNodeType> leftLeaf;
-        private Mock<MockableNodeType> leftRightLeaf;
-        private Mock<MockableNodeType> rightRightLeaf;
+        private readonly Mock<MockableNodeType> rootNode;
+        private readonly Mock<MockableNodeType> leftNode;
+        private readonly Mock<MockableNodeType> rightNode;
+        private readonly Mock<MockableNodeType> leftLeaf;
+        private readonly Mock<MockableNodeType> leftRightLeaf;
+        private readonly Mock<MockableNodeType> rightRightLeaf;
 
         public HasChildNodesDescendantsTest()
         {
