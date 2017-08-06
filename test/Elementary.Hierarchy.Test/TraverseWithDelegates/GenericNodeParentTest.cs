@@ -9,9 +9,10 @@
     public class GenericNodeParentTest
     {
         [Fact]
-        public void D_root_throws_InvalidOperationException__on_Parent()
+        public void D_root_throws_InvalidOperationException_on_Parent()
         {
             // ARRANGE
+            // a parent isn't available
 
             TryGetParent<string> nodeHierarchy = (string node, out string parent) =>
             {
@@ -20,12 +21,13 @@
             };
 
             // ACT
+            // ask for parent
 
             InvalidOperationException result = Assert.Throws<InvalidOperationException>(() => "startNode".Parent(nodeHierarchy));
 
             // ASSERT
 
-            Assert.True(result.Message.Contains("has no parent"));
+            Assert.Contains("has no parent",result.Message);
         }
 
         [Fact]
