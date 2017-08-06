@@ -220,7 +220,7 @@
             Assert.Equal(new[] { this.leftNode.Object, this.rightNode.Object }, descendants);
         }
 
-          [Fact]
+        [Fact]
         public void IHasChildNodes_root_returns_empty_set_of_nodes_as_level0_descendants_on_Descendants()
         {
             // ACT
