@@ -220,19 +220,29 @@
             Assert.Equal(new[] { this.leftNode.Object, this.rightNode.Object }, descendants);
         }
 
+          [Fact]
+        public void IHasChildNodes_root_returns_empty_set_of_nodes_as_level0_descendants_on_Descendants()
+        {
+            // ACT
+
+            var descendants = this.rootNode.Object.Descendants(maxDepth: 0).ToArray();
+
+            // ASSERT
+
+            Assert.False(descendants.Any());
+        }
+
         [Fact]
-        public void IHasChildNodes_root_throws_ArgumentException_on_level0_on_Descendants()
+        public void IHasChildNodes_root_throws_ArgumentException_on_level_lt0_on_Descendants()
         {
             // ACT
 
             ArgumentException ex = Assert.Throws<ArgumentException>(() => this.rootNode.Object.Descendants(maxDepth: -1));
-            MockableNodeType[] result = this.rootNode.Object.Descendants(maxDepth: 0).ToArray();
 
             // ASSERT
 
             Assert.Contains("must be > 0", ex.Message);
             Assert.Equal("maxDepth", ex.ParamName);
-            Assert.False(result.Any());
         }
 
         [Fact]

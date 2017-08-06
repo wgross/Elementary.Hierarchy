@@ -130,7 +130,7 @@
         }
 
         [Fact]
-        public void D_root_returns_children_as_level1_descendants_on_Descendants()
+        public void d_root_returns_children_as_level1_descendants_on_Descendants()
         {
             // ACT
 
@@ -141,19 +141,29 @@
             Assert.Equal(new[] { "leftNode", "rightNode" }, descendants);
         }
 
+       [Fact]
+        public void D_root_returns_children_as_level1_descendants_on_Descendants()
+        {
+            // ACT
+
+            string[] descendants = "rootNode".Descendants(this.GetChildNodes, maxDepth: 0).ToArray();
+
+            // ASSERT
+
+            Assert.False(descendants.Any());
+        }
+
         [Fact]
-        public void D_root_throws_on_level0_on_Descendants()
+        public void D_root_throws_ArgumentException_on_level_lt0_on_Descendants()
         {
             // ACT
 
             ArgumentException ex = Assert.Throws<ArgumentException>(() => "rootNode".Descendants(this.GetChildNodes, maxDepth: -1));
-            string[] result = "rootNode".Descendants(this.GetChildNodes, maxDepth: 0).ToArray();
 
             // ASSERT
 
             Assert.Contains("must be > 0", ex.Message);
             Assert.Equal("maxDepth", ex.ParamName);
-            Assert.False(result.Any());
         }
 
         [Fact]
