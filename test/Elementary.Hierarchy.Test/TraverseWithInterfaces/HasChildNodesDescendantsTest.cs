@@ -107,7 +107,7 @@
             // ASSERT
 
             Assert.Equal(1, result.Count());
-            Assert.Same(this.leftLeaf.Object, result.ElementAt(0));
+            Assert.Same(this.leftLeaf.Object, result.Single());
 
             this.leftNode.VerifyAll();
             this.leftLeaf.VerifyAll();

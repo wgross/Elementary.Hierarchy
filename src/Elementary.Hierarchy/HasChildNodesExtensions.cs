@@ -22,8 +22,8 @@
         public static IEnumerable<TNode> Children<TNode>(this TNode startNode)
             where TNode : IHasChildNodes<TNode>
         {
-             if (startNode is IHasDescendantNodes<TNode>)
-                return ((IHasDescendantNodes<TNode>)startNode).GetDescendants(depthFirst: false,maxDepth: 1);
+            if (startNode is IHasDescendantNodes<TNode>)
+                return ((IHasDescendantNodes<TNode>)startNode).GetDescendants(depthFirst: false, maxDepth: 1);
 
             return startNode.Children(n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>());
         }
@@ -50,7 +50,7 @@
                 throw new ArgumentException("must be > 0", nameof(maxDepth));
 
             if (startNode is IHasDescendantNodes<TNode>)
-                return ((IHasDescendantNodes<TNode>)startNode).GetDescendants(depthFirst.GetValueOrDefault(false), maxDepth.GetValueOrDefault(int.MaxValue));
+                return ((IHasDescendantNodes<TNode>)startNode).GetDescendants(depthFirst.GetValueOrDefault(false), maxDepth.GetValueOrDefault(int.MaxValue)) ?? Enumerable.Empty<TNode>();
 
             // startNode's implememtation doesn't provide an optimized accessor to its descendants.
             // just rely on the child nodes
@@ -93,10 +93,13 @@
         /// </summary>
         /// <typeparam name="TNode">type of the hierarchy node</typeparam>
         /// <param name="startNode">The node instance to start traversal at</param>
-        /// <returns>An enumerableset of leaf nodes</returns>
+        /// <returns>An enumerable set of leaf nodes</returns>
         public static IEnumerable<TNode> Leaves<TNode>(this TNode startNode)
             where TNode : IHasChildNodes<TNode>
         {
+            if (startNode is IHasDescendantNodes<TNode>)
+                return startNode.DescendantsAndSelf(depthFirst: true, maxDepth: int.MaxValue).Where(n => !n.HasChildNodes);
+
             return startNode.Leaves(n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>());
         }
 
@@ -245,7 +248,7 @@ namespace Elementary.Hierarchy.Generic
         /// <typeparam name="TNode">type of the hierarchy node</typeparam>
         /// <param name="startNode">The node instance to start traversal at</param>
         /// <param name="getChildNodes"></param>
-        /// <returns></returns>
+        /// <returns>a collection of leaves</returns>
         public static IEnumerable<TNode> Leaves<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes)
         {
             // all nodes which havn't a child node are leaves of the tree.

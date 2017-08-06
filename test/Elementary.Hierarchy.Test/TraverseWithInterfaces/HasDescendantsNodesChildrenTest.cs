@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Elementary.Hierarchy.Test
 {
-    public class HasDescendantsChildrenTest
+    public class HasDescendantsNodesChildrenTest
     {
         private readonly Mock<MockableNodeType> rootNode;
 
@@ -13,7 +13,7 @@ namespace Elementary.Hierarchy.Test
         public interface MockableNodeType : IHasDescendantNodes<MockableNodeType>
         { }
 
-        public HasDescendantsChildrenTest()
+        public HasDescendantsNodesChildrenTest()
         {
 
             this.leftNode = new Mock<MockableNodeType>();
