@@ -5,20 +5,20 @@
     using System.Linq;
     using Xunit;
 
-    public class HasDescendantsDescendantsAndSelfTest
+    public class HasDescendantNodesDescendantsAndSelfTest
     {
         public interface MockableNodeType : IHasDescendantNodes<MockableNodeType>
         {
         }
 
-        private Mock<MockableNodeType> rootNode;
-        private Mock<MockableNodeType> leftNode;
-        private Mock<MockableNodeType> rightNode;
-        private Mock<MockableNodeType> leftLeaf;
-        private Mock<MockableNodeType> leftRightLeaf;
-        private Mock<MockableNodeType> rightRightLeaf;
+        private readonly Mock<MockableNodeType> rootNode;
+        private readonly Mock<MockableNodeType> leftNode;
+        private readonly Mock<MockableNodeType> rightNode;
+        private readonly Mock<MockableNodeType> leftLeaf;
+        private readonly Mock<MockableNodeType> leftRightLeaf;
+        private readonly Mock<MockableNodeType> rightRightLeaf;
 
-        public HasDescendantsDescendantsAndSelfTest()
+        public HasDescendantNodesDescendantsAndSelfTest()
         {
             //                rootNode
             //                /      \
@@ -261,15 +261,15 @@
             // ACT
 
             var descendantsAndSelf = this.rootNode.Object.DescendantsAndSelf(maxDepth: 2).Skip(1).ToArray();
-            var children = this.rootNode.Object.Children().ToArray();
+            
 
             // ASSERT
 
-            Assert.Equal(children, descendantsAndSelf);
+            Assert.Equal(new[] { this.leftNode.Object, this.rightNode.Object }, descendantsAndSelf);
 
             this.rootNode.Verify(n => n.GetDescendants(false, 1), Times.Once());
-            this.rootNode.Verify(n => n.HasChildNodes, Times.Once());
-            this.rootNode.Verify(n => n.ChildNodes, Times.Once());
+            this.rootNode.Verify(n => n.HasChildNodes, Times.Never());
+            this.rootNode.Verify(n => n.ChildNodes, Times.Never());
 
             this.leftNode.Verify(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()), Times.Never());
             this.leftNode.Verify(n => n.HasChildNodes, Times.Never());

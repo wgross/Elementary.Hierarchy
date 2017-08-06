@@ -237,16 +237,25 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
         }
 
         [Fact]
-        public void IHasDescendentNodes_root_returns_children_as_level1_descendants_on_Descendants()
+        public void IHasDescendentNodes_root_propegates_maxDepth_to_GetDescendants_on_Descendants()
         {
+            // ARRANGE
+            // add an additional setup to root
+            
+            this.rootNode
+                .Setup(n => n.GetDescendants(false, 1))
+                .Returns(new[]{this.leftNode.Object, this.rightNode.Object});
+
             // ACT
+            // 
 
             var descendants = this.rootNode.Object.Descendants(maxDepth: 1).ToArray();
-            var children = this.rootNode.Object.Children().ToArray();
-
+            
             // ASSERT
 
-            Assert.Equal(children, descendants);
+            this.rootNode.Verify(n => n.GetDescendants(false,1), Times.Once());
+
+            Assert.Equal(new[]{this.leftNode.Object, this.rightNode.Object}, descendants);
         }
 
         [Fact]

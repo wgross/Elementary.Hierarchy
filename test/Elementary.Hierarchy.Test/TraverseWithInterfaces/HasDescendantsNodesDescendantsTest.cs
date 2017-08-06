@@ -214,11 +214,11 @@
             // ACT
 
             var descendants = this.rootNode.Object.Descendants(maxDepth: 1).ToArray();
-            var children = this.rootNode.Object.Children().ToArray();
 
             // ASSERT
 
             Assert.Equal(2, descendants.Count());
+            var children = new[] { this.leftNode.Object, this.rightNode.Object };
             Assert.Equal(2, children.Count());
             Assert.Equal(children, descendants);
 

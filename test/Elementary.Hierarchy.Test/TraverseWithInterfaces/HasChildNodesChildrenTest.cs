@@ -1,8 +1,9 @@
+using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using Xunit;
 
-namespace Elementary.Hierarchy.Test
+namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 {
     public class HasChildNodesChildrenTest
     {
@@ -35,22 +36,23 @@ namespace Elementary.Hierarchy.Test
         }
 
         [Fact]
-        public void IHasChildNodes_root_returns_children_on_Children()
+        public void IHasChildNodes_calls_ChildNodes_to_retrieve_children_on_Children()
         {
             // ACT
 
             var children = this.rootNode.Object.Children().ToArray();
 
             // ASSERT
+            // first HasChildNodes is called, then ChildNodes
 
-            this.rootNode.Verify(r => r.HasChildNodes, Times.Once);
+            this.rootNode.Verify(r => r.HasChildNodes, Times.Once());
             this.rootNode.Verify(r => r.ChildNodes, Times.Once());
 
             Assert.Equal(new[] { this.leftNode.Object, this.rightNode.Object }, children);
         }
 
         [Fact]
-        public void IHasChildNodes_leaf_doesnt_retrieve_childnodes_if_it_hasnt_some()
+        public void IHasChildNodes_checks_HasChildNodes_before_calling_ChildNodes_on_Children()
         {
             // ACT
 
@@ -58,10 +60,32 @@ namespace Elementary.Hierarchy.Test
 
             // ASSERT
 
-            this.leftNode.Verify(r => r.HasChildNodes, Times.Once());
-            this.leftNode.Verify(r => r.ChildNodes, Times.Never());
+            this.rootNode.Verify(r => r.HasChildNodes, Times.Once());
+            this.rootNode.Verify(r => r.ChildNodes, Times.Never());
 
-            Assert.False(children.Any());
+            Assert.Equal(new[] { this.leftNode.Object, this.rightNode.Object }, children);
+        }
+
+        [Fact]
+        public void IHasChildNodes_converts_null_to_empty_collection_on_Children()
+        {
+            // ARRANGE
+            // make a inconsisstent mockup
+            
+            var node = new Mock<MockableNodeType>();
+            node.Setup(n => n.HasChildNodes).Returns(true);
+            node.Setup(n => n.ChildNodes).Returns((IEnumerable<MockableNodeType>)null);
+
+            // ACT
+            // ask for children
+            
+            var result = node.Object.Children();
+
+            // ASSERT
+            // result isn't null but empty
+
+            Assert.NotNull(result);
+            Assert.False(result.Any());
         }
     }
 }

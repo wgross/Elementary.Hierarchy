@@ -15,6 +15,7 @@
         /// <summary>
         /// Returns the child node of a given <paramref name="startNode"/>
         /// The child nodes are retrieved from the ChildNodes property if the <see cref="IHasChildNodes{TNode}"/> interface.
+        /// If <see cref="IHasChildNodes{TNode}.ChildNodes"/> returns null, <see cref="Enumerable.Empty{TResult}"/> is returned.
         /// </summary>
         /// <typeparam name="TNode"></typeparam>
         /// <param name="startNode"></param>
@@ -167,7 +168,7 @@ namespace Elementary.Hierarchy.Generic
             if (getChildren == null)
                 throw new ArgumentNullException(nameof(getChildren));
 
-            return getChildren(startNode);
+            return getChildren(startNode) ?? Enumerable.Empty<TNode>();
         }
 
         #endregion Children
