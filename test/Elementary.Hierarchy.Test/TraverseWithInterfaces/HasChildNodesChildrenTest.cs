@@ -56,7 +56,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
         {
             // ACT
 
-            var children = this.leftNode.Object.Children().ToArray();
+            var children = this.rootNode.Object.Children().ToArray();
 
             // ASSERT
 

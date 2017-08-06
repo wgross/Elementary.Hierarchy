@@ -86,12 +86,37 @@
                 .Setup(n => n.ChildNodes).Returns(Enumerable.Empty<MockableNodeType>());
 
             // ACT
+            // leaf says it has a child but doesn't returns one
 
             IEnumerable<MockableNodeType> result = badLeaf.Object.Descendants();
 
             // ASSERT
 
-            Assert.Equal(0, result.Count());
+            Assert.False(result.Any());
+
+            badLeaf.Verify(n => n.HasChildNodes, Times.Once());
+            badLeaf.Verify(n => n.ChildNodes, Times.Once());
+        }
+
+        [Fact]
+        public void IHasChildNodes_inconsistent_leaf_returns_converts_null_to_empty_children_on_Descendants()
+        {
+            // ARRANGE
+
+            var badLeaf = new Mock<MockableNodeType>();
+            badLeaf // claims to hav subnodes
+                .Setup(n => n.HasChildNodes).Returns(true);
+            badLeaf //  but returns empty set of subnodes
+                .Setup(n => n.ChildNodes).Returns((IEnumerable<MockableNodeType>)null);
+
+            // ACT
+            // leaf says it has a child but does returns null
+
+            IEnumerable<MockableNodeType> result = badLeaf.Object.Descendants();
+
+            // ASSERT
+
+            Assert.False(result.Any());
 
             badLeaf.Verify(n => n.HasChildNodes, Times.Once());
             badLeaf.Verify(n => n.ChildNodes, Times.Once());
@@ -189,11 +214,10 @@
             // ACT
 
             var descendants = this.rootNode.Object.Descendants(maxDepth: 1).ToArray();
-            var children = this.rootNode.Object.Children().ToArray();
 
             // ASSERT
 
-            Assert.Equal(children, descendants);
+            Assert.Equal(new[] { this.leftNode.Object, this.rightNode.Object }, descendants);
         }
 
         [Fact]
@@ -206,7 +230,7 @@
 
             // ASSERT
 
-            Assert.True(ex.Message.Contains("must be > 0"));
+            Assert.Contains("must be > 0", ex.Message);
             Assert.Equal("maxDepth", ex.ParamName);
             Assert.False(result.Any());
         }
@@ -220,7 +244,14 @@
 
             // ASSERT
 
-            Assert.Equal(new[] { this.leftNode.Object, this.rightNode.Object, this.leftLeaf.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result);
+            Assert.Equal(new[]
+            {
+                this.leftNode.Object,
+                this.rightNode.Object,
+                this.leftLeaf.Object,
+                this.leftRightLeaf.Object,
+                this.rightRightLeaf.Object
+            }, result);
         }
 
         [Fact]
@@ -232,12 +263,14 @@
 
             // ASSERT
 
-            Assert.Equal(new[] {
+            Assert.Equal(new[]
+            {
                 this.leftNode.Object,
                 this.leftLeaf.Object,
                 this.rightNode.Object,
                 this.leftRightLeaf.Object,
-                this.rightRightLeaf.Object }, result);
+                this.rightRightLeaf.Object
+            }, result);
         }
     }
 }

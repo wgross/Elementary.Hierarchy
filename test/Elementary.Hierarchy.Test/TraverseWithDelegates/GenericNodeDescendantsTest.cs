@@ -51,7 +51,24 @@
 
             // ASSERT
 
-            Assert.Equal(0, result.Count());
+            Assert.False(result.Any());
+        }
+
+        [Fact]
+        public void D_inconsistent_leaf_returns_converts_null_to_empty_children_on_Descendants()
+        {
+            // ARRANGE
+
+            Func<string, bool> hasChildNodes = n => true;
+            Func<string, IEnumerable<string>> getChildNodes = n => null;
+
+            // ACT
+
+            IEnumerable<string> result = "badLeaf".Descendants(getChildNodes).ToArray();
+
+            // ASSERT
+
+            Assert.False(result.Any());
         }
 
         [Fact]
@@ -118,11 +135,10 @@
             // ACT
 
             var descendants = "rootNode".Descendants(this.GetChildNodes, maxDepth: 1).ToArray();
-            var children = "rootNode".Children(this.GetChildNodes).ToArray();
-
+            
             // ASSERT
 
-            Assert.Equal(children, descendants);
+            Assert.Equal(new[] { "leftNode", "rightNode" }, descendants);
         }
 
         [Fact]
@@ -135,7 +151,7 @@
 
             // ASSERT
 
-            Assert.True(ex.Message.Contains("must be > 0"));
+            Assert.Contains("must be > 0", ex.Message);
             Assert.Equal("maxDepth", ex.ParamName);
             Assert.False(result.Any());
         }
@@ -149,7 +165,14 @@
 
             // ASSERT
 
-            Assert.Equal(new[] { "leftNode", "rightNode", "leftLeaf", "leftRightLeaf", "rightRightLeaf" }, result);
+            Assert.Equal(new[] 
+            { 
+                "leftNode", 
+                "rightNode", 
+                "leftLeaf", 
+                "leftRightLeaf", 
+                "rightRightLeaf" 
+            }, result);
         }
 
         [Fact]

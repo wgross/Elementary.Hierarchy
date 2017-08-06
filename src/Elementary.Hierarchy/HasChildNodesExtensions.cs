@@ -350,7 +350,7 @@ namespace Elementary.Hierarchy.Generic
             var nodesToVisit = new Queue<Tuple<int, TNode, TNode>>();
             if (0 < maxDepth) // startNode is depth 0, next level is 1
             {
-                foreach (var child in getChildNodes(startNode)) // descend one level from the start node
+                foreach (var child in getChildNodes(startNode) ?? Enumerable.Empty<TNode>()) // descend one level from the start node
                 {
                     nodesToVisit.Enqueue(Tuple.Create(1, child, startNode));
                 }
