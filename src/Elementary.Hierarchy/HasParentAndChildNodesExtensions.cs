@@ -19,7 +19,7 @@
         /// <returns>
         /// An <see cref="IEnumerable{TNode}"/> containing all visited nodes without the start node.
         /// </returns>
-        public static IEnumerable<TNode> FollowingSiblings<TNode>(this TNode startNode)
+        public static IEnumerable<TNode> NextSiblings<TNode>(this TNode startNode)
             where TNode : class, IHasChildNodes<TNode>, IHasParentNode<TNode>
         {
             if (startNode == null)
@@ -33,7 +33,7 @@
         }
 
         /// <summary>
-        /// Traverses the start nodes parent child node beginning with the first child until the start node is reached.
+        /// Traverses the start nodes parent child nodes beginning with the first child until the start node is reached.
         /// The siblings are returned inside a <see cref="IEnumerable{TNode}"/>/>.
         /// The start node is not returned.
         /// </summary>
@@ -42,7 +42,7 @@
         /// </returns>
         /// <typeparam name="TNode">Type of the node, implements <see cref="IHasParentNode{TNode}"/></typeparam>
         /// <param name="startNode">reference to the node to start from</param>
-        public static IEnumerable<TNode> PrecedingSiblings<TNode>(this TNode startNode)
+        public static IEnumerable<TNode> PreviousSiblings<TNode>(this TNode startNode)
             where TNode : class, IHasChildNodes<TNode>, IHasParentNode<TNode>
         {
             if (startNode == null)
