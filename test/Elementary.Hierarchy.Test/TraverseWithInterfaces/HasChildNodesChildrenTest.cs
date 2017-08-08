@@ -55,15 +55,15 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
         public void IHasChildNodes_checks_HasChildNodes_before_calling_ChildNodes_on_Children()
         {
             // ACT
+            // get child node from leave
 
-            var children = this.rootNode.Object.Children().ToArray();
+            var children = this.leftNode.Object.Children().ToArray();
 
             // ASSERT
+            // HashChildNOdes was called, but ChildNodes never
 
-            this.rootNode.Verify(r => r.HasChildNodes, Times.Once());
-            this.rootNode.Verify(r => r.ChildNodes, Times.Never());
-
-            Assert.Equal(new[] { this.leftNode.Object, this.rightNode.Object }, children);
+            this.leftNode.Verify(r => r.HasChildNodes, Times.Once());
+            this.leftNode.Verify(r => r.ChildNodes, Times.Never());
         }
 
         [Fact]
