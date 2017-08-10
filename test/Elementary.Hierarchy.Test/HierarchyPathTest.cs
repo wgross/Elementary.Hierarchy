@@ -55,7 +55,7 @@
         }
 
         [Fact]
-        public void Create_immutable_path_from_item_array()
+        public void Create_path_from_array_copy()
         {
             // ARRANGE
 
@@ -72,7 +72,7 @@
         }
 
         [Fact]
-        public void Create_immutable_path_from_item_enumerable()
+        public void Create_from_enumerable_copy()
         {
             // ARRANGE
 
