@@ -66,7 +66,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
             this.leftNode.Verify(r => r.ChildNodes, Times.Never());
         }
 
-        [Fact]
+        [Fact] 
         public void IHasChildNodes_converts_null_to_empty_collection_on_Children()
         {
             // ARRANGE
