@@ -171,7 +171,7 @@ namespace Elementary.Hierarchy.Generic
         /// <summary>
         /// Retrieves a descendant of the <paramref name="startNode"/> or throws <see cref="KeyNotFoundException"/> if the
         /// <paramref name="path"/> can't be followed completely.
-        /// The child nodes are retrieved with the specified <paramref name="path"/> delegate.
+        /// The child nodes are retrieved with the specified <paramref name="path"/> delegates.
         /// </summary>
         /// <typeparam name="TNode"></typeparam>
         /// <param name="startNode"></param>
@@ -273,7 +273,7 @@ namespace Elementary.Hierarchy.Generic
         /// <typeparam name="TNode"></typeparam>
         /// <param name="startNode"></param>
         /// <param name="path"></param>
-        /// <param name="tryGetChildNode">delegate to retrieve a child node by specified key</param>
+        /// <param name="getChildNodes">delegate to retrieve the child nodes of a node</param>
         /// <param name="createDefault">supplies default value in case the requested node isn't found</param>
         /// <returns>TNode instance behind key or default(TNode)</returns>
         public static TNode DescendantAtOrDefault<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, Func<TNode> createDefault = null, params Func<IEnumerable<TNode>, (bool,TNode)>[] path)
@@ -305,7 +305,7 @@ namespace Elementary.Hierarchy.Generic
 
             yield return startNode;
 
-            // now descend from the start node, if there is sometin left in the path
+            // now descend from the start node, if there ars items left in the path
             TNode childNode = startNode;
             var keyItems = path.Items.ToArray();
             for (int i = 0; i < keyItems.Length; i++)
@@ -313,6 +313,36 @@ namespace Elementary.Hierarchy.Generic
                     yield return childNode;
                 else
                     yield break;
+        }
+
+
+        /// <summary>
+        /// The Tree is traversed from <paramref name="startNode"/>  until the node is reached which is specified by the <paramref name="path"/>.
+        /// The traversal stops if the destination node cannot be reached.
+        /// </summary>
+        /// <typeparam name="TNode">Type of the hierarchy node, mist implement IHasIdentifiableChildNodes</typeparam>
+        /// <param name="startNode">node to start the traversal</param>
+        /// <param name="path">path of delegates for choosing child nodes </param>
+        /// <param name="getChildNodes">delegate which defines the tree structure by mapping a node to its child nodes</param>
+        /// <returns>Collection of the nodes which where visited along the traversal beginning with <paramref name="startNode"/>.</returns>
+        public static IEnumerable<TNode> DescendAlongPath<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, params Func<IEnumerable<TNode>, (bool, TNode)>[] path)
+        {
+            // return the start node as the first node to traverse.
+            // this makes sure that at least one node is contained on the result
+
+            yield return startNode;
+
+            // now descend from the start node, if there are items left in the path
+            TNode currentNode = startNode;
+            for (int i = 0; i < path.Length; i++)
+            {
+                (var found, var nextNode) = path[i](getChildNodes(currentNode));
+                if (found)
+                    yield return nextNode;
+                else
+                    yield break;
+                currentNode = nextNode;
+            }
         }
 
         #endregion DescendAlongPath

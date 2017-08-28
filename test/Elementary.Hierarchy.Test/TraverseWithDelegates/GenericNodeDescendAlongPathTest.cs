@@ -8,7 +8,7 @@
     public class GenericNodeDescendAlongPathTest
     {
         [Fact]
-        public void D_root_returns_itself_for_empty_path_on_DescendAlongPath()
+        public void D_returns_itself_for_empty_path_on_DescendAlongPath()
         {
             // ARRANGE
 
@@ -34,7 +34,7 @@
         }
 
         [Fact]
-        public void D_root_returns_child_on_DescendAlongPath()
+        public void D_returns_child_on_DescendAlongPath()
         {
             // ARRANGE
 
@@ -60,7 +60,7 @@
         }
 
         [Fact]
-        public void D_root_returns_child_and_grandchild_on_DescendAlongPath()
+        public void D_returns_child_and_grandchild_on_DescendAlongPath()
         {
             // ARRANGE
 
@@ -90,7 +90,7 @@
         }
 
         [Fact]
-        public void D_root_return_incomplete_list_on_DescendAlongPath()
+        public void D_return_incomplete_list_on_DescendAlongPath()
         {
             // ARRANGE
 
