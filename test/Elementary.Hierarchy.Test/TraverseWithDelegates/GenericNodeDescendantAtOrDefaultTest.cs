@@ -7,7 +7,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
     public class GenericNodeDescendantAtOrDefaultTest
     {
         [Fact]
-        public void D_root_returns_child_on_DescendantAtOrDefault()
+        public void D_returns_child_on_DescendantAtOrDefault()
         {
             // ARRANGE
 
@@ -37,7 +37,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
         }
 
         [Fact]
-        public void D_root_returns_itself_on_DescendantAtOrDefault()
+        public void D_returns_itself_on_DescendantAtOrDefault()
         {
             // ARRANGE
 
@@ -60,7 +60,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
         }
 
         [Fact]
-        public void D_root_returns_grandchild_on_DescendentAtOrDefault()
+        public void D_returns_grandchild_on_DescendentAtOrDefault()
         {
             // ARRANGE
 
@@ -95,7 +95,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
         }
 
         [Fact]
-        public void D_root_returns_null_on_invalid_childId_on_DescendantOrDefault()
+        public void D_returns_null_on_invalid_childId_on_DescendantOrDefault()
         {
             // ARRANGE
 
@@ -125,7 +125,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
         }
 
         [Fact]
-        public void D_root_returns_substitute_on_invalid_childId_on_DescendantOrDefault()
+        public void D_returns_substitute_on_invalid_childId_on_DescendantOrDefault()
         {
             // ARRANGE
 

@@ -264,6 +264,26 @@ namespace Elementary.Hierarchy.Generic
             return childNode;
         }
 
+        /// <summary>
+        /// Retrieves a descendant of the <paramref name="startNode"/> specifed by the <paramref name="path"/> or returns a substitute value
+        /// Which can be supplied by the <paramref name="createDefault"/> delegate.
+        /// If no delegate was specified default(TNode) is returned.
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TNode"></typeparam>
+        /// <param name="startNode"></param>
+        /// <param name="path"></param>
+        /// <param name="tryGetChildNode">delegate to retrieve a child node by specified key</param>
+        /// <param name="createDefault">supplies default value in case the requested node isn't found</param>
+        /// <returns>TNode instance behind key or default(TNode)</returns>
+        public static TNode DescendantAtOrDefault<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, Func<TNode> createDefault = null, params Func<IEnumerable<TNode>, (bool,TNode)>[] path)
+        {
+            (var found, var node) = path.Aggregate((true, startNode), (result, pathItem) => pathItem(getChildNodes(result.Item2)));
+            if (!found)
+                return (createDefault ?? (() => default(TNode)))();
+            return node;
+        }
+
         #endregion DescendantAtOrDefault
 
         #region DescendAlongPath
