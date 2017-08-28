@@ -1,8 +1,8 @@
 ﻿namespace Elementary.Hierarchy
 {
-    using Elementary.Hierarchy.Generic;
     using System;
     using System.Collections.Generic;
+    using Elementary.Hierarchy.Generic;
 
     /// <summary>
     /// Provides extensions to the interface <see cref="IHasIdentifiableChildNodes{TKey, TNode}"/>
@@ -168,6 +168,24 @@ namespace Elementary.Hierarchy.Generic
             return childNode;
         }
 
+        /// <summary>
+        /// Retrieves a descendant of the <paramref name="startNode"/> or throws <see cref="KeyNotFoundException"/> if the
+        /// <paramref name="path"/> can't be followed completely.
+        /// The child nodes are retrieved with the specified <paramref name="path"/> delegate.
+        /// </summary>
+        /// <typeparam name="TNode"></typeparam>
+        /// <param name="startNode"></param>
+        /// <param name="path"></param>
+        /// <param name="getChildNodes">Retrieves a nodes child nodes</param>
+        /// <returns></returns>
+        public static TNode DescendantAt<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, params Func<IEnumerable<TNode>, (bool, TNode)>[] path)
+        {
+            (var found, var node) = path.Aggregate((true, startNode), (result, pathItem) => pathItem(getChildNodes(result.Item2)));
+            if (!found)
+                throw new KeyNotFoundException("Key not found");
+            return node;
+        }
+
         #endregion DescendantAt
 
         #region TryGetDescendantAt
@@ -282,7 +300,7 @@ namespace Elementary.Hierarchy.Generic
         #region VisitDescendantAtAndAncestors
 
         /// <summary>
-        /// A descendent of the <paramref name="startNode"/> is presented to the <paramref name="visitDescendantAt"/>. 
+        /// A descendent of the <paramref name="startNode"/> is presented to the <paramref name="visitDescendantAt"/>.
         /// Afterwards all ancestors are presented to <paramref name="visitAncestor"/> until the <paramref name="startNode"/> is reached.
         /// if the <paramref name="startNode"/> is also the descendant to visit, it isn't presented to <paramref name="visitAncestor"/>.
         /// </summary>

@@ -31,7 +31,7 @@ namespace Elementary.Hierarchy.Nodes
 
         public V Value { get; }
 
-        #region IHasChildNode members
+        #region IHasChildNodes members
 
         public bool HasChildNodes => this.childNodes.Any();
 
