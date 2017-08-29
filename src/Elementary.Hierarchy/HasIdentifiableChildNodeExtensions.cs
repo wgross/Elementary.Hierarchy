@@ -122,12 +122,12 @@
         /// <param name="path">specified the path to descend along from the start node</param>
         /// <param name="visitDescendantAt">the visitor to call at teh descandant</param>
         /// <param name="visitAncestors">the visitor to call for all ancestors</param>
-        public static void VisitDescandantAtAndAncestors<TKey, TNode>(this TNode startNode, HierarchyPath<TKey> path, Action<TNode> visitDescendantAt, Action<TNode> visitAncestors)
-            where TNode : IHasIdentifiableChildNodes<TKey, TNode>
-        {
-            var tryGetChildNode = (TryGetChildNode<TKey, TNode>)((TNode p, TKey k, out TNode c) => p.TryGetChildNode(k, out c));
-            startNode.VisitDescandantAtAndAncestors(tryGetChildNode, path, visitDescendantAt, visitAncestors);
-        }
+        //public static void VisitDescandantAtAndAncestors<TKey, TNode>(this TNode startNode, HierarchyPath<TKey> path, Action<TNode> visitDescendantAt, Action<TNode> visitAncestors)
+        //    where TNode : IHasIdentifiableChildNodes<TKey, TNode>
+        //{
+        //    var tryGetChildNode = (TryGetChildNode<TKey, TNode>)((TNode p, TKey k, out TNode c) => p.TryGetChildNode(k, out c));
+        //    startNode.VisitDescandantAtAndAncestors(tryGetChildNode, path, visitDescendantAt, visitAncestors);
+        //}
 
         #endregion VisitDescendantAtAndAncestors
     }
@@ -361,31 +361,31 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="path">specified the path to descend along from the start node</param>
         /// <param name="visitDescendantAt">the visitor to call at the descandant</param>
         /// <param name="visitAncestor">the visitor to call for all ancestors</param>
-        public static void VisitDescandantAtAndAncestors<TKey, TNode>(this TNode startNode, TryGetChildNode<TKey, TNode> tryGetChildNode, HierarchyPath<TKey> path, Action<TNode> visitDescendantAt, Action<TNode> visitAncestor)
-        {
-            if (visitDescendantAt == null)
-                throw new ArgumentNullException(nameof(visitDescendantAt));
+        //public static void VisitDescandantAtAndAncestors<TKey, TNode>(this TNode startNode, TryGetChildNode<TKey, TNode> tryGetChildNode, HierarchyPath<TKey> path, Action<TNode> visitDescendantAt, Action<TNode> visitAncestor)
+        //{
+        //    if (visitDescendantAt == null)
+        //        throw new ArgumentNullException(nameof(visitDescendantAt));
 
-            if (visitAncestor == null)
-                throw new ArgumentNullException(nameof(visitAncestor));
+        //    if (visitAncestor == null)
+        //        throw new ArgumentNullException(nameof(visitAncestor));
 
-            var ancestors = new Stack<TNode>(new[] { startNode });
+        //    var ancestors = new Stack<TNode>(new[] { startNode });
 
-            // descend down the tree until the descendant is reached.
-            // remember all ancestors in a stack for re.visiting them afterwards.
-            var pathArray = path.Items.ToArray();
-            TNode currentNode = startNode;
-            for (int i = 0; i < pathArray.Length; i++)
-                if (!tryGetChildNode(currentNode, pathArray[i], out currentNode))
-                    throw new KeyNotFoundException($"Key not found:'{string.Join("/", pathArray.Take(i + 1))}'");
-                else ancestors.Push(currentNode);
+        //    // descend down the tree until the descendant is reached.
+        //    // remember all ancestors in a stack for re.visiting them afterwards.
+        //    var pathArray = path.Items.ToArray();
+        //    TNode currentNode = startNode;
+        //    for (int i = 0; i < pathArray.Length; i++)
+        //        if (!tryGetChildNode(currentNode, pathArray[i], out currentNode))
+        //            throw new KeyNotFoundException($"Key not found:'{string.Join("/", pathArray.Take(i + 1))}'");
+        //        else ancestors.Push(currentNode);
 
-            // the descandant is visited first
-            // and afterwards all ancestors are presented.
-            visitDescendantAt(ancestors.Pop());
-            while (ancestors.Any())
-                visitAncestor(ancestors.Pop());
-        }
+        //    // the descandant is visited first
+        //    // and afterwards all ancestors are presented.
+        //    visitDescendantAt(ancestors.Pop());
+        //    while (ancestors.Any())
+        //        visitAncestor(ancestors.Pop());
+        //}
 
         #endregion VisitDescendantAtAndAncestors
     }
