@@ -1,35 +1,19 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 {
-    using Elementary.Hierarchy.Generic;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Elementary.Hierarchy.Generic;
     using Xunit;
 
     public class GenericNodeDescendantsTest
     {
-        private IEnumerable<string> GetChildNodes(string rootNode)
-        {
-            switch (rootNode)
-            {
-                case "rootNode":
-                    return new[] { "leftNode", "rightNode" };
-
-                case "leftNode":
-                    return new[] { "leftLeaf" };
-
-                case "rightNode":
-                    return new[] { "leftRightLeaf", "rightRightLeaf" };
-            }
-            return Enumerable.Empty<string>();
-        }
-
         [Fact]
         public void D_leaf_returns_no_children_on_Descendants()
         {
             // ACT
 
-            IEnumerable<string> result = "leftRightLeaf".Descendants(this.GetChildNodes).ToArray();
+            IEnumerable<string> result = "leftRightLeaf".Descendants(DelegateTreeDefinition.GetChildNodes).ToArray();
 
             // ASSERT
 
@@ -76,7 +60,7 @@
         {
             // ACT
 
-            IEnumerable<string> result = "leftNode".Descendants(this.GetChildNodes).ToArray();
+            IEnumerable<string> result = "leftNode".Descendants(DelegateTreeDefinition.GetChildNodes).ToArray();
 
             // ASSERT
 
@@ -89,7 +73,7 @@
         {
             // ACT
 
-            IEnumerable<string> result = "rightNode".Descendants(this.GetChildNodes);
+            IEnumerable<string> result = "rightNode".Descendants(DelegateTreeDefinition.GetChildNodes);
 
             // ASSERT
 
@@ -102,7 +86,7 @@
         {
             // ACT
 
-            IEnumerable<string> result = "rootNode".Descendants(this.GetChildNodes).ToArray();
+            IEnumerable<string> result = "rootNode".Descendants(DelegateTreeDefinition.GetChildNodes).ToArray();
 
             // ASSERT
 
@@ -115,7 +99,7 @@
         {
             // ACT
 
-            IEnumerable<string> result = "rootNode".Descendants(this.GetChildNodes, depthFirst: true).ToArray();
+            IEnumerable<string> result = "rootNode".Descendants(DelegateTreeDefinition.GetChildNodes, depthFirst: true).ToArray();
 
             // ASSERT
 
@@ -134,19 +118,19 @@
         {
             // ACT
 
-            var descendants = "rootNode".Descendants(this.GetChildNodes, maxDepth: 1).ToArray();
-            
+            var descendants = "rootNode".Descendants(DelegateTreeDefinition.GetChildNodes, maxDepth: 1).ToArray();
+
             // ASSERT
 
             Assert.Equal(new[] { "leftNode", "rightNode" }, descendants);
         }
 
-       [Fact]
+        [Fact]
         public void D_root_returns_children_as_level1_descendants_on_Descendants()
         {
             // ACT
 
-            string[] descendants = "rootNode".Descendants(this.GetChildNodes, maxDepth: 0).ToArray();
+            string[] descendants = "rootNode".Descendants(DelegateTreeDefinition.GetChildNodes, maxDepth: 0).ToArray();
 
             // ASSERT
 
@@ -158,7 +142,7 @@
         {
             // ACT
 
-            ArgumentException ex = Assert.Throws<ArgumentException>(() => "rootNode".Descendants(this.GetChildNodes, maxDepth: -1));
+            ArgumentException ex = Assert.Throws<ArgumentException>(() => "rootNode".Descendants(DelegateTreeDefinition.GetChildNodes, maxDepth: -1));
 
             // ASSERT
 
@@ -171,17 +155,17 @@
         {
             // ACT
 
-            string[] result = "rootNode".Descendants(this.GetChildNodes, maxDepth: 3).ToArray();
+            string[] result = "rootNode".Descendants(DelegateTreeDefinition.GetChildNodes, maxDepth: 3).ToArray();
 
             // ASSERT
 
-            Assert.Equal(new[] 
-            { 
-                "leftNode", 
-                "rightNode", 
-                "leftLeaf", 
-                "leftRightLeaf", 
-                "rightRightLeaf" 
+            Assert.Equal(new[]
+            {
+                "leftNode",
+                "rightNode",
+                "leftLeaf",
+                "leftRightLeaf",
+                "rightRightLeaf"
             }, result);
         }
 
@@ -190,7 +174,7 @@
         {
             // ACT
 
-            IEnumerable<string> result = "rootNode".Descendants(this.GetChildNodes, depthFirst: true, maxDepth: 3).ToArray();
+            IEnumerable<string> result = "rootNode".Descendants(DelegateTreeDefinition.GetChildNodes, depthFirst: true, maxDepth: 3).ToArray();
 
             // ASSERT
 

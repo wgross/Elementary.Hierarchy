@@ -7,29 +7,13 @@ namespace Elementary.Hierarchy.Test.SelectWithDelegates
 {
     public class GenericNodeDescendantAtOrDefaultDelegatePathTest
     {
-        private IEnumerable<string> GetChildNodes(string rootNode)
-        {
-            switch (rootNode)
-            {
-                case "rootNode":
-                    return new[] { "leftNode", "rightNode" };
-
-                case "leftNode":
-                    return new[] { "leftLeaf" };
-
-                case "rightNode":
-                    return new[] { "leftRightLeaf", "rightRightLeaf" };
-            }
-            return Enumerable.Empty<string>();
-        }
-
         [Fact]
         public void D_returns_child_DescendantAtOrDefault()
         {
             // ACT
             // provide a child selector and retrieve the child
 
-            var result = "rootNode".DescendantAtOrDefault(getChildNodes: this.GetChildNodes, createDefault: () => "default", path: ns => (true, ns.First()));
+            var result = "rootNode".DescendantAtOrDefault(getChildNodes: DelegateTreeDefinition.GetChildNodes, createDefault: () => "default", path: ns => (true, ns.First()));
 
             // ASSERT
             // node was found
@@ -43,7 +27,7 @@ namespace Elementary.Hierarchy.Test.SelectWithDelegates
             // ACT
             // without a path the node itself is returned
 
-            var result = "rootNode".DescendantAtOrDefault(this.GetChildNodes, createDefault: () => "default");
+            var result = "rootNode".DescendantAtOrDefault(DelegateTreeDefinition.GetChildNodes, createDefault: () => "default");
 
             // ASSERT
             // node was found
@@ -57,7 +41,7 @@ namespace Elementary.Hierarchy.Test.SelectWithDelegates
             // ACT
             // provide a child selector and retrieve the child
 
-            var result = "rootNode".DescendantAtOrDefault(this.GetChildNodes, () => "default", (c => (true, c.Last())), (c => (true, c.First())));
+            var result = "rootNode".DescendantAtOrDefault(DelegateTreeDefinition.GetChildNodes, () => "default", (c => (true, c.Last())), (c => (true, c.First())));
 
             // ASSERT
             // node was found
@@ -71,7 +55,7 @@ namespace Elementary.Hierarchy.Test.SelectWithDelegates
             // ACT
             // provide a child selector and retrieve the child
 
-            var result = "rootNode".DescendantAtOrDefault(getChildNodes: this.GetChildNodes, createDefault: null, path: ns => (false, "not result"));
+            var result = "rootNode".DescendantAtOrDefault(getChildNodes: DelegateTreeDefinition.GetChildNodes, createDefault: null, path: ns => (false, "not result"));
 
             // ASSERT
             // node wasn't found, defauilt not supplied -> default(TNode) is used
@@ -85,7 +69,7 @@ namespace Elementary.Hierarchy.Test.SelectWithDelegates
             // ACT
             // provide a child selector and retrieve the child
 
-            var result = "rootNode".DescendantAtOrDefault(getChildNodes: this.GetChildNodes, createDefault: () => "default", path: ns => (false, "not result"));
+            var result = "rootNode".DescendantAtOrDefault(getChildNodes: DelegateTreeDefinition.GetChildNodes, createDefault: () => "default", path: ns => (false, "not result"));
 
             // ASSERT
             // node wasn't found, default delegate was called

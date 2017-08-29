@@ -30,27 +30,9 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
         [Fact]
         public void D_root_returns_its_descendant_leaves_on_Leaves()
         {
-            // ARRANGE
-
-            Func<string, IEnumerable<string>> getChildNodes = p =>
-            {
-                switch (p)
-                {
-                    case "root":
-                        return new[] { "leftNode", "rightNode" };
-
-                    case "leftNode":
-                        return new[] { "leftLeaf" };
-
-                    case "rightNode":
-                        return new[] { "leftRightLeaf", "rightRightLeaf" };
-                }
-                return Enumerable.Empty<string>();
-            };
-
             // ACT
 
-            IEnumerable<string> result = "root".Leaves(getChildNodes).ToArray();
+            IEnumerable<string> result = "rootNode".Leaves(DelegateTreeDefinition.GetChildNodes).ToArray();
 
             // ASSERT
 

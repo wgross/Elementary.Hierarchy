@@ -8,29 +8,13 @@ namespace Elementary.Hierarchy.Test.SelectWithDelegates
 {
     public class GenericNodeDescendantAtDelegatePathTest
     {
-        private IEnumerable<string> GetChildNodes(string rootNode)
-        {
-            switch (rootNode)
-            {
-                case "rootNode":
-                    return new[] { "leftNode", "rightNode" };
-
-                case "leftNode":
-                    return new[] { "leftLeaf" };
-
-                case "rightNode":
-                    return new[] { "leftRightLeaf", "rightRightLeaf" };
-            }
-            return Enumerable.Empty<string>();
-        }
-
         [Fact]
         public void D_returns_child_on_DescendantAt()
         {
             // ACT
             // provide a child selector and retrieve the child
 
-            var result = "rootNode".DescendantAt(getChildNodes: this.GetChildNodes, path: ns => (true, ns.First()));
+            var result = "rootNode".DescendantAt(getChildNodes: DelegateTreeDefinition.GetChildNodes, path: ns => (true, ns.First()));
 
             // ASSERT
             // node was found
@@ -44,7 +28,7 @@ namespace Elementary.Hierarchy.Test.SelectWithDelegates
             // ACT
             // without a path the node itself is returned
 
-            var result = "rootNode".DescendantAt(this.GetChildNodes);
+            var result = "rootNode".DescendantAt(DelegateTreeDefinition.GetChildNodes);
 
             // ASSERT
             // node was found
@@ -58,7 +42,7 @@ namespace Elementary.Hierarchy.Test.SelectWithDelegates
             // ACT
             // provide a child selector and retrieve the child
             
-            var result = "rootNode".DescendantAt(this.GetChildNodes, (c => (true, c.Last())), (c => (true, c.First())));
+            var result = "rootNode".DescendantAt(DelegateTreeDefinition.GetChildNodes, (c => (true, c.Last())), (c => (true, c.First())));
 
             // ASSERT
             // node was found
@@ -74,7 +58,7 @@ namespace Elementary.Hierarchy.Test.SelectWithDelegates
 
             KeyNotFoundException result = Assert.Throws<KeyNotFoundException>(() =>
             {
-                "startNode".DescendantAt(this.GetChildNodes, (c => (false, null)));
+                "startNode".DescendantAt(DelegateTreeDefinition.GetChildNodes, (c => (false, null)));
             });
 
             // ASSERT
