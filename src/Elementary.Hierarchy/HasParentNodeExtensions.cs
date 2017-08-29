@@ -16,15 +16,13 @@
         /// <param name="startNode"></param>
         /// <returns>A parent node instance</returns>
         public static TNode Parent<TNode>(this TNode startNode)
-            where TNode : class, IHasParentNode<TNode>
+            where TNode : IHasParentNode<TNode>
         {
             return startNode.Parent((TNode n) =>
             {
                 if (!n.HasParentNode)
                     return (false, default(TNode));
-                var parent = n.ParentNode;
-                return (parent != null, parent);
-                
+                return (true, n.ParentNode);
             });
         }
 
