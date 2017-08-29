@@ -20,5 +20,5 @@
     /// <param name="path">node identifier to search for</param>
     /// <param name="childNode">found child node</param>
     /// <returns>true if child was found, false otherwise</returns>
-    public delegate bool TryGetChildNode<TKey, TNode>(TNode startNode, TKey path, out TNode childNode);
+    //public delegate bool TryGetChildNode<TKey, TNode>(TNode startNode, TKey path, out TNode childNode);
 }

@@ -90,8 +90,9 @@ namespace Elementary.Hierarchy.Collections.LiteDb
             if (path == null)
                 throw new ArgumentNullException(nameof(path));
 
-            if (this.GetOrCreateRootNode().TryGetDescendantAt(path, out var descendantNode))
-                return descendantNode.TryGetValue(out value);
+            var (found, node) = this.GetOrCreateRootNode().TryGetDescendantAt(path);
+            if(found)
+                return node.TryGetValue(out value);
 
             value = default(TValue);
             return false;

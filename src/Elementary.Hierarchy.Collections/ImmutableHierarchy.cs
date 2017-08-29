@@ -115,8 +115,9 @@ namespace Elementary.Hierarchy.Collections
             if (path == null)
                 throw new ArgumentNullException(nameof(path));
 
-            if (this.rootNode.TryGetDescendantAt(path, out var descendantNode))
-                return descendantNode.TryGetValue(out value);
+            var (found, node) = this.rootNode.TryGetDescendantAt(path);
+            if (found)
+                return node.TryGetValue(out value);
 
             value = default(TValue);
             return false;

@@ -9,31 +9,18 @@ namespace Elementary.Hierarchy.Test.SelectWithDelegates
         [Fact]
         public void D_returns_child_on_DescendantAtOrDefault()
         {
-            // ARRANGE
-
-            var nodeHierarchy = (TryGetChildNode<string, string>)(delegate (string node, string key, out string childNode)
-            {
-                if (node == "startNode" && key == "childNode")
-                {
-                    childNode = "childNode";
-                    return true;
-                }
-
-                throw new InvalidOperationException("unknown node");
-            });
-
             // ACT
 
-            string result1 = "startNode".DescendantAtOrDefault(nodeHierarchy, HierarchyPath.Create("childNode"));
+            string result1 = "rootNode".DescendantAtOrDefault(DelegateTreeDefinition.TryGetChildNode, HierarchyPath.Create("leftNode"));
 
             HierarchyPath<string> foundNodePath;
-            string result2 = "startNode".DescendantAtOrDefault(nodeHierarchy, HierarchyPath.Create("childNode"), out foundNodePath);
+            string result2 = "rootNode".DescendantAtOrDefault(DelegateTreeDefinition.TryGetChildNode, HierarchyPath.Create("leftNode"), out foundNodePath);
 
             // ASSERT
 
-            Assert.Equal("childNode", result1);
-            Assert.Equal("childNode", result2);
-            Assert.Equal(HierarchyPath.Create("childNode"), foundNodePath);
+            Assert.Equal("leftNode", result1);
+            Assert.Equal("leftNode", result2);
+            Assert.Equal(HierarchyPath.Create("leftNode"), foundNodePath);
         }
 
         [Fact]
@@ -41,81 +28,50 @@ namespace Elementary.Hierarchy.Test.SelectWithDelegates
         {
             // ARRANGE
 
-            var nodeHierarchy = (TryGetChildNode<string, string>)(delegate (string node, string key, out string childNode)
+            var nodeHierarchy = (Func<string, string,(bool,string)>)(delegate (string node, string key)
             {
-                childNode = null;
                 throw new InvalidOperationException("unknown node");
             });
 
             // ACT
 
             HierarchyPath<string> foundNodePath;
-            string result = "startNode".DescendantAtOrDefault(nodeHierarchy, HierarchyPath.Create<string>(), out foundNodePath);
+            string result = "rootNode".DescendantAtOrDefault(nodeHierarchy, HierarchyPath.Create<string>(), out foundNodePath);
 
             // ASSERT
 
             Assert.NotNull(result);
-            Assert.Equal("startNode", result);
+            Assert.Equal("rootNode", result);
             Assert.Equal(HierarchyPath.Create<string>(), foundNodePath);
         }
 
         [Fact]
         public void D_returns_grandchild_on_DescendentAtOrDefault()
         {
-            // ARRANGE
-
-            var nodeHierarchy = (TryGetChildNode<string, string>)(delegate (string node, string key, out string childNode)
-            {
-                if (node == "startNode" && key == "childNode")
-                {
-                    childNode = "childNode";
-                    return true;
-                }
-                else if (node == "childNode" && key == "grandChildNode")
-                {
-                    childNode = "grandChildNode";
-                    return true;
-                }
-
-                throw new InvalidOperationException("unknown node");
-            });
 
             // ACT
 
-            string result1 = "startNode".DescendantAtOrDefault(nodeHierarchy, HierarchyPath.Create("childNode", "grandChildNode"));
+            string result1 = "rootNode".DescendantAtOrDefault(DelegateTreeDefinition.TryGetChildNode, HierarchyPath.Create("leftNode", "leftLeaf"));
 
             HierarchyPath<string> foundNodePath;
-            string result2 = "startNode".DescendantAtOrDefault(nodeHierarchy, HierarchyPath.Create("childNode", "grandChildNode"), out foundNodePath);
+            string result2 = "rootNode".DescendantAtOrDefault(DelegateTreeDefinition.TryGetChildNode, HierarchyPath.Create("leftNode", "leftLeaf"), out foundNodePath);
 
             // ASSERT
 
-            Assert.Same("grandChildNode", result1);
-            Assert.Same("grandChildNode", result2);
-            Assert.Equal(HierarchyPath.Create("childNode", "grandChildNode"), foundNodePath);
+            Assert.Same("leftLeaf", result1);
+            Assert.Same("leftLeaf", result2);
+            Assert.Equal(HierarchyPath.Create("leftNode", "leftLeaf"), foundNodePath);
         }
 
         [Fact]
         public void D_returns_null_on_invalid_childId_on_DescendantOrDefault()
         {
-            // ARRANGE
-
-            var nodeHierarchy = (TryGetChildNode<string, string>)(delegate (string node, string key, out string childNode)
-            {
-                if (node == "startNode")
-                {
-                    childNode = null;
-                    return false;
-                }
-
-                throw new InvalidOperationException("unknown node");
-            });
-
             // ACT
 
-            string result1 = "startNode".DescendantAtOrDefault(nodeHierarchy, HierarchyPath.Create("childNode"));
+            string result1 = "rootNode".DescendantAtOrDefault(DelegateTreeDefinition.TryGetChildNode, HierarchyPath.Create("unknownNode"));
 
             HierarchyPath<string> foundNodePath;
-            string result2 = "startNode".DescendantAtOrDefault(nodeHierarchy, HierarchyPath.Create("childNode"), out foundNodePath);
+            string result2 = "rootNode".DescendantAtOrDefault(DelegateTreeDefinition.TryGetChildNode, HierarchyPath.Create("unknownNode"), out foundNodePath);
 
             // ASSERT
 
@@ -127,25 +83,12 @@ namespace Elementary.Hierarchy.Test.SelectWithDelegates
         [Fact]
         public void D_returns_substitute_on_invalid_childId_on_DescendantOrDefault()
         {
-            // ARRANGE
-
-            var nodeHierarchy = (TryGetChildNode<string, string>)(delegate (string node, string key, out string childNode)
-            {
-                if (node == "startNode")
-                {
-                    childNode = null;
-                    return false;
-                }
-
-                throw new InvalidOperationException("unknown node");
-            });
-
             // ACT
 
-            string result1 = "startNode".DescendantAtOrDefault(nodeHierarchy, HierarchyPath.Create("childNode"), createDefault: () => "substitute");
+            string result1 = "rootNode".DescendantAtOrDefault(DelegateTreeDefinition.TryGetChildNode, HierarchyPath.Create("unknownNode"), createDefault: () => "substitute");
 
             HierarchyPath<string> foundNodePath;
-            string result2 = "startNode".DescendantAtOrDefault(nodeHierarchy, HierarchyPath.Create("childNode"), out foundNodePath, createDefault: () => "substitute");
+            string result2 = "rootNode".DescendantAtOrDefault(DelegateTreeDefinition.TryGetChildNode, HierarchyPath.Create("unknownNode"), out foundNodePath, createDefault: () => "substitute");
 
             // ASSERT
 

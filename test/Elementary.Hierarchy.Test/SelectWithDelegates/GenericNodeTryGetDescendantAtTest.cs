@@ -1,117 +1,67 @@
 ﻿namespace Elementary.Hierarchy.Test.SelectWithDelegates
 {
-    using Elementary.Hierarchy.Generic;
     using System;
+    using Elementary.Hierarchy.Generic;
     using Xunit;
 
     public class GenericNodeTryGetDescendantAtTest
     {
         [Fact]
-        public void D_root_returns_child_on_TryGetDescendantAt()
+        public void D_returns_child_on_TryGetDescendantAt()
         {
             // ARRANGE
 
-            var nodeHierarchy = (TryGetChildNode<string, string>)(delegate (string node, string key, out string childNode)
-            {
-                throw new InvalidOperationException("unknown node");
-            });
+            var nodeHierarchy = (Func<string, string, (bool, string)>)(delegate (string node, string key)
+              {
+                  throw new InvalidOperationException("unknown node");
+              });
 
             // ACT
 
-            string resultNode = null;
-            bool result = "startNode".TryGetDescendantAt(nodeHierarchy, HierarchyPath.Create<string>(), out resultNode);
+            var (result_found, result_node) = "rootNode".TryGetDescendantAt(nodeHierarchy, HierarchyPath.Create<string>());
 
             // ASSERT
 
-            Assert.True(result);
-            Assert.Equal("startNode", resultNode);
+            Assert.True(result_found);
+            Assert.Equal("rootNode", result_node);
         }
 
         [Fact]
-        public void D_root_returns_itself_on_TryGetDescendantAt()
+        public void D_returns_itself_on_TryGetDescendantAt()
         {
-            // ARRANGE
-
-            var nodeHierarchy = (TryGetChildNode<string, string>)(delegate (string node, string key, out string childNode)
-            {
-                if (node == "startNode" && key == "childNode")
-                {
-                    childNode = "childNode";
-                    return true;
-                }
-
-                throw new InvalidOperationException("unknown node");
-            });
-
             // ACT
 
-            string resultNode;
-            bool result = "startNode".TryGetDescendantAt(nodeHierarchy, HierarchyPath.Create<string>(), out resultNode);
+            var (result_found, result_node) = "rootNode".TryGetDescendantAt(DelegateTreeDefinition.TryGetChildNode, HierarchyPath.Create<string>());
 
             // ASSERT
 
-            Assert.True(result);
-            Assert.Equal("startNode", resultNode);
+            Assert.True(result_found);
+            Assert.Equal("rootNode", result_node);
         }
 
         [Fact]
-        public void D_root_returns_grandchild_on_TryGetDescendentAt()
+        public void D_returns_grandchild_on_TryGetDescendentAt()
         {
-            // ARRANGE
-
-            // ARRANGE
-
-            var nodeHierarchy = (TryGetChildNode<string, string>)(delegate (string node, string key, out string childNode)
-            {
-                if (node == "startNode" && key == "childNode")
-                {
-                    childNode = "childNode";
-                    return true;
-                }
-                else if (node == "childNode" && key == "grandChildNode")
-                {
-                    childNode = "grandChildNode";
-                    return true;
-                }
-
-                throw new InvalidOperationException("unknown node");
-            });
-
             // ACT
 
-            string resultNode;
-            bool result = "startNode".TryGetDescendantAt(nodeHierarchy, HierarchyPath.Create("childNode", "grandChildNode"), out resultNode);
+            var (result_found, result_node) = "rootNode".TryGetDescendantAt(DelegateTreeDefinition.TryGetChildNode, HierarchyPath.Create("leftNode", "leftLeaf"));
 
             // ASSERT
 
-            Assert.True(result);
-            Assert.Equal("grandChildNode", resultNode);
+            Assert.True(result_found);
+            Assert.Equal("leftLeaf", result_node);
         }
 
         [Fact]
-        public void D_root_node_throws_KeyNotFoundException_on_invalid_childId_on_TryGetDescendantAt()
+        public void D_node_throws_KeyNotFoundException_on_invalid_childId_on_TryGetDescendantAt()
         {
-            // ARRANGE
-
-            var nodeHierarchy = (TryGetChildNode<string, string>)(delegate (string node, string key, out string childNode)
-            {
-                if (node == "startNode")
-                {
-                    childNode = null;
-                    return false;
-                }
-
-                throw new InvalidOperationException("unknown node");
-            });
-
             // ACT
 
-            string resultNode;
-            bool result = "startNode".TryGetDescendantAt(nodeHierarchy, HierarchyPath.Create("childNode"), out resultNode);
+            var (result_found, result_node) = "rootNode".TryGetDescendantAt(DelegateTreeDefinition.TryGetChildNode, HierarchyPath.Create("unknownNode"));
 
             // ASSERT
 
-            Assert.False(result);
+            Assert.False(result_found);
         }
     }
 }

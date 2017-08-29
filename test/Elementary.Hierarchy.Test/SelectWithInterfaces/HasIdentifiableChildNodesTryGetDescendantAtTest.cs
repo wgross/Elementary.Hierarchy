@@ -28,14 +28,13 @@
 
             // ACT
 
-            MockableNodeType resultNode;
-            bool result = this.startNode.Object.TryGetDescendantAt(HierarchyPath.Create(1), out resultNode);
+            var (result_found, result_node) = this.startNode.Object.TryGetDescendantAt(HierarchyPath.Create(1));
 
             // ASSERT
 
-            Assert.True(result);
-            Assert.NotNull(resultNode);
-            Assert.Same(childNode, resultNode);
+            Assert.True(result_found);
+            Assert.NotNull(result_node);
+            Assert.Same(childNode, result_node);
             this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once());
         }
 
@@ -44,13 +43,12 @@
         {
             // ACT
 
-            MockableNodeType resultNode;
-            bool result = this.startNode.Object.TryGetDescendantAt(HierarchyPath.Create<int>(), out resultNode);
+            var (result_found, result_node) = this.startNode.Object.TryGetDescendantAt(HierarchyPath.Create<int>());
 
             // ASSERT
 
-            Assert.True(result);
-            Assert.Same(startNode.Object, resultNode);
+            Assert.True(result_found);
+            Assert.Same(startNode.Object, result_node);
         }
 
         [Fact]
@@ -73,13 +71,12 @@
 
             // ACT
 
-            MockableNodeType resultNode;
-            bool result = this.startNode.Object.TryGetDescendantAt(HierarchyPath.Create(1, 2), out resultNode);
+            var (result_found, result_node) = this.startNode.Object.TryGetDescendantAt(HierarchyPath.Create(1, 2));
 
             // ASSERT
 
-            Assert.True(result);
-            Assert.Same(subChildNode, resultNode);
+            Assert.True(result_found);
+            Assert.Same(subChildNode, result_node);
             this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once());
             childNodeMock.Verify(n => n.TryGetChildNode(2, out subChildNode), Times.Once());
         }
@@ -96,12 +93,11 @@
 
             // ACT
 
-            MockableNodeType resultNode;
-            bool result = this.startNode.Object.TryGetDescendantAt(HierarchyPath.Create(1), out resultNode);
+            var (result_found, result_node) = this.startNode.Object.TryGetDescendantAt(HierarchyPath.Create(1));
 
             // ASSERT
 
-            Assert.False(result);
+            Assert.False(result_found);
 
             startNode.Verify(n => n.TryGetChildNode(It.IsAny<int>(), out childNode), Times.Once());
             startNode.VerifyAll();

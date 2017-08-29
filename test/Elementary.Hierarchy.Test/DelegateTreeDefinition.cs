@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Elementary.Hierarchy.Test
 {
     public class DelegateTreeDefinition
     {
-        public static IEnumerable<string> GetChildNodes(string rootNode)
+        public static IEnumerable<string> GetChildNodes(string node)
         {
             //                rootNode
             //                /      \
@@ -17,7 +15,7 @@ namespace Elementary.Hierarchy.Test
             //
             // unkown node -> {}
 
-            switch (rootNode)
+            switch (node)
             {
                 case "rootNode":
                     return new[] { "leftNode", "rightNode" };
@@ -29,6 +27,28 @@ namespace Elementary.Hierarchy.Test
                     return new[] { "leftRightLeaf", "rightRightLeaf" };
             }
             return Enumerable.Empty<string>();
+        }
+
+        public static (bool,string) TryGetChildNode(string node, string childKey)
+        {
+            //                rootNode
+            //                /      \
+            //        leftNode        rightNode
+            //           /            /       \
+            //     leftLeaf    leftRightLeaf  rightRightLeaf
+            //
+            // unkown node -> (false,null)
+
+            var nodeMap = new Dictionary<(string, string), string>
+            {
+                { ("rootNode","leftNode"), "leftNode" },
+                { ("rootNode","rightNode"), "rightNode" },
+                { ("leftNode","leftLeaf"), "leftLeaf" },
+                { ("rightNode","leftRightLeaf"), "leftRightLeaf" },
+                { ("rightNode","rightRightLeaf"), "rightRightLeaf" }
+            };
+
+            return nodeMap.TryGetValue((node, childKey), out var child) ? (true, child) : (false, null);
         }
     }
 }
