@@ -4,7 +4,7 @@ using System.Linq;
 using Elementary.Hierarchy.Generic;
 using Xunit;
 
-namespace Elementary.Hierarchy.Test.TraverseWithDelegates
+namespace Elementary.Hierarchy.Test.SelectWithDelegates
 {
     public class GenericNodeDescendantAtDelegatePathTest
     {

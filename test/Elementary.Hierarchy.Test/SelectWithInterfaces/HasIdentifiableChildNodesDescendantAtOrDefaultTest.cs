@@ -1,7 +1,7 @@
 ﻿using Moq;
 using Xunit;
 
-namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
+namespace Elementary.Hierarchy.Test.SelectWithInterfaces
 {
     public class HasIdentifiableChildNodesDescendantAtOrDefaultTest
     {
