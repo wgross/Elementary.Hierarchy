@@ -12,7 +12,10 @@ namespace Elementary.Hierarchy.Collections.Operations
             {
                 return RemoveDestinationNode(node, recurse, out hasRemovedNode);
             }
-            else if (node.TryGetChildNode(path.Items.First(), out var childNode))
+
+            var (found, childNode) = node.TryGetChildNode(path.Items.First());
+
+            if (found)
             {
                 return RewriteParentNodeAfterChildNodeRemoved(node, childNode, path, recurse, out hasRemovedNode);
             }

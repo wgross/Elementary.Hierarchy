@@ -39,8 +39,8 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             var startNode = new Mock<NodeType>();
             startNode
-                .Setup(n => n.TryGetChildNode("a", out childNode))
-                .Returns(true);
+                .Setup(n => n.TryGetChildNode("a"))
+                .Returns((true,childNode));
             startNode
                 .Setup(n => n.ReplaceChild(childNode, childNode))
                 .Returns(startNode.Object);
@@ -56,7 +56,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
             Assert.Same(result, startNode.Object);
             Assert.Same(childNode, descendentAt);
 
-            startNode.Verify(n => n.TryGetChildNode("a", out childNode), Times.Once());
+            startNode.Verify(n => n.TryGetChildNode("a"), Times.Once());
             startNode.Verify(n => n.ReplaceChild(childNode, childNode), Times.Once());
             startNode.VerifyAll();
         }
@@ -68,12 +68,10 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             var childNode = new Mock<NodeType>().Object;
 
-            NodeType nullNode = null;
-
             var startNode = new Mock<NodeType>();
             startNode
-                .Setup(n => n.TryGetChildNode("a", out nullNode))
-                .Returns(false);
+                .Setup(n => n.TryGetChildNode("a"))
+                .Returns((false,null));
             startNode
                 .Setup(n => n.AddChild(childNode))
                 .Returns(startNode.Object);

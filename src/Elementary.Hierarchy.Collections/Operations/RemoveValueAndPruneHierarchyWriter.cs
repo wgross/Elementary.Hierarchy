@@ -29,27 +29,32 @@ namespace Elementary.Hierarchy.Collections.Operations
 
                 this.ValueWasCleared = node.RemoveValue();
             }
-            else if (node.TryGetChildNode(path.Items.First(), out var childNode))
+            else
             {
-                // descend further into the tree.
+                var (found, childNode) = node.TryGetChildNode(path.Items.First());
 
-                this.ClearValue(childNode, path.SplitDescendants(), out descendantWasReached);
-
-                // now inspect the result:
-                // try to prune if a vaue has been removes an pruning was requested
-
-                if (descendantWasReached)
+                if (found)
                 {
-                    // find out if the cleared childs descandants has values
-                    // if a value is still present, keep the sub tree
+                    // descend further into the tree.
 
-                    if (childNode.Descendants().Any(n => n.TryGetValue(out var value)))
-                        return node;
+                    this.ClearValue(childNode, path.SplitDescendants(), out descendantWasReached);
 
-                    // the childs descandants have no values.
-                    // remove this sub tree from the hierarcy completely
+                    // now inspect the result:
+                    // try to prune if a vaue has been removes an pruning was requested
 
-                    return node.RemoveChild(childNode);
+                    if (descendantWasReached)
+                    {
+                        // find out if the cleared childs descandants has values
+                        // if a value is still present, keep the sub tree
+
+                        if (childNode.Descendants().Any(n => n.TryGetValue(out var value)))
+                            return node;
+
+                        // the childs descandants have no values.
+                        // remove this sub tree from the hierarcy completely
+
+                        return node.RemoveChild(childNode);
+                    }
                 }
             }
             return node;

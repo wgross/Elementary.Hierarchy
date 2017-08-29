@@ -23,8 +23,8 @@
             MockableNodeType childNode = new Mock<MockableNodeType>().Object;
 
             this.startNode
-                .Setup(n => n.TryGetChildNode(1, out childNode))
-                .Returns(true);
+                .Setup(n => n.TryGetChildNode(1))
+                .Returns((true, childNode));
 
             // ACT
 
@@ -35,7 +35,7 @@
             Assert.True(result_found);
             Assert.NotNull(result_node);
             Assert.Same(childNode, result_node);
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once());
+            this.startNode.Verify(n => n.TryGetChildNode(1), Times.Once());
         }
 
         [Fact]
@@ -60,14 +60,14 @@
 
             var childNodeMock = new Mock<MockableNodeType>();
             childNodeMock
-                .Setup(n => n.TryGetChildNode(2, out subChildNode))
-                .Returns(true);
+                .Setup(n => n.TryGetChildNode(2))
+                .Returns((true, subChildNode));
 
             var childNode = childNodeMock.Object;
 
             this.startNode
-                .Setup(n => n.TryGetChildNode(1, out childNode))
-                .Returns(true);
+                .Setup(n => n.TryGetChildNode(1))
+                .Returns((true, childNode));
 
             // ACT
 
@@ -77,8 +77,8 @@
 
             Assert.True(result_found);
             Assert.Same(subChildNode, result_node);
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once());
-            childNodeMock.Verify(n => n.TryGetChildNode(2, out subChildNode), Times.Once());
+            this.startNode.Verify(n => n.TryGetChildNode(1), Times.Once());
+            childNodeMock.Verify(n => n.TryGetChildNode(2), Times.Once());
         }
 
         [Fact]
@@ -88,8 +88,8 @@
             var childNode = new Mock<MockableNodeType>().Object;
 
             this.startNode
-                .Setup(n => n.TryGetChildNode(1, out childNode))
-                .Returns(false);
+                .Setup(n => n.TryGetChildNode(1))
+                .Returns((false, childNode));
 
             // ACT
 
@@ -99,7 +99,7 @@
 
             Assert.False(result_found);
 
-            startNode.Verify(n => n.TryGetChildNode(It.IsAny<int>(), out childNode), Times.Once());
+            startNode.Verify(n => n.TryGetChildNode(It.IsAny<int>()), Times.Once());
             startNode.VerifyAll();
         }
     }

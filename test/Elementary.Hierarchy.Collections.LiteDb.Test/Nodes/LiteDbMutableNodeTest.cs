@@ -1,8 +1,8 @@
-﻿using Elementary.Hierarchy.Collections.LiteDb.Nodes;
-using LiteDB;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
+using Elementary.Hierarchy.Collections.LiteDb.Nodes;
+using LiteDB;
 using Xunit;
 
 namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
@@ -41,7 +41,8 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
             Assert.Same(node, result);
 
             Assert.True(node.HasChildNodes);
-            Assert.True(node.TryGetChildNode("a", out var addedChild));
+            var (found, addedChild) = node.TryGetChildNode("a");
+            Assert.True(found);
             Assert.Equal(child, addedChild);
             Assert.Equal(child, node.ChildNodes.Single());
 
@@ -82,7 +83,8 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
             // node is unchanged
 
             Assert.True(node.HasChildNodes);
-            Assert.True(node.TryGetChildNode("a", out var addedChild));
+            var (found, addedChild) = node.TryGetChildNode("a");
+            Assert.True(found);
             Assert.Equal(child, addedChild);
             Assert.Equal(child, node.ChildNodes.Single());
 
@@ -121,7 +123,8 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
             // node is unchanged
 
             Assert.False(node.HasChildNodes);
-            Assert.False(node.TryGetChildNode("a", out var addedChild));
+            var (found, addedChild) = node.TryGetChildNode("a");
+            Assert.False(found);
             Assert.False(node.ChildNodes.Any());
 
             // check db
@@ -152,7 +155,8 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
 
             Assert.NotNull(result);
             Assert.False(result.HasChildNodes);
-            Assert.False(result.TryGetChildNode("a", out var addedChild));
+            var (found, addedChild) = node.TryGetChildNode("a");
+            Assert.False(found);
             Assert.False(result.ChildNodes.Any());
 
             // check db
@@ -189,7 +193,8 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
 
             Assert.NotNull(result);
             Assert.True(result.HasChildNodes);
-            Assert.True(result.TryGetChildNode("a", out var addedChild));
+            var (found, addedChild) = result.TryGetChildNode("a");
+            Assert.True(found);
             Assert.Equal(secondChild, addedChild);
             Assert.Equal(secondChild, result.ChildNodes.Single());
 
@@ -232,7 +237,8 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
 
             Assert.Equal("Key of child to replace (key='a') and new child (key='b') must be equal", result.Message);
             Assert.True(node.HasChildNodes);
-            Assert.True(node.TryGetChildNode("a", out var addedChild));
+            var (found, addedChild) = node.TryGetChildNode("a");
+            Assert.True(found);
             Assert.Equal(child, addedChild);
             Assert.Equal(child, node.ChildNodes.Single());
 
@@ -277,7 +283,8 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
 
             Assert.Equal("The node (id='a') doesn't replace any of the existing child nodes", result.Message);
             Assert.True(node.HasChildNodes);
-            Assert.True(node.TryGetChildNode("a", out var addedChild));
+            var (found, addedChild) = node.TryGetChildNode("a");
+            Assert.True(found);
             Assert.Equal(child, addedChild);
             Assert.Equal(child, node.ChildNodes.Single());
 
@@ -330,7 +337,10 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
 
             Assert.True(result);
             Assert.False(node.HasChildNodes);
-            Assert.False(node.TryGetChildNode("a", out var addedChild));
+
+            var (found, addedChild) = node.TryGetChildNode("a");
+
+            Assert.False(found);
             Assert.False(node.ChildNodes.Any());
 
             // check db

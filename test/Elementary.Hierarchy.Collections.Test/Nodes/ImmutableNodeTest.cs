@@ -29,9 +29,15 @@ namespace Elementary.Hierarchy.Collections.Test.Nodes
             Assert.True(result.HasValue);
             Assert.Equal(1, result.Value);
             Assert.Same(child, result.ChildNodes.Single());
-            Assert.False(node.TryGetChildNode("a", out var addedChild1));
-            Assert.True(result.TryGetChildNode("a", out var addedChild2));
-            Assert.Same(child, addedChild2);
+
+            var (found, addedChild) = node.TryGetChildNode("a");
+
+            Assert.False(found);
+
+            (found,addedChild) = result.TryGetChildNode("a");
+
+            Assert.True(found);
+            Assert.Same(child, addedChild);
         }
 
         [Fact]
@@ -52,9 +58,15 @@ namespace Elementary.Hierarchy.Collections.Test.Nodes
             Assert.True(node.HasChildNodes);
             Assert.False(result.HasChildNodes);
             Assert.Equal(1, result.Value);
-            Assert.True(node.TryGetChildNode("a", out var readChild1));
-            Assert.Same(child, readChild1);
-            Assert.False(result.TryGetChildNode("a", out var readChild2));
+
+            var (found, readChild) = node.TryGetChildNode("a");
+
+            Assert.True(found);
+            Assert.Same(child, readChild);
+
+            (found, readChild) = result.TryGetChildNode("a");
+
+            Assert.False(found);
         }
 
         [Fact]
@@ -77,10 +89,16 @@ namespace Elementary.Hierarchy.Collections.Test.Nodes
             Assert.True(node.HasChildNodes);
             Assert.True(result.HasChildNodes);
             Assert.Equal(1, result.Value);
-            Assert.True(node.TryGetChildNode("a", out var readChildNode1));
-            Assert.Same(child, readChildNode1);
-            Assert.True(result.TryGetChildNode("a", out var readChildNode2));
-            Assert.Same(secondChild, readChildNode2);
+
+            var (found, readChildNode) = node.TryGetChildNode("a");
+
+            Assert.True(found);
+            Assert.Same(child, readChildNode);
+
+            (found, readChildNode) = result.TryGetChildNode("a");
+
+            Assert.True(found);
+            Assert.Same(secondChild, readChildNode);
         }
 
         [Fact]
@@ -101,7 +119,10 @@ namespace Elementary.Hierarchy.Collections.Test.Nodes
             Assert.Equal("Key of child to replace (key='a') and new child (key='b') must be equal", result.Message);
             Assert.True(node.HasChildNodes);
             Assert.Same(child, node.ChildNodes.Single());
-            Assert.True(node.TryGetChildNode("a", out var addedChild));
+
+            var (found, addedChild) = node.TryGetChildNode("a");
+
+            Assert.True(found);
             Assert.Same(child, addedChild);
         }
 
@@ -123,7 +144,10 @@ namespace Elementary.Hierarchy.Collections.Test.Nodes
             Assert.Equal("Key of child to replace (key='a') and new child (key='b') must be equal", result.Message);
             Assert.True(node.HasChildNodes);
             Assert.Same(child, node.ChildNodes.Single());
-            Assert.True(node.TryGetChildNode("a", out var addedChild));
+
+            var (found, addedChild) = node.TryGetChildNode("a");
+
+            Assert.True(found);
             Assert.Same(child, addedChild);
         }
     }

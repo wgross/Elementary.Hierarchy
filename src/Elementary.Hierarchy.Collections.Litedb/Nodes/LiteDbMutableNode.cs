@@ -75,7 +75,9 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
             bool? removeAllChildNodesFinished = null;
             foreach (var childNodeInfo in childNodeInfos)
             {
-                if (this.TryGetChildNode(childNodeInfo.Key, out var childNode))
+                var (found, childNode) = this.TryGetChildNode(childNodeInfo.Key);
+                
+                if (found)
                 {
                     // descend int the tree further to clean up.
                     // this part is successful of deletions wen well and not childnode are left.
@@ -104,7 +106,9 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
 
         public IEnumerable<LiteDbMutableNode<TValue>> ChildNodes => this.BsonDocumentChildNodes.Select(kv =>
         {
-            return this.TryGetChildNode(kv.Key, out var node)
+            var (found, node) = this.TryGetChildNode(kv.Key);
+
+            return found
                 ? node
                 : throw new InvalidOperationException($"Db is inconsistent: a node(key='{kv.Key}',id='{kv.Value}') is missing");
         });
@@ -145,6 +149,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
             if (!EqualityComparer<string>.Default.Equals(childToReplaceKey, newChildKey))
                 throw new InvalidOperationException($"Key of child to replace (key='{childToReplaceKey}') and new child (key='{newChildKey}') must be equal");
 
+
             if (this.BsonDocumentChildNodes.TryGetValue(newChildKey, out var childId))
             {
                 if (!childToReplace.TryGetId(out var childToReplaceId) || !childId.Equals(childToReplaceId))
@@ -156,14 +161,14 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Nodes
             return this;
         }
 
-        public bool TryGetChildNode(string key, out LiteDbMutableNode<TValue> childNode)
+        public (bool, LiteDbMutableNode<TValue>) TryGetChildNode(string key)
         {
-            childNode = null;
+            
             if (!this.BsonDocumentChildNodes.TryGetValue(key, out var childNodeId))
-                return false;
+                return (false,null);
 
-            childNode = new LiteDbMutableNode<TValue>(this.nodes, this.nodes.FindById(childNodeId), key);
-            return true;
+            var childNode = new LiteDbMutableNode<TValue>(this.nodes, this.nodes.FindById(childNodeId), key);
+            return (true,childNode);
         }
     }
 }

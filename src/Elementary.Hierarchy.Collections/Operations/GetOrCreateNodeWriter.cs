@@ -29,7 +29,8 @@ namespace Elementary.Hierarchy.Collections.Operations
             }
             else
             {
-                if (node.TryGetChildNode(path.Items.First(), out var child))
+                var (found, child) = node.TryGetChildNode(path.Items.First());
+                if(found)
                     return node.ReplaceChild(child, this.GetOrCreate(child, path.SplitDescendants(), out descendantAt));
                 else
                     return node.AddChild(this.GetOrCreate(this.createNode(path.Items.First()), path.SplitDescendants(), out descendantAt));

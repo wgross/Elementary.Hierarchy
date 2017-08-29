@@ -57,16 +57,16 @@ namespace Elementary.Hierarchy.Collections.Nodes
 
         #region IHasIdentifiableChildren members
 
-        public bool TryGetChildNode(TKey id, out MutableNode<TKey, TValue> childNode)
+        public (bool, MutableNode<TKey, TValue>) TryGetChildNode(TKey id)
         {
-            childNode = this.childNodes.SingleOrDefault(n =>
+            var childNode = this.childNodes.SingleOrDefault(n =>
             {
                 if (n.TryGetKey(out var key))
                     return EqualityComparer<TKey>.Default.Equals(key, id);
                 else // this is unexpected. ChildNodes always have keys.
                     throw new InvalidOperationException("child must have a key");
             });
-            return childNode != null;
+            return (childNode != null, childNode);
         }
 
         #endregion IHasIdentifiableChildren members

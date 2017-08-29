@@ -53,8 +53,8 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             var startNodeMock = new Mock<NodeType>();
             startNodeMock
-                .Setup(n => n.TryGetChildNode("a", out childNode))
-                .Returns(true);
+                .Setup(n => n.TryGetChildNode("a"))
+                .Returns((true, childNode));
 
             var writer = new RemoveValueAndPruneHierarchyWriter<string, int, NodeType>();
 
@@ -86,15 +86,15 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             var childNodeMock = new Mock<NodeType>();
             childNodeMock
-                .Setup(n => n.TryGetChildNode("b", out grandChild))
-                .Returns(true);
+                .Setup(n => n.TryGetChildNode("b"))
+                .Returns((true, grandChild));
 
             var childNode = childNodeMock.Object;
 
             var startNodeMock = new Mock<NodeType>();
             startNodeMock
-                .Setup(n => n.TryGetChildNode("a", out childNode))
-                .Returns(true);
+                .Setup(n => n.TryGetChildNode("a"))
+                .Returns((true, childNode));
 
             var writer = new RemoveValueAndPruneHierarchyWriter<string, int, NodeType>();
 
@@ -154,8 +154,8 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
             var childNode = childNodeMock.Object;
             var startNode = new Mock<NodeType>();
             startNode
-                .Setup(n => n.TryGetChildNode("a", out childNode))
-                .Returns(true);
+                .Setup(n => n.TryGetChildNode("a"))
+                .Returns((true, childNode));
 
             var writer = new RemoveValueAndPruneHierarchyWriter<string, int, NodeType>();
 
@@ -167,7 +167,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             Assert.False(writer.ValueWasCleared);
 
-            startNode.Verify(n => n.TryGetChildNode("a", out childNode), Times.Once());
+            startNode.Verify(n => n.TryGetChildNode("a"), Times.Once());
             childNodeMock.Verify(n => n.RemoveValue());
         }
 
@@ -184,8 +184,8 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
             var childNode = childNodeMock.Object;
             var startNode = new Mock<NodeType>();
             startNode
-                .Setup(n => n.TryGetChildNode("a", out childNode))
-                .Returns(true);
+                .Setup(n => n.TryGetChildNode("a"))
+                .Returns((true, childNode));
             startNode
                 .Setup(n => n.RemoveChild(childNode))
                 .Returns(startNode.Object); // node is changed in place
@@ -200,7 +200,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             Assert.True(writer.ValueWasCleared);
 
-            startNode.Verify(n => n.TryGetChildNode("a", out childNode), Times.Once());
+            startNode.Verify(n => n.TryGetChildNode("a"), Times.Once());
             startNode.Verify(n => n.RemoveChild(childNode), Times.Once());
             childNodeMock.Verify(n => n.RemoveValue());
         }
@@ -218,8 +218,8 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
             var childNode = childNodeMock.Object;
             var startNode = new Mock<NodeType>();
             startNode
-                .Setup(n => n.TryGetChildNode("a", out childNode))
-                .Returns(true);
+                .Setup(n => n.TryGetChildNode("a"))
+                .Returns((true, childNode));
             startNode
                 .Setup(n => n.RemoveChild(childNode))
                 .Returns(startNode.Object); // node is changed in place
@@ -234,7 +234,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             Assert.False(writer.ValueWasCleared);
 
-            startNode.Verify(n => n.TryGetChildNode("a", out childNode), Times.Once());
+            startNode.Verify(n => n.TryGetChildNode("a"), Times.Once());
             startNode.Verify(n => n.RemoveChild(childNode), Times.Once());
             childNodeMock.Verify(n => n.RemoveValue());
         }
@@ -265,8 +265,8 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
             var childNode = childNodeMock.Object;
             var startNode = new Mock<NodeType>();
             startNode
-                .Setup(n => n.TryGetChildNode("a", out childNode))
-                .Returns(true);
+                .Setup(n => n.TryGetChildNode("a"))
+                .Returns((true, childNode));
 
             var writer = new RemoveValueAndPruneHierarchyWriter<string, int, NodeType>();
 
@@ -278,7 +278,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             Assert.True(writer.ValueWasCleared);
 
-            startNode.Verify(n => n.TryGetChildNode("a", out childNode), Times.Once());
+            startNode.Verify(n => n.TryGetChildNode("a"), Times.Once());
             startNode.Verify(n => n.RemoveChild(It.IsAny<NodeType>()), Times.Never());
             startNode.VerifyAll();
             childNodeMock.Verify(n => n.RemoveValue());
@@ -313,8 +313,8 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
             var childNode = childNodeMock.Object;
             var startNode = new Mock<NodeType>();
             startNode
-                .Setup(n => n.TryGetChildNode("a", out childNode))
-                .Returns(true);
+                .Setup(n => n.TryGetChildNode("a"))
+                .Returns((true, childNode));
 
             var writer = new RemoveValueAndPruneHierarchyWriter<string, int, NodeType>();
 
@@ -326,7 +326,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             Assert.False(writer.ValueWasCleared);
 
-            startNode.Verify(n => n.TryGetChildNode("a", out childNode), Times.Once());
+            startNode.Verify(n => n.TryGetChildNode("a"), Times.Once());
             startNode.Verify(n => n.RemoveChild(It.IsAny<NodeType>()), Times.Never());
             startNode.VerifyAll();
             childNodeMock.Verify(n => n.RemoveValue());

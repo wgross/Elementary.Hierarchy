@@ -23,8 +23,8 @@ namespace Elementary.Hierarchy.Test.SelectWithInterfaces
             MockableNodeType childNode = new Mock<MockableNodeType>().Object;
 
             this.startNode
-                .Setup(n => n.TryGetChildNode(1, out childNode))
-                .Returns(true);
+                .Setup(n => n.TryGetChildNode(1))
+                .Returns((true, childNode));
 
             // ACT
 
@@ -39,7 +39,7 @@ namespace Elementary.Hierarchy.Test.SelectWithInterfaces
             Assert.Same(childNode, result1);
             Assert.Same(childNode, result2);
             Assert.Equal(HierarchyPath.Create(1), foundNodePath);
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Exactly(2));
+            this.startNode.Verify(n => n.TryGetChildNode(1), Times.Exactly(2));
         }
 
         [Fact]
@@ -58,8 +58,8 @@ namespace Elementary.Hierarchy.Test.SelectWithInterfaces
             Assert.Same(startNode.Object, result2);
             Assert.Equal(HierarchyPath.Create<int>(), foundNodePath);
 
-            MockableNodeType childNode;
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Never());
+            
+            this.startNode.Verify(n => n.TryGetChildNode(1), Times.Never());
         }
 
         [Fact]
@@ -71,14 +71,14 @@ namespace Elementary.Hierarchy.Test.SelectWithInterfaces
 
             var childNode = new Mock<MockableNodeType>();
             childNode
-                .Setup(n => n.TryGetChildNode(2, out grandChildNode))
-                .Returns(true);
+                .Setup(n => n.TryGetChildNode(2))
+                .Returns((true, grandChildNode));
 
             var childNodeObject = childNode.Object;
 
             this.startNode
-                .Setup(n => n.TryGetChildNode(1, out childNodeObject))
-                .Returns(true);
+                .Setup(n => n.TryGetChildNode(1))
+                .Returns((true, childNodeObject));
 
             // ACT
 
@@ -91,8 +91,8 @@ namespace Elementary.Hierarchy.Test.SelectWithInterfaces
 
             Assert.NotNull(grandChildNode);
             Assert.Same(grandChildNode, result1);
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNodeObject), Times.Exactly(2));
-            this.startNode.Verify(n => n.TryGetChildNode(1, out grandChildNode), Times.Exactly(2));
+            this.startNode.Verify(n => n.TryGetChildNode(1), Times.Exactly(2));
+            this.startNode.Verify(n => n.TryGetChildNode(1), Times.Exactly(2));
         }
 
         [Fact]
@@ -103,8 +103,8 @@ namespace Elementary.Hierarchy.Test.SelectWithInterfaces
             MockableNodeType childNode = new Mock<MockableNodeType>().Object;
 
             this.startNode
-                .Setup(n => n.TryGetChildNode(1, out childNode))
-                .Returns(false);
+                .Setup(n => n.TryGetChildNode(1))
+                .Returns((false, childNode));
 
             // ACT
 
@@ -118,7 +118,7 @@ namespace Elementary.Hierarchy.Test.SelectWithInterfaces
             Assert.Null(result1);
             Assert.Null(result2);
             Assert.Equal(HierarchyPath.Create<int>(), foundNodePath);
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Exactly(2));
+            this.startNode.Verify(n => n.TryGetChildNode(1), Times.Exactly(2));
         }
 
         [Fact]
@@ -129,8 +129,8 @@ namespace Elementary.Hierarchy.Test.SelectWithInterfaces
             MockableNodeType childNode = new Mock<MockableNodeType>().Object;
 
             this.startNode
-                .Setup(n => n.TryGetChildNode(1, out childNode))
-                .Returns(false);
+                .Setup(n => n.TryGetChildNode(1))
+                .Returns((false, childNode));
 
             MockableNodeType substitute = new Mock<MockableNodeType>().Object;
 
@@ -146,7 +146,7 @@ namespace Elementary.Hierarchy.Test.SelectWithInterfaces
             Assert.Same(substitute, result1);
             Assert.Same(substitute, result2);
             Assert.Equal(HierarchyPath.Create<int>(), foundNodePath);
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Exactly(2));
+            this.startNode.Verify(n => n.TryGetChildNode(1), Times.Exactly(2));
         }
     }
 }

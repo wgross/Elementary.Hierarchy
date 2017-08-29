@@ -1,7 +1,7 @@
 ﻿namespace Elementary.Hierarchy.Test.SelectWithInterfaces
 {
-    using Moq;
     using System.Collections.Generic;
+    using Moq;
     using Xunit;
 
     public class HasIdentifiableChildNodesDescendantAtTest
@@ -24,8 +24,8 @@
             MockableNodeType childNode = new Mock<MockableNodeType>().Object;
 
             this.startNode
-                .Setup(n => n.TryGetChildNode(1, out childNode))
-                .Returns(true);
+                .Setup(n => n.TryGetChildNode(1))
+                .Returns((true, childNode));
 
             // ACT
 
@@ -35,7 +35,7 @@
 
             Assert.NotNull(childNode);
             Assert.Same(childNode, result);
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once());
+            this.startNode.Verify(n => n.TryGetChildNode(1), Times.Once());
         }
 
         [Fact]
@@ -59,14 +59,14 @@
 
             var childNodeMock = new Mock<MockableNodeType>();
             childNodeMock
-                .Setup(n => n.TryGetChildNode(2, out subChildNode))
-                .Returns(true);
+                .Setup(n => n.TryGetChildNode(2))
+                .Returns((true, subChildNode));
 
             var childNode = childNodeMock.Object;
 
             this.startNode
-                .Setup(n => n.TryGetChildNode(1, out childNode))
-                .Returns(true);
+                .Setup(n => n.TryGetChildNode(1))
+                .Returns((true, childNode));
 
             // ACT
 
@@ -75,8 +75,8 @@
             // ASSERT
 
             Assert.Same(subChildNode, result);
-            this.startNode.Verify(n => n.TryGetChildNode(1, out childNode), Times.Once());
-            childNodeMock.Verify(n => n.TryGetChildNode(2, out subChildNode), Times.Once());
+            this.startNode.Verify(n => n.TryGetChildNode(1), Times.Once());
+            childNodeMock.Verify(n => n.TryGetChildNode(2), Times.Once());
         }
 
         [Fact]
@@ -87,9 +87,9 @@
             var childNode = new Mock<MockableNodeType>().Object;
 
             this.startNode
-                .Setup(n => n.TryGetChildNode(1, out childNode))
-                .Returns(false);
-            
+                .Setup(n => n.TryGetChildNode(1))
+                .Returns((false, null));
+
             // ACT
 
             KeyNotFoundException result = Assert.Throws<KeyNotFoundException>(() => { this.startNode.Object.DescendantAt(HierarchyPath.Create(1)); });
@@ -98,7 +98,7 @@
 
             Assert.True(result.Message.Contains("Key not found:'1'"));
 
-            startNode.Verify(n => n.TryGetChildNode(It.IsAny<int>(), out childNode), Times.Once());
+            startNode.Verify(n => n.TryGetChildNode(It.IsAny<int>()), Times.Once());
             startNode.VerifyAll();
         }
     }

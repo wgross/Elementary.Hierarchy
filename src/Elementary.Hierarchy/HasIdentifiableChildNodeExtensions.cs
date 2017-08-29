@@ -23,14 +23,7 @@
         public static TNode DescendantAt<TKey, TNode>(this TNode startNode, HierarchyPath<TKey> path)
             where TNode : IHasIdentifiableChildNodes<TKey, TNode>
         {
-            Func<TNode, TKey, (bool, TNode)> tryGetChildNode = (TNode p, TKey k) =>
-            {
-                TNode child;
-                var found = p.TryGetChildNode(k, out child);
-                return (found, child);
-            };
-
-            return startNode.DescendantAt(tryGetChildNode, path);
+            return startNode.DescendantAt((TNode p, TKey k) => p.TryGetChildNode(k), path);
         }
 
         #endregion DescendantAt
@@ -48,14 +41,7 @@
         public static (bool, TNode) TryGetDescendantAt<TKey, TNode>(this TNode startNode, HierarchyPath<TKey> path)
             where TNode : IHasIdentifiableChildNodes<TKey, TNode>
         {
-            Func<TNode, TKey, (bool, TNode)> tryGetChildNode = (TNode p, TKey k) =>
-            {
-                TNode child;
-                var found = p.TryGetChildNode(k, out child);
-                return (found, child);
-            };
-
-            return startNode.TryGetDescendantAt(tryGetChildNode, path);
+            return startNode.TryGetDescendantAt((TNode p, TKey k) => p.TryGetChildNode(k), path);
         }
 
         #endregion TryGetDescendantAt
@@ -95,14 +81,7 @@
         public static TNode DescendantAtOrDefault<TKey, TNode>(this TNode startNode, HierarchyPath<TKey> path, out HierarchyPath<TKey> foundKey, Func<TNode> createDefault = null)
             where TNode : IHasIdentifiableChildNodes<TKey, TNode>
         {
-            Func<TNode, TKey, (bool, TNode)> tryGetChildNode = (TNode p, TKey k) =>
-            {
-                TNode child;
-                var found = p.TryGetChildNode(k, out child);
-                return (found, child);
-            };
-
-            return startNode.DescendantAtOrDefault(tryGetChildNode, path, out foundKey, createDefault);
+            return startNode.DescendantAtOrDefault((TNode p, TKey k) => p.TryGetChildNode(k), path, out foundKey, createDefault);
         }
 
         #endregion DescendantAtOrDefault
@@ -121,14 +100,7 @@
         public static IEnumerable<TNode> DescendAlongPath<TKey, TNode>(this TNode startNode, HierarchyPath<TKey> path)
             where TNode : IHasIdentifiableChildNodes<TKey, TNode>
         {
-            Func<TNode, TKey, (bool, TNode)> tryGetChildNode = (TNode p, TKey k) =>
-            {
-                TNode childNode;
-                var found = p.TryGetChildNode(k, out childNode);
-                return (found, childNode);
-            };
-
-            return startNode.DescendAlongPath(tryGetChildNode, path);
+            return startNode.DescendAlongPath((TNode p, TKey k) => p.TryGetChildNode(k), path);
         }
 
         #endregion DescendAlongPath
@@ -161,13 +133,13 @@ namespace Elementary.Hierarchy.Generic
         /// <returns>the requested TNode instance</returns>
         public static TNode DescendantAt<TKey, TNode>(this TNode startNode, Func<TNode, TKey, (bool, TNode)> tryGetChildNode, HierarchyPath<TKey> path)
         {
-            var pathArray = path.Items.ToArray();
+            var pathSegments = path.Items.ToArray();
             TNode childNode = startNode;
-            for (int i = 0; i < pathArray.Length; i++)
+            for (int i = 0; i < pathSegments.Length; i++)
             {
-                var (found, node) = tryGetChildNode(childNode, pathArray[i]);
+                var (found, node) = tryGetChildNode(childNode, pathSegments[i]);
                 if (!found)
-                    throw new KeyNotFoundException($"Key not found:'{string.Join("/", pathArray.Take(i + 1))}'");
+                    throw new KeyNotFoundException($"Key not found:'{string.Join("/", pathSegments.Take(i + 1))}'");
                 childNode = node;
             }
             return childNode;

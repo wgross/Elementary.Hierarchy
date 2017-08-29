@@ -1,5 +1,5 @@
-﻿using Elementary.Hierarchy.Collections.Nodes;
-using System;
+﻿using System;
+using Elementary.Hierarchy.Collections.Nodes;
 
 namespace Elementary.Hierarchy.Collections.Traversal
 {
@@ -38,13 +38,12 @@ namespace Elementary.Hierarchy.Collections.Traversal
 
         #endregion Construction and initialization of this instance
 
-        public bool TryGetChildNode(TKey id, out IHierarchyNode<TKey, TValue> childNode)
+        public (bool, IHierarchyNode<TKey, TValue>) TryGetChildNode(TKey id)
         {
-            childNode = null;
-            if (!this.InnerNode.TryGetChildNode(id, out var innerChildNode))
-                return false;
-            childNode = new HierarchyTraverser<TKey, TValue, TNode>(this, innerChildNode);
-            return true;
+            var (found, innerChildNode) = this.InnerNode.TryGetChildNode(id);
+            if (!found)
+                return (false, null);
+            return (true, new HierarchyTraverser<TKey, TValue, TNode>(this, innerChildNode));
         }
 
         public bool TryGetValue(out TValue value)
