@@ -123,9 +123,9 @@
         {
             Func<TNode, TKey, (bool, TNode)> tryGetChildNode = (TNode p, TKey k) =>
             {
-                TNode child;
-                var found = p.TryGetChildNode(k, out child);
-                return (found, child);
+                TNode childNode;
+                var found = p.TryGetChildNode(k, out childNode);
+                return (found, childNode);
             };
 
             return startNode.DescendAlongPath(tryGetChildNode, path);
@@ -142,7 +142,7 @@ namespace Elementary.Hierarchy.Generic
     using System.Linq;
 
     /// <summary>
-    /// Provides extensions to any type which may support the concept of haing 'identifieable children' using delegates.
+    /// Provides extensions to any type which may support the concept of having 'identifieable children' using delegates.
     /// </summary>
     public static class HasIdentifiableChildNodeExtensions
     {
@@ -185,10 +185,10 @@ namespace Elementary.Hierarchy.Generic
         /// <returns></returns>
         public static TNode DescendantAt<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, params Func<IEnumerable<TNode>, (bool, TNode)>[] path)
         {
-            (var found, var node) = path.Aggregate((true, startNode), (result, pathItem) => pathItem(getChildNodes(result.Item2)));
+            (var found, var childNode) = path.Aggregate((true, startNode), (result, pathItem) => pathItem(getChildNodes(result.Item2)));
             if (!found)
                 throw new KeyNotFoundException("Key not found");
-            return node;
+            return childNode;
         }
 
         #endregion DescendantAt
@@ -211,10 +211,10 @@ namespace Elementary.Hierarchy.Generic
             TNode currentNode = startNode;
             for (int i = 0; i < pathSegments.Length; i++)
             {
-                var (found, node) = tryGetChildNode(currentNode, pathSegments[i]);
+                var (found, childNode) = tryGetChildNode(currentNode, pathSegments[i]);
                 if (!found)
                     return (false, default(TNode));
-                currentNode = node;
+                currentNode = childNode;
             }
             return (true, currentNode);
         }
@@ -261,12 +261,12 @@ namespace Elementary.Hierarchy.Generic
             var keyItems = path.Items.ToArray();
             for (int i = 0; i < keyItems.Length; i++)
             {
-                var (found, node) = tryGetChildNode(childNode, keyItems[i]);
+                bool found = false;
+                (found, childNode) = tryGetChildNode(childNode, keyItems[i]);
                 if (found)
                     foundKey = foundKey.Join(keyItems[i]); // add current key to 'found' path
                 else
                     return (createDefault ?? (() => default(TNode)))();
-                childNode = node;
             }
             return childNode;
         }
@@ -285,10 +285,10 @@ namespace Elementary.Hierarchy.Generic
         /// <returns>TNode instance behind key or default(TNode)</returns>
         public static TNode DescendantAtOrDefault<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, Func<TNode> createDefault = null, params Func<IEnumerable<TNode>, (bool, TNode)>[] path)
         {
-            (var found, var node) = path.Aggregate((true, startNode), (result, pathItem) => pathItem(getChildNodes(result.Item2)));
+            var (found, childNode) = path.Aggregate((true, startNode), (result, pathItem) => pathItem(getChildNodes(result.Item2)));
             if (!found)
                 return (createDefault ?? (() => default(TNode)))();
-            return node;
+            return childNode;
         }
 
         #endregion DescendantAtOrDefault
@@ -317,12 +317,12 @@ namespace Elementary.Hierarchy.Generic
             var keyItems = path.Items.ToArray();
             for (int i = 0; i < keyItems.Length; i++)
             {
-                var (found, node) = tryGetChildNode(childNode, keyItems[i]);
+                bool found = false;
+                (found, childNode) = tryGetChildNode(childNode, keyItems[i]);
                 if (found)
-                    yield return node;
+                    yield return childNode;
                 else
                     yield break;
-                childNode = node;
             }
         }
 
@@ -343,15 +343,15 @@ namespace Elementary.Hierarchy.Generic
             yield return startNode;
 
             // now descend from the start node, if there are items left in the path
-            TNode currentNode = startNode;
+            TNode childNode = startNode;
             for (int i = 0; i < path.Length; i++)
             {
-                (var found, var nextNode) = path[i](getChildNodes(currentNode));
+                bool found = false;
+                (found, childNode) = path[i](getChildNodes(childNode));
                 if (found)
-                    yield return nextNode;
+                    yield return childNode;
                 else
                     yield break;
-                currentNode = nextNode;
             }
         }
 
