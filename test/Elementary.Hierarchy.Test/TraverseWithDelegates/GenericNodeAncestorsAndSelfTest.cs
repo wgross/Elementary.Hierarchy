@@ -8,56 +8,30 @@
     public class GenericNodeAncestorsAndSelfTest
     {
         [Fact]
-        public void D_root_returns_itself_on_AncestorsAndSelf()
+        public void D_returns_itself_on_AncestorsAndSelf()
         {
-            // ARRANGE
-
-            TryGetParent<string> nodeHierarchy = (string node, out string parent) =>
-            {
-                parent = null;
-                return false;
-            };
-
             // ACT
 
-            IEnumerable<string> result = "startNode".AncestorsAndSelf(nodeHierarchy).ToArray();
+            IEnumerable<string> result = "rootNode".AncestorsAndSelf(DelegateTreeDefinition.TryGetParentNode).ToArray();
 
             // ASSERT
 
             Assert.Equal(1, result.Count());
-            Assert.Equal("startNode", result.ElementAt(0));
+            Assert.Equal("rootNode", result.ElementAt(0));
         }
 
         [Fact]
         public void D_inner_node_returns_path_to_root_on_AncestorsOrSefl()
         {
-            // ARRANGE
-
-            TryGetParent<string> nodeHierarchy = (string node, out string parent) =>
-            {
-                switch (node)
-                {
-                    case "startNode":
-                        parent = "parentOfStartNode";
-                        return true;
-
-                    case "parentOfStartNode":
-                        parent = "rootNode";
-                        return true;
-                }
-                parent = null;
-                return false;
-            };
-
             // ACT
 
-            IEnumerable<string> result = "startNode".AncestorsAndSelf(nodeHierarchy).ToArray();
+            IEnumerable<string> result = "leftLeaf".AncestorsAndSelf(DelegateTreeDefinition.TryGetParentNode).ToArray();
 
             // ASSERT
 
             Assert.Equal(3, result.Count());
-            Assert.Equal("startNode", result.ElementAt(0));
-            Assert.Equal("parentOfStartNode", result.ElementAt(1));
+            Assert.Equal("leftLeaf", result.ElementAt(0));
+            Assert.Equal("leftNode", result.ElementAt(1));
             Assert.Equal("rootNode", result.ElementAt(2));
         }
     }

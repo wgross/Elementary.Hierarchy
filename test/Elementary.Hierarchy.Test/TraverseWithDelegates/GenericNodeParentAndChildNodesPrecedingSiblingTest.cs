@@ -51,7 +51,7 @@
         {
             // ACT
 
-            string[] result = "rootNode".PrecedingSiblings(this.TryGetParent, this.GetChildNodes).ToArray();
+            string[] result = "rootNode".PrecedingSiblings(DelegateTreeDefinition.TryGetParentNode, DelegateTreeDefinition.GetChildNodes).ToArray();
 
             // ASSERT
 
@@ -63,7 +63,7 @@
         {
             // ACT
 
-            string[] result = "rightNode".PrecedingSiblings(this.TryGetParent, this.GetChildNodes).ToArray();
+            string[] result = "rightNode".PrecedingSiblings(DelegateTreeDefinition.TryGetParentNode, DelegateTreeDefinition.GetChildNodes).ToArray();
 
             // ASSERT
 
@@ -76,7 +76,7 @@
         {
             // ACT
 
-            string[] result = "leftNode".PrecedingSiblings(this.TryGetParent, this.GetChildNodes).ToArray();
+            string[] result = "leftNode".PrecedingSiblings(DelegateTreeDefinition.TryGetParentNode, DelegateTreeDefinition.GetChildNodes).ToArray();
 
             // ASSERT
 
@@ -88,13 +88,12 @@
         {
             // ACT
 
-            string[] result = "rightLeaf3".PrecedingSiblings(this.TryGetParent, this.GetChildNodes).ToArray();
+            string[] result = "rightRightLeaf".PrecedingSiblings(DelegateTreeDefinition.TryGetParentNode, DelegateTreeDefinition.GetChildNodes).ToArray();
 
             // ASSERT
 
-            Assert.Equal(2, result.Count());
-            Assert.Equal("rightLeaf1", result.ElementAt(0));
-            Assert.Equal("rightLeaf2", result.ElementAt(1));
+            Assert.Equal(1, result.Count());
+            Assert.Equal("leftRightLeaf", result.ElementAt(0));
         }
     }
 }

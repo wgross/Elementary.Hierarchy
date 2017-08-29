@@ -29,7 +29,7 @@ namespace Elementary.Hierarchy.Test
             return Enumerable.Empty<string>();
         }
 
-        public static (bool,string) TryGetChildNode(string node, string childKey)
+        public static (bool, string) TryGetChildNode(string node, string childKey)
         {
             //                rootNode
             //                /      \
@@ -49,6 +49,28 @@ namespace Elementary.Hierarchy.Test
             };
 
             return nodeMap.TryGetValue((node, childKey), out var child) ? (true, child) : (false, null);
+        }
+
+        public static (bool, string) TryGetParentNode(string node)
+        {
+            //                rootNode
+            //                /      \
+            //        leftNode        rightNode
+            //           /            /       \
+            //     leftLeaf    leftRightLeaf  rightRightLeaf
+            //
+            // unkown node -> (false,null)
+
+            var nodeMap = new Dictionary<string, string>
+            {
+                { "leftNode", "rootNode" },
+                { "rightNode", "rootNode" },
+                { "leftLeaf", "leftNode" },
+                { "leftRightLeaf", "rightNode" },
+                { "rightRightLeaf", "rightNode" }
+            };
+
+            return nodeMap.TryGetValue(node, out var parent) ? (true, parent) : (false, null);
         }
     }
 }

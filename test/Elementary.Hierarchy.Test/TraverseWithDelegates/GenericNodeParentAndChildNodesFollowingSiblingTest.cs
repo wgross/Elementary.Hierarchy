@@ -1,7 +1,7 @@
-﻿using Elementary.Hierarchy.Generic;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Elementary.Hierarchy.Generic;
 using Xunit;
 
 namespace Elementary.Hierarchy.Test.TraverseWithDelegates
@@ -51,7 +51,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
         {
             // ACT
 
-            string[] result = "rootNode".FollowingSiblings(this.TryGetParent, this.GetChildNodes).ToArray();
+            string[] result = "rootNode".FollowingSiblings(DelegateTreeDefinition.TryGetParentNode, DelegateTreeDefinition.GetChildNodes).ToArray();
 
             // ASSERT
 
@@ -63,7 +63,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
         {
             // ACT
 
-            string[] result = "leftNode".FollowingSiblings(this.TryGetParent, this.GetChildNodes).ToArray();
+            string[] result = "leftNode".FollowingSiblings(DelegateTreeDefinition.TryGetParentNode, DelegateTreeDefinition.GetChildNodes).ToArray();
 
             // ASSERT
 
@@ -76,7 +76,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
         {
             // ACT
 
-            string[] result = "rightNode".FollowingSiblings(this.TryGetParent, this.GetChildNodes).ToArray();
+            string[] result = "rightNode".FollowingSiblings(DelegateTreeDefinition.TryGetParentNode, DelegateTreeDefinition.GetChildNodes).ToArray();
 
             // ASSERT
 
@@ -88,13 +88,12 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
         {
             // ACT
 
-            string[] result = "rightLeaf1".FollowingSiblings(this.TryGetParent, this.GetChildNodes).ToArray();
+            string[] result = "leftRightLeaf".FollowingSiblings(DelegateTreeDefinition.TryGetParentNode, DelegateTreeDefinition.GetChildNodes).ToArray();
 
             // ASSERT
 
-            Assert.Equal(2, result.Count());
-            Assert.Same("rightLeaf2", result.ElementAt(0));
-            Assert.Same("rightLeaf3", result.ElementAt(1));
+            Assert.Equal(1, result.Count());
+            Assert.Same("rightRightLeaf", result.ElementAt(0));
         }
     }
 }
