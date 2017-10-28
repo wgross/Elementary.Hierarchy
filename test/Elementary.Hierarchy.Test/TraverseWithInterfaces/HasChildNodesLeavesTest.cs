@@ -83,5 +83,17 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
             Assert.Equal(3, result.Count());
             Assert.Equal(new[] { this.leftLeaf.Object, this.leftRightLeaf.Object, this.rightRightLeaf.Object }, result.ToArray());
         }
+
+        [Fact]
+        public void I_Leaves_are_not_Leaves_if_maxDepth_make_them_to_Leaves()
+        {
+            // ACT & ASSERT
+            // maxDepths doesn craete leaves in the sense of the Leaves algorithm
+
+            Assert.Equal(0, rootNode.Object.Leaves(maxDepth: 0).Count());
+            Assert.Equal(0, rootNode.Object.Leaves(maxDepth: 1).Count());
+            Assert.Equal(0, rootNode.Object.Leaves(maxDepth: 2).Count());
+            Assert.Equal(3, rootNode.Object.Leaves(maxDepth: 3).Count());
+        }
     }
 }

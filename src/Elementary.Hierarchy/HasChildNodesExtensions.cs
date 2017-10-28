@@ -94,14 +94,16 @@
         /// </summary>
         /// <typeparam name="TNode">type of the hierarchy node</typeparam>
         /// <param name="startNode">The node instance to start traversal at</param>
+        /// <param name="maxDepth">Specifies the maximum depth of enumeration 0 is always empty, 1 is <paramref name="startNode"/>, 2 children of <paramref name="startNode"/></param>
+        /// /// <param name="maxDepth">the maximum depth to search at</param>
         /// <returns>An enumerable set of leaf nodes</returns>
-        public static IEnumerable<TNode> Leaves<TNode>(this TNode startNode)
+        public static IEnumerable<TNode> Leaves<TNode>(this TNode startNode, bool? depthFirst = null, int? maxDepth = null)
             where TNode : IHasChildNodes<TNode>
         {
             if (startNode is IHasDescendantNodes<TNode>)
-                return startNode.DescendantsAndSelf(depthFirst: true, maxDepth: int.MaxValue).Where(n => !n.HasChildNodes);
+                return startNode.DescendantsAndSelf(depthFirst: depthFirst, maxDepth: maxDepth).Where(n => !n.HasChildNodes);
 
-            return startNode.Leaves(n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>());
+            return startNode.Leaves(n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>(), depthFirst: depthFirst, maxDepth: maxDepth);
         }
 
         #endregion Leaves
@@ -218,7 +220,7 @@ namespace Elementary.Hierarchy.Generic
         /// </returns>
         /// <typeparam name="TNode">type of the hierarchy node</typeparam>
         /// <param name="startNode">The TNode instance to start traversal at</param>
-        /// <param name="depthFirst">specifies if child noded are enumerated depth first or breadth first</param>
+        /// <param name="depthFirst">specifies if child nodes are enumerated depth first or breadth first</param>
         /// <param name="getChildNodes">delegate retrueved the child nodes of the specified TNode instance</param>
         /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is the <paramref name="startNode"/>, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
         public static IEnumerable<TNode> DescendantsAndSelf<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, bool? depthFirst = null, int? maxDepth = null)
@@ -248,12 +250,14 @@ namespace Elementary.Hierarchy.Generic
         /// </summary>
         /// <typeparam name="TNode">type of the hierarchy node</typeparam>
         /// <param name="startNode">The node instance to start traversal at</param>
+        /// <param name="depthFirst">specifies if child nodes are enumerated depth first or breadth first</param>
         /// <param name="getChildNodes"></param>
+        /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is the <paramref name="startNode"/>, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
         /// <returns>a collection of leaves</returns>
-        public static IEnumerable<TNode> Leaves<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes)
+        public static IEnumerable<TNode> Leaves<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, bool? depthFirst = null, int? maxDepth = null)
         {
             // all nodes which havn't a child node are leaves of the tree.
-            return startNode.DescendantsAndSelf(getChildNodes: getChildNodes).Where(n => !getChildNodes(n).Any());
+            return startNode.DescendantsAndSelf(getChildNodes: getChildNodes, depthFirst: depthFirst, maxDepth: maxDepth).Where(n => !getChildNodes(n).Any());
         }
 
         #endregion Leaves

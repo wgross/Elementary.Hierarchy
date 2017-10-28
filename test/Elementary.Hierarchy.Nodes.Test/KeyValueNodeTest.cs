@@ -6,7 +6,7 @@ namespace Elementary.Hierarchy.Nodes.Test
     public class UnitTest1
     {
         [Fact]
-        public void KeyNavlueNode_stores_Key_and_Value()
+        public void KeyValueNode_stores_Key_and_Value()
         {
             // ACT
             var result = new KeyValueNode<int, string>(key: 1, value: "value");
