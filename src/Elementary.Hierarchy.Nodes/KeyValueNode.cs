@@ -6,28 +6,67 @@ namespace Elementary.Hierarchy.Nodes
 {
     public class KeyValueNode
     {
-        public static KeyValueNode<K,V> Create<K,V>(K key, V value) 
+        public static KeyValueNode<K, V> Create<K, V>(K key, V value)
         {
-            return new KeyValueNode<K,V>(key, value);
-        }    
+            return new KeyValueNode<K, V>(key, value);
+        }
+
+        public static KeyValueNode<K, V> Create<K, V>(V value)
+        {
+            return new KeyValueNode<K, V>(value);
+        }
+
+        public static KeyValueNode<K, V> Create<K, V>(V value, params KeyValueNode<K, V>[] childNodes)
+        {
+            return new KeyValueNode<K, V>(value, childNodes);
+        }
+
+        public static KeyValueNode<K, V> Create<K, V>(K key, V value, params KeyValueNode<K, V>[] childNodes)
+        {
+            return new KeyValueNode<K, V>(key, value, childNodes);
+        }
     }
 
-    public class KeyValueNode<K,V> : IHasChildNodes<KeyValueNode<K,V>>
+    public class KeyValueNode<K, V> : IHasChildNodes<KeyValueNode<K, V>>
     {
-        private readonly KeyValueNode<K,V>[] childNodes;
+        #region Construction and initialization of this instance
+
+        private struct OptionalKey
+        {
+            public K Key;
+        }
+
+        private readonly KeyValueNode<K, V>[] childNodes;
+        private readonly OptionalKey? key;
+
+        public KeyValueNode(V value)
+            : this(null, value, new KeyValueNode<K, V>[0])
+        { }
+
+        public KeyValueNode(V value, params KeyValueNode<K, V>[] childNodes)
+            : this(null, value, childNodes)
+        { }
 
         public KeyValueNode(K key, V value)
-            : this(key, value, new KeyValueNode<K,V>[0])
-        {}
+            : this(new OptionalKey { Key = key }, value, new KeyValueNode<K, V>[0])
+        { }
 
-        public KeyValueNode(K key, V value, params KeyValueNode<K,V>[] childNodes)
+        public KeyValueNode(K key, V value, params KeyValueNode<K, V>[] childNodes)
+            : this(new OptionalKey { Key = key }, value, childNodes)
+        { }
+
+        private KeyValueNode(OptionalKey? key, V value, KeyValueNode<K, V>[] childNodes)
         {
-            this.Key = key;
+            this.key = key;
             this.Value = value;
             this.childNodes = childNodes.ToArray();
         }
 
-        public K Key {get;}
+        #endregion Construction and initialization of this instance
+
+        public K Key => (this.key ?? throw new InvalidOperationException("node has no key")).Key;
+
+        public bool HasKey => this.key.HasValue;
 
         public V Value { get; }
 
@@ -37,6 +76,8 @@ namespace Elementary.Hierarchy.Nodes
 
         public IEnumerable<KeyValueNode<K, V>> ChildNodes => this.childNodes;
 
-        #endregion 
+        
+
+        #endregion IHasChildNodes members
     }
 }

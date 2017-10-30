@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Elementary.Hierarchy.Nodes.Test
 {
-    public class UnitTest1
+    public class KeyValueNodeTest
     {
         [Fact]
         public void KeyValueNode_stores_Key_and_Value()
@@ -14,11 +14,12 @@ namespace Elementary.Hierarchy.Nodes.Test
             // ASSERT
 
             Assert.Equal(1, result.Key);
+            Assert.True(result.HasKey);
             Assert.Equal("value", result.Value);
         }
 
         [Fact]
-        public void KeyValueNode_stores_Kay_value_and_ChildNodes()
+        public void KeyValueNode_stores_Key_value_and_ChildNodes()
         {
             // ARRANGE
             var a = KeyValueNode.Create(key: 1, value: "nodeA");
@@ -35,6 +36,23 @@ namespace Elementary.Hierarchy.Nodes.Test
             Assert.Equal("nodeC", result.Value);
             Assert.True(result.HasChildNodes);
             Assert.Equal(new[] { a, b }, result.Children());
+        }
+
+        [Fact]
+        public void KeyValueNode_root_has_no_key()
+        {
+            // ARRANGE
+
+            var a = KeyValueNode.Create<string, string>(value: "nodeA");
+
+            // ACT & ASSERT
+            // throws on key retrieval
+
+            var result = Assert.Throws<InvalidOperationException>(() => a.Key);
+
+            Assert.Equal("node has no key", result.Message);
+            Assert.Equal("nodeA", a.Value);
+            Assert.False(a.HasKey);
         }
     }
 }
