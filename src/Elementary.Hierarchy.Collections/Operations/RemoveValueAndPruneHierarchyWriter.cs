@@ -37,7 +37,7 @@ namespace Elementary.Hierarchy.Collections.Operations
                 {
                     // descend further into the tree.
 
-                    this.ClearValue(childNode, path.SplitDescendants(), out descendantWasReached);
+                    this.ClearValue(childNode, path.Descendants(), out descendantWasReached);
 
                     // now inspect the result:
                     // try to prune if a vaue has been removes an pruning was requested

@@ -35,7 +35,7 @@ namespace Elementary.Hierarchy.Collections.Operations
                 {
                     // descend further into the tree.
 
-                    this.ClearValue(childNode, path.SplitDescendants(), out descendantWasReached);
+                    this.ClearValue(childNode, path.Descendants(), out descendantWasReached);
                 }
             }
             return node;
