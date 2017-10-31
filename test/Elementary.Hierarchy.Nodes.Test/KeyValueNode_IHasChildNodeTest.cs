@@ -28,7 +28,7 @@ namespace Elementary.Hierarchy.Nodes.Test
 
             // ASSERT
 
-            Assert.Equal(new[] { "leftNode",  "rightNode", "leftLeaf", "leftRightLeaf", "rightRightLeaf" }, result.Select(n => n.Key));
+            Assert.Equal(new[] { "leftNode", "rightNode", "leftLeaf", "leftRightLeaf", "rightRightLeaf" }, result.Select(n => n.Key));
         }
 
         [Theory]
@@ -43,6 +43,19 @@ namespace Elementary.Hierarchy.Nodes.Test
 
             Assert.False(result.ElementAt(0).HasKey);
             Assert.Equal(new[] { "leftNode", "rightNode", "leftLeaf", "leftRightLeaf", "rightRightLeaf" }, result.Skip(1).Select(n => n.Key));
+        }
+
+        [Theory]
+        [MemberData(nameof(KeyValueNodeTreeDefinitions.Default), MemberType = typeof(KeyValueNodeTreeDefinitions))]
+        public void KeyValueNode_returns_leaves_nodes(KeyValueNode<string, int> root)
+        {
+            // ACT
+
+            var result = root.Leaves();
+
+            // ASSERT
+
+            Assert.Equal(new[] { "leftLeaf", "leftRightLeaf", "rightRightLeaf" }, result.Select(n => n.Key));
         }
     }
 }

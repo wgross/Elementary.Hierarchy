@@ -6,7 +6,7 @@ namespace Elementary.Hierarchy.Nodes
 {
     public class KeyValueNode
     {
-        public static KeyValueNode<K, V> Create<K, V>(K key, V value)
+        public static KeyValueNode<K, V> Node<K, V>(K key, V value)
         {
             return new KeyValueNode<K, V>(key, value);
         }

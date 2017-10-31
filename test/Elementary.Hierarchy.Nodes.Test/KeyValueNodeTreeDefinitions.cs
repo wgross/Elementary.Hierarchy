@@ -18,9 +18,9 @@
             {
                 new KeyValueNode<string, int>(0,
                     Create("leftNode", 2,
-                        Create("leftLeaf", 4)),
+                        Node("leftLeaf", 4)),
                     Create("rightNode", 3,
-                        Create("leftRightLeaf", 5), Create("rightRightLeaf", 6)))
+                        Node("leftRightLeaf", 5), Node("rightRightLeaf", 6)))
             };
         }
     }

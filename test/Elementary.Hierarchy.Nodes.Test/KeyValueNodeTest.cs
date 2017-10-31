@@ -22,8 +22,8 @@ namespace Elementary.Hierarchy.Nodes.Test
         public void KeyValueNode_stores_Key_value_and_ChildNodes()
         {
             // ARRANGE
-            var a = KeyValueNode.Create(key: 1, value: "nodeA");
-            var b = KeyValueNode.Create(key: 2, value: "nodeB");
+            var a = KeyValueNode.Node(key: 1, value: "nodeA");
+            var b = KeyValueNode.Node(key: 2, value: "nodeB");
 
             // ACT
             // create third node, add a and b as childnodes
