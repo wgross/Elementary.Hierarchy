@@ -28,7 +28,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
                 .Returns(false);
             this.rootNode = new Mock<MockableNodeType>();
             this.rootNode
-                .Setup(n => n.GetDescendants(true, int.MaxValue - 1))
+                .Setup(n => n.GetDescendants(false, int.MaxValue))
                 .Returns(new[] { this.leftNode.Object });
             this.rootNode
                 .Setup(n => n.HasChildNodes)
@@ -46,7 +46,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
             // ASSERT
             // The hierarchy is retrieved completely. This is not efficient but provides the correct result
 
-            this.rootNode.Verify(r => r.GetDescendants(true, 2147483646), Times.Once());
+            this.rootNode.Verify(r => r.GetDescendants(false, 2147483647), Times.Once());
             this.rootNode.Verify(r => r.HasChildNodes, Times.Once());
             this.rootNode.Verify(r => r.ChildNodes, Times.Never());
             this.leftNode.Verify(n => n.HasChildNodes, Times.Once());
@@ -66,7 +66,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
             // ASSERT
             // The hierarchy is retrieved completely. This is not efficient but provides the correct result
 
-            this.leftNode.Verify(r => r.GetDescendants(true, 2147483646), Times.Once());
+            this.leftNode.Verify(r => r.GetDescendants(false, 2147483647), Times.Once());
             this.leftNode.Verify(n => n.HasChildNodes, Times.Once());
             this.leftNode.Verify(n => n.ChildNodes, Times.Never());
 
