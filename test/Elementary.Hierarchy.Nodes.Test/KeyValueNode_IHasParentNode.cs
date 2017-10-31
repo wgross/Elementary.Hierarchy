@@ -11,11 +11,11 @@ namespace Elementary.Hierarchy.Nodes.Test
         }
 
         [Fact]
-        public void KeyValueNodeDecorator_root_has_no_parent()
+        public void HasParentDecorator_root_has_no_parent()
         {
             // ACT
 
-            var rootTraverser = new TraversalDecorator<MockableNode>(Mock.Of<MockableNode>());
+            var rootTraverser = new HasParentDecorator<MockableNode>(Mock.Of<MockableNode>());
 
             // ASSERT
 
@@ -23,7 +23,7 @@ namespace Elementary.Hierarchy.Nodes.Test
         }
 
         [Fact]
-        public void KeyValueNodeDecorator_root_returns_childnodes()
+        public void HasParentDecorator_root_returns_childnodes()
         {
             // ARRANGE
             // root has a child node
@@ -34,7 +34,7 @@ namespace Elementary.Hierarchy.Nodes.Test
             Mock.Get(node).Setup(n => n.HasChildNodes).Returns(true);
             Mock.Get(node).Setup(n => n.ChildNodes).Returns(new[] { child });
 
-            var traverser = new TraversalDecorator<MockableNode>(node);
+            var traverser = new HasParentDecorator<MockableNode>(node);
 
             // ACT
 
@@ -47,7 +47,7 @@ namespace Elementary.Hierarchy.Nodes.Test
         }
 
         [Fact]
-        public void KeyValueDecorator_has_parent_for_childnode()
+        public void HasParentDecorator_has_parent_for_childnode()
         {
             // ARRANGE
             // root has a child node
@@ -58,7 +58,7 @@ namespace Elementary.Hierarchy.Nodes.Test
             Mock.Get(node).Setup(n => n.HasChildNodes).Returns(true);
             Mock.Get(node).Setup(n => n.ChildNodes).Returns(new[] { child });
 
-            var traverser = new TraversalDecorator<MockableNode>(node);
+            var traverser = new HasParentDecorator<MockableNode>(node);
 
             // ACT
             // fetch parent fro single child

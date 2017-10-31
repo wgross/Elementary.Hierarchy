@@ -4,17 +4,17 @@ using System.Linq;
 
 namespace Elementary.Hierarchy.Nodes
 {
-    public class TraversalDecorator<N> : IHasParentNode<TraversalDecorator<N>>, IHasChildNodes<TraversalDecorator<N>>
+    public class HasParentDecorator<N> : IHasParentNode<HasParentDecorator<N>>, IHasChildNodes<HasParentDecorator<N>>
         where N : IHasChildNodes<N>
     {
         #region Construction and initialization
 
-        public TraversalDecorator(N node)
+        public HasParentDecorator(N node)
         {
             this.Node = node;
         }
 
-        private TraversalDecorator(N node, TraversalDecorator<N> parent)
+        private HasParentDecorator(N node, HasParentDecorator<N> parent)
         {
             this.Node = node;
             this.parent = parent;
@@ -22,16 +22,16 @@ namespace Elementary.Hierarchy.Nodes
 
         public N Node { get; }
 
-        private readonly TraversalDecorator<N> parent;
+        private readonly HasParentDecorator<N> parent;
 
         #endregion Construction and initialization
 
         public bool HasParentNode => this.ParentNode != null;
 
-        public TraversalDecorator<N> ParentNode => this.parent;
+        public HasParentDecorator<N> ParentNode => this.parent;
 
         public bool HasChildNodes => this.Node.HasChildNodes;
 
-        public IEnumerable<TraversalDecorator<N>> ChildNodes => this.Node.ChildNodes.Select(n => new TraversalDecorator<N>(n, this));
+        public IEnumerable<HasParentDecorator<N>> ChildNodes => this.Node.ChildNodes.Select(n => new HasParentDecorator<N>(n, this));
     }
 }
