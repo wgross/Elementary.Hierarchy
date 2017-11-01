@@ -6,28 +6,18 @@ namespace Elementary.Hierarchy.Nodes
 {
     public class KeyValueNode
     {
-        public static KeyValueNode<K, V> Node<K, V>(K key, V value)
-        {
-            return new KeyValueNode<K, V>(key, value);
-        }
-
-        public static KeyValueNode<K, V> Create<K, V>(V value)
-        {
-            return new KeyValueNode<K, V>(value);
-        }
-
-        public static KeyValueNode<K, V> Create<K, V>(V value, params KeyValueNode<K, V>[] childNodes)
+        public static KeyValueNode<K, V> RootNode<K, V>(V value, params KeyValueNode<K, V>[] childNodes)
         {
             return new KeyValueNode<K, V>(value, childNodes);
         }
 
-        public static KeyValueNode<K, V> Create<K, V>(K key, V value, params KeyValueNode<K, V>[] childNodes)
+        public static KeyValueNode<K, V> InnerNode<K, V>(K key, V value, params KeyValueNode<K, V>[] childNodes)
         {
             return new KeyValueNode<K, V>(key, value, childNodes);
         }
     }
 
-    public class KeyValueNode<K, V> : IHasChildNodes<KeyValueNode<K, V>>
+    public class KeyValueNode<K, V> : IHasChildNodes<KeyValueNode<K, V>>, IHasIdentifiableChildNodes<K, KeyValueNode<K, V>>
     {
         #region Construction and initialization of this instance
 
@@ -76,8 +66,20 @@ namespace Elementary.Hierarchy.Nodes
 
         public IEnumerable<KeyValueNode<K, V>> ChildNodes => this.childNodes;
 
-        
-
         #endregion IHasChildNodes members
+
+        #region IHasIdentfiableChildNodes members
+
+        public (bool, KeyValueNode<K, V>) TryGetChildNode(K id)
+        {
+            var child = this.childNodes.SingleOrDefault(c => c.Key.Equals(id));
+
+            if (child == null)
+                return (false, null);
+
+            return (true, child);
+        }
+
+        #endregion IHasIdentfiableChildNodes members
     }
 }

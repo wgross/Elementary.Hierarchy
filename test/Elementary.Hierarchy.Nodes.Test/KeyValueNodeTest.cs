@@ -1,4 +1,4 @@
-using System;
+using System.Linq;
 using Xunit;
 
 namespace Elementary.Hierarchy.Nodes.Test
@@ -6,53 +6,57 @@ namespace Elementary.Hierarchy.Nodes.Test
     public class KeyValueNodeTest
     {
         [Fact]
-        public void KeyValueNode_stores_Key_and_Value()
+        public void Factory_creates_root_node_with_value()
         {
             // ACT
-            var result = new KeyValueNode<int, string>(key: 1, value: "value");
+
+            var result = KeyValueNode.RootNode<string, int>(value: 0);
 
             // ASSERT
 
-            Assert.Equal(1, result.Key);
+            Assert.Equal(0, result.Value);
+            Assert.False(result.HasKey);
+            Assert.False(result.HasChildNodes);
+            Assert.False(result.ChildNodes.Any());
+        }
+
+        [Fact]
+        public void Factory_creates_innerNode_with_child_having_key_and_value()
+        {
+            // ACT
+
+            var result = KeyValueNode.InnerNode(key: "a", value: 1);
+
+            // ASSERT
+
+            Assert.Equal(1, result.Value);
             Assert.True(result.HasKey);
-            Assert.Equal("value", result.Value);
+            Assert.Equal("a", result.Key);
+            Assert.False(result.HasChildNodes);
+            Assert.False(result.ChildNodes.Any());
+            Assert.Equal((false, null), result.TryGetChildNode("xx"));
         }
 
         [Fact]
-        public void KeyValueNode_stores_Key_value_and_ChildNodes()
+        public void Factory_creates_root_node_with_childNodes_and_grandchildren()
         {
-            // ARRANGE
-            var a = KeyValueNode.Node(key: 1, value: "nodeA");
-            var b = KeyValueNode.Node(key: 2, value: "nodeB");
-
             // ACT
-            // create third node, add a and b as childnodes
 
-            var result = new KeyValueNode<int, string>(3, "nodeC", a, b);
+            var result = KeyValueNode.RootNode<string, int>(0,
+                KeyValueNode.InnerNode("a", 1,
+                    KeyValueNode.InnerNode("b", 2)));
 
             // ASSERT
-            // check the parent node
-            Assert.Equal(3, result.Key);
-            Assert.Equal("nodeC", result.Value);
+
             Assert.True(result.HasChildNodes);
-            Assert.Equal(new[] { a, b }, result.Children());
-        }
+            Assert.Equal("a", result.ChildNodes.Single().Key);
+            Assert.True(result.ChildNodes.Single().HasChildNodes);
+            Assert.Equal("b", result.ChildNodes.Single().ChildNodes.Single().Key);
 
-        [Fact]
-        public void KeyValueNode_root_has_no_key()
-        {
-            // ARRANGE
+            (var found, var child) = result.TryGetChildNode("a");
 
-            var a = KeyValueNode.Create<string, string>(value: "nodeA");
-
-            // ACT & ASSERT
-            // throws on key retrieval
-
-            var result = Assert.Throws<InvalidOperationException>(() => a.Key);
-
-            Assert.Equal("node has no key", result.Message);
-            Assert.Equal("nodeA", a.Value);
-            Assert.False(a.HasKey);
+            Assert.True(found);
+            Assert.Equal("a", child.Key);
         }
     }
 }

@@ -16,11 +16,11 @@
         {
             yield return new object[]
             {
-                new KeyValueNode<string, int>(0,
-                    Create("leftNode", 2,
-                        Node("leftLeaf", 4)),
-                    Create("rightNode", 3,
-                        Node("leftRightLeaf", 5), Node("rightRightLeaf", 6)))
+                RootNode<string, int>(0,
+                    InnerNode("leftNode", 2,
+                        InnerNode("leftLeaf", 4)),
+                    InnerNode("rightNode", 3,
+                        InnerNode("leftRightLeaf", 5), InnerNode("rightRightLeaf", 6)))
             };
         }
     }
