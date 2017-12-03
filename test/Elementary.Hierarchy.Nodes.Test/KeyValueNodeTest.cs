@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Xunit;
 
@@ -5,8 +6,10 @@ namespace Elementary.Hierarchy.Nodes.Test
 {
     public class KeyValueNodeTest
     {
+        #region CREATE
+
         [Fact]
-        public void Factory_creates_root_node_with_value()
+        public void KeyValueNode_Factory_creates_root_node_with_value()
         {
             // ACT
 
@@ -21,7 +24,7 @@ namespace Elementary.Hierarchy.Nodes.Test
         }
 
         [Fact]
-        public void Factory_creates_innerNode_with_child_having_key_and_value()
+        public void KeyValueNode_Factory_creates_innerNode_with_child_having_key_and_value()
         {
             // ACT
 
@@ -38,7 +41,7 @@ namespace Elementary.Hierarchy.Nodes.Test
         }
 
         [Fact]
-        public void Factory_creates_root_node_with_childNodes_and_grandchildren()
+        public void KeyValueNode_Factory_creates_root_node_with_childNodes_and_grandchildren()
         {
             // ACT
 
@@ -58,5 +61,102 @@ namespace Elementary.Hierarchy.Nodes.Test
             Assert.True(found);
             Assert.Equal("a", child.Key);
         }
+
+        #endregion CREATE
+
+        #region UPDATE child nodes
+
+        [Fact]
+        public void KeyValueNode_adds_childnode()
+        {
+            // ARRANGE
+
+            var root = KeyValueNode.RootNode<string, int>(0);
+            var child = KeyValueNode.InnerNode("a", 1);
+
+            // ACT
+
+            root.Add(child);
+
+            // ASSERT
+
+            Assert.True(root.HasChildNodes);
+            Assert.Same(child, root.ChildNodes.Single());
+        }
+
+        [Fact]
+        public void KeyValueNode_adds_childnode_fails_on_duplicate_key()
+        {
+            // ARRANGE
+
+            var root = KeyValueNode.RootNode<string, int>(0, KeyValueNode.InnerNode("a", 0));
+            var child = KeyValueNode.InnerNode("a", 1);
+
+            // ACT
+
+            var result = Assert.Throws<InvalidOperationException>(() => root.Add(child));
+
+            // ASSERT
+
+            Assert.True(root.HasChildNodes);
+            Assert.NotSame(child, root.ChildNodes.Single());
+        }
+
+        [Fact]
+        public void KeyValueNode_substitutes_child_node_by_Key()
+        {
+            // ARRANGE
+
+            var root = KeyValueNode.RootNode<string, int>(0, KeyValueNode.InnerNode("a", 0));
+            var child = KeyValueNode.InnerNode("a", 1);
+
+            // ACT
+
+            root.Set(child);
+
+            // ASSERT
+
+            Assert.Same(child, root.ChildNodes.Single());
+        }
+
+        #endregion UPDATE child nodes
+
+        #region DELETE child node
+
+        [Fact]
+        public void KeyValueNode_removes_childnode_by_key()
+        {
+            // ARRANGE
+
+            var root = KeyValueNode.RootNode<string, int>(0, KeyValueNode.InnerNode("a", 0));
+
+            // ACT
+
+            var result = root.Remove("a");
+
+            // ASSERT
+
+            Assert.True(result);
+            Assert.False(root.ChildNodes.Any());
+        }
+
+        [Fact]
+        public void KeyValueNode_fails_gracefully_on_removing_childnode_by_unkown_key()
+        {
+            // ARRANGE
+
+            var root = KeyValueNode.RootNode<string, int>(0, KeyValueNode.InnerNode("a", 0));
+
+            // ACT
+
+            var result = root.Remove("x");
+
+            // ASSERT
+
+            Assert.False(result);
+            Assert.Single(root.ChildNodes);
+        }
+
+        #endregion DELETE child node
     }
 }

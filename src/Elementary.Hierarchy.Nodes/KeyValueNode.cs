@@ -17,7 +17,7 @@ namespace Elementary.Hierarchy.Nodes
         }
     }
 
-    public class KeyValueNode<K, V> : IHasChildNodes<KeyValueNode<K, V>>, IHasIdentifiableChildNodes<K, KeyValueNode<K, V>>
+    public class KeyValueNode<K, V> : IHasChildNodes<KeyValueNode<K, V>>, IHasIdentifiableChildNodes<K, KeyValueNode<K, V>>, IChangeChildNodes<K, KeyValueNode<K, V>>, IIdentifiableNode<K>
     {
         #region Construction and initialization of this instance
 
@@ -26,7 +26,7 @@ namespace Elementary.Hierarchy.Nodes
             public K Key;
         }
 
-        private readonly KeyValueNode<K, V>[] childNodes;
+        private KeyValueNode<K, V>[] childNodes;
         private readonly OptionalKey? key;
 
         public KeyValueNode(V value)
@@ -54,9 +54,13 @@ namespace Elementary.Hierarchy.Nodes
 
         #endregion Construction and initialization of this instance
 
+        #region IIdentfiableNode Members
+
         public K Key => (this.key ?? throw new InvalidOperationException("node has no key")).Key;
 
         public bool HasKey => this.key.HasValue;
+
+        #endregion IIdentfiableNode Members
 
         public V Value { get; }
 
@@ -81,5 +85,44 @@ namespace Elementary.Hierarchy.Nodes
         }
 
         #endregion IHasIdentfiableChildNodes members
+
+        #region IChangeChildNodes
+
+        public void Add(KeyValueNode<K, V> childNode)
+        {
+            if (this.childNodes.Any(c => c.Key.Equals(childNode.Key)))
+                throw new InvalidOperationException($"a child node(key='{childNode.Key}') already exist");
+
+            var tmp = new KeyValueNode<K, V>[this.childNodes.Length + 1];
+            Array.Copy(this.childNodes, tmp, this.childNodes.Length);
+            tmp[this.childNodes.Length] = childNode;
+
+            this.childNodes = tmp;
+        }
+
+        public bool Set(KeyValueNode<K, V> child)
+        {
+            for (int i = 0; i < this.childNodes.Length; i++)
+            {
+                if (EqualityComparer<K>.Default.Equals(this.childNodes[i].Key, child.Key))
+                {
+                    this.childNodes[i] = child;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool Remove(K key)
+        {
+            var tmp = this.childNodes.TakeWhile(c => !c.Key.Equals(key)).ToArray();
+            var oldChildNodesLength = this.childNodes.Length;
+
+            this.childNodes = tmp;
+
+            return oldChildNodesLength != this.childNodes.Length;
+        }
+
+        #endregion IChangeChildNodes
     }
 }
