@@ -15,7 +15,7 @@
   
   <!-- build -->
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp1.1;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2;net461</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <PackageProjectUrl>https://github.com/wgross/Elementary.Hierarchy</PackageProjectUrl>
     <Version>1.0.0</Version>

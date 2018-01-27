@@ -28,11 +28,15 @@ namespace Elementary.Hierarchy.Collections.Operations
 
                 this.ValueWasCleared = node.RemoveValue();
             }
-            else if (node.TryGetChildNode(path.Items.First(), out var childNode))
+            else
             {
-                // descend further into the tree.
+                var (found, childNode) = node.TryGetChildNode(path.Items.First());
+                if (found)
+                {
+                    // descend further into the tree.
 
-                this.ClearValue(childNode, path.SplitDescendants(), out descendantWasReached);
+                    this.ClearValue(childNode, path.Descendants(), out descendantWasReached);
+                }
             }
             return node;
         }

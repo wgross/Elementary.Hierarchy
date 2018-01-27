@@ -1,6 +1,6 @@
-﻿using Elementary.Hierarchy.Collections.Nodes;
-using System;
+﻿using System;
 using System.Linq;
+using Elementary.Hierarchy.Collections.Nodes;
 using Xunit;
 
 namespace Elementary.Hierarchy.Collections.Test.Nodes
@@ -24,7 +24,10 @@ namespace Elementary.Hierarchy.Collections.Test.Nodes
             Assert.Same(node, result);
             Assert.True(node.HasChildNodes);
             Assert.Same(child, result.ChildNodes.Single());
-            Assert.True(node.TryGetChildNode("a", out var addedChild));
+
+            var (found, addedChild) = node.TryGetChildNode("a");
+
+            Assert.True(found);
             Assert.Same(child, addedChild);
         }
 
@@ -45,7 +48,10 @@ namespace Elementary.Hierarchy.Collections.Test.Nodes
             Assert.Same(node, result);
             Assert.False(node.HasChildNodes);
             Assert.False(result.ChildNodes.Any());
-            Assert.False(node.TryGetChildNode("a", out var addedChild));
+
+            var (found, addedChild) = node.TryGetChildNode("a");
+
+            Assert.False(found);
         }
 
         [Fact]
@@ -66,7 +72,10 @@ namespace Elementary.Hierarchy.Collections.Test.Nodes
             Assert.Same(node, result);
             Assert.True(node.HasChildNodes);
             Assert.Same(secondChild, result.ChildNodes.Single());
-            Assert.True(node.TryGetChildNode("a", out var addedChild));
+
+            var (found, addedChild) = node.TryGetChildNode("a");
+
+            Assert.True(found);
             Assert.Same(secondChild, addedChild);
         }
 
@@ -88,7 +97,10 @@ namespace Elementary.Hierarchy.Collections.Test.Nodes
             Assert.Equal("Key of child to replace (key='a') and new child (key='b') must be equal", result.Message);
             Assert.True(node.HasChildNodes);
             Assert.Same(child, node.ChildNodes.Single());
-            Assert.True(node.TryGetChildNode("a", out var addedChild));
+
+            var (found, addedChild) = node.TryGetChildNode("a");
+
+            Assert.True(found);
             Assert.Same(child, addedChild);
         }
 
@@ -96,7 +108,7 @@ namespace Elementary.Hierarchy.Collections.Test.Nodes
         public void MutableNode_fails_on_replacing_unknown_child()
         {
             // ARRANGE
-            // none of the child nodes are added to the root node. 
+            // none of the child nodes are added to the root node.
 
             var child = new MutableNode<string, int>("a");
             var node = MutableNode<string, int>.CreateRoot();

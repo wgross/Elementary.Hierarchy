@@ -12,7 +12,10 @@ namespace Elementary.Hierarchy.Collections.Operations
             {
                 return RemoveDestinationNode(node, recurse, out hasRemovedNode);
             }
-            else if (node.TryGetChildNode(path.Items.First(), out var childNode))
+
+            var (found, childNode) = node.TryGetChildNode(path.Items.First());
+
+            if (found)
             {
                 return RewriteParentNodeAfterChildNodeRemoved(node, childNode, path, recurse, out hasRemovedNode);
             }
@@ -30,7 +33,7 @@ namespace Elementary.Hierarchy.Collections.Operations
             // traverse the tree further down along the path
             // depending on the result of the removal operations this node has to be rewritten
 
-            var returnedChildNode = this.RemoveNode(childNode, remainingPath.SplitDescendants(), recurse, out nodeRemoved);
+            var returnedChildNode = this.RemoveNode(childNode, remainingPath.Descendants(), recurse, out nodeRemoved);
 
             if (returnedChildNode == null)
             {

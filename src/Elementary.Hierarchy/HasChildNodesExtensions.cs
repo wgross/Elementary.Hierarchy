@@ -15,6 +15,7 @@
         /// <summary>
         /// Returns the child node of a given <paramref name="startNode"/>
         /// The child nodes are retrieved from the ChildNodes property if the <see cref="IHasChildNodes{TNode}"/> interface.
+        /// If <see cref="IHasChildNodes{TNode}.ChildNodes"/> returns null, <see cref="Enumerable.Empty{TResult}"/> is returned.
         /// </summary>
         /// <typeparam name="TNode"></typeparam>
         /// <param name="startNode"></param>
@@ -22,6 +23,9 @@
         public static IEnumerable<TNode> Children<TNode>(this TNode startNode)
             where TNode : IHasChildNodes<TNode>
         {
+            if (startNode is IHasDescendantNodes<TNode>)
+                return ((IHasDescendantNodes<TNode>)startNode).GetDescendants(depthFirst: false, maxDepth: 1);
+
             return startNode.Children(n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>());
         }
 
@@ -47,7 +51,7 @@
                 throw new ArgumentException("must be > 0", nameof(maxDepth));
 
             if (startNode is IHasDescendantNodes<TNode>)
-                return ((IHasDescendantNodes<TNode>)startNode).GetDescendants(depthFirst.GetValueOrDefault(false), maxDepth.GetValueOrDefault(int.MaxValue));
+                return ((IHasDescendantNodes<TNode>)startNode).GetDescendants(depthFirst.GetValueOrDefault(false), maxDepth.GetValueOrDefault(int.MaxValue)) ?? Enumerable.Empty<TNode>();
 
             // startNode's implememtation doesn't provide an optimized accessor to its descendants.
             // just rely on the child nodes
@@ -90,11 +94,16 @@
         /// </summary>
         /// <typeparam name="TNode">type of the hierarchy node</typeparam>
         /// <param name="startNode">The node instance to start traversal at</param>
-        /// <returns>An enumerableset of leaf nodes</returns>
-        public static IEnumerable<TNode> Leaves<TNode>(this TNode startNode)
+        /// <param name="maxDepth">Specifies the maximum depth of enumeration 0 is always empty, 1 is <paramref name="startNode"/>, 2 children of <paramref name="startNode"/></param>
+        /// /// <param name="maxDepth">the maximum depth to search at</param>
+        /// <returns>An enumerable set of leaf nodes</returns>
+        public static IEnumerable<TNode> Leaves<TNode>(this TNode startNode, bool? depthFirst = null, int? maxDepth = null)
             where TNode : IHasChildNodes<TNode>
         {
-            return startNode.Leaves(n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>());
+            if (startNode is IHasDescendantNodes<TNode>)
+                return startNode.DescendantsAndSelf(depthFirst: depthFirst, maxDepth: maxDepth).Where(n => !n.HasChildNodes);
+
+            return startNode.Leaves(n => n.HasChildNodes ? n.ChildNodes : Enumerable.Empty<TNode>(), depthFirst: depthFirst, maxDepth: maxDepth);
         }
 
         #endregion Leaves
@@ -161,7 +170,7 @@ namespace Elementary.Hierarchy.Generic
             if (getChildren == null)
                 throw new ArgumentNullException(nameof(getChildren));
 
-            return getChildren(startNode);
+            return getChildren(startNode) ?? Enumerable.Empty<TNode>();
         }
 
         #endregion Children
@@ -211,7 +220,7 @@ namespace Elementary.Hierarchy.Generic
         /// </returns>
         /// <typeparam name="TNode">type of the hierarchy node</typeparam>
         /// <param name="startNode">The TNode instance to start traversal at</param>
-        /// <param name="depthFirst">specifies if child noded are enumerated depth first or breadth first</param>
+        /// <param name="depthFirst">specifies if child nodes are enumerated depth first or breadth first</param>
         /// <param name="getChildNodes">delegate retrueved the child nodes of the specified TNode instance</param>
         /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is the <paramref name="startNode"/>, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
         public static IEnumerable<TNode> DescendantsAndSelf<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, bool? depthFirst = null, int? maxDepth = null)
@@ -241,12 +250,14 @@ namespace Elementary.Hierarchy.Generic
         /// </summary>
         /// <typeparam name="TNode">type of the hierarchy node</typeparam>
         /// <param name="startNode">The node instance to start traversal at</param>
+        /// <param name="depthFirst">specifies if child nodes are enumerated depth first or breadth first</param>
         /// <param name="getChildNodes"></param>
-        /// <returns></returns>
-        public static IEnumerable<TNode> Leaves<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes)
+        /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is the <paramref name="startNode"/>, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
+        /// <returns>a collection of leaves</returns>
+        public static IEnumerable<TNode> Leaves<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, bool? depthFirst = null, int? maxDepth = null)
         {
             // all nodes which havn't a child node are leaves of the tree.
-            return startNode.DescendantsAndSelf(getChildNodes: getChildNodes).Where(n => !getChildNodes(n).Any());
+            return startNode.DescendantsAndSelf(getChildNodes: getChildNodes, depthFirst: depthFirst, maxDepth: maxDepth).Where(n => !getChildNodes(n).Any());
         }
 
         #endregion Leaves
@@ -343,7 +354,7 @@ namespace Elementary.Hierarchy.Generic
             var nodesToVisit = new Queue<Tuple<int, TNode, TNode>>();
             if (0 < maxDepth) // startNode is depth 0, next level is 1
             {
-                foreach (var child in getChildNodes(startNode)) // descend one level from the start node
+                foreach (var child in getChildNodes(startNode) ?? Enumerable.Empty<TNode>()) // descend one level from the start node
                 {
                     nodesToVisit.Enqueue(Tuple.Create(1, child, startNode));
                 }

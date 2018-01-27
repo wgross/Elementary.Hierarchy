@@ -181,7 +181,7 @@
         /// Creates HierarchyPath instance containing all path items except the first.
         /// </summary>
         /// <returns></returns>
-        public HierarchyPath<T> SplitDescendants()
+        public HierarchyPath<T> Descendants()
         {
             return HierarchyPath.Create(this.Items.Skip(1));
         }

@@ -17,27 +17,28 @@
         }
 
         [Fact]
-        public void I_Root_throws_InvalidOperationException_on_Parent()
+        public void IHasParentNode_root_throws_InvalidOperationException_on_Parent()
         {
             // ARRANGE
+            // a parent isn't available
 
-            startNode // returns false for 'HasParentNode'
-                .Setup(m => m.HasParentNode).Returns(false);
+            startNode.Setup(m => m.HasParentNode).Returns(false);
 
             // ACT
+            // ask for parent
 
             InvalidOperationException result = Assert.Throws<InvalidOperationException>(() => startNode.Object.Parent());
 
             // ASSERT
 
-            Assert.True(result.Message.Contains("has no parent"));
-
             startNode.Verify(m => m.HasParentNode, Times.Once());
             startNode.Verify(m => m.ParentNode, Times.Never());
+
+            Assert.Contains("has no parent",result.Message);
         }
 
         [Fact]
-        public void I_inner_node_returns_parent_on_Parent()
+        public void IHasParentNode_inner_node_returns_parent_on_Parent()
         {
             // ARRANGE
 
@@ -63,7 +64,10 @@
             MockableNodeType result = this.startNode.Object.Parent();
 
             // ASSERT
-
+            
+            startNode.Verify(m => m.HasParentNode, Times.Once());
+            startNode.Verify(m => m.ParentNode, Times.Once());
+            
             Assert.Same(parentOfStartNode.Object, result);
         }
     }

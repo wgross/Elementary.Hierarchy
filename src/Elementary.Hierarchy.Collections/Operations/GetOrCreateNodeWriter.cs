@@ -29,10 +29,11 @@ namespace Elementary.Hierarchy.Collections.Operations
             }
             else
             {
-                if (node.TryGetChildNode(path.Items.First(), out var child))
-                    return node.ReplaceChild(child, this.GetOrCreate(child, path.SplitDescendants(), out descendantAt));
+                var (found, child) = node.TryGetChildNode(path.Items.First());
+                if(found)
+                    return node.ReplaceChild(child, this.GetOrCreate(child, path.Descendants(), out descendantAt));
                 else
-                    return node.AddChild(this.GetOrCreate(this.createNode(path.Items.First()), path.SplitDescendants(), out descendantAt));
+                    return node.AddChild(this.GetOrCreate(this.createNode(path.Items.First()), path.Descendants(), out descendantAt));
             }
         }
     }

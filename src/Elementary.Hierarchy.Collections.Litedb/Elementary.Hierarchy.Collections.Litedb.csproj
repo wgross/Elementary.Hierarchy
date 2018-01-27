@@ -2,7 +2,7 @@
 
   <!-- build -->
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp1.1;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2;net461</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <PackageProjectUrl>https://github.com/wgross/Elementary.Hierarchy</PackageProjectUrl>
   </PropertyGroup>
@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LiteDB" Version="3.1.0" />
+    <PackageReference Include="LiteDB" Version="3.1.4" />
   </ItemGroup>
 
   <ItemGroup>

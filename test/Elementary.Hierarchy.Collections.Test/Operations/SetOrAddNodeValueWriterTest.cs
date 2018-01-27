@@ -1,7 +1,7 @@
-﻿using Elementary.Hierarchy.Collections.Nodes;
+﻿using System;
+using Elementary.Hierarchy.Collections.Nodes;
 using Elementary.Hierarchy.Collections.Operations;
 using Moq;
-using System;
 using Xunit;
 
 namespace Elementary.Hierarchy.Collections.Test.Operations
@@ -51,10 +51,9 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
             var childNode = new Mock<NodeType>();
             var startNode = new Mock<NodeType>();
 
-            NodeType child;
             startNode
-                .Setup(n => n.TryGetChildNode("a", out child))
-                .Returns(false);
+                .Setup(n => n.TryGetChildNode("a"))
+                .Returns((false, null));
 
             startNode
                 .Setup(n => n.AddChild(childNode.Object))
@@ -92,8 +91,8 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             var startNode = new Mock<NodeType>();
             startNode
-                .Setup(n => n.TryGetChildNode("a", out childNodeObject))
-                .Returns(true);
+                .Setup(n => n.TryGetChildNode("a"))
+                .Returns((true, childNodeObject));
 
             var writer = new SetOrAddNodeValueWriter<string, int, NodeType>(id => null);
 
@@ -103,7 +102,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ASSERT
 
-            startNode.Verify(n => n.TryGetChildNode("a", out childNodeObject), Times.Once());
+            startNode.Verify(n => n.TryGetChildNode("a"), Times.Once());
             startNode.VerifyAll();
 
             childNode.Verify(n => n.TryGetValue(out value), Times.Once());
@@ -147,10 +146,9 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
             var childNode = new Mock<NodeType>();
             var startNode = new Mock<NodeType>();
 
-            NodeType child;
             startNode
-                .Setup(n => n.TryGetChildNode("a", out child))
-                .Returns(false);
+                .Setup(n => n.TryGetChildNode("a"))
+                .Returns((false,null));
 
             startNode
                 .Setup(n => n.AddChild(childNode.Object))
@@ -185,8 +183,8 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             var startNode = new Mock<NodeType>();
             startNode
-                .Setup(n => n.TryGetChildNode("a", out childNodeObject))
-                .Returns(true);
+                .Setup(n => n.TryGetChildNode("a"))
+                .Returns((true, childNodeObject));
             startNode
                 .Setup(n => n.ReplaceChild(childNodeObject, childNodeObject))
                 .Returns(startNode.Object);
@@ -199,7 +197,7 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
 
             // ASSERT
 
-            startNode.Verify(n => n.TryGetChildNode("a", out childNodeObject), Times.Once());
+            startNode.Verify(n => n.TryGetChildNode("a"), Times.Once());
             startNode.VerifyAll();
 
             childNode.Verify(n => n.TryGetValue(out value), Times.Never());
@@ -209,6 +207,6 @@ namespace Elementary.Hierarchy.Collections.Test.Operations
             Assert.Same(startNode.Object, result);
         }
 
-        #endregion SetVAlue
+        #endregion SetValue
     }
 }
