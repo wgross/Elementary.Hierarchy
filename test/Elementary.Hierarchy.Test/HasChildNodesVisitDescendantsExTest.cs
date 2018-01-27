@@ -1,12 +1,11 @@
 ﻿using Moq;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace Elementary.Hierarchy.Test
 {
-    [TestFixture]
     public class HasChildNodesVisitDescendantsExTest
     {
         public interface MockableNodeType : IHasChildNodes<MockableNodeType>
@@ -20,8 +19,7 @@ namespace Elementary.Hierarchy.Test
         private Mock<MockableNodeType> leftRightLeaf;
         private Mock<MockableNodeType> rightRightLeaf;
 
-        [SetUp]
-        public void ArrangeAllTests()
+        public HasChildNodesVisitDescendantsExTest()
         {
             //                rootNode
             //                /      \
@@ -60,7 +58,7 @@ namespace Elementary.Hierarchy.Test
                 .Setup(n => n.ChildNodes).Returns(new[] { this.leftNode.Object, this.rightNode.Object });
         }
 
-        [Test]
+        [Fact]
         public void I_visit_complete_tree_breadthFirst_on_VisitDescendants()
         {
             // ACT
@@ -72,8 +70,8 @@ namespace Elementary.Hierarchy.Test
             // ASSERT
 
             // Check list of visited nodes
-            Assert.AreEqual(5, result.Count());
-            CollectionAssert.AreEqual(new[]
+            Assert.Equal(5, result.Count());
+            Assert.Equal(new[]
             {
                 this.leftNode,
                 this.rightNode,
@@ -83,11 +81,11 @@ namespace Elementary.Hierarchy.Test
             }.Select(n => n.Object), result.Select(i => i.Item2));
 
             // check presented breadcrumbs
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object }, result.ElementAt(0).Item1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object }, result.ElementAt(1).Item1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object, this.leftNode.Object }, result.ElementAt(2).Item1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object, this.rightNode.Object }, result.ElementAt(3).Item1);
-            CollectionAssert.AreEqual(new[] { this.rootNode.Object, this.rightNode.Object }, result.ElementAt(4).Item1);
+            Assert.Equal(new[] { this.rootNode.Object }, result.ElementAt(0).Item1);
+            Assert.Equal(new[] { this.rootNode.Object }, result.ElementAt(1).Item1);
+            Assert.Equal(new[] { this.rootNode.Object, this.leftNode.Object }, result.ElementAt(2).Item1);
+            Assert.Equal(new[] { this.rootNode.Object, this.rightNode.Object }, result.ElementAt(3).Item1);
+            Assert.Equal(new[] { this.rootNode.Object, this.rightNode.Object }, result.ElementAt(4).Item1);
 
             this.rootNode.VerifyAll();
             this.leftNode.VerifyAll();

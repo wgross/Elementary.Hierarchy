@@ -1,12 +1,11 @@
-﻿using Elementary.Hierarchy.Generic;
-using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Elementary.Hierarchy.Generic;
+using Xunit;
 
 namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 {
-    [TestFixture]
     public class GenericNodeParentAndChildNodesFollowingSiblingTest
     {
         private IEnumerable<string> GetChildNodes(string rootNode)
@@ -47,55 +46,54 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
             return false;
         }
 
-        [Test]
+        [Fact]
         public void D_root_node_has_no_siblings_on_FollowingSiblings()
         {
             // ACT
 
-            string[] result = "rootNode".FollowingSiblings(this.TryGetParent, this.GetChildNodes).ToArray();
+            string[] result = "rootNode".FollowingSiblings(DelegateTreeDefinition.TryGetParentNode, DelegateTreeDefinition.GetChildNodes).ToArray();
 
             // ASSERT
 
-            Assert.IsFalse(result.Any());
+            Assert.False(result.Any());
         }
 
-        [Test]
+        [Fact]
         public void D_node_returns_right_sibling_on_FollowingSiblings()
         {
             // ACT
 
-            string[] result = "leftNode".FollowingSiblings(this.TryGetParent, this.GetChildNodes).ToArray();
+            string[] result = "leftNode".FollowingSiblings(DelegateTreeDefinition.TryGetParentNode, DelegateTreeDefinition.GetChildNodes).ToArray();
 
             // ASSERT
 
-            Assert.AreEqual(1, result.Count());
-            Assert.AreSame("rightNode", result.Single());
+            Assert.Equal(1, result.Count());
+            Assert.Same("rightNode", result.Single());
         }
 
-        [Test]
+        [Fact]
         public void D_node_returns_no_siblings_on_FollowingSiblings()
         {
             // ACT
 
-            string[] result = "rightNode".FollowingSiblings(this.TryGetParent, this.GetChildNodes).ToArray();
+            string[] result = "rightNode".FollowingSiblings(DelegateTreeDefinition.TryGetParentNode, DelegateTreeDefinition.GetChildNodes).ToArray();
 
             // ASSERT
 
-            Assert.AreEqual(0, result.Count());
+            Assert.Equal(0, result.Count());
         }
 
-        [Test]
+        [Fact]
         public void D_node_returns_all_siblings_on_FollowingSiblings()
         {
             // ACT
 
-            string[] result = "rightLeaf1".FollowingSiblings(this.TryGetParent, this.GetChildNodes).ToArray();
+            string[] result = "leftRightLeaf".FollowingSiblings(DelegateTreeDefinition.TryGetParentNode, DelegateTreeDefinition.GetChildNodes).ToArray();
 
             // ASSERT
 
-            Assert.AreEqual(2, result.Count());
-            Assert.AreSame("rightLeaf2", result.ElementAt(0));
-            Assert.AreSame("rightLeaf3", result.ElementAt(1));
+            Assert.Equal(1, result.Count());
+            Assert.Same("rightRightLeaf", result.ElementAt(0));
         }
     }
 }

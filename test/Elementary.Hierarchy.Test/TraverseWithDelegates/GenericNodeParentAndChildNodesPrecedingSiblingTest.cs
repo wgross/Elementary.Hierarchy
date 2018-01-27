@@ -1,12 +1,11 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 {
     using Elementary.Hierarchy.Generic;
-    using NUnit.Framework;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Xunit;
 
-    [TestFixture]
     public class GenericNodeParentAndChildNodesPrecedingSiblingTest
     {
         private IEnumerable<string> GetChildNodes(string rootNode)
@@ -47,55 +46,54 @@
             return false;
         }
 
-        [Test]
+        [Fact]
         public void D_root_node_has_no_siblings_on_PrecedingSiblings()
         {
             // ACT
 
-            string[] result = "rootNode".PrecedingSiblings(this.TryGetParent, this.GetChildNodes).ToArray();
+            string[] result = "rootNode".PrecedingSiblings(DelegateTreeDefinition.TryGetParentNode, DelegateTreeDefinition.GetChildNodes).ToArray();
 
             // ASSERT
 
-            Assert.IsFalse(result.Any());
+            Assert.False(result.Any());
         }
 
-        [Test]
+        [Fact]
         public void D_node_returns_left_sibling_on_PrecedingSiblings()
         {
             // ACT
 
-            string[] result = "rightNode".PrecedingSiblings(this.TryGetParent, this.GetChildNodes).ToArray();
+            string[] result = "rightNode".PrecedingSiblings(DelegateTreeDefinition.TryGetParentNode, DelegateTreeDefinition.GetChildNodes).ToArray();
 
             // ASSERT
 
-            Assert.AreEqual(1, result.Count());
-            Assert.AreEqual("leftNode", result.ElementAt(0));
+            Assert.Equal(1, result.Count());
+            Assert.Equal("leftNode", result.ElementAt(0));
         }
 
-        [Test]
+        [Fact]
         public void D_node_returns_no_siblings_on_PrecedingSiblings()
         {
             // ACT
 
-            string[] result = "leftNode".PrecedingSiblings(this.TryGetParent, this.GetChildNodes).ToArray();
+            string[] result = "leftNode".PrecedingSiblings(DelegateTreeDefinition.TryGetParentNode, DelegateTreeDefinition.GetChildNodes).ToArray();
 
             // ASSERT
 
-            Assert.IsFalse(result.Any());
+            Assert.False(result.Any());
         }
 
-        [Test]
+        [Fact]
         public void D_node_returns_all_siblings_on_PrecedingSiblings()
         {
             // ACT
 
-            string[] result = "rightLeaf3".PrecedingSiblings(this.TryGetParent, this.GetChildNodes).ToArray();
+            string[] result = "rightRightLeaf".PrecedingSiblings(DelegateTreeDefinition.TryGetParentNode, DelegateTreeDefinition.GetChildNodes).ToArray();
 
             // ASSERT
 
-            Assert.AreEqual(2, result.Count());
-            Assert.AreEqual("rightLeaf1", result.ElementAt(0));
-            Assert.AreEqual("rightLeaf2", result.ElementAt(1));
+            Assert.Equal(1, result.Count());
+            Assert.Equal("leftRightLeaf", result.ElementAt(0));
         }
     }
 }

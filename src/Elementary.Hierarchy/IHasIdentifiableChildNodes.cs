@@ -6,14 +6,13 @@
     /// </summary>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TNode"></typeparam>
-    public interface IHasIdentifiableChildNodes<TKey, TNode> : IHasChildNodes<TNode>
+    public interface IHasIdentifiableChildNodes<TKey, TNode> //: IHasChildNodes<TNode>
     {
         /// <summary>
         /// Tries to find a child node indetified by <paramref name="id"/>
         /// </summary>
         /// <param name="id">unique identifier of a child node</param>
-        /// <param name="childNode">contains the chhild node, if found.</param>
         /// <returns>true if found, false otherwise</returns>
-        bool TryGetChildNode(TKey id, out TNode childNode);
+        (bool,TNode) TryGetChildNode(TKey id);
     }
 }

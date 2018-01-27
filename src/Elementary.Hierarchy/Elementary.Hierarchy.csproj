@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <!-- metadata -->
+  <PropertyGroup>
+    <Description>Elementary Hierarchy provides interfaces, data structures and algorithms for developing of hierarchical data structures.</Description>
+    <Copyright>Copyright © 2016-2017</Copyright>
+    <Authors>Wolfgang Gross</Authors>
+    <PackageId>Elementary.Hierarchy</PackageId>
+    <PackageTags>framework;tree;traversal;hierarchy</PackageTags>
+    <PackageReleaseNotes>
+      2.0.0: supports .NetStandard 2.0; removed TryGet pattern from interfaces.
+      1.7.1: added net461 as target platform, fixed assemblies wrong file version
+    </PackageReleaseNotes>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/wgross/Elementary.Hierarchy/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/wgross/Elementary.Hierarchy</RepositoryUrl>
+    <Version>2.0.0</Version>
+	<PackageProjectUrl>https://github.com/wgross/Elementary.Hierarchy</PackageProjectUrl>
+  </PropertyGroup>
+  
+  <!-- build -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>portable</DebugType>
+    <DebugSymbols>True</DebugSymbols>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  
+</Project>

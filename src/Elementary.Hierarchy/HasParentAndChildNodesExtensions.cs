@@ -19,7 +19,7 @@
         /// <returns>
         /// An <see cref="IEnumerable{TNode}"/> containing all visited nodes without the start node.
         /// </returns>
-        public static IEnumerable<TNode> FollowingSiblings<TNode>(this TNode startNode)
+        public static IEnumerable<TNode> NextSiblings<TNode>(this TNode startNode)
             where TNode : class, IHasChildNodes<TNode>, IHasParentNode<TNode>
         {
             if (startNode == null)
@@ -33,7 +33,7 @@
         }
 
         /// <summary>
-        /// Traverses the start nodes parent child node beginning with the first child until the start node is reached.
+        /// Traverses the start nodes parent child nodes beginning with the first child until the start node is reached.
         /// The siblings are returned inside a <see cref="IEnumerable{TNode}"/>/>.
         /// The start node is not returned.
         /// </summary>
@@ -42,7 +42,7 @@
         /// </returns>
         /// <typeparam name="TNode">Type of the node, implements <see cref="IHasParentNode{TNode}"/></typeparam>
         /// <param name="startNode">reference to the node to start from</param>
-        public static IEnumerable<TNode> PrecedingSiblings<TNode>(this TNode startNode)
+        public static IEnumerable<TNode> PreviousSiblings<TNode>(this TNode startNode)
             where TNode : class, IHasChildNodes<TNode>, IHasParentNode<TNode>
         {
             if (startNode == null)
@@ -79,7 +79,7 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="startNode">reference to the node to start from</param>
         /// <param name="getChildren">Delegate to retrieve a nodes children</param>
         /// <param name="tryGetParent">Delegate to retrieve a nodes parent</param>
-        public static IEnumerable<TNode> FollowingSiblings<TNode>(this TNode startNode, TryGetParent<TNode> tryGetParent, Func<TNode, IEnumerable<TNode>> getChildren)
+        public static IEnumerable<TNode> FollowingSiblings<TNode>(this TNode startNode, Func<TNode,(bool,TNode)> tryGetParent, Func<TNode, IEnumerable<TNode>> getChildren)
         {
             if (tryGetParent == null)
                 throw new ArgumentNullException(nameof(tryGetParent));
@@ -88,8 +88,8 @@ namespace Elementary.Hierarchy.Generic
                 throw new ArgumentNullException(nameof(getChildren));
 
             // if there is no parnet node, no sbilings are enumerated.
-            TNode parentNode;
-            if (tryGetParent(startNode, out parentNode))
+            var (found,parentNode) = tryGetParent(startNode);
+            if(found)
                 return getChildren(parentNode).SkipWhile(n => !n.Equals(startNode)).Skip(1);
 
             return Enumerable.Empty<TNode>();
@@ -107,7 +107,7 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="startNode">reference to the node to start from</param>
         /// <param name="getChildren">Delegate to retrieve a nodes children</param>
         /// <param name="tryGetParent">Delegate to retrieve a nodes parent</param>
-        public static IEnumerable<TNode> PrecedingSiblings<TNode>(this TNode startNode, TryGetParent<TNode> tryGetParent, Func<TNode, IEnumerable<TNode>> getChildren)
+        public static IEnumerable<TNode> PrecedingSiblings<TNode>(this TNode startNode, Func<TNode,(bool,TNode)> tryGetParent, Func<TNode, IEnumerable<TNode>> getChildren)
         {
             if (tryGetParent == null)
                 throw new ArgumentNullException(nameof(tryGetParent));
@@ -116,8 +116,8 @@ namespace Elementary.Hierarchy.Generic
                 throw new ArgumentNullException(nameof(getChildren));
 
             // if there is no parnet node, no sbilings are enumerated.
-            TNode parentNode;
-            if (tryGetParent(startNode, out parentNode))
+            var (found, parentNode) = tryGetParent(startNode);
+            if(found)
                 return getChildren(parentNode).TakeWhile(n => !n.Equals(startNode));
 
             return Enumerable.Empty<TNode>();
