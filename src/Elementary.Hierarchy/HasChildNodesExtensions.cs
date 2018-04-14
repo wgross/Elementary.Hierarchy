@@ -401,12 +401,12 @@ namespace Elementary.Hierarchy.Generic
 
             // add the children of the start node to the queue of nodes to vist
 
-            var nodesToVisit = new Queue<Tuple<int, TNode, TNode>>();
+            var nodesToVisit = new Queue<(int level, TNode child, TNode node)>();
             if (0 < maxDepth) // startNode is depth 0, next level is 1
             {
                 foreach (var child in getChildNodes(startNode) ?? Enumerable.Empty<TNode>()) // descend one level from the start node
                 {
-                    nodesToVisit.Enqueue(Tuple.Create(1, child, startNode));
+                    nodesToVisit.Enqueue((level: 1, child: child, node: startNode));
                 }
             }
 
@@ -427,7 +427,7 @@ namespace Elementary.Hierarchy.Generic
                 {
                     foreach (TNode childOfCurrentNode in getChildNodes(currentNode)) // descend one level
                     {
-                        nodesToVisit.Enqueue(Tuple.Create(currentNodeLevel + 1, childOfCurrentNode, currentNode));
+                        nodesToVisit.Enqueue((level: currentNodeLevel + 1, child: childOfCurrentNode, node: currentNode));
                     }
                 }
                 lastLevel = currentNodeLevel;
@@ -449,13 +449,13 @@ namespace Elementary.Hierarchy.Generic
 
             // keep a stack with the enumerators in their current enumeration state
 
-            var nodesToVisit = new Stack<Tuple<int, IEnumerator<TNode>, TNode>>();
+            var nodesToVisit = new Stack<(int level, IEnumerator<TNode> children, TNode node)>();
 
             // children of startNode are pushed with level 1.
             // descend to children of startNode only if maxDepth is > 0
 
             if (0 < maxDepth)
-                nodesToVisit.Push(Tuple.Create(1, getChildNodes(startNode).GetEnumerator(), startNode));
+                nodesToVisit.Push((level: 1, children: getChildNodes(startNode).GetEnumerator(), node: startNode));
 
             while (nodesToVisit.Any())
             {
@@ -477,7 +477,7 @@ namespace Elementary.Hierarchy.Generic
                 // enumerate the child nodes of this node during the next step
 
                 if (currentNodeLevel < maxDepth)
-                    nodesToVisit.Push(Tuple.Create(currentNodeLevel + 1, getChildNodes(currentNode).GetEnumerator(), currentNode));
+                    nodesToVisit.Push((level: currentNodeLevel + 1, children: getChildNodes(currentNode).GetEnumerator(), node: currentNode));
 
                 // present the current node for enumeration, including an update of the breadcrumbs to the current node
                 updateBreadcrumbs(breadcrumbs, currentNodeLevel, currentNodeParent);
