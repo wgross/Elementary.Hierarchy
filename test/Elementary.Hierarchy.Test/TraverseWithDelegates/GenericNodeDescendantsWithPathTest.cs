@@ -1,7 +1,6 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 {
     using Elementary.Hierarchy.Generic;
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Xunit;
@@ -36,12 +35,12 @@
             // ASSERT
 
             Assert.Equal(5, result.Count());
-            Assert.Equal(new[] { "leftNode", "rightNode", "leftLeaf", "leftRightLeaf", "rightRightLeaf" }, result.Select(i => i.Item2).ToArray());
-            Assert.Equal(new[] { "rootNode" }, result.ElementAt(0).Item1);
-            Assert.Equal(new[] { "rootNode" }, result.ElementAt(1).Item1);
-            Assert.Equal(new[] { "rootNode", "leftNode" }, result.ElementAt(2).Item1);
-            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(3).Item1);
-            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(4).Item1);
+            Assert.Equal(new[] { "leftNode", "rightNode", "leftLeaf", "leftRightLeaf", "rightRightLeaf" }, result.Select(i => i.node).ToArray());
+            Assert.Equal(new[] { "rootNode" }, result.ElementAt(0).path);
+            Assert.Equal(new[] { "rootNode" }, result.ElementAt(1).path);
+            Assert.Equal(new[] { "rootNode", "leftNode" }, result.ElementAt(2).path);
+            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(3).path);
+            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(4).path);
         }
 
         [Fact]
@@ -60,14 +59,14 @@
                 "rightNode",
                 "leftRightLeaf",
                 "rightRightLeaf"
-            }, result.Select(i => i.Item2));
+            }, result.Select(i => i.node));
 
-            Assert.Equal(new[] { "leftNode", "leftLeaf", "rightNode", "leftRightLeaf", "rightRightLeaf" }, result.Select(i => i.Item2).ToArray());
-            Assert.Equal(new[] { "rootNode" }, result.ElementAt(0).Item1);
-            Assert.Equal(new[] { "rootNode", "leftNode" }, result.ElementAt(1).Item1);
-            Assert.Equal(new[] { "rootNode" }, result.ElementAt(2).Item1);
-            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(3).Item1);
-            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(4).Item1);
+            Assert.Equal(new[] { "leftNode", "leftLeaf", "rightNode", "leftRightLeaf", "rightRightLeaf" }, result.Select(i => i.node).ToArray());
+            Assert.Equal(new[] { "rootNode" }, result.ElementAt(0).path);
+            Assert.Equal(new[] { "rootNode", "leftNode" }, result.ElementAt(1).path);
+            Assert.Equal(new[] { "rootNode" }, result.ElementAt(2).path);
+            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(3).path);
+            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(4).path);
         }
 
         [Fact]
@@ -80,8 +79,8 @@
             // ASSERT
 
             Assert.Equal(1, result.Count());
-            Assert.Equal("leftLeaf", result.ElementAt(0).Item2);
-            Assert.Equal(new[] { "leftNode" }, result.ElementAt(0).Item1);
+            Assert.Equal("leftLeaf", result.ElementAt(0).node);
+            Assert.Equal(new[] { "leftNode" }, result.ElementAt(0).path);
         }
 
         [Fact]
@@ -94,9 +93,9 @@
             // ASSERT
 
             Assert.Equal(2, result.Count());
-            Assert.Equal(new[] { "leftRightLeaf", "rightRightLeaf" }, result.Select(i => i.Item2));
-            Assert.Equal(new[] { "rightNode" }, result.ElementAt(0).Item1);
-            Assert.Equal(new[] { "rightNode" }, result.ElementAt(1).Item1);
+            Assert.Equal(new[] { "leftRightLeaf", "rightRightLeaf" }, result.Select(i => i.node));
+            Assert.Equal(new[] { "rightNode" }, result.ElementAt(0).path);
+            Assert.Equal(new[] { "rightNode" }, result.ElementAt(1).path);
         }
 
         #endregion DescendantsWithPath
@@ -119,13 +118,13 @@
                 "rightNode",
                 "leftLeaf",
                 "leftRightLeaf",
-                "rightRightLeaf" }, result.Select(i => i.Item2));
-            Assert.Empty(result.ElementAt(0).Item1); // parent of startNode isn't known
-            Assert.Equal(new[] { "rootNode" }, result.ElementAt(1).Item1.ToArray());
-            Assert.Equal(new[] { "rootNode" }, result.ElementAt(2).Item1.ToArray());
-            Assert.Equal(new[] { "rootNode", "leftNode" }, result.ElementAt(3).Item1);
-            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(4).Item1);
-            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(5).Item1);
+                "rightRightLeaf" }, result.Select(i => i.node));
+            Assert.Empty(result.ElementAt(0).path); // parent of startNode isn't known
+            Assert.Equal(new[] { "rootNode" }, result.ElementAt(1).path.ToArray());
+            Assert.Equal(new[] { "rootNode" }, result.ElementAt(2).path.ToArray());
+            Assert.Equal(new[] { "rootNode", "leftNode" }, result.ElementAt(3).path);
+            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(4).path);
+            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(5).path);
         }
 
         [Fact]
@@ -133,8 +132,7 @@
         {
             // ACT
 
-            var result = new List<Tuple<List<string>, string>>();
-            "rootNode".VisitDescendantsAndSelf(this.GetChildNodes, (b, n) => result.Add(Tuple.Create(b.ToList(), n)), depthFirst: true);
+            var result = "rootNode".DescendantsAndSelfWithPath(this.GetChildNodes, depthFirst: true);
 
             // ASSERT
 
@@ -146,15 +144,15 @@
                 "rightNode",
                 "leftRightLeaf",
                 "rightRightLeaf"
-            }, result.Select(i => i.Item2));
+            }, result.Select(i => i.node));
 
-            Assert.Equal(new[] { "rootNode", "leftNode", "leftLeaf", "rightNode", "leftRightLeaf", "rightRightLeaf" }, result.Select(i => i.Item2));
-            Assert.Equal(new string[] { }, result.ElementAt(0).Item1);
-            Assert.Equal(new[] { "rootNode" }, result.ElementAt(1).Item1);
-            Assert.Equal(new[] { "rootNode", "leftNode" }, result.ElementAt(2).Item1);
-            Assert.Equal(new[] { "rootNode" }, result.ElementAt(3).Item1);
-            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(4).Item1);
-            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(5).Item1);
+            Assert.Equal(new[] { "rootNode", "leftNode", "leftLeaf", "rightNode", "leftRightLeaf", "rightRightLeaf" }, result.Select(i => i.node));
+            Assert.Equal(new string[] { }, result.ElementAt(0).path);
+            Assert.Equal(new[] { "rootNode" }, result.ElementAt(1).path);
+            Assert.Equal(new[] { "rootNode", "leftNode" }, result.ElementAt(2).path);
+            Assert.Equal(new[] { "rootNode" }, result.ElementAt(3).path);
+            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(4).path);
+            Assert.Equal(new[] { "rootNode", "rightNode" }, result.ElementAt(5).path);
         }
 
         #endregion DescendantsAndSelfWithPath
