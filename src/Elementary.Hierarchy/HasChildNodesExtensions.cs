@@ -242,6 +242,56 @@ namespace Elementary.Hierarchy.Generic
 
         #endregion Descendants/-AndSelf
 
+        #region DescandantsWithPath
+
+        /// <summary>
+        /// Traverses all descendants of the given <paramref name="startNode"/>.
+        /// All nodes are returned and additionally the path to the <paramref name="startNode"/> is presented added as secend member of the enumerated result tuple.
+        /// </summary>
+        /// <typeparam name="TNode">type of the hierarchy node</typeparam>
+        /// <param name="startNode">node start traversal at</param>
+        /// <param name="getChildren">delegate to retruebe children form any node of the hierarchy</param>
+        /// <param name="depthFirst">enables deth first traversal, breadth first is default</param>
+        /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is always empty, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
+        public static IEnumerable<(IEnumerable<TNode>, TNode)> DescendantsWithPath<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren, bool? depthFirst = null, int? maxDepth = null)
+        {
+            if (getChildren == null)
+                throw new ArgumentNullException(nameof(getChildren));
+
+            if (maxDepth.HasValue && maxDepth.Value < 0)
+                throw new ArgumentException("must be > 0", nameof(maxDepth));
+
+            var breadcrumbs = new List<TNode>();
+            return depthFirst.GetValueOrDefault(false)
+                ? EnumerateDescendentsDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Select(n => (breadcrumbs.ToArray().AsEnumerable(), n))
+                : EnumerateDescendantsBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Select(n => (breadcrumbs.ToArray().AsEnumerable(), n));
+        }
+
+        /// <summary>
+        /// Traverses all descendants of the given <paramref name="startNode"/>. The start node is returned as first item.
+        /// All nodes are returned and additionally the path to the <paramref name="startNode"/> is presented added as secend member of the enumerated result tuple.
+        /// </summary>
+        /// <typeparam name="TNode">type of the hierarchy node</typeparam>
+        /// <param name="startNode">node start traversal at</param>
+        /// <param name="getChildren">delegate to retruebe children form any node of the hierarchy</param>
+        /// <param name="depthFirst">enables deth first traversal, breadth first is default</param>
+        /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is always empty, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
+        public static IEnumerable<(IEnumerable<TNode>, TNode)> DescendantsAndSelfWithPath<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren, bool? depthFirst = null, int? maxDepth = null)
+        {
+            if (getChildren == null)
+                throw new ArgumentNullException(nameof(getChildren));
+
+            if (maxDepth.HasValue && maxDepth.Value < 0)
+                throw new ArgumentException("must be > 0", nameof(maxDepth));
+
+            var breadcrumbs = new List<TNode> { startNode };
+            return Enumerable.Concat(new[] { (Enumerable.Empty<TNode>(), startNode) }, depthFirst.GetValueOrDefault(false)
+                ? EnumerateDescendentsDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Select(n => ((IEnumerable<TNode>)(breadcrumbs.ToArray()), n))
+                : EnumerateDescendantsBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Select(n => ((IEnumerable<TNode>)(breadcrumbs.ToArray()), n)));
+        }
+
+        #endregion DescandantsWithPath
+
         #region Leaves
 
         /// <summary>
