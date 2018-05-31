@@ -1,7 +1,7 @@
 # Elementary.Hierarchy
 
 Provides basic functionality to create tree data structures. 
-This includes tree traversal and identfication of tree nodes with path-like identifiers. See the projects [[wiki|https://github.com/wgross/Elementary.Hierarchy/wiki] for details.
+This includes tree traversal and identfication of tree nodes with path-like identifiers. See the projects wiki (https://github.com/wgross/Elementary.Hierarchy/wiki) for details.
 
 ## Installation 
 
