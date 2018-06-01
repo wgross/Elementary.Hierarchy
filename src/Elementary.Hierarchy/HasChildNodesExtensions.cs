@@ -242,7 +242,7 @@ namespace Elementary.Hierarchy.Generic
 
         #endregion Descendants/-AndSelf
 
-        #region DescandantsWithPath
+        #region DescandantsWithPath/-AndSelf
 
         /// <summary>
         /// Traverses all descendants of the given <paramref name="startNode"/>.
@@ -290,7 +290,7 @@ namespace Elementary.Hierarchy.Generic
                 : EnumerateDescendantsBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Select(n => (n, (IEnumerable<TNode>)(breadcrumbs.ToArray()))));
         }
 
-        #endregion DescandantsWithPath
+        #endregion DescandantsWithPath/-AndSelf
 
         #region Leaves
 
