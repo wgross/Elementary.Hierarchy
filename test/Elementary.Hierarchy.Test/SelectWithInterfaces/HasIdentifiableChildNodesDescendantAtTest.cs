@@ -1,7 +1,7 @@
 ﻿namespace Elementary.Hierarchy.Test.SelectWithInterfaces
 {
-    using System.Collections.Generic;
     using Moq;
+    using System.Collections.Generic;
     using Xunit;
 
     public class HasIdentifiableChildNodesDescendantAtTest
@@ -39,7 +39,7 @@
         }
 
         [Fact]
-        public void I_root_returns_itself_on_DescendantAt()
+        public void I_root_returns_itself_on_DescendantAt_with_empty_path()
         {
             // ACT
 

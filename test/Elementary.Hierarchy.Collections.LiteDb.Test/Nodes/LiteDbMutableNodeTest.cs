@@ -214,8 +214,8 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
             Assert.Equal("a", childKey.AsString);
             Assert.True(childDoc.TryGetValue("value", out var childValue));
             Assert.Equal(2, childValue.AsInt32);
-            Assert.NotEqual(child.BsonDocument.Get("_id").AsObjectId, childDoc.Get("_id").AsObjectId);
-            Assert.Equal(secondChild.BsonDocument.Get("_id").AsObjectId, childDoc.Get("_id").AsObjectId);
+            Assert.NotEqual(child.BsonDocument.Get("_id").Single().AsObjectId, childDoc.Get("_id").Single().AsObjectId);
+            Assert.Equal(secondChild.BsonDocument.Get("_id").Single().AsObjectId, childDoc.Get("_id").Single().AsObjectId);
         }
 
         [Fact]
@@ -258,8 +258,8 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
             Assert.Equal("a", childKey.AsString);
             Assert.True(childDoc.TryGetValue("value", out var childValue));
             Assert.Equal(1, childValue.AsInt32);
-            Assert.Equal(child.BsonDocument.Get("_id").AsObjectId, childDoc.Get("_id").AsObjectId);
-            Assert.NotEqual(secondChild.BsonDocument.Get("_id").AsObjectId, childDoc.Get("_id").AsObjectId);
+            Assert.Equal(child.BsonDocument.Get("_id").Single().AsObjectId, childDoc.Get("_id").Single().AsObjectId);
+            Assert.NotEqual(secondChild.BsonDocument.Get("_id").Single().AsObjectId, childDoc.Get("_id").Single().AsObjectId);
         }
 
         [Fact]
@@ -304,9 +304,9 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test.Nodes
             Assert.Equal("a", childKey.AsString);
             Assert.True(childDoc.TryGetValue("value", out var childValue));
             Assert.Equal(1, childValue.AsInt32);
-            Assert.Equal(child.BsonDocument.Get("_id").AsObjectId, childDoc.Get("_id").AsObjectId);
-            Assert.NotEqual(secondChild.BsonDocument.Get("_id").AsObjectId, childDoc.Get("_id").AsObjectId);
-            Assert.NotEqual(thirdChild.BsonDocument.Get("_id").AsObjectId, childDoc.Get("_id").AsObjectId);
+            Assert.Equal(child.BsonDocument.Get("_id").Single().AsObjectId, childDoc.Get("_id").Single().AsObjectId);
+            Assert.NotEqual(secondChild.BsonDocument.Get("_id").Single().AsObjectId, childDoc.Get("_id").Single().AsObjectId);
+            Assert.NotEqual(thirdChild.BsonDocument.Get("_id").Single().AsObjectId, childDoc.Get("_id").Single().AsObjectId);
         }
 
         #endregion Replace Child
