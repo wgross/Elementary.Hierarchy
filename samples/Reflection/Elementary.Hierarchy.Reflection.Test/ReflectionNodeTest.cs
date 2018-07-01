@@ -5,6 +5,11 @@ namespace Elementary.Hierarchy.Reflection.Test
 {
     public class ReflectionNodeTest
     {
+        private class ReadWriteProperty
+        {
+            public string Property { get; set; }
+        }
+
         #region Stop descending into object graph by property type
 
         [Fact]
@@ -247,6 +252,77 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             //Assert.True(success);
             //Assert.NotNull(result);
+        }
+
+        [Fact]
+        public void Retrieve_the_leafs_inner_value()
+        {
+            // ARRANGE
+
+            var obj = new { property = (string)"1" };
+            var hierarchyNode = new ReflectionNode(root: obj);
+            var (_, node) = hierarchyNode.TryGetChildNode("property");
+
+            // ACT
+
+            var (success, result) = node.TryGetValue<string>();
+
+            // ASSERT
+
+            Assert.True(success);
+            Assert.Equal("1", result);
+        }
+
+        [Fact]
+        public void Retrieve_inner_value_of_inner_node_fails()
+        {
+            // ARRANGE
+
+            var obj = new { property = (string)"1" };
+            var hierarchyNode = new ReflectionNode(root: obj);
+
+            // ACT
+
+            var (success, result) = hierarchyNode.TryGetValue<string>();
+
+            // ASSERT
+
+            Assert.False(success);
+        }
+
+        [Fact]
+        public void Set_inner_value_of_leaf_node()
+        {
+            // ARRANGE
+
+            var obj = new ReadWriteProperty { Property = "1" };
+            var hierarchyNode = new ReflectionNode(root: obj);
+
+            // ACT
+
+            var success = hierarchyNode.TryGetChildNode("Property").Item2.TrySetValue("2");
+
+            // ASSERT
+
+            Assert.True(success);
+            Assert.Equal("2", hierarchyNode.TryGetChildNode("Property").Item2.TryGetValue<string>().Item2);
+        }
+
+        [Fact]
+        public void Set_inner_value_of_inner_node_fails()
+        {
+            // ARRANGE
+
+            var obj = new ReadWriteProperty { Property = "1" };
+            var hierarchyNode = new ReflectionNode(root: obj);
+
+            // ACT
+
+            var success = hierarchyNode.TrySetValue("2");
+
+            // ASSERT
+
+            Assert.False(success);
         }
     }
 }
