@@ -18,7 +18,7 @@ namespace Elementary.Hierarchy.Reflection.Test
             // ARRANGE
 
             var obj = new { property = (byte)1 };
-            var hierarchyNode = new ReflectionNode(root: obj);
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
 
             // ACT
 
@@ -35,7 +35,7 @@ namespace Elementary.Hierarchy.Reflection.Test
             // ARRANGE
 
             var obj = new { property = (char)1 };
-            var hierarchyNode = new ReflectionNode(root: obj);
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
 
             // ACT
 
@@ -52,7 +52,7 @@ namespace Elementary.Hierarchy.Reflection.Test
             // ARRANGE
 
             var obj = new { property = (short)1 };
-            var hierarchyNode = new ReflectionNode(root: obj);
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
 
             // ACT
 
@@ -69,7 +69,7 @@ namespace Elementary.Hierarchy.Reflection.Test
             // ARRANGE
 
             var obj = new { property = (ushort)1 };
-            var hierarchyNode = new ReflectionNode(root: obj);
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
 
             // ACT
 
@@ -86,7 +86,7 @@ namespace Elementary.Hierarchy.Reflection.Test
             // ARRANGE
 
             var obj = new { property = (int)1 };
-            var hierarchyNode = new ReflectionNode(root: obj);
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
 
             // ACT
 
@@ -103,7 +103,7 @@ namespace Elementary.Hierarchy.Reflection.Test
             // ARRANGE
 
             var obj = new { property = (uint)1 };
-            var hierarchyNode = new ReflectionNode(root: obj);
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
 
             // ACT
 
@@ -120,7 +120,7 @@ namespace Elementary.Hierarchy.Reflection.Test
             // ARRANGE
 
             var obj = new { property = (long)1 };
-            var hierarchyNode = new ReflectionNode(root: obj);
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
 
             // ACT
 
@@ -137,7 +137,7 @@ namespace Elementary.Hierarchy.Reflection.Test
             // ARRANGE
 
             var obj = new { property = (ulong)1 };
-            var hierarchyNode = new ReflectionNode(root: obj);
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
 
             // ACT
 
@@ -154,7 +154,7 @@ namespace Elementary.Hierarchy.Reflection.Test
             // ARRANGE
 
             var obj = new { property = (double)1 };
-            var hierarchyNode = new ReflectionNode(root: obj);
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
 
             // ACT
 
@@ -171,7 +171,7 @@ namespace Elementary.Hierarchy.Reflection.Test
             // ARRANGE
 
             var obj = new { property = (float)1 };
-            var hierarchyNode = new ReflectionNode(root: obj);
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
 
             // ACT
 
@@ -188,7 +188,7 @@ namespace Elementary.Hierarchy.Reflection.Test
             // ARRANGE
 
             var obj = new { property = (float)1 };
-            var hierarchyNode = new ReflectionNode(root: obj);
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
 
             // ACT
 
@@ -205,7 +205,7 @@ namespace Elementary.Hierarchy.Reflection.Test
             // ARRANGE
 
             var obj = new { property = (string)"1" };
-            var hierarchyNode = new ReflectionNode(root: obj);
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
 
             // ACT
 
@@ -224,7 +224,7 @@ namespace Elementary.Hierarchy.Reflection.Test
             // ARRANGE
 
             var obj = new { property = (string)"1" };
-            var hierarchyNode = new ReflectionNode(root: obj);
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
 
             // ACT
 
@@ -242,7 +242,7 @@ namespace Elementary.Hierarchy.Reflection.Test
             // ARRANGE
 
             var obj = new { property = (string)"1" };
-            var hierarchyNode = new ReflectionNode(root: obj);
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
 
             // ACT
 
@@ -260,7 +260,7 @@ namespace Elementary.Hierarchy.Reflection.Test
             // ARRANGE
 
             var obj = new { property = (string)"1" };
-            var hierarchyNode = new ReflectionNode(root: obj);
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
             var (_, node) = hierarchyNode.TryGetChildNode("property");
 
             // ACT
@@ -279,7 +279,7 @@ namespace Elementary.Hierarchy.Reflection.Test
             // ARRANGE
 
             var obj = new { property = (string)"1" };
-            var hierarchyNode = new ReflectionNode(root: obj);
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
 
             // ACT
 
@@ -291,12 +291,38 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
+        public void Retrieve_the_descandants_leafs_inner_value()
+        {
+            // ARRANGE
+
+            var obj = new
+            {
+                child = new
+                {
+                    property = (string)"1"
+                }
+            };
+
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
+            var node = hierarchyNode.DescendantAt(HierarchyPath.Create("child", "property"));
+
+            // ACT
+
+            var (success, result) = node.TryGetValue<string>();
+
+            // ASSERT
+
+            Assert.True(success);
+            Assert.Equal("1", result);
+        }
+
+        [Fact]
         public void Set_inner_value_of_leaf_node()
         {
             // ARRANGE
 
             var obj = new ReadWriteProperty { Property = "1" };
-            var hierarchyNode = new ReflectionNode(root: obj);
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
 
             // ACT
 
@@ -314,7 +340,7 @@ namespace Elementary.Hierarchy.Reflection.Test
             // ARRANGE
 
             var obj = new ReadWriteProperty { Property = "1" };
-            var hierarchyNode = new ReflectionNode(root: obj);
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
 
             // ACT
 
