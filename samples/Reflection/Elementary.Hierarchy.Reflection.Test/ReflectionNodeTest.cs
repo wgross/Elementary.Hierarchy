@@ -5,6 +5,11 @@ namespace Elementary.Hierarchy.Reflection.Test
 {
     public class ReflectionNodeTest
     {
+        private class ReadWritePropertyParent
+        {
+            public ReadWriteProperty ReadWriteProperty { get; set; }
+        }
+
         private class ReadWriteProperty
         {
             public string Property { get; set; }
@@ -255,7 +260,7 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void Retrieve_the_leafs_inner_value()
+        public void Retrieve_the_leafs_value()
         {
             // ARRANGE
 
@@ -274,7 +279,7 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void Retrieve_inner_value_of_inner_node_fails()
+        public void Retrieve_inner_nodes_value()
         {
             // ARRANGE
 
@@ -283,11 +288,12 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ACT
 
-            var (success, result) = hierarchyNode.TryGetValue<string>();
+            var (success, result) = hierarchyNode.TryGetValue<object>();
 
             // ASSERT
 
-            Assert.False(success);
+            Assert.True(success);
+            Assert.Same(obj, result);
         }
 
         [Fact]
@@ -335,20 +341,21 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void Set_inner_value_of_inner_node_fails()
+        public void Set_inner_node_value()
         {
             // ARRANGE
 
-            var obj = new ReadWriteProperty { Property = "1" };
+            var obj = new ReadWritePropertyParent { ReadWriteProperty = new ReadWriteProperty { Property = "1" } };
             var hierarchyNode = ReflectedHierarchy.Create(obj);
 
             // ACT
 
-            var success = hierarchyNode.TrySetValue("2");
+            var success = hierarchyNode.DescendantAt(HierarchyPath.Create("ReadWriteProperty")).TrySetValue(new ReadWriteProperty { Property = "2" });
 
             // ASSERT
 
-            Assert.False(success);
+            Assert.True(success);
+            Assert.Equal("2", obj.ReadWriteProperty.Property);
         }
     }
 }

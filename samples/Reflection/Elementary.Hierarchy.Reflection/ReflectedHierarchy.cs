@@ -4,7 +4,7 @@
     {
         public static IReflectedHierarchyNode Create<T>(T hierarchy)
         {
-            return new ReflectedInnerNode(hierarchy, new MapValueTypesAndStringAsLeaf());
+            return new ReflectedInnerNode(hierarchy, null, new MapValueTypesAndStringAsLeaf());
         }
     }
 }

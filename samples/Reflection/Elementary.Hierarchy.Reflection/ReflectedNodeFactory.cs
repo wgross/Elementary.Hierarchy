@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 namespace Elementary.Hierarchy.Reflection
 {
@@ -6,14 +7,14 @@ namespace Elementary.Hierarchy.Reflection
     {
         public IReflectedHierarchyNode SelectReflectedNode(object propertyOwner, PropertyInfo propertyInfo)
         {
-            if (propertyInfo.PropertyType.IsValueType || propertyInfo.PropertyType.Equals(typeof(string)))
-            {
-                return new ReflectedLeafNode(propertyOwner, propertyInfo);
-            }
-            else
-            {
-                return new ReflectedInnerNode(propertyInfo.GetValue(propertyOwner), this);
-            }
+            //if (propertyInfo.PropertyType.IsValueType || propertyInfo.PropertyType.Equals(typeof(string)))
+            //{
+            //    throw new NotImplementedException();
+            //}
+            //else
+            //{
+                return new ReflectedInnerNode(propertyOwner, propertyInfo, this);
+            //}
         }
     }
 }

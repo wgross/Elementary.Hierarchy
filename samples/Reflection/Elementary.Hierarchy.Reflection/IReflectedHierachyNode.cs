@@ -5,5 +5,6 @@
         (bool, T) TryGetValue<T>();
 
         bool TrySetValue<T>(T value);
+
     }
 }
