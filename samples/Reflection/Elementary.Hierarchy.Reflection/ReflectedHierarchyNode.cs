@@ -35,12 +35,21 @@ namespace Elementary.Hierarchy.Reflection
 
         public (bool, T) TryGetValue<T>()
         {
+            if (!typeof(T).IsAssignableFrom(this.PropertyValue.GetType()))
+                return (false, default(T));
+
             var value = (T)(this.propertyInfo?.GetValue(this.instance) ?? this.instance);
             return (true, value);
         }
 
         public bool TrySetValue<T>(T value)
         {
+            if (this.propertyInfo.GetSetMethod() == null)
+                return false;
+
+            if (!this.PropertyValue.GetType().IsAssignableFrom(typeof(T)))
+                return false;
+
             this.propertyInfo.SetValue(this.instance, value);
             return true;
         }

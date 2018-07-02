@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace Elementary.Hierarchy.Reflection.Test
@@ -15,78 +16,8 @@ namespace Elementary.Hierarchy.Reflection.Test
             public string Property { get; set; }
         }
 
-        #region Stop descending into object graph by property type
-
         [Fact]
-        public void ReflectionNode_sees_byte_property_as_leaf()
-        {
-            // ARRANGE
-
-            var obj = new { property = (byte)1 };
-            var hierarchyNode = ReflectedHierarchy.Create(obj);
-
-            // ACT
-
-            var result = hierarchyNode.Children().ToArray();
-
-            // ASSERT
-
-            Assert.Single(result);
-        }
-
-        [Fact]
-        public void ReflectionNode_sees_char_property_as_leaf()
-        {
-            // ARRANGE
-
-            var obj = new { property = (char)1 };
-            var hierarchyNode = ReflectedHierarchy.Create(obj);
-
-            // ACT
-
-            var result = hierarchyNode.Children().ToArray();
-
-            // ASSERT
-
-            Assert.Single(result);
-        }
-
-        [Fact]
-        public void ReflectionNode_sees_short_property_as_leaf()
-        {
-            // ARRANGE
-
-            var obj = new { property = (short)1 };
-            var hierarchyNode = ReflectedHierarchy.Create(obj);
-
-            // ACT
-
-            var result = hierarchyNode.Children().ToArray();
-
-            // ASSERT
-
-            Assert.Single(result);
-        }
-
-        [Fact]
-        public void ReflectionNode_sees_ushort_property_as_leaf()
-        {
-            // ARRANGE
-
-            var obj = new { property = (ushort)1 };
-            var hierarchyNode = ReflectedHierarchy.Create(obj);
-
-            // ACT
-
-            var result = hierarchyNode.Children().ToArray();
-
-            // ASSERT
-
-            Assert.Single(result);
-        }
-
-        [Fact]
-        public void ReflectionNode_sees_int_property_as_leaf()
+        public void ReflectionNode_sees_int_property_as_node()
         {
             // ARRANGE
 
@@ -103,109 +34,7 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void ReflectionNode_sees_uint_property_as_leaf()
-        {
-            // ARRANGE
-
-            var obj = new { property = (uint)1 };
-            var hierarchyNode = ReflectedHierarchy.Create(obj);
-
-            // ACT
-
-            var result = hierarchyNode.Children().ToArray();
-
-            // ASSERT
-
-            Assert.Single(result);
-        }
-
-        [Fact]
-        public void ReflectionNode_sees_long_property_as_leaf()
-        {
-            // ARRANGE
-
-            var obj = new { property = (long)1 };
-            var hierarchyNode = ReflectedHierarchy.Create(obj);
-
-            // ACT
-
-            var result = hierarchyNode.Children().ToArray();
-
-            // ASSERT
-
-            Assert.Single(result);
-        }
-
-        [Fact]
-        public void ReflectionNode_sees_ulong_property_as_leaf()
-        {
-            // ARRANGE
-
-            var obj = new { property = (ulong)1 };
-            var hierarchyNode = ReflectedHierarchy.Create(obj);
-
-            // ACT
-
-            var result = hierarchyNode.Children().ToArray();
-
-            // ASSERT
-
-            Assert.Single(result);
-        }
-
-        [Fact]
-        public void ReflectionNode_sees_double_property_as_leaf()
-        {
-            // ARRANGE
-
-            var obj = new { property = (double)1 };
-            var hierarchyNode = ReflectedHierarchy.Create(obj);
-
-            // ACT
-
-            var result = hierarchyNode.Children().ToArray();
-
-            // ASSERT
-
-            Assert.Single(result);
-        }
-
-        [Fact]
-        public void ReflectionNode_sees_float_property_as_leaf()
-        {
-            // ARRANGE
-
-            var obj = new { property = (float)1 };
-            var hierarchyNode = ReflectedHierarchy.Create(obj);
-
-            // ACT
-
-            var result = hierarchyNode.Children().ToArray();
-
-            // ASSERT
-
-            Assert.Single(result);
-        }
-
-        [Fact]
-        public void ReflectionNode_sees_decimal_property_as_leaf()
-        {
-            // ARRANGE
-
-            var obj = new { property = (float)1 };
-            var hierarchyNode = ReflectedHierarchy.Create(obj);
-
-            // ACT
-
-            var result = hierarchyNode.Children().ToArray();
-
-            // ASSERT
-
-            Assert.Single(result);
-        }
-
-        [Fact]
-        public void ReflectionNode_sees_string_property_as_leaf()
+        public void ReflectionNode_sees_string_property_as_node()
         {
             // ARRANGE
 
@@ -221,10 +50,8 @@ namespace Elementary.Hierarchy.Reflection.Test
             Assert.Single(result);
         }
 
-        #endregion Stop descending into object graph by property type
-
         [Fact]
-        public void ReflectionNode_provides_access_to_child_from_property_name()
+        public void Retrieve_property_as_child()
         {
             // ARRANGE
 
@@ -241,8 +68,8 @@ namespace Elementary.Hierarchy.Reflection.Test
             Assert.NotNull(result);
         }
 
-        [Fact(Skip = "just an idea")]
-        public void ReflectionNode_provides_access_to_child_by_PropertyExpression()
+        [Fact]
+        public void Retrieve_property_as_child_fails_on_wrong_name()
         {
             // ARRANGE
 
@@ -251,12 +78,11 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ACT
 
-            // var (success, result) = hierarchyNode.TryGetChildNode(n => n.property);
+            var (success, _) = hierarchyNode.TryGetChildNode("wrong");
 
             // ASSERT
 
-            //Assert.True(success);
-            //Assert.NotNull(result);
+            Assert.False(success);
         }
 
         [Fact]
@@ -279,7 +105,7 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void Retrieve_inner_nodes_value()
+        public void Retrieve_nodes_value()
         {
             // ARRANGE
 
@@ -294,6 +120,23 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             Assert.True(success);
             Assert.Same(obj, result);
+        }
+
+        [Fact]
+        public void Retrieve_nodes_value_fails_on_wrong_type()
+        {
+            // ARRANGE
+
+            var obj = new { property = (string)"1" };
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
+
+            // ACT
+
+            var (success, result) = hierarchyNode.TryGetValue<int>();
+
+            // ASSERT
+
+            Assert.False(success);
         }
 
         [Fact]
@@ -341,7 +184,7 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void Set_inner_node_value()
+        public void Set_node_value()
         {
             // ARRANGE
 
@@ -356,6 +199,57 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             Assert.True(success);
             Assert.Equal("2", obj.ReadWriteProperty.Property);
+        }
+
+        [Fact]
+        public void Set_node_value_fails_on_wrong_name()
+        {
+            // ARRANGE
+
+            var obj = new ReadWritePropertyParent { ReadWriteProperty = new ReadWriteProperty { Property = "1" } };
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
+
+            // ACT
+
+            var result = Assert.Throws<KeyNotFoundException>(() => hierarchyNode.DescendantAt(HierarchyPath.Create("Wrong")).TrySetValue(new ReadWriteProperty { Property = "2" }));
+
+            // ASSERT
+
+            Assert.Equal("Key not found:'Wrong'", result.Message);
+        }
+
+        [Fact]
+        public void Set_node_value_fails_on_wrong_type()
+        {
+            // ARRANGE
+
+            var obj = new ReadWritePropertyParent { ReadWriteProperty = new ReadWriteProperty { Property = "1" } };
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
+
+            // ACT
+
+            var success = hierarchyNode.DescendantAt(HierarchyPath.Create("ReadWriteProperty")).TrySetValue("2");
+
+            // ASSERT
+
+            Assert.False(success);
+        }
+
+        [Fact]
+        public void Set_node_value_fails_on_read_only_property()
+        {
+            // ARRANGE
+
+            var obj = new { property = (string)"1" };
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
+
+            // ACT
+
+            var success = hierarchyNode.DescendantAt(HierarchyPath.Create("property")).TrySetValue("2");
+
+            // ASSERT
+
+            Assert.False(success);
         }
     }
 }
