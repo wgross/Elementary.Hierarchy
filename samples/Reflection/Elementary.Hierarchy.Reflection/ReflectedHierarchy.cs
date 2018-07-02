@@ -2,9 +2,9 @@
 {
     public class ReflectedHierarchy
     {
-        public static IReflectedHierarchyNode Create<T>(T hierarchy)
+        public static IReflectedHierarchyNode Create<T>(T root)
         {
-            return new ReflectedInnerNode(hierarchy, null, new MapValueTypesAndStringAsLeaf());
+            return new ReflectedHierarchyNode(root, propertyInfo: null);
         }
     }
 }
