@@ -1,53 +1,30 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Elementary.Hierarchy.Reflection
 {
-    public class ReflectedHierarchyNode : IReflectedHierarchyNode
+    /// <summary>
+    /// An inner node of the refleceted hierrachy refers always to an instance and a property info.
+    /// The name of the property is the key of the child in the collectin of child nodes of ites owning instance.
+    /// </summary>
+    public class ReflectedHierarchyNode : ReflectedNodeBase, IReflectedHierarchyNode
     {
-        private readonly object instance;
         private readonly PropertyInfo propertyInfo;
 
         public ReflectedHierarchyNode(object instance, PropertyInfo propertyInfo)
+            : base(instance)
+
         {
-            this.instance = instance;
             this.propertyInfo = propertyInfo;
         }
 
-        private object PropertyValue => this.propertyInfo?.GetValue(this.instance) ?? this.instance;
-
-        private IEnumerable<PropertyInfo> ChildPropertyInfos => this.PropertyValue.GetType().GetProperties();
-
-        public bool HasChildNodes => ChildPropertyInfos.Any();
-
-        public IEnumerable<IReflectedHierarchyNode> ChildNodes => this.ChildPropertyInfos.Select(pi => new ReflectedHierarchyNode(this.PropertyValue, pi));
-
-        public (bool, IReflectedHierarchyNode) TryGetChildNode(string id)
-        {
-            var childNode = this.ChildPropertyInfos
-                .Where(pi => pi.Name.Equals(id))
-                .Select(pi => new ReflectedHierarchyNode(this.PropertyValue, pi))
-                .FirstOrDefault();
-
-            return (childNode != null, childNode);
-        }
-
-        public (bool, T) TryGetValue<T>()
-        {
-            if (!typeof(T).IsAssignableFrom(this.PropertyValue.GetType()))
-                return (false, default(T));
-
-            var value = (T)(this.propertyInfo?.GetValue(this.instance) ?? this.instance);
-            return (true, value);
-        }
+        protected override object NodeValue => this.propertyInfo.GetValue(this.instance);
 
         public bool TrySetValue<T>(T value)
         {
             if (this.propertyInfo.GetSetMethod() == null)
                 return false;
 
-            if (!this.PropertyValue.GetType().IsAssignableFrom(typeof(T)))
+            if (!this.propertyInfo.PropertyType.IsAssignableFrom(typeof(T)))
                 return false;
 
             this.propertyInfo.SetValue(this.instance, value);
