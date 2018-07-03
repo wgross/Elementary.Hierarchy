@@ -307,25 +307,25 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="path">path of delegates for choosing child nodes </param>
         /// <param name="getChildNodes">delegate which defines the tree structure by mapping a node to its child nodes</param>
         /// <returns>Collection of the nodes which where visited along the traversal beginning with <paramref name="startNode"/>.</returns>
-        public static IEnumerable<TNode> DescendAlongPath<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, params Func<IEnumerable<TNode>, (bool, TNode)>[] path)
-        {
-            // return the start node as the first node to traverse.
-            // this makes sure that at least one node is contained on the result
+        //public static IEnumerable<TNode> DescendAlongPath<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, params Func<IEnumerable<TNode>, (bool, TNode)>[] path)
+        //{
+        //    // return the start node as the first node to traverse.
+        //    // this makes sure that at least one node is contained on the result
 
-            yield return startNode;
+        //    yield return startNode;
 
-            // now descend from the start node, if there are items left in the path
-            TNode childNode = startNode;
-            for (int i = 0; i < path.Length; i++)
-            {
-                bool found = false;
-                (found, childNode) = path[i](getChildNodes(childNode));
-                if (found)
-                    yield return childNode;
-                else
-                    yield break;
-            }
-        }
+        //    // now descend from the start node, if there are items left in the path
+        //    TNode childNode = startNode;
+        //    for (int i = 0; i < path.Length; i++)
+        //    {
+        //        bool found = false;
+        //        (found, childNode) = path[i](getChildNodes(childNode));
+        //        if (found)
+        //            yield return childNode;
+        //        else
+        //            yield break;
+        //    }
+        //}
 
         #endregion DescendAlongPath
     }
