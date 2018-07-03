@@ -16,6 +16,27 @@ namespace Elementary.Hierarchy.Reflection.Test
             public string Property { get; set; }
         }
 
+        #region Try get nodes values
+
+        [Fact]
+        public void Create_root_from_scalar_value_type()
+
+        {
+            // ARRANGE
+
+            var hierarchyNode = ReflectedHierarchy.Create(1);
+
+            // ACT
+
+            var (success, value) = hierarchyNode.TryGetValue<int>();
+
+            // ASSERT
+
+            Assert.True(success);
+            Assert.Equal(1, value);
+            Assert.False(hierarchyNode.HasChildNodes);
+        }
+
         [Fact]
         public void ReflectionNode_sees_int_property_as_node()
         {
@@ -86,26 +107,7 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void Retrieve_the_leafs_value()
-        {
-            // ARRANGE
-
-            var obj = new { property = (string)"1" };
-            var hierarchyNode = ReflectedHierarchy.Create(obj);
-            var (_, node) = hierarchyNode.TryGetChildNode("property");
-
-            // ACT
-
-            var (success, result) = node.TryGetValue<string>();
-
-            // ASSERT
-
-            Assert.True(success);
-            Assert.Equal("1", result);
-        }
-
-        [Fact]
-        public void Retrieve_nodes_value()
+        public void Retrieve_property_value_from_child()
         {
             // ARRANGE
 
@@ -114,16 +116,16 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ACT
 
-            var (success, result) = hierarchyNode.TryGetValue<object>();
+            var (success, value) = hierarchyNode.TryGetChildNode("property").Item2.TryGetValue<string>();
 
             // ASSERT
 
             Assert.True(success);
-            Assert.Same(obj, result);
+            Assert.Equal("1", value);
         }
 
         [Fact]
-        public void Retrieve_nodes_value_fails_on_wrong_type()
+        public void Retrieve_property_value_from_child_fails_on_wrong_type()
         {
             // ARRANGE
 
@@ -139,48 +141,25 @@ namespace Elementary.Hierarchy.Reflection.Test
             Assert.False(success);
         }
 
+        #endregion Try get nodes values
+
+        #region Try set node values
+
         [Fact]
-        public void Retrieve_the_descandants_leafs_inner_value()
+        public void Set_root_value_fails()
         {
             // ARRANGE
 
-            var obj = new
-            {
-                child = new
-                {
-                    property = (string)"1"
-                }
-            };
-
-            var hierarchyNode = ReflectedHierarchy.Create(obj);
-            var node = hierarchyNode.DescendantAt(HierarchyPath.Create("child", "property"));
-
-            // ACT
-
-            var (success, result) = node.TryGetValue<string>();
-
-            // ASSERT
-
-            Assert.True(success);
-            Assert.Equal("1", result);
-        }
-
-        [Fact]
-        public void Set_inner_value_of_leaf_node()
-        {
-            // ARRANGE
-
-            var obj = new ReadWriteProperty { Property = "1" };
+            var obj = new ReadWritePropertyParent { ReadWriteProperty = new ReadWriteProperty { Property = "1" } };
             var hierarchyNode = ReflectedHierarchy.Create(obj);
 
             // ACT
 
-            var success = hierarchyNode.TryGetChildNode("Property").Item2.TrySetValue("2");
+            var success = hierarchyNode.TrySetValue(new ReadWritePropertyParent());
 
             // ASSERT
 
-            Assert.True(success);
-            Assert.Equal("2", hierarchyNode.TryGetChildNode("Property").Item2.TryGetValue<string>().Item2);
+            Assert.False(success);
         }
 
         [Fact]
@@ -251,5 +230,7 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             Assert.False(success);
         }
+
+        #endregion Set node values
     }
 }

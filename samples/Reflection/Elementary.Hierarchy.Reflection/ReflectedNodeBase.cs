@@ -13,7 +13,7 @@ namespace Elementary.Hierarchy.Reflection
             this.instance = instance;
         }
 
-        protected abstract object NodeValue { get; set; }
+        protected abstract object NodeValue { get; }
 
         /// <summary>
         /// The child nodes of this node are all properties of this NodeValue.
