@@ -10,12 +10,14 @@ namespace Elementary.Hierarchy.Reflection
     {
         private readonly PropertyInfo propertyInfo;
 
-        public ReflectedHierarchyNode(object instance, PropertyInfo propertyInfo)
-            : base(instance)
+        public ReflectedHierarchyNode(object instance, PropertyInfo propertyInfo, IReflectedHierarchyNodeFactory nodeFactory)
+            : base(instance, nodeFactory)
 
         {
             this.propertyInfo = propertyInfo;
         }
+
+        public override string Id => this.propertyInfo.Name;
 
         protected override object NodeValue => this.propertyInfo.GetValue(this.instance);
 

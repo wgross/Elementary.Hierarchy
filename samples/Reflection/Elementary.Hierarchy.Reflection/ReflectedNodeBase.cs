@@ -7,11 +7,15 @@ namespace Elementary.Hierarchy.Reflection
     public abstract class ReflectedNodeBase
     {
         protected readonly object instance;
+        private readonly IReflectedHierarchyNodeFactory nodeFactory;
 
-        public ReflectedNodeBase(object instance)
+        public ReflectedNodeBase(object instance, IReflectedHierarchyNodeFactory nodeFactory)
         {
             this.instance = instance;
+            this.nodeFactory = nodeFactory;
         }
+
+        public abstract string Id { get; }
 
         protected abstract object NodeValue { get; }
 
@@ -22,13 +26,13 @@ namespace Elementary.Hierarchy.Reflection
 
         public bool HasChildNodes => ChildPropertyInfos.Any();
 
-        public IEnumerable<IReflectedHierarchyNode> ChildNodes => this.ChildPropertyInfos.Select(pi => new ReflectedHierarchyNode(this.instance, pi));
+        public IEnumerable<IReflectedHierarchyNode> ChildNodes => this.ChildPropertyInfos.Select(pi => this.nodeFactory.Create(this.instance, pi));
 
         public (bool, IReflectedHierarchyNode) TryGetChildNode(string id)
         {
             var childNode = this.ChildPropertyInfos
                 .Where(pi => pi.Name.Equals(id))
-                .Select(pi => new ReflectedHierarchyNode(this.NodeValue, pi))
+                .Select(pi => this.nodeFactory.Create(this.NodeValue, pi))
                 .FirstOrDefault();
 
             return (childNode != null, childNode);
