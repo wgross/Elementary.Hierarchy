@@ -69,6 +69,7 @@ namespace Elementary.Hierarchy.Reflection.Test
             // ASSERT
 
             Assert.Single(result);
+            Assert.Equal("1", result.Single().TryGetValue<string>().Item2);
         }
 
         [Fact]
@@ -122,6 +123,24 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             Assert.True(success);
             Assert.Equal("1", value);
+        }
+
+        [Fact]
+        public void Retrieve_property_value_type_as_object_from_child()
+        {
+            // ARRANGE
+
+            var obj = new { property = 1 };
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
+
+            // ACT
+
+            var (success, value) = hierarchyNode.TryGetChildNode("property").Item2.TryGetValue<object>();
+
+            // ASSERT
+
+            Assert.True(success);
+            Assert.Equal(1, value);
         }
 
         [Fact]
@@ -231,6 +250,22 @@ namespace Elementary.Hierarchy.Reflection.Test
             Assert.False(success);
         }
 
-        #endregion Set node values
+        #endregion Try set node values
+
+        [Fact]
+        public void Enumerate_descendants_of_string_hierarchy()
+        {
+            // ARRANGE
+
+            var hierarchyNode = ReflectedHierarchy.Create("test");
+
+            // ACT
+
+            var result = hierarchyNode.DescendantsAndSelf().ToArray();
+
+            // ASSERT
+
+            Assert.Equal(1, result.Length);
+        }
     }
 }
