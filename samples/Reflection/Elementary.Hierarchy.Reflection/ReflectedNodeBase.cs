@@ -24,11 +24,11 @@ namespace Elementary.Hierarchy.Reflection
         /// </summary>
         private IEnumerable<PropertyInfo> ChildPropertyInfos => this.NodeValue.GetType().GetProperties();
 
-        public bool HasChildNodes => ChildPropertyInfos.Any();
+        public virtual bool HasChildNodes => ChildPropertyInfos.Any();
 
-        public IEnumerable<IReflectedHierarchyNode> ChildNodes => this.ChildPropertyInfos.Select(pi => this.nodeFactory.Create(this.instance, pi));
+        public virtual IEnumerable<IReflectedHierarchyNode> ChildNodes => this.ChildPropertyInfos.Select(pi => this.nodeFactory.Create(this.instance, pi)).Where(n => n != null);
 
-        public (bool, IReflectedHierarchyNode) TryGetChildNode(string id)
+        public virtual (bool, IReflectedHierarchyNode) TryGetChildNode(string id)
         {
             var childNode = this.ChildPropertyInfos
                 .Where(pi => pi.Name.Equals(id))

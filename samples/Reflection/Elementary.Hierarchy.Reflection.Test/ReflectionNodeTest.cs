@@ -38,7 +38,7 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void ReflectionNode_sees_int_property_as_node()
+        public void ReflectionNode_sees_int_property_as_node() 
         {
             // ARRANGE
 
@@ -253,7 +253,7 @@ namespace Elementary.Hierarchy.Reflection.Test
         #endregion Try set node values
 
         [Fact]
-        public void Enumerate_descendants_of_string_hierarchy()
+        public void Indexed_properties_are_skipped()
         {
             // ARRANGE
 
@@ -261,11 +261,39 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ACT
 
-            var result = hierarchyNode.DescendantsAndSelf().ToArray();
+            var result = hierarchyNode.Descendants().ToArray();
 
             // ASSERT
+            // 'Chars' property is skipped
 
-            Assert.Equal(1, result.Length);
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public void Array_properties_are_converted_to_nodes()
+        {
+            // ARRANGE
+
+            var h = new
+            {
+                data = new[] { 1, 2 }
+            };
+
+            //Array value = (Array)h.GetType().GetProperty("data").GetValue(h);
+            //var ints = value.OfType<int>();
+            //var ints2 = (int[])value;
+            var hierarchyNode = ReflectedHierarchy.Create(h);
+
+            // ACT
+
+            var result = hierarchyNode.Descendants().ToArray();
+
+            // ASSERT
+            // 'Chars' property is skipped
+
+            Assert.Single(result);
+            Assert.Equal("data", result.Single().Id);
+            Assert.Equal(new[] { 1, 2 }, result.Single().TryGetValue<int[]>().Item2);
         }
     }
 }
