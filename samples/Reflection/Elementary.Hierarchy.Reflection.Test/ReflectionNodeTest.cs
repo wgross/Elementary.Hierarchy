@@ -68,6 +68,24 @@ namespace Elementary.Hierarchy.Reflection.Test
             Assert.True(result.Single().HasChildNodes);
         }
 
+        [Fact]
+        public void Skip_properties_with_indexer()
+        {
+            // ARRANGE
+
+            var hierarchyNode = ReflectedHierarchy.Create("test");
+
+            // ACT
+
+            var result = hierarchyNode.ChildNodes.ToArray();
+
+            // ASSERT
+            // 'Chars' property is skipped, Length is contained
+
+            Assert.Single(result);
+            Assert.Equal("Length", result.Single().Id);
+        }
+
         #endregion Map objects and properties to hierarchy nodes
 
         #region TryGet node by name
@@ -380,50 +398,6 @@ namespace Elementary.Hierarchy.Reflection.Test
             Assert.False(success);
         }
 
-        #endregion Try set node values
-
-        [Fact]
-        public void Indexed_properties_are_skipped()
-        {
-            // ARRANGE
-
-            var hierarchyNode = ReflectedHierarchy.Create("test");
-
-            // ACT
-
-            var result = hierarchyNode.Descendants().ToArray();
-
-            // ASSERT
-            // 'Chars' property is skipped
-
-            Assert.Empty(result);
-        }
-
-        [Fact]
-        public void Array_properties_are_converted_to_nodes()
-        {
-            // ARRANGE
-
-            var h = new
-            {
-                data = new[] { 1, 2 }
-            };
-
-            //Array value = (Array)h.GetType().GetProperty("data").GetValue(h);
-            //var ints = value.OfType<int>();
-            //var ints2 = (int[])value;
-            var hierarchyNode = ReflectedHierarchy.Create(h);
-
-            // ACT
-
-            var result = hierarchyNode.Descendants().ToArray();
-
-            // ASSERT
-            // 'Chars' property is skipped
-
-            Assert.Single(result);
-            Assert.Equal("data", result.Single().Id);
-            Assert.Equal(new[] { 1, 2 }, result.Single().TryGetValue<int[]>().Item2);
-        }
+        #endregion Try Set node values
     }
 }

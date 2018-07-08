@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Linq;
+using System.Reflection;
 
 namespace Elementary.Hierarchy.Reflection
 {
@@ -6,8 +7,8 @@ namespace Elementary.Hierarchy.Reflection
     {
         public IReflectedHierarchyNode Create(object instance, PropertyInfo property)
         {
-            //if (property.GetMethod?.IsSpecialName ?? false)
-            //    return null;
+            if (property.GetIndexParameters().Any())
+                return null; // exclude indexers
 
             if (property.PropertyType.IsArray)
                 return new ReflectedHierarchyArrayNode(instance, property, this);
