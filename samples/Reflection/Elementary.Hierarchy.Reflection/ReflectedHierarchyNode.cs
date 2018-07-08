@@ -6,18 +6,13 @@ namespace Elementary.Hierarchy.Reflection
     /// An inner node of the refleceted hierrachy refers always to an instance and a property info.
     /// The name of the property is the key of the child in the collectin of child nodes of ites owning instance.
     /// </summary>
-    public class ReflectedHierarchyNode : ReflectedNodeBase, IReflectedHierarchyNode
+    public class ReflectedHierarchyNode : ReflectedPropertyNodeBase, IReflectedHierarchyNode
     {
-        private readonly PropertyInfo propertyInfo;
-
         public ReflectedHierarchyNode(object instance, PropertyInfo propertyInfo, IReflectedHierarchyNodeFactory nodeFactory)
-            : base(instance, nodeFactory)
+            : base(instance, propertyInfo, nodeFactory)
 
         {
-            this.propertyInfo = propertyInfo;
         }
-
-        public override string Id => this.propertyInfo.Name;
 
         protected override object NodeValue => this.propertyInfo.GetValue(this.instance);
 

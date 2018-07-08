@@ -7,13 +7,17 @@
 
         { }
 
-        public override string Id => string.Empty;
-
         protected override object NodeValue => this.instance;
+
+        #region IReflectedHierarchyNode members
+
+        public string Id => string.Empty;
 
         public bool TrySetValue<T>(T value)
         {
             return false;
         }
+
+        #endregion IReflectedHierarchyNode members
     }
 }

@@ -15,8 +15,6 @@ namespace Elementary.Hierarchy.Reflection
             this.nodeFactory = nodeFactory;
         }
 
-        public abstract string Id { get; }
-
         protected abstract object NodeValue { get; }
 
         /// <summary>

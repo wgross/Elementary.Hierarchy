@@ -5,14 +5,11 @@ using System.Reflection;
 
 namespace Elementary.Hierarchy.Reflection
 {
-    public class ReflectedHierarchyArrayNode : ReflectedNodeBase, IReflectedHierarchyNode
+    public class ReflectedHierarchyArrayNode : ReflectedPropertyNodeBase, IReflectedHierarchyNode
     {
-        private readonly PropertyInfo propertyInfo;
-
         public ReflectedHierarchyArrayNode(object instance, PropertyInfo propertyInfo, IReflectedHierarchyNodeFactory nodeFactory)
-            : base(instance, nodeFactory)
+            : base(instance, propertyInfo, nodeFactory)
         {
-            this.propertyInfo = propertyInfo;
         }
 
         #region IHasChildNodes members
@@ -30,8 +27,6 @@ namespace Elementary.Hierarchy.Reflection
         #endregion IHasIdentifiableChildNodes members
 
         #region IReflectedHierarchyNode members
-
-        public override string Id => this.propertyInfo.Name;
 
         public bool TrySetValue<T>(T value)
         {
