@@ -16,29 +16,23 @@ namespace Elementary.Hierarchy.Reflection.Test
             public string Property { get; set; }
         }
 
-        #region Try get nodes values
+        #region Map objects and properties to hierarchy nodes
 
         [Fact]
         public void Create_root_from_scalar_value_type()
 
         {
-            // ARRANGE
+            // ACT
 
             var hierarchyNode = ReflectedHierarchy.Create(1);
 
-            // ACT
-
-            var (success, value) = hierarchyNode.TryGetValue<int>();
-
             // ASSERT
 
-            Assert.True(success);
-            Assert.Equal(1, value);
             Assert.False(hierarchyNode.HasChildNodes);
         }
 
         [Fact]
-        public void ReflectionNode_sees_int_property_as_node() 
+        public void Create_node_from_scalar_value_type_property()
         {
             // ARRANGE
 
@@ -52,14 +46,15 @@ namespace Elementary.Hierarchy.Reflection.Test
             // ASSERT
 
             Assert.Single(result);
+            Assert.False(result.Single().HasChildNodes);
         }
 
         [Fact]
-        public void ReflectionNode_sees_string_property_as_node()
+        public void Create_node_from_scalar_ref_type_property()
         {
             // ARRANGE
 
-            var obj = new { property = (string)"1" };
+            var obj = new { property = "1" };
             var hierarchyNode = ReflectedHierarchy.Create(obj);
 
             // ACT
@@ -67,10 +62,15 @@ namespace Elementary.Hierarchy.Reflection.Test
             var result = hierarchyNode.Children().ToArray();
 
             // ASSERT
+            // string has additionalproperties which qualify sub nodes.
 
             Assert.Single(result);
-            Assert.Equal("1", result.Single().TryGetValue<string>().Item2);
+            Assert.True(result.Single().HasChildNodes);
         }
+
+        #endregion Map objects and properties to hierarchy nodes
+
+        #region TryGet node by name
 
         [Fact]
         public void Retrieve_property_as_child()
@@ -91,7 +91,7 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void Retrieve_property_as_child_fails_on_wrong_name()
+        public void Retrieve_property_as_child_fails_on_unkown_name()
         {
             // ARRANGE
 
@@ -100,15 +100,73 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ACT
 
-            var (success, _) = hierarchyNode.TryGetChildNode("wrong");
+            var (success, result) = hierarchyNode.TryGetChildNode("wrong");
 
             // ASSERT
 
             Assert.False(success);
         }
 
+        #endregion TryGet node by name
+
+        #region TryGet value from node
+
         [Fact]
-        public void Retrieve_property_value_from_child()
+        public void Get_value_from_root_as_scalar_value_type()
+
+        {
+            // ARRANGE
+
+            var hierarchyNode = ReflectedHierarchy.Create(1);
+
+            // ACT
+
+            var (success, value) = hierarchyNode.TryGetValue<int>();
+
+            // ASSERT
+
+            Assert.True(success);
+            Assert.Equal(1, value);
+        }
+
+        [Fact]
+        public void Get_value_from_root_as_scalar_ref_type()
+
+        {
+            // ARRANGE
+
+            var hierarchyNode = ReflectedHierarchy.Create("1");
+
+            // ACT
+
+            var (success, value) = hierarchyNode.TryGetValue<string>();
+
+            // ASSERT
+
+            Assert.True(success);
+            Assert.Equal("1", value);
+        }
+
+        [Fact]
+        public void Get_value_from_root_as_scalar_array_type()
+
+        {
+            // ARRANGE
+
+            var hierarchyNode = ReflectedHierarchy.Create(new[] { 1, 2 });
+
+            // ACT
+
+            var (success, value) = hierarchyNode.TryGetValue<int[]>();
+
+            // ASSERT
+
+            Assert.True(success);
+            Assert.Equal(new[] { 1, 2 }, value);
+        }
+
+        [Fact]
+        public void Retrieve_property_ref_value_from_child()
         {
             // ARRANGE
 
@@ -123,6 +181,42 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             Assert.True(success);
             Assert.Equal("1", value);
+        }
+
+        [Fact]
+        public void Retrieve_property_struct_value_from_child()
+        {
+            // ARRANGE
+
+            var obj = new { property = 1 };
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
+
+            // ACT
+
+            var (success, value) = hierarchyNode.TryGetChildNode("property").Item2.TryGetValue<int>();
+
+            // ASSERT
+
+            Assert.True(success);
+            Assert.Equal(1, value);
+        }
+
+        [Fact]
+        public void Retrieve_property_array_value_from_child()
+        {
+            // ARRANGE
+
+            var obj = new { property = new[] { 1, 2 } };
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
+
+            // ACT
+
+            var (success, value) = hierarchyNode.TryGetChildNode("property").Item2.TryGetValue<int[]>();
+
+            // ASSERT
+
+            Assert.True(success);
+            Assert.Equal(new[] { 1, 2 }, value);
         }
 
         [Fact]
@@ -144,25 +238,61 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void Retrieve_property_value_from_child_fails_on_wrong_type()
+        public void Retrieve_property_ref_type_as_object_from_child()
         {
             // ARRANGE
 
-            var obj = new { property = (string)"1" };
+            var obj = new { property = "1" };
             var hierarchyNode = ReflectedHierarchy.Create(obj);
 
             // ACT
 
-            var (success, result) = hierarchyNode.TryGetValue<int>();
+            var (success, value) = hierarchyNode.TryGetChildNode("property").Item2.TryGetValue<object>();
+
+            // ASSERT
+
+            Assert.True(success);
+            Assert.Equal("1", value);
+        }
+
+        [Fact]
+        public void Retrieve_property_array_type_as_object_from_child()
+        {
+            // ARRANGE
+
+            var obj = new { property = new[] { 1, 2 } };
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
+
+            // ACT
+
+            var (success, value) = hierarchyNode.TryGetChildNode("property").Item2.TryGetValue<object>();
+
+            // ASSERT
+
+            Assert.True(success);
+            Assert.Equal(new[] { 1, 2 }, value);
+        }
+
+        [Fact]
+        public void Retrieve_property_fails_on_wrong_type()
+        {
+            // ARRANGE
+
+            var obj = new { property = 1 };
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
+
+            // ACT
+
+            var (success, value) = hierarchyNode.TryGetChildNode("property").Item2.TryGetValue<string>();
 
             // ASSERT
 
             Assert.False(success);
         }
 
-        #endregion Try get nodes values
+        #endregion TryGet value from node
 
-        #region Try set node values
+        #region Try Set node values
 
         [Fact]
         public void Set_root_value_fails()
