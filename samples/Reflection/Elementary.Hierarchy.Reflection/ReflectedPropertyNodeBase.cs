@@ -1,9 +1,10 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Elementary.Hierarchy.Reflection
 {
-    public class ReflectedPropertyNodeBase : ReflectedNodeBase
+    public abstract class ReflectedPropertyNodeBase : ReflectedNodeBase
     {
         protected readonly PropertyInfo propertyInfo;
 
@@ -14,7 +15,9 @@ namespace Elementary.Hierarchy.Reflection
             this.propertyInfo = propertyInfo;
         }
 
-        protected override object NodeValue => throw new NotImplementedException();
+        protected override object NodeValue => this.propertyInfo.GetValue(this.instance);
+
+     
 
         #region IReflectedHierarchyNode members
 

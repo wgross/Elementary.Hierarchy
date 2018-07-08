@@ -14,8 +14,6 @@ namespace Elementary.Hierarchy.Reflection
         {
         }
 
-        protected override object NodeValue => this.propertyInfo.GetValue(this.instance);
-
         public bool TrySetValue<T>(T value)
         {
             if (this.propertyInfo.GetSetMethod() == null)

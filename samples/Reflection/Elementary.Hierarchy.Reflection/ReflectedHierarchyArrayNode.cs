@@ -20,12 +20,6 @@ namespace Elementary.Hierarchy.Reflection
 
         #endregion IHasChildNodes members
 
-        #region IHasIdentifiableChildNodes members
-
-        protected override object NodeValue => (Array)this.propertyInfo.GetValue(this.instance);
-
-        #endregion IHasIdentifiableChildNodes members
-
         #region IReflectedHierarchyNode members
 
         public bool TrySetValue<T>(T value)

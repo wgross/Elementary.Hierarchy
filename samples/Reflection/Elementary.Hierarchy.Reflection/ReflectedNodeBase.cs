@@ -7,7 +7,7 @@ namespace Elementary.Hierarchy.Reflection
     public abstract class ReflectedNodeBase
     {
         protected readonly object instance;
-        private readonly IReflectedHierarchyNodeFactory nodeFactory;
+        protected readonly IReflectedHierarchyNodeFactory nodeFactory;
 
         public ReflectedNodeBase(object instance, IReflectedHierarchyNodeFactory nodeFactory)
         {
@@ -17,10 +17,7 @@ namespace Elementary.Hierarchy.Reflection
 
         protected abstract object NodeValue { get; }
 
-        /// <summary>
-        /// The child nodes of this node are all properties of this NodeValue.
-        /// </summary>
-        private IEnumerable<PropertyInfo> ChildPropertyInfos => this.NodeValue.GetType().GetProperties();
+        protected IEnumerable<PropertyInfo> ChildPropertyInfos => this.NodeValue.GetType().GetProperties();
 
         public virtual bool HasChildNodes => ChildPropertyInfos.Any();
 
