@@ -13,7 +13,12 @@ namespace Elementary.Hierarchy.Reflection
             if (property.PropertyType.IsArray)
                 return new ReflectedHierarchyArrayNode(instance, property, this);
 
-            return new ReflectedHierarchyNode(instance, property, nodeFactory: this);
+            return new ReflectedHierarchyPropertyNode(instance, property, nodeFactory: this);
+        }
+
+        public IReflectedHierarchyNode Create(object instance, string id)
+        {
+            return new ReflectedHierarchObjectNode(instance, id, this);
         }
     }
 }

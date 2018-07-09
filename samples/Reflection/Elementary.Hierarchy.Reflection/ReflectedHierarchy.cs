@@ -4,7 +4,7 @@
     {
         public static IReflectedHierarchyNode Create<T>(T root)
         {
-            return new ReflectedHierarchyRootNode(root, new ReflectedHierarchyNodeFactory());
+            return new ReflectedHierarchyNodeFactory().Create(root, id: null);
         }
     }
 }
