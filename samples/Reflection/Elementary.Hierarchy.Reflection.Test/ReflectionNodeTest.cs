@@ -255,7 +255,7 @@ namespace Elementary.Hierarchy.Reflection.Test
         #region TryGet value from node
 
         [Fact]
-        public void Get_value_from_root_as_scalar_value_type()
+        public void Get_struct_value_from_root()
 
         {
             // ARRANGE
@@ -273,7 +273,7 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void Get_value_from_root_as_scalar_ref_type()
+        public void Get_ref_value_from_root()
 
         {
             // ARRANGE
@@ -291,7 +291,7 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void Get_value_from_root_as_scalar_array_type()
+        public void Get_array_value_from_root()
 
         {
             // ARRANGE
@@ -309,7 +309,7 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void Retrieve_property_ref_value_from_child()
+        public void Get_ref_value_from_property_node()
         {
             // ARRANGE
 
@@ -327,7 +327,7 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void Retrieve_property_struct_value_from_child()
+        public void Get_struct_value_from_property_node()
         {
             // ARRANGE
 
@@ -345,7 +345,7 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void Retrieve_property_array_value_from_child()
+        public void Get_array_value_from_property_node()
         {
             // ARRANGE
 
@@ -363,7 +363,25 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void Retrieve_property_value_type_as_object_from_child()
+        public void Get_array_item_value_from_property_node()
+        {
+            // ARRANGE
+
+            var obj = new { property = new[] { 1, 2 } };
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
+
+            // ACT
+
+            var (success, value) = hierarchyNode.TryGetChildNode("property").Item2.TryGetChildNode("1").Item2.TryGetValue<int>();
+
+            // ASSERT
+
+            Assert.True(success);
+            Assert.Equal(2, value);
+        }
+
+        [Fact]
+        public void Get_struct_value_as_object_from_property_node()
         {
             // ARRANGE
 
@@ -381,7 +399,7 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void Retrieve_property_ref_type_as_object_from_child()
+        public void Get_ref_value_as_object_from_property_node()
         {
             // ARRANGE
 
@@ -399,7 +417,7 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void Retrieve_property_array_type_as_object_from_child()
+        public void Get_array_value_as_object_from_property_node()
         {
             // ARRANGE
 
@@ -417,7 +435,25 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void Retrieve_property_fails_on_wrong_type()
+        public void Get_array_item_value_as_object_from_property_node()
+        {
+            // ARRANGE
+
+            var obj = new { property = new[] { 1, 2 } };
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
+
+            // ACT
+
+            var (success, value) = hierarchyNode.TryGetChildNode("property").Item2.TryGetChildNode("1").Item2.TryGetValue<object>();
+
+            // ASSERT
+
+            Assert.True(success);
+            Assert.Equal(2, value);
+        }
+
+        [Fact]
+        public void Get_value_from_property_node_fails_on_wrong_type()
         {
             // ARRANGE
 
@@ -434,8 +470,19 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void Retrieve_array_element_by_index()
+        public void Get_value_from_root_fails_on_wrong_type()
         {
+            // ARRANGE
+
+            var hierarchyNode = ReflectedHierarchy.Create(1);
+
+            // ACT
+
+            var (success, value) = hierarchyNode.TryGetValue<string>();
+
+            // ASSERT
+
+            Assert.False(success);
         }
 
         #endregion TryGet value from node

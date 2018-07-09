@@ -40,8 +40,11 @@ namespace Elementary.Hierarchy.Reflection
             if (!int.TryParse(id, out var index))
                 return (false, null);
 
-            var tmp = this.nodeFactory.Create(((Array)this.NodeValue).GetValue(int.Parse(id)), id);
-            return (tmp != null, tmp);
+            var ary = (Array)this.NodeValue;
+            if (index > ary.Length - 1)
+                return (false, null);
+
+            return (true, this.nodeFactory.Create(ary.GetValue(index), id));
         }
 
         #endregion IReflectedHierarchyNode members
