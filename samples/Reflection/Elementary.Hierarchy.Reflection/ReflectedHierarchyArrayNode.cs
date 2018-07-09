@@ -32,7 +32,11 @@ namespace Elementary.Hierarchy.Reflection
 
         public bool TrySetValue<T>(T value)
         {
-            throw new NotImplementedException();
+            if (this.IsNotAssignable<T>())
+                return false;
+
+            this.propertyInfo.SetValue(this.instance, value);
+            return true;
         }
 
         public override (bool, IReflectedHierarchyNode) TryGetChildNode(string id)

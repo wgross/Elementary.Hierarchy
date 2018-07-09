@@ -26,6 +26,16 @@ namespace Elementary.Hierarchy.Reflection
         /// </summary>
         public string Id => this.propertyInfo.Name;
 
+        protected bool IsNotAssignable<T>()
+        {
+            if (this.propertyInfo.GetSetMethod() == null)
+                return true;
+
+            if (!this.propertyInfo.PropertyType.IsAssignableFrom(typeof(T)))
+                return true;
+
+            return false;
+        }
         #endregion IReflectedHierarchyNode members
     }
 }

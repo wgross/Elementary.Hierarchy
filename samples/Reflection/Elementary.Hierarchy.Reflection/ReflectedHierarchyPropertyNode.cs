@@ -16,10 +16,7 @@ namespace Elementary.Hierarchy.Reflection
 
         public bool TrySetValue<T>(T value)
         {
-            if (this.propertyInfo.GetSetMethod() == null)
-                return false;
-
-            if (!this.propertyInfo.PropertyType.IsAssignableFrom(typeof(T)))
+            if (this.IsNotAssignable<T>())
                 return false;
 
             this.propertyInfo.SetValue(this.instance, value);
