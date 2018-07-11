@@ -51,6 +51,11 @@ namespace Elementary.Hierarchy.Reflection
             return (true, this.nodeFactory.Create(ary.GetValue(index), id));
         }
 
+        public bool TrySetValue<T>(Func<T, T> generateNewValue)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion IReflectedHierarchyNode members
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 namespace Elementary.Hierarchy.Reflection
 {
@@ -21,6 +22,11 @@ namespace Elementary.Hierarchy.Reflection
 
             this.propertyInfo.SetValue(this.instance, value);
             return true;
+        }
+
+        public bool TrySetValue<T>(Func<T, T> generateNewValue)
+        {
+            return this.TrySetValue(generateNewValue((T)this.NodeValue));
         }
     }
 }

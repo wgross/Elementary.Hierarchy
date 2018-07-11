@@ -11,11 +11,6 @@ namespace Elementary.Hierarchy.Reflection.Test
             public T Property { get; set; }
         }
 
-        //private class ReadWriteProperty
-        //{
-        //    public string Property { get; set; }
-        //}
-
         #region Map objects to hierachy root nodes
 
         [Fact]
@@ -517,6 +512,24 @@ namespace Elementary.Hierarchy.Reflection.Test
             // ACT
 
             var success = hierarchyNode.DescendantAt(HierarchyPath.Create("Property")).TrySetValue("2");
+
+            // ASSERT
+
+            Assert.True(success);
+            Assert.Equal("2", obj.Property);
+        }
+
+        [Fact]
+        public void Set_value_at_property_node_delegate()
+        {
+            // ARRANGE
+
+            var obj = new ReadWritePropertyParent<string> { Property = "1" };
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
+
+            // ACT
+
+            var success = hierarchyNode.DescendantAt(HierarchyPath.Create("Property")).TrySetValue((string old) => "2");
 
             // ASSERT
 

@@ -1,4 +1,6 @@
-﻿namespace Elementary.Hierarchy.Reflection
+﻿using System;
+
+namespace Elementary.Hierarchy.Reflection
 {
     public interface IReflectedHierarchyNode : IHasChildNodes<IReflectedHierarchyNode>, IHasIdentifiableChildNodes<string, IReflectedHierarchyNode>
     {
@@ -8,5 +10,6 @@
 
         bool TrySetValue<T>(T value);
 
+        bool TrySetValue<T>(Func<T, T> generateNewValue);
     }
 }
