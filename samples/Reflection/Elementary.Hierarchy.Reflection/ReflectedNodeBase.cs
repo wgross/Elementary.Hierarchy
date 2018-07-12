@@ -15,31 +15,29 @@ namespace Elementary.Hierarchy.Reflection
             this.nodeFactory = nodeFactory;
         }
 
-        protected abstract object NodeValue { get; }
+        //protected virtual IEnumerable<PropertyInfo> ChildPropertyInfos => this.NodeValue.GetType().GetProperties();
 
-        protected virtual IEnumerable<PropertyInfo> ChildPropertyInfos => this.NodeValue.GetType().GetProperties();
+        //public virtual bool HasChildNodes => ChildPropertyInfos.Any();
 
-        public virtual bool HasChildNodes => ChildPropertyInfos.Any();
+        //public virtual IEnumerable<IReflectedHierarchyNode> ChildNodes => this.ChildPropertyInfos.Select(pi => this.nodeFactory.Create(this.instance, pi)).Where(n => n != null);
 
-        public virtual IEnumerable<IReflectedHierarchyNode> ChildNodes => this.ChildPropertyInfos.Select(pi => this.nodeFactory.Create(this.instance, pi)).Where(n => n != null);
+        //public virtual (bool, IReflectedHierarchyNode) TryGetChildNode(string id)
+        //{
+        //    var childNode = this.ChildPropertyInfos
+        //        .Where(pi => pi.Name.Equals(id))
+        //        .Select(pi => this.nodeFactory.Create(this.NodeValue, pi))
+        //        .FirstOrDefault();
 
-        public virtual (bool, IReflectedHierarchyNode) TryGetChildNode(string id)
-        {
-            var childNode = this.ChildPropertyInfos
-                .Where(pi => pi.Name.Equals(id))
-                .Select(pi => this.nodeFactory.Create(this.NodeValue, pi))
-                .FirstOrDefault();
+        //    return (childNode != null, childNode);
+        //}
 
-            return (childNode != null, childNode);
-        }
+        //public (bool, T) TryGetValue<T>()
+        //{
+        //    var nodeValue = this.NodeValue;
+        //    if (!typeof(T).IsAssignableFrom(nodeValue.GetType()))
+        //        return (false, default(T));
 
-        public (bool, T) TryGetValue<T>()
-        {
-            var nodeValue = this.NodeValue;
-            if (!typeof(T).IsAssignableFrom(nodeValue.GetType()))
-                return (false, default(T));
-
-            return (true, (T)nodeValue);
-        }
+        //    return (true, (T)nodeValue);
+        //}
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.Generic;
+using System.Reflection;
 
 namespace Elementary.Hierarchy.Reflection
 {
@@ -17,9 +18,20 @@ namespace Elementary.Hierarchy.Reflection
         /// A property node resolves its inner value by getting the property value of the instance the property
         /// actually belongs to,
         /// </summary>
-        protected override object NodeValue => this.propertyInfo.GetValue(this.instance);
+        protected object NodeValue => this.propertyInfo.GetValue(this.instance);
+
+        protected IEnumerable<PropertyInfo> ChildPropertyInfos => this.NodeValue.GetType().GetProperties();
 
         #region IReflectedHierarchyNode members
+
+        public (bool, T) TryGetValue<T>()
+        {
+            var nodeValue = this.NodeValue;
+            if (!typeof(T).IsAssignableFrom(nodeValue.GetType()))
+                return (false, default(T));
+
+            return (true, (T)nodeValue);
+        }
 
         /// <summary>
         /// The name of a property node is the name of the property it refers to.
@@ -36,6 +48,7 @@ namespace Elementary.Hierarchy.Reflection
 
             return false;
         }
+
         #endregion IReflectedHierarchyNode members
     }
 }

@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Elementary.Hierarchy.Reflection
 {
-    public class ReflectedHierarchyArrayNode : ReflectedPropertyNodeBase, IReflectedHierarchyNode
+    public sealed class ReflectedHierarchyArrayNode : ReflectedPropertyNodeBase, IReflectedHierarchyNode
     {
         public ReflectedHierarchyArrayNode(object instance, PropertyInfo propertyInfo, IReflectedHierarchyNodeFactory nodeFactory)
             : base(instance, propertyInfo, nodeFactory)
@@ -14,9 +14,9 @@ namespace Elementary.Hierarchy.Reflection
 
         #region IHasChildNodes members
 
-        public override bool HasChildNodes => ((Array)this.NodeValue).Length != 0;
+        public bool HasChildNodes => ((Array)this.NodeValue).Length != 0;
 
-        public override IEnumerable<IReflectedHierarchyNode> ChildNodes
+        public IEnumerable<IReflectedHierarchyNode> ChildNodes
         {
             get
             {
@@ -28,18 +28,9 @@ namespace Elementary.Hierarchy.Reflection
 
         #endregion IHasChildNodes members
 
-        #region IReflectedHierarchyNode members
+        #region IHasIdentifiableChildNodes
 
-        public bool TrySetValue<T>(T value)
-        {
-            if (this.IsNotAssignable<T>())
-                return false;
-
-            this.propertyInfo.SetValue(this.instance, value);
-            return true;
-        }
-
-        public override (bool, IReflectedHierarchyNode) TryGetChildNode(string id)
+        public (bool, IReflectedHierarchyNode) TryGetChildNode(string id)
         {
             if (!int.TryParse(id, out var index))
                 return (false, null);
@@ -49,6 +40,19 @@ namespace Elementary.Hierarchy.Reflection
                 return (false, null);
 
             return (true, this.nodeFactory.Create(ary.GetValue(index), id));
+        }
+
+        #endregion IHasIdentifiableChildNodes
+
+        #region IReflectedHierarchyNode members
+
+        public bool TrySetValue<T>(T value)
+        {
+            if (this.IsNotAssignable<T>())
+                return false;
+
+            this.propertyInfo.SetValue(this.instance, value);
+            return true;
         }
 
         public bool TrySetValue<T>(Func<T, T> generateNewValue)
