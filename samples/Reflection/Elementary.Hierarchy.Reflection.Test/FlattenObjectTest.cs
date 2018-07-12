@@ -23,7 +23,10 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ASSERT
 
-            Assert.Equal(2, result.Count);
+            Assert.Equal(3, result.Count);
+            Assert.True(result.ContainsKey("/a"));
+            Assert.True(result.ContainsKey("/b"));
+            Assert.True(result.ContainsKey("/b/Length"));
         }
     }
 }

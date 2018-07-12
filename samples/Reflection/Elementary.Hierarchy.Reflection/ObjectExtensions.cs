@@ -14,8 +14,9 @@ namespace Elementary.Hierarchy.Reflection
             h.VisitDescendants((path, n) =>
             {
                 var (success, value) = n.TryGetValue<object>();
+                var pathOfParent = string.Join("/", path.Select(p => p.Id));
 
-                flatted_h.Add(string.Join(":", string.Join(":", path.Select(p => p.Id), n.Id)), value);
+                flatted_h.Add(string.Join("/", pathOfParent, n.Id), value);
             });
 
             return flatted_h;
