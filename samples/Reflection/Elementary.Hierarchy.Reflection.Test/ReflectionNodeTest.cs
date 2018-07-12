@@ -11,7 +11,7 @@ namespace Elementary.Hierarchy.Reflection.Test
             public T Property { get; set; }
         }
 
-        #region Map objects to hierachy root nodes
+        #region Map objects to hierarchy root nodes
 
         [Fact]
         public void Create_root_from_scalar_value_type()
@@ -55,7 +55,7 @@ namespace Elementary.Hierarchy.Reflection.Test
             Assert.Empty(hierarchyNode.ChildNodes);
         }
 
-        #endregion Map objects to hierachy root nodes
+        #endregion Map objects to hierarchy root nodes
 
         #region Map object properties to inner nodes
 
@@ -643,5 +643,83 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         #endregion Try Set node values
+
+        #region Taverse the hierachy
+
+        [Fact]
+        public void Object_without_properties_hasnt_descendants()
+        {
+            // ARRANGE
+
+            var obj = new { };
+
+            // ACT
+
+            var result = ReflectedHierarchy.Create(obj).Descendants().ToArray();
+
+            // ASSERT
+
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public void Object_with_int_property_has_single_descendant()
+        {
+            // ARRANGE
+
+            var obj = new
+            {
+                a = 1,
+            };
+
+            // ACT
+
+            var result = ReflectedHierarchy.Create(obj).Descendants().ToArray();
+
+            // ASSERT
+
+            Assert.Single(result);
+        }
+
+        [Fact]
+        public void Object_with_string_property_has_single_descendant()
+        {
+            // ARRANGE
+
+            var obj = new
+            {
+                a = "string",
+            };
+
+            // ACT
+
+            var result = ReflectedHierarchy.Create(obj).Descendants().ToArray();
+
+            // ASSERT
+
+            Assert.Single(result);
+        }
+
+        [Fact]
+        private void Object_with_two_properties_create_three_descendants()
+        {
+            // ARRANGE
+
+            var obj = new
+            {
+                //a = 1,
+                b = "b"
+            };
+
+            // ACT
+
+            var result = ReflectedHierarchy.Create(obj).Descendants().ToArray();
+
+            // ASSERT
+
+            Assert.Equal(3, result.Count());
+        }
+
+        #endregion Taverse the hierachy
     }
 }

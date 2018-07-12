@@ -17,7 +17,7 @@ namespace Elementary.Hierarchy.Reflection
 
         protected abstract object NodeValue { get; }
 
-        protected IEnumerable<PropertyInfo> ChildPropertyInfos => this.NodeValue.GetType().GetProperties();
+        protected virtual IEnumerable<PropertyInfo> ChildPropertyInfos => this.NodeValue.GetType().GetProperties();
 
         public virtual bool HasChildNodes => ChildPropertyInfos.Any();
 

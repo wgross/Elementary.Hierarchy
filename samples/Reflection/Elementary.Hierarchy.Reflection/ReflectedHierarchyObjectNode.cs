@@ -2,16 +2,14 @@
 
 namespace Elementary.Hierarchy.Reflection
 {
-    public sealed class ReflectedHierarchObjectNode : ReflectedNodeBase, IReflectedHierarchyNode
+    public sealed class ReflectedHierarchyObjectNode : ReflectedHierarchyObjectNodeBase, IReflectedHierarchyNode
     {
-        public ReflectedHierarchObjectNode(object instance, string id, IReflectedHierarchyNodeFactory nodeFactory)
+        public ReflectedHierarchyObjectNode(object instance, string id, IReflectedHierarchyNodeFactory nodeFactory)
             : base(instance, nodeFactory)
 
         {
-            this.Id = id ?? string.Empty;
+            this.Id = id;
         }
-
-        protected override object NodeValue => this.instance;
 
         #region IReflectedHierarchyNode members
 
@@ -19,7 +17,8 @@ namespace Elementary.Hierarchy.Reflection
 
         public bool TrySetValue<T>(T value)
         {
-            return false;
+            this.instance = value;
+            return true;
         }
 
         public bool TrySetValue<T>(Func<T, T> generateNewValue)

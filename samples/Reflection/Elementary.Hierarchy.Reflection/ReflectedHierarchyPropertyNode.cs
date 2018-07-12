@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Elementary.Hierarchy.Reflection
@@ -14,6 +15,8 @@ namespace Elementary.Hierarchy.Reflection
 
         {
         }
+
+        public override IEnumerable<IReflectedHierarchyNode> ChildNodes => base.ChildNodes;
 
         public bool TrySetValue<T>(T value)
         {

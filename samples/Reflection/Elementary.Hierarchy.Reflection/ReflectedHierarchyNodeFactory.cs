@@ -18,7 +18,7 @@ namespace Elementary.Hierarchy.Reflection
 
         public IReflectedHierarchyNode Create(object instance, string id)
         {
-            return new ReflectedHierarchObjectNode(instance, id, this);
+            return new ReflectedHierarchyObjectNode(instance, id, this);
         }
     }
 }
