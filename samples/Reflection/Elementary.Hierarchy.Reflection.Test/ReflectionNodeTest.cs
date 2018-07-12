@@ -696,8 +696,9 @@ namespace Elementary.Hierarchy.Reflection.Test
             var result = ReflectedHierarchy.Create(obj).Descendants().ToArray();
 
             // ASSERT
+            // retuirns property "a" and a's value property Length. Chars is ignored.
 
-            Assert.Single(result);
+            Assert.Equal(2, result.Length);
         }
 
         [Fact]
@@ -707,7 +708,7 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             var obj = new
             {
-                //a = 1,
+                a = 1,
                 b = "b"
             };
 
