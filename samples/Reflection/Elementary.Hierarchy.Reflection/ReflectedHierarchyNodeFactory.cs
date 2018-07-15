@@ -5,7 +5,7 @@ namespace Elementary.Hierarchy.Reflection
 {
     public class ReflectedHierarchyNodeFactory : IReflectedHierarchyNodeFactory
     {
-        public IReflectedHierarchyNode Create(object instance, PropertyInfo property)
+        public virtual IReflectedHierarchyNode Create(object instance, PropertyInfo property)
         {
             if (property.GetIndexParameters().Any())
                 return null; // exclude indexers

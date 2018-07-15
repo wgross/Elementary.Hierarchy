@@ -19,7 +19,7 @@ namespace Elementary.Hierarchy.Reflection
 
         #region IHasChildNodes members
 
-        public bool HasChildNodes => this.ChildPropertyInfos.Any();
+        public bool HasChildNodes => this.ChildNodes.Any();
 
         public IEnumerable<IReflectedHierarchyNode> ChildNodes => this.ChildPropertyInfos.Select(pi => this.nodeFactory.Create(this.NodeValue, pi)).Where(n => n != null);
 

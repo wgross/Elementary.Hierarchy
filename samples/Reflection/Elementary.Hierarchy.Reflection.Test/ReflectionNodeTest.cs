@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Moq;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Xunit;
 
 namespace Elementary.Hierarchy.Reflection.Test
@@ -56,6 +58,28 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         #endregion Map objects to hierarchy root nodes
+
+        #region Node calls factory for child node creation
+
+        [Fact]
+        public void Create_property_child_node_with_factory()
+        {
+            // ARRANGE
+
+            var factory = new Mock<IReflectedHierarchyNodeFactory>();
+            var nodeValue = new { a = 1 };
+            var hierarchyNode = ReflectedHierarchy.Create(nodeValue, factory.Object);
+
+            // ACT
+
+            var result = hierarchyNode.ChildNodes.ToArray();
+
+            // ASSERT
+
+            factory.Verify(f => f.Create(nodeValue, It.Is<PropertyInfo>(pi => pi.Name.Equals("a"))), Times.Once());
+        }
+
+        #endregion Node calls factory for child node creation
 
         #region Map object properties to inner nodes
 

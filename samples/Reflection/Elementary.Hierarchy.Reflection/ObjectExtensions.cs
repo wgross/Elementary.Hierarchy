@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Elementary.Hierarchy.Generic;
 
 namespace Elementary.Hierarchy.Reflection
 {
@@ -8,11 +7,14 @@ namespace Elementary.Hierarchy.Reflection
     {
         public static IDictionary<string, object> FlattenAsDictionary(this object root)
         {
-            var h = ReflectedHierarchy.Create(root);
+            var h = ReflectedHierarchy.Create(root, new FlattedObjectHierarchyNodeFactory());
             var flatted_h = new Dictionary<string, object>();
 
             h.VisitDescendants((path, n) =>
             {
+                if (n.HasChildNodes)
+                    return; // don't add inner nodes to dictionary
+
                 var (success, value) = n.TryGetValue<object>();
                 var pathOfParent = string.Join("/", path.Select(p => p.Id));
 
