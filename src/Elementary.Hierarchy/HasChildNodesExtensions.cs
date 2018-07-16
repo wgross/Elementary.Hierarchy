@@ -284,10 +284,10 @@ namespace Elementary.Hierarchy.Generic
             if (maxDepth.HasValue && maxDepth.Value < 0)
                 throw new ArgumentException("must be > 0", nameof(maxDepth));
 
-            var breadcrumbs = new List<TNode> { startNode };
-            return Enumerable.Concat(new[] { (startNode, Enumerable.Empty<TNode>()) }, depthFirst.GetValueOrDefault(false)
-                ? EnumerateDescendentsAndSelfDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Skip(1).Select(n => (n, (IEnumerable<TNode>)(breadcrumbs.ToArray())))
-                : EnumerateDescendantsAndSelfBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Skip(1).Select(n => (n, (IEnumerable<TNode>)(breadcrumbs.ToArray()))));
+            var breadcrumbs = new List<TNode>();
+            return depthFirst.GetValueOrDefault(false)
+                ? EnumerateDescendentsAndSelfDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Select(n => (n, (IEnumerable<TNode>)(breadcrumbs.ToArray())))
+                : EnumerateDescendantsAndSelfBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Select(n => (n, (IEnumerable<TNode>)(breadcrumbs.ToArray())));
         }
 
         #endregion DescandantsWithPath/-AndSelf
@@ -397,7 +397,10 @@ namespace Elementary.Hierarchy.Generic
 
             Action<List<TNode>, int, TNode> updateBreadcrumbs = delegate { };
             if (breadcrumbs != null)
+            {
                 updateBreadcrumbs = UpdateBreadcrumbs;
+                breadcrumbs.Clear();
+            }
 
             // return start node at level 0
 
@@ -449,7 +452,10 @@ namespace Elementary.Hierarchy.Generic
 
             Action<List<TNode>, int, TNode> updateBreadcrumbs = delegate { };
             if (breadcrumbs != null)
+            {
                 updateBreadcrumbs = UpdateBreadcrumbs;
+                breadcrumbs.Clear();
+            }
 
             // return start node first as 'self'
 
