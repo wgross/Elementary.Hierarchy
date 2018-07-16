@@ -312,6 +312,17 @@ namespace Elementary.Hierarchy.Generic
 
         #endregion Leaves
 
+        #region BreadcrumbsToLeaves
+
+        public static IEnumerable<(IEnumerable<TNode>, TNode)> BreadcrumbsToLeaves<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, int? maxDepth = null)
+        {
+            var breadcrumbs = new List<TNode>();
+            foreach (var node in EnumerateDescendentsAndSelfDepthFirst(startNode, breadcrumbs, maxDepth: maxDepth ?? int.MaxValue, getChildNodes: getChildNodes).Where(n => !getChildNodes(n).Any()))
+                yield return (breadcrumbs.ToArray(), node);
+        }
+
+        #endregion BreadcrumbsToLeaves
+
         #region VisitDescandants/-AndSelf
 
         /// <summary>
@@ -456,6 +467,58 @@ namespace Elementary.Hierarchy.Generic
 
             if (0 < maxDepth)
                 nodesToVisit.Push((level: 1, children: getChildNodes(startNode).GetEnumerator(), node: startNode));
+
+            while (nodesToVisit.Any())
+            {
+                // go to the right or up (or to the first node if the enumeration hasn't started yet)
+
+                while (nodesToVisit.Any() && !nodesToVisit.Peek().Item2.MoveNext())
+                    nodesToVisit.Pop();
+
+                if (!nodesToVisit.Any())
+                    yield break;
+
+                // descend and return current node
+
+                var currentNodeTuple = nodesToVisit.Peek();
+                var currentNodeLevel = currentNodeTuple.Item1;
+                var currentNodeParent = currentNodeTuple.Item3;
+                var currentNode = currentNodeTuple.Item2.Current;
+
+                // enumerate the child nodes of this node during the next step
+
+                if (currentNodeLevel < maxDepth)
+                    nodesToVisit.Push((level: currentNodeLevel + 1, children: getChildNodes(currentNode).GetEnumerator(), node: currentNode));
+
+                // present the current node for enumeration, including an update of the breadcrumbs to the current node
+                updateBreadcrumbs(breadcrumbs, currentNodeLevel, currentNodeParent);
+                yield return currentNode;
+            }
+            yield break;
+        }
+
+        private static IEnumerable<TNode> EnumerateDescendentsAndSelfDepthFirst<TNode>(TNode startNode, List<TNode> breadcrumbs, int maxDepth, Func<TNode, IEnumerable<TNode>> getChildNodes)
+        {
+            // enable the breadcrumb handling if needed
+
+            Action<List<TNode>, int, TNode> updateBreadcrumbs = delegate { };
+            if (breadcrumbs != null)
+                updateBreadcrumbs = UpdateBreadcrumbs;
+
+            // keep a stack with the enumerators in their current enumeration state
+
+            var nodesToVisit = new Stack<(int level, IEnumerator<TNode> children, TNode node)>();
+
+            // children of startNode are pushed with level 1.
+            // descend to children of startNode only if maxDepth is > 0
+
+            if (0 < maxDepth)
+                nodesToVisit.Push((level: 1, children: getChildNodes(startNode).GetEnumerator(), node: startNode));
+
+            // return start node first as 'self'
+            yield return startNode;
+
+            // process with the chhild nodes of the start node
 
             while (nodesToVisit.Any())
             {

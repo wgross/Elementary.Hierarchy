@@ -19,7 +19,7 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ACT
 
-            var result = obj.FlattenAsDictionary();
+            var result = obj.Flatten();
 
             // ASSERT
 
@@ -40,7 +40,7 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ACT
 
-            var result = obj.FlattenAsDictionary();
+            var result = obj.Flatten();
 
             // ASSERT
 
@@ -61,7 +61,7 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ACT
 
-            var result = obj.FlattenAsDictionary();
+            var result = obj.Flatten();
 
             // ASSERT
 
@@ -85,7 +85,7 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ACT
 
-            var result = obj.FlattenAsDictionary();
+            var result = obj.Flatten();
 
             // ASSERT
 

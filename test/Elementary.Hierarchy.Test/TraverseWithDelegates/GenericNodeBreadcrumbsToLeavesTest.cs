@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 {
-    public class GenericNodeLeavesTest
+    public class GenericNodeBreadcrumbsToLeavesTest
     {
         [Fact]
         public void D_empty_root_returns_itself_on_Leaves()
@@ -22,7 +22,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
             // ASSERT
 
             Assert.NotNull(result);
-            Assert.Equal(1, result.Count());
+            Assert.Single(result);
             Assert.Equal("root", result.ElementAt(0));
         }
 
@@ -41,14 +41,14 @@ namespace Elementary.Hierarchy.Test.TraverseWithDelegates
         }
 
         [Fact]
-        public void I_Leaves_are_not_Leaves_if_maxDepth_make_them_to_Leaves()
+        public void D_Leaves_are_not_Leaves_if_maxDepth_makes_them_to_Leaves_on_Leaves()
         {
             // ACT & ASSERT
             // maxDepths doesn craete leaves in the sense of the Leaves algorithm
 
-            Assert.Equal(0, "rootNode".Leaves(DelegateTreeDefinition.GetChildNodes, maxDepth: 0).Count());
-            Assert.Equal(0, "rootNode".Leaves(DelegateTreeDefinition.GetChildNodes, maxDepth: 1).Count());
-            Assert.Equal(0, "rootNode".Leaves(DelegateTreeDefinition.GetChildNodes, maxDepth: 2).Count());
+            Assert.Empty("rootNode".Leaves(DelegateTreeDefinition.GetChildNodes, maxDepth: 0));
+            Assert.Empty("rootNode".Leaves(DelegateTreeDefinition.GetChildNodes, maxDepth: 1));
+            Assert.Empty("rootNode".Leaves(DelegateTreeDefinition.GetChildNodes, maxDepth: 2));
             Assert.Equal(3, "rootNode".Leaves(DelegateTreeDefinition.GetChildNodes, maxDepth: 3).Count());
         }
     }

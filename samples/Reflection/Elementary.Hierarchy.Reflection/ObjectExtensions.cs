@@ -5,7 +5,7 @@ namespace Elementary.Hierarchy.Reflection
 {
     public static class ObjectExtensions
     {
-        public static IDictionary<string, object> FlattenAsDictionary(this object root)
+        public static IDictionary<string, object> Flatten(this object root)
         {
             var h = ReflectedHierarchy.Create(root, new FlattedObjectHierarchyNodeFactory());
             var flatted_h = new Dictionary<string, object>();
