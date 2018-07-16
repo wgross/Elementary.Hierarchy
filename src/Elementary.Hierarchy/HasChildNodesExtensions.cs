@@ -199,15 +199,15 @@ namespace Elementary.Hierarchy.Generic
                 throw new ArgumentException("must be > 0", nameof(maxDepth));
 
             if (depthFirst.GetValueOrDefault(false))
-                return EnumerateDescendentsDepthFirst(startNode,
+                return EnumerateDescendentsAndSelfDepthFirst(startNode,
                     breadcrumbs: null,
                     maxDepth: maxDepth ?? int.MaxValue,
-                    getChildNodes: getChildNodes);
+                    getChildNodes: getChildNodes).Skip(1);
             else // this is the default case:
-                return EnumerateDescendantsBreadthFirst(startNode,
+                return EnumerateDescendantsAndSelfBreadthFirst(startNode,
                     breadcrumbs: null,
                     maxDepth: maxDepth ?? int.MaxValue,
-                    getChildNodes: getChildNodes);
+                    getChildNodes: getChildNodes).Skip(1);
         }
 
         /// <summary>
@@ -263,8 +263,8 @@ namespace Elementary.Hierarchy.Generic
 
             var breadcrumbs = new List<TNode>();
             return depthFirst.GetValueOrDefault(false)
-                ? EnumerateDescendentsDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Select(n => (n, breadcrumbs.ToArray().AsEnumerable()))
-                : EnumerateDescendantsBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Select(n => (n, breadcrumbs.ToArray().AsEnumerable()));
+                ? EnumerateDescendentsAndSelfDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Skip(1).Select(n => (n, breadcrumbs.ToArray().AsEnumerable()))
+                : EnumerateDescendantsAndSelfBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Skip(1).Select(n => (n, breadcrumbs.ToArray().AsEnumerable()));
         }
 
         /// <summary>
@@ -286,8 +286,8 @@ namespace Elementary.Hierarchy.Generic
 
             var breadcrumbs = new List<TNode> { startNode };
             return Enumerable.Concat(new[] { (startNode, Enumerable.Empty<TNode>()) }, depthFirst.GetValueOrDefault(false)
-                ? EnumerateDescendentsDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Select(n => (n, (IEnumerable<TNode>)(breadcrumbs.ToArray())))
-                : EnumerateDescendantsBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Select(n => (n, (IEnumerable<TNode>)(breadcrumbs.ToArray()))));
+                ? EnumerateDescendentsAndSelfDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Skip(1).Select(n => (n, (IEnumerable<TNode>)(breadcrumbs.ToArray())))
+                : EnumerateDescendantsAndSelfBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Skip(1).Select(n => (n, (IEnumerable<TNode>)(breadcrumbs.ToArray()))));
         }
 
         #endregion DescandantsWithPath/-AndSelf
@@ -311,17 +311,6 @@ namespace Elementary.Hierarchy.Generic
         }
 
         #endregion Leaves
-
-        #region BreadcrumbsToLeaves
-
-        public static IEnumerable<(IEnumerable<TNode>, TNode)> BreadcrumbsToLeaves<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, int? maxDepth = null)
-        {
-            var breadcrumbs = new List<TNode>();
-            foreach (var node in EnumerateDescendentsAndSelfDepthFirst(startNode, breadcrumbs, maxDepth: maxDepth ?? int.MaxValue, getChildNodes: getChildNodes).Where(n => !getChildNodes(n).Any()))
-                yield return (breadcrumbs.ToArray(), node);
-        }
-
-        #endregion BreadcrumbsToLeaves
 
         #region VisitDescandants/-AndSelf
 
@@ -354,12 +343,12 @@ namespace Elementary.Hierarchy.Generic
             // and continue with descendants
             if (depthFirst.GetValueOrDefault(false))
             {
-                foreach (var node in EnumerateDescendentsDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren))
+                foreach (var node in EnumerateDescendentsAndSelfDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Skip(1))
                     visitor(breadcrumbs, node);
             }
             else // this is the default case:
             {
-                foreach (var node in EnumerateDescendantsBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren))
+                foreach (var node in EnumerateDescendantsAndSelfBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Skip(1))
                     visitor(breadcrumbs, node);
             }
         }
@@ -388,12 +377,12 @@ namespace Elementary.Hierarchy.Generic
             var breadcrumbs = new List<TNode>();
             if (depthFirst.GetValueOrDefault(false))
             {
-                foreach (var node in EnumerateDescendentsDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren))
+                foreach (var node in EnumerateDescendentsAndSelfDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Skip(1))
                     visitor(breadcrumbs, node);
             }
             else // this is the default case:
             {
-                foreach (var node in EnumerateDescendantsBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren))
+                foreach (var node in EnumerateDescendantsAndSelfBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Skip(1))
                     visitor(breadcrumbs, node);
             }
         }
@@ -402,13 +391,17 @@ namespace Elementary.Hierarchy.Generic
 
         #region Internal implementation of hierarchy traversal
 
-        private static IEnumerable<TNode> EnumerateDescendantsBreadthFirst<TNode>(TNode startNode, List<TNode> breadcrumbs, int maxDepth, Func<TNode, IEnumerable<TNode>> getChildNodes)
+        private static IEnumerable<TNode> EnumerateDescendantsAndSelfBreadthFirst<TNode>(TNode startNode, List<TNode> breadcrumbs, int maxDepth, Func<TNode, IEnumerable<TNode>> getChildNodes)
         {
             // enable the breadcrumb handling if needed
 
             Action<List<TNode>, int, TNode> updateBreadcrumbs = delegate { };
             if (breadcrumbs != null)
                 updateBreadcrumbs = UpdateBreadcrumbs;
+
+            // return start node at level 0
+
+            yield return startNode;
 
             // add the children of the start node to the queue of nodes to vist
 
@@ -450,53 +443,6 @@ namespace Elementary.Hierarchy.Generic
             yield break;
         }
 
-        private static IEnumerable<TNode> EnumerateDescendentsDepthFirst<TNode>(TNode startNode, List<TNode> breadcrumbs, int maxDepth, Func<TNode, IEnumerable<TNode>> getChildNodes)
-        {
-            // enable the breadcrumb handling if needed
-
-            Action<List<TNode>, int, TNode> updateBreadcrumbs = delegate { };
-            if (breadcrumbs != null)
-                updateBreadcrumbs = UpdateBreadcrumbs;
-
-            // keep a stack with the enumerators in their current enumeration state
-
-            var nodesToVisit = new Stack<(int level, IEnumerator<TNode> children, TNode node)>();
-
-            // children of startNode are pushed with level 1.
-            // descend to children of startNode only if maxDepth is > 0
-
-            if (0 < maxDepth)
-                nodesToVisit.Push((level: 1, children: getChildNodes(startNode).GetEnumerator(), node: startNode));
-
-            while (nodesToVisit.Any())
-            {
-                // go to the right or up (or to the first node if the enumeration hasn't started yet)
-
-                while (nodesToVisit.Any() && !nodesToVisit.Peek().Item2.MoveNext())
-                    nodesToVisit.Pop();
-
-                if (!nodesToVisit.Any())
-                    yield break;
-
-                // descend and return current node
-
-                var currentNodeTuple = nodesToVisit.Peek();
-                var currentNodeLevel = currentNodeTuple.Item1;
-                var currentNodeParent = currentNodeTuple.Item3;
-                var currentNode = currentNodeTuple.Item2.Current;
-
-                // enumerate the child nodes of this node during the next step
-
-                if (currentNodeLevel < maxDepth)
-                    nodesToVisit.Push((level: currentNodeLevel + 1, children: getChildNodes(currentNode).GetEnumerator(), node: currentNode));
-
-                // present the current node for enumeration, including an update of the breadcrumbs to the current node
-                updateBreadcrumbs(breadcrumbs, currentNodeLevel, currentNodeParent);
-                yield return currentNode;
-            }
-            yield break;
-        }
-
         private static IEnumerable<TNode> EnumerateDescendentsAndSelfDepthFirst<TNode>(TNode startNode, List<TNode> breadcrumbs, int maxDepth, Func<TNode, IEnumerable<TNode>> getChildNodes)
         {
             // enable the breadcrumb handling if needed
@@ -505,6 +451,10 @@ namespace Elementary.Hierarchy.Generic
             if (breadcrumbs != null)
                 updateBreadcrumbs = UpdateBreadcrumbs;
 
+            // return start node first as 'self'
+
+            yield return startNode;
+
             // keep a stack with the enumerators in their current enumeration state
 
             var nodesToVisit = new Stack<(int level, IEnumerator<TNode> children, TNode node)>();
@@ -514,9 +464,6 @@ namespace Elementary.Hierarchy.Generic
 
             if (0 < maxDepth)
                 nodesToVisit.Push((level: 1, children: getChildNodes(startNode).GetEnumerator(), node: startNode));
-
-            // return start node first as 'self'
-            yield return startNode;
 
             // process with the chhild nodes of the start node
 

@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 {
-    public class GenericNodeBreadcrumbsToLeavesTest
+    public class GenericNodeLeavesTest
     {
         [Fact]
         public void D_empty_root_returns_itself_on_Leaves()
