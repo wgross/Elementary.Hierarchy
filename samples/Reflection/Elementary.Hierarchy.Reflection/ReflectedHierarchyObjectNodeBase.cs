@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -26,7 +27,11 @@ namespace Elementary.Hierarchy.Reflection
 
         public bool HasChildNodes => this.ChildPropertyInfos.Any();
 
-        public IEnumerable<IReflectedHierarchyNode> ChildNodes => this.ChildPropertyInfos.Select(pi => this.nodeFactory.Create(this.instance, pi)).Where(n => n != null);
+        public IEnumerable<IReflectedHierarchyNode> ChildNodes => this
+            .ChildPropertyInfos
+            .OrderBy(pi => pi.Name, StringComparer.OrdinalIgnoreCase)
+            .Select(pi => this.nodeFactory.Create(this.instance, pi))
+            .Where(n => n != null);
 
         #endregion IHasChildNodes members
 

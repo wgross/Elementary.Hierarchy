@@ -21,7 +21,11 @@ namespace Elementary.Hierarchy.Reflection
 
         public bool HasChildNodes => this.ChildNodes.Any();
 
-        public IEnumerable<IReflectedHierarchyNode> ChildNodes => this.ChildPropertyInfos.Select(pi => this.nodeFactory.Create(this.NodeValue, pi)).Where(n => n != null);
+        public IEnumerable<IReflectedHierarchyNode> ChildNodes => this
+            .ChildPropertyInfos
+            .OrderBy(pi => pi.Name, StringComparer.OrdinalIgnoreCase)
+            .Select(pi => this.nodeFactory.Create(this.NodeValue, pi))
+            .Where(n => n != null);
 
         #endregion IHasChildNodes members
 

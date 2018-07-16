@@ -178,6 +178,74 @@ namespace Elementary.Hierarchy.Reflection.Test
             Assert.Equal("Length", result.Single().Id);
         }
 
+        [Fact]
+        public void Sort_property_names_ascending_at_object_node()
+        {
+            // ARRANGE
+
+            var obj1 = new
+            {
+                b = "b",
+                a = 1
+            };
+
+            var obj2 = new
+            {
+                a = 1,
+                b = "b"
+            };
+
+            var hierarchyNode1 = ReflectedHierarchy.Create(obj1);
+            var hierarchyNode2 = ReflectedHierarchy.Create(obj2);
+
+            // ACT
+
+            var result1 = hierarchyNode1.Children().ToArray();
+            var result2 = hierarchyNode2.Children().ToArray();
+
+            // ASSERT
+
+            Assert.Equal(new[] { "a", "b" }, result1.Select(n => n.Id));
+            Assert.Equal(new[] { "a", "b" }, result2.Select(n => n.Id));
+        }
+
+        [Fact]
+        public void Sort_property_names_ascending_at_property_node()
+        {
+            // ARRANGE
+
+            var obj1 = new
+            {
+                property = new
+                {
+                    b = "b",
+                    a = 1
+                }
+            };
+
+            var obj2 = new
+            {
+                property = new
+                {
+                    a = 1,
+                    b = "b"
+                }
+            };
+
+            var hierarchyNode1 = ReflectedHierarchy.Create(obj1);
+            var hierarchyNode2 = ReflectedHierarchy.Create(obj2);
+
+            // ACT
+
+            var result1 = hierarchyNode1.DescendantAt(HierarchyPath.Create("property")).Children().ToArray();
+            var result2 = hierarchyNode2.DescendantAt(HierarchyPath.Create("property")).Children().ToArray();
+
+            // ASSERT
+
+            Assert.Equal(new[] { "a", "b" }, result1.Select(n => n.Id));
+            Assert.Equal(new[] { "a", "b" }, result2.Select(n => n.Id));
+        }
+
         #endregion Map object properties to inner nodes
 
         #region TryGet node by name
