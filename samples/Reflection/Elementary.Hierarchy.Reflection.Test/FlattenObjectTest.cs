@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -19,7 +20,7 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ACT
 
-            var result = obj.Flatten();
+            var result = new Dictionary<string,object>(obj.Flatten());
 
             // ASSERT
 
@@ -40,7 +41,7 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ACT
 
-            var result = obj.Flatten();
+            var result = new Dictionary<string, object>(obj.Flatten());
 
             // ASSERT
 
@@ -61,11 +62,11 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ACT
 
-            var result = obj.Flatten();
+            var result = new Dictionary<string, object>(obj.Flatten());
 
             // ASSERT
 
-            Assert.Equal(1, result.Count);
+            Assert.Single(result);
             Assert.True(result.ContainsKey("/a"));
             Assert.IsType<DateTime>(result.Single().Value);
         }
@@ -85,11 +86,11 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ACT
 
-            var result = obj.Flatten();
+            var result = new Dictionary<string, object>(obj.Flatten());
 
             // ASSERT
 
-            Assert.Equal(1, result.Count);
+            Assert.Single(result);
             Assert.True(result.ContainsKey("/a/b"));
             Assert.IsType<DateTime>(result.Single().Value);
         }
