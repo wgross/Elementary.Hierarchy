@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Elementary.Hierarchy.Reflection
 {
-    public class CompareDeepResult
+    public class DeepCompareResult
     {
         public bool AreEqual => !(this.DifferentValues.Any() || this.DifferentTypes.Any() || this.RightLeafIsMissing.Any() || this.LeftLeafIsMissing.Any());
 

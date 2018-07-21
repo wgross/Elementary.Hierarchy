@@ -1,8 +1,9 @@
-﻿using Xunit;
+﻿using System.Linq;
+using Xunit;
 
 namespace Elementary.Hierarchy.Reflection.Test
 {
-    public class EqualsDeepTest
+    public class DeepCompareTest
     {
         [Fact]
         public void Instances_are_equal()
@@ -21,11 +22,11 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ACT
 
-            var result = left.EqualsDeep(right);
+            var result = left.DeepCompare(right);
 
             // ASSERT
 
-            Assert.True(result);
+            Assert.True(result.AreEqual);
         }
 
         [Fact]
@@ -40,11 +41,11 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ACT
 
-            var result = left.EqualsDeep(left);
+            var result = left.DeepCompare(left);
 
             // ASSERT
 
-            Assert.True(result);
+            Assert.True(result.AreEqual);
         }
 
         [Fact]
@@ -65,13 +66,13 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ACT
 
-            var result1 = left.EqualsDeep(right);
-            var result2 = right.EqualsDeep(left);
+            var result1 = left.DeepCompare(right);
+            var result2 = right.DeepCompare(left);
 
             // ASSERT
 
-            Assert.False(result1);
-            Assert.False(result2);
+            Assert.False(result1.AreEqual);
+            Assert.False(result2.AreEqual);
         }
 
         [Fact]
@@ -91,11 +92,13 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ACT
 
-            var result = left.EqualsDeep(right);
+            var result = left.DeepCompare(right);
 
             // ASSERT
 
-            Assert.False(result);
+            Assert.False(result.AreEqual);
+            Assert.Equal("/a", result.RightLeafIsMissing.Single());
+            Assert.Equal("/b", result.LeftLeafIsMissing.Single());
         }
 
         [Fact]
@@ -115,11 +118,38 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ACT
 
-            var result = left.EqualsDeep(right);
+            var result = left.DeepCompare(right);
 
             // ASSERT
 
-            Assert.False(result);
+            Assert.False(result.AreEqual);
+            Assert.Equal("/a/0", result.LeftLeafIsMissing.Single());
+            Assert.Equal("/a", result.RightLeafIsMissing.Single());
+        }
+
+        [Fact]
+        public void Instances_not_equal_on_different_values()
+        {
+            // ARRANGE
+
+            var left = new
+            {
+                a = "b",
+            };
+
+            var right = new
+            {
+                a = "a"
+            };
+
+            // ACT
+
+            var result = left.DeepCompare(right);
+
+            // ASSERT
+
+            Assert.False(result.AreEqual);
+            Assert.Equal("/a", result.DifferentValues.Single());
         }
     }
 }

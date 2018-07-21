@@ -22,7 +22,7 @@ namespace Elementary.Hierarchy.Reflection
             }
         }
 
-        public static bool EqualsDeep(this object left, object right)
+        public static bool DeepEquals(this object left, object right)
         {
             if (ReferenceEquals(left, right))
                 return true;
@@ -51,20 +51,20 @@ namespace Elementary.Hierarchy.Reflection
             return true;
         }
 
-        public static CompareDeepResult CompareDeep(this object left, object right)
+        public static DeepCompareResult DeepCompare(this object left, object right)
         {
             if (ReferenceEquals(left, right))
-                return new CompareDeepResult();
+                return new DeepCompareResult();
 
             var leftLeafEnumerator = left.Flatten().GetEnumerator();
             var rightLeaves = right.Flatten().ToDictionary(kv => kv.Key);
-            var compareResult = new CompareDeepResult();
+            var compareResult = new DeepCompareResult();
 
             foreach (var leftLeaf in left.Flatten())
             {
                 if (rightLeaves.TryGetValue(leftLeaf.Key, out var rightLeaf))
                 {
-                    CompareDeepLeafPair(leftLeaf, rightLeaf, compareResult);
+                    DeppCompareLeaves(leftLeaf, rightLeaf, compareResult);
                     rightLeaves.Remove(leftLeaf.Key);
                 }
                 else
@@ -81,7 +81,7 @@ namespace Elementary.Hierarchy.Reflection
             });
         }
 
-        private static void CompareDeepLeafPair(KeyValuePair<string, object> leftLeaf, KeyValuePair<string, object> rightLeaf, CompareDeepResult compareResult)
+        private static void DeppCompareLeaves(KeyValuePair<string, object> leftLeaf, KeyValuePair<string, object> rightLeaf, DeepCompareResult compareResult)
         {
             if (!EqualityComparer<Type>.Default.Equals(leftLeaf.Value.GetType(), rightLeaf.Value.GetType()))
                 compareResult.DifferentTypes.Add(leftLeaf.Key);
