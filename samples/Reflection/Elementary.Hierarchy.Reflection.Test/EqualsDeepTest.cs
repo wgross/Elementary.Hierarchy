@@ -2,7 +2,7 @@
 
 namespace Elementary.Hierarchy.Reflection.Test
 {
-    public class CompareObjectTest
+    public class EqualsDeepTest
     {
         [Fact]
         public void Instances_are_equal()
@@ -21,7 +21,26 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ACT
 
-            var result = HierarchicalObjectComparer.Equals(left, right);
+            var result = left.EqualsDeep(right);
+
+            // ASSERT
+
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void Instances_are_equal_for_same_instances()
+        {
+            // ARRANGE
+
+            var left = new
+            {
+                a = "a"
+            };
+
+            // ACT
+
+            var result = left.EqualsDeep(left);
 
             // ASSERT
 
@@ -46,8 +65,8 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ACT
 
-            var result1 = HierarchicalObjectComparer.Equals(left, right);
-            var result2 = HierarchicalObjectComparer.Equals(right, left);
+            var result1 = left.EqualsDeep(right);
+            var result2 = right.EqualsDeep(left);
 
             // ASSERT
 
@@ -72,12 +91,11 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ACT
 
-            var result = HierarchicalObjectComparer.Equals(left, right);
+            var result = left.EqualsDeep(right);
 
             // ASSERT
 
             Assert.False(result);
-
         }
 
         [Fact]
@@ -87,7 +105,7 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             var left = new
             {
-                a = 1,
+                a = new[] { 1 },
             };
 
             var right = new
@@ -97,12 +115,11 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ACT
 
-            var result = HierarchicalObjectComparer.Equals(left, right);
+            var result = left.EqualsDeep(right);
 
             // ASSERT
 
             Assert.False(result);
-
         }
     }
 }
