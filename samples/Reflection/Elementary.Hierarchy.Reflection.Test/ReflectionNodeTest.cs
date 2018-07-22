@@ -66,8 +66,12 @@ namespace Elementary.Hierarchy.Reflection.Test
         {
             // ARRANGE
 
-            var factory = new Mock<IReflectedHierarchyNodeFactory>();
             var nodeValue = new { a = 1 };
+            var factory = new Mock<IReflectedHierarchyNodeFactory>(MockBehavior.Strict);
+            factory
+                .Setup(f => f.Create(nodeValue, It.Is<PropertyInfo>(pi => pi.Name.Equals("a"))))
+                .Returns((IReflectedHierarchyNode)null);
+
             var hierarchyNode = ReflectedHierarchy.Create(nodeValue, factory.Object);
 
             // ACT
@@ -76,7 +80,7 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ASSERT
 
-            factory.Verify(f => f.Create(nodeValue, It.Is<PropertyInfo>(pi => pi.Name.Equals("a"))), Times.Once());
+            factory.VerifyAll();
         }
 
         #endregion Node calls factory for child node creation
@@ -158,6 +162,25 @@ namespace Elementary.Hierarchy.Reflection.Test
             // An array has its items as child nodes
 
             Assert.Equal(2, result.Length);
+        }
+
+        [Fact]
+        public void Create_child_nodes_from_scalar_enumerable_type_property()
+        {
+            // ARRANGE
+
+            var obj = new { property = new List<int> { 1, 2 } };
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
+
+            // ACT
+
+            var result = hierarchyNode.Children().Single().Children().ToArray();
+
+            // ASSERT
+            // An array has its items as child nodes
+
+            Assert.Equal(2, result.Length);
+            Assert.Equal(new[] { "0", "1" }, result.Select(p => p.Id).ToArray());
         }
 
         [Fact]
@@ -304,6 +327,24 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
+        public void Retrieve_enumerable_item_by_index_from_enumerable_node()
+        {
+            // ARRANGE
+
+            var obj = new { property = new List<int> { 1, 2 } };
+            var (_, hierarchyNode) = ReflectedHierarchy.Create(obj).TryGetChildNode("property");
+
+            // ACT
+
+            var (success, result) = hierarchyNode.TryGetChildNode("0");
+
+            // ASSERT
+
+            Assert.True(success);
+            Assert.Equal("0", result.Id);
+        }
+
+        [Fact]
         public void Retrieve_array_item_by_index_from_array_node_fails_on_wrong_index()
         {
             // ARRANGE
@@ -432,7 +473,7 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void Get_array_value_from_property_node()
+        public void Get_array_value_from_array_node()
         {
             // ARRANGE
 
@@ -450,11 +491,47 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void Get_array_item_value_from_property_node()
+        public void Get_list_value_from_enumerable_node()
+        {
+            // ARRANGE
+
+            var obj = new { property = new List<int> { 1, 2 } };
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
+
+            // ACT
+
+            var (success, value) = hierarchyNode.TryGetChildNode("property").Item2.TryGetValue<List<int>>();
+
+            // ASSERT
+
+            Assert.True(success);
+            Assert.Same(obj.property, value);
+        }
+
+        [Fact]
+        public void Get_array_item_value_from_array_node()
         {
             // ARRANGE
 
             var obj = new { property = new[] { 1, 2 } };
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
+
+            // ACT
+
+            var (success, value) = hierarchyNode.TryGetChildNode("property").Item2.TryGetChildNode("1").Item2.TryGetValue<int>();
+
+            // ASSERT
+
+            Assert.True(success);
+            Assert.Equal(2, value);
+        }
+
+        [Fact]
+        public void Get_enumerable_item_value_from_enumerable_node()
+        {
+            // ARRANGE
+
+            var obj = new { property = new List<int> { 1, 2 } };
             var hierarchyNode = ReflectedHierarchy.Create(obj);
 
             // ACT
@@ -504,7 +581,7 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void Get_array_value_as_object_from_property_node()
+        public void Get_array_value_as_object_from_array_node()
         {
             // ARRANGE
 
@@ -522,7 +599,7 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void Get_array_item_value_as_object_from_property_node()
+        public void Get_array_item_value_as_object_from_array_node()
         {
             // ARRANGE
 
@@ -630,7 +707,7 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         [Fact]
-        public void Set_array_value_at_property_node()
+        public void Set_array_value_at_array_node()
         {
             // ARRANGE
 
@@ -640,6 +717,24 @@ namespace Elementary.Hierarchy.Reflection.Test
             // ACT
 
             var success = hierarchyNode.DescendantAt(HierarchyPath.Create("Property")).TrySetValue(new[] { 2 });
+
+            // ASSERT
+
+            Assert.True(success);
+            Assert.Equal(new[] { 2 }, obj.Property);
+        }
+
+        [Fact]
+        public void Set_list_value_at_enumerable_node()
+        {
+            // ARRANGE
+
+            var obj = new ReadWritePropertyParent<List<int>> { Property = new List<int> { 1 } };
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
+
+            // ACT
+
+            var success = hierarchyNode.DescendantAt(HierarchyPath.Create("Property")).TrySetValue(new List<int> { 2 });
 
             // ASSERT
 

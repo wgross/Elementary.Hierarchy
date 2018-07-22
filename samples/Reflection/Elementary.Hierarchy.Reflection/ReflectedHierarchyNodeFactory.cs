@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Linq;
 using System.Reflection;
 
 namespace Elementary.Hierarchy.Reflection
@@ -12,6 +13,10 @@ namespace Elementary.Hierarchy.Reflection
 
             if (property.PropertyType.IsArray)
                 return new ReflectedHierarchyArrayNode(instance, property, this);
+
+            if (property.PropertyType != typeof(string)) // string is also enumerable but is treated like a 'value type'
+                if (property.PropertyType.GetInterface(typeof(IEnumerable).Name) != null)
+                    return new ReflectedEnumerableNode(instance, property, this);
 
             return new ReflectedHierarchyPropertyNode(instance, property, nodeFactory: this);
         }
