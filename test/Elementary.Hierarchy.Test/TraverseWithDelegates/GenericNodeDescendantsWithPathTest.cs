@@ -30,7 +30,7 @@
         {
             // ACT
 
-            var result = "rootNode".DescendantsWithPath(getChildren: this.GetChildNodes, depthFirst: false, maxDepth: null).ToArray();
+            var result = "rootNode".DescendantsWithPath(getChildren: this.GetChildNodes, depthFirst: false, maxDepth: null);
 
             // ASSERT
 
@@ -78,7 +78,7 @@
 
             // ASSERT
 
-            Assert.Equal(1, result.Count());
+            Assert.Single(result);
             Assert.Equal("leftLeaf", result.ElementAt(0).node);
             Assert.Equal(new[] { "leftNode" }, result.ElementAt(0).path);
         }
@@ -103,11 +103,11 @@
         #region DescendantsAndSelfWithPath
 
         [Fact]
-        public void D_Traverse_complete_tree_with_DescendantsAndSelfWithPath()
+        public void D_Traverse_complete_tree_breadthFirst_with_DescendantsAndSelfWithPath()
         {
             // ACT
 
-            var result = "rootNode".DescendantsAndSelfWithPath(getChildren: this.GetChildNodes);
+            var result = "rootNode".DescendantsAndSelfWithPath(getChildren: this.GetChildNodes, depthFirst:false);
 
             // ASSERT
 
@@ -128,7 +128,7 @@
         }
 
         [Fact]
-        public void D_visit_complete_tree_depthFirst_on_DescendantsAndSelfWithPath()
+        public void D_visit_complete_tree_depthFirst_with_DescendantsAndSelfWithPath()
         {
             // ACT
 
