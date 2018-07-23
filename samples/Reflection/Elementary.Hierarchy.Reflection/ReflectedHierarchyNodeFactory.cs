@@ -16,7 +16,7 @@ namespace Elementary.Hierarchy.Reflection
 
             if (property.PropertyType != typeof(string)) // string is also enumerable but is treated like a 'value type'
                 if (property.PropertyType.GetInterface(typeof(IEnumerable).Name) != null)
-                    return new ReflectedEnumerableNode(instance, property, this);
+                    return new ReflectedHierarchyEnumerableNode(instance, property, this);
 
             return new ReflectedHierarchyPropertyNode(instance, property, nodeFactory: this);
         }

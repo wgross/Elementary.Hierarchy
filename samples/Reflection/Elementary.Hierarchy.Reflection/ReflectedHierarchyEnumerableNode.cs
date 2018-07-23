@@ -7,9 +7,9 @@ using System.Reflection;
 
 namespace Elementary.Hierarchy.Reflection
 {
-    internal class ReflectedEnumerableNode : ReflectedPropertyNodeBase, IReflectedHierarchyNode
+    internal class ReflectedHierarchyEnumerableNode : ReflectedPropertyNodeBase, IReflectedHierarchyNode
     {
-        public ReflectedEnumerableNode(object instance, PropertyInfo propertyInfo, ReflectedHierarchyNodeFactory nodeFactory)
+        public ReflectedHierarchyEnumerableNode(object instance, PropertyInfo propertyInfo, ReflectedHierarchyNodeFactory nodeFactory)
             : base(instance, propertyInfo, nodeFactory)
         {
         }
@@ -35,8 +35,14 @@ namespace Elementary.Hierarchy.Reflection
         {
             if (!int.TryParse(id, out var index))
                 return (false, null);
-
-            return (true, this.nodeFactory.Create(((IEnumerable)this.NodeValue).Cast<object>().ElementAt(index), id));
+            try
+            {
+                return (true, this.nodeFactory.Create(((IEnumerable)this.NodeValue).Cast<object>().ElementAt(index), id));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return (false, null);
+            }
         }
 
         #endregion IHasIdentifiableChildNodes

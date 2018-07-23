@@ -378,6 +378,41 @@ namespace Elementary.Hierarchy.Reflection.Test
             Assert.False(success);
         }
 
+        [Fact]
+        public void Retrieve_array_item_by_index_from_enumerable_node_fails_on_wrong_index()
+        {
+            // ARRANGE
+
+            var obj = new { property = new List<int> { 1, 2 } };
+            var (_, hierarchyNode) = ReflectedHierarchy.Create(obj).TryGetChildNode("property");
+
+            // ACT
+
+            var (success, result) = hierarchyNode.TryGetChildNode("2");
+
+            // ASSERT
+
+            Assert.False(success);
+        }
+
+        [Fact]
+        public void Retrieve_array_item_by_index_from_enumerable_node_fails_on_index_not_a_number()
+        {
+            // ARRANGE
+
+            var obj = new { property = new List<int> { 1, 2 } };
+            var (_, hierarchyNode) = ReflectedHierarchy.Create(obj).TryGetChildNode("property");
+
+            // ACT
+
+            var (success, result) = hierarchyNode.TryGetChildNode("number");
+
+            // ASSERT
+
+            Assert.False(success);
+        }
+
+
         #endregion TryGet node by name
 
         #region TryGet value from node
@@ -722,6 +757,24 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             Assert.True(success);
             Assert.Equal(new[] { 2 }, obj.Property);
+        }
+
+        [Fact(Skip ="Requires array item node")]
+        public void Set_array_item_value_at_array_node()
+        {
+            // ARRANGE
+
+            var obj = new ReadWritePropertyParent<int[]> { Property = new[] { 1 } };
+            var hierarchyNode = ReflectedHierarchy.Create(obj);
+
+            // ACT
+
+            var success = hierarchyNode.DescendantAt(HierarchyPath.Create("Property","0")).TrySetValue(2);
+
+            // ASSERT
+
+            Assert.True(success);
+            Assert.Equal(2, obj.Property[0]);
         }
 
         [Fact]
