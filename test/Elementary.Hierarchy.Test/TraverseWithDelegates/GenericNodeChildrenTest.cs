@@ -1,7 +1,7 @@
+using Elementary.Hierarchy.Generic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Elementary.Hierarchy.Generic;
 using Xunit;
 
 namespace Elementary.Hierarchy.Test.TraverseWithDelegates

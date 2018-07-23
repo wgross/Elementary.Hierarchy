@@ -1,7 +1,7 @@
 ﻿namespace Elementary.Hierarchy.Test.SelectWithInterfaces
 {
-    using System.Linq;
     using Moq;
+    using System.Linq;
     using Xunit;
 
     public class HasIdentifiableChildNodesDescendAlongPathTest

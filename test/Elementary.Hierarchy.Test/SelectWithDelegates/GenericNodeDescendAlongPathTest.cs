@@ -1,8 +1,8 @@
 ﻿namespace Elementary.Hierarchy.Test.SelectWithDelegates
 {
+    using Elementary.Hierarchy.Generic;
     using System;
     using System.Linq;
-    using Elementary.Hierarchy.Generic;
     using Xunit;
 
     public class GenericNodeDescendAlongPathTest
@@ -37,15 +37,15 @@
         {
             // ARRANGE
 
-            var nodeHierarchy = (Func<string, string,(bool,string)>)(delegate (string node, string key)
-            {
-                if (node == "startNode" && key == "childNode")
-                {
-                    return (true,"childNode");
-                }
+            var nodeHierarchy = (Func<string, string, (bool, string)>)(delegate (string node, string key)
+              {
+                  if (node == "startNode" && key == "childNode")
+                  {
+                      return (true, "childNode");
+                  }
 
-                throw new InvalidOperationException("unknown node");
-            });
+                  throw new InvalidOperationException("unknown node");
+              });
 
             // ACT
 
@@ -94,7 +94,7 @@
             {
                 if (node == "startNode")
                 {
-                    return (false,null);
+                    return (false, null);
                 }
 
                 throw new InvalidOperationException("unknown node");

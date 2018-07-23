@@ -412,7 +412,6 @@ namespace Elementary.Hierarchy.Reflection.Test
             Assert.False(success);
         }
 
-
         #endregion TryGet node by name
 
         #region TryGet value from node
@@ -685,8 +684,6 @@ namespace Elementary.Hierarchy.Reflection.Test
         }
 
         #endregion TryGet value from node
-
-        
 
         #region Taverse the hierachy
 

@@ -1,7 +1,7 @@
 ﻿namespace Elementary.Hierarchy
 {
-    using System.Collections.Generic;
     using Elementary.Hierarchy.Generic;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Provides extensions to classes implementing <see cref="IHasParentNode{TNode}"/>

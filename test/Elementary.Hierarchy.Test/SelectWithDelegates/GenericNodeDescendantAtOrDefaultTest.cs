@@ -28,10 +28,10 @@ namespace Elementary.Hierarchy.Test.SelectWithDelegates
         {
             // ARRANGE
 
-            var nodeHierarchy = (Func<string, string,(bool,string)>)(delegate (string node, string key)
-            {
-                throw new InvalidOperationException("unknown node");
-            });
+            var nodeHierarchy = (Func<string, string, (bool, string)>)(delegate (string node, string key)
+              {
+                  throw new InvalidOperationException("unknown node");
+              });
 
             // ACT
 
@@ -48,7 +48,6 @@ namespace Elementary.Hierarchy.Test.SelectWithDelegates
         [Fact]
         public void D_returns_grandchild_on_DescendentAtOrDefault()
         {
-
             // ACT
 
             string result1 = "rootNode".DescendantAtOrDefault(DelegateTreeDefinition.TryGetChildNode, HierarchyPath.Create("leftNode", "leftLeaf"));

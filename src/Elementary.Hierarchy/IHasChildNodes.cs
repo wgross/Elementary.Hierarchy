@@ -17,6 +17,5 @@
         /// returns a collection of child nodes.
         /// </summary>
         IEnumerable<TNode> ChildNodes { get; }
-
     }
 }

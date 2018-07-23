@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-
-namespace Elementary.Hierarchy.Reflection
+﻿namespace Elementary.Hierarchy.Reflection
 {
     public abstract class ReflectedNodeBase
     {

@@ -1,8 +1,8 @@
 ﻿namespace Elementary.Hierarchy
 {
+    using Elementary.Hierarchy.Generic;
     using System;
     using System.Collections.Generic;
-    using Elementary.Hierarchy.Generic;
 
     /// <summary>
     /// Provides extensions to the interface <see cref="IHasIdentifiableChildNodes{TKey, TNode}"/>

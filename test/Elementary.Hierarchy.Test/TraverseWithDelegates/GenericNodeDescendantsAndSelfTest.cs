@@ -1,9 +1,9 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseWithDelegates
 {
+    using Elementary.Hierarchy.Generic;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Elementary.Hierarchy.Generic;
     using Xunit;
 
     public class GenericNodeDescendantsAndSelfTest

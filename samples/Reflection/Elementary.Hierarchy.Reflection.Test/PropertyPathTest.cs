@@ -49,7 +49,7 @@ namespace Elementary.Hierarchy.Reflection.Test
 
             // ASSERT>
 
-            Assert.Equal(HierarchyPath.Create("a","0"), result);
+            Assert.Equal(HierarchyPath.Create("a", "0"), result);
         }
     }
 }

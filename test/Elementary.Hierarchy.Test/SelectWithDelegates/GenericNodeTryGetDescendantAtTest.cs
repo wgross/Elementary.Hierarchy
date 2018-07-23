@@ -1,7 +1,7 @@
 ﻿namespace Elementary.Hierarchy.Test.SelectWithDelegates
 {
-    using System;
     using Elementary.Hierarchy.Generic;
+    using System;
     using Xunit;
 
     public class GenericNodeTryGetDescendantAtTest

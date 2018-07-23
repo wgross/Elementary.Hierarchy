@@ -107,7 +107,7 @@
         {
             // ACT
 
-            var result = "rootNode".DescendantsAndSelfWithPath(getChildren: this.GetChildNodes, depthFirst:false);
+            var result = "rootNode".DescendantsAndSelfWithPath(getChildren: this.GetChildNodes, depthFirst: false);
 
             // ASSERT
 

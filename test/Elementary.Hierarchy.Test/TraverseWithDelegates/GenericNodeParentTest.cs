@@ -18,7 +18,7 @@
 
             // ASSERT
 
-            Assert.Contains("has no parent",result.Message);
+            Assert.Contains("has no parent", result.Message);
         }
 
         [Fact]

@@ -111,7 +111,7 @@
         }
 
         #endregion Descendants
-        
+
         #region ToString
 
         [Fact]
@@ -163,7 +163,7 @@
         }
 
         #endregion ToString
-        
+
         #region Join
 
         [Fact]

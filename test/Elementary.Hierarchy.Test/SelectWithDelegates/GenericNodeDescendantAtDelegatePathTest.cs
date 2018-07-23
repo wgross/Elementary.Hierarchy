@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Elementary.Hierarchy.Generic;
 using System.Collections.Generic;
 using System.Linq;
-using Elementary.Hierarchy.Generic;
 using Xunit;
 
 namespace Elementary.Hierarchy.Test.SelectWithDelegates
@@ -41,7 +40,7 @@ namespace Elementary.Hierarchy.Test.SelectWithDelegates
         {
             // ACT
             // provide a child selector and retrieve the child
-            
+
             var result = "rootNode".DescendantAt(DelegateTreeDefinition.GetChildNodes, (c => (true, c.Last())), (c => (true, c.First())));
 
             // ASSERT
