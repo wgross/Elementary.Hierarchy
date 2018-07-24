@@ -98,6 +98,19 @@
             Assert.Equal(new[] { "rightNode" }, result.ElementAt(1).path);
         }
 
+        [Fact]
+        public void D_TraverseWithPath_breaks_on_maxDepth()
+        {
+            // ACT
+
+            var result = "rootNode".DescendantsWithPath(this.GetChildNodes, maxDepth:1);
+            
+            // ASSERT
+
+            Assert.Equal(2, result.Count());
+            Assert.Equal(new[] { "leftNode", "rightNode" }, result.Select(i => i.node));
+        }
+
         #endregion DescendantsWithPath
 
         #region DescendantsAndSelfWithPath
