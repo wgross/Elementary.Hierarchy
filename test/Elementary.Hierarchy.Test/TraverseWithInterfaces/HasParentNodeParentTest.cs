@@ -34,7 +34,7 @@
             startNode.Verify(m => m.HasParentNode, Times.Once());
             startNode.Verify(m => m.ParentNode, Times.Never());
 
-            Assert.Contains("has no parent",result.Message);
+            Assert.Contains("has no parent", result.Message);
         }
 
         [Fact]
@@ -64,10 +64,10 @@
             MockableNodeType result = this.startNode.Object.Parent();
 
             // ASSERT
-            
+
             startNode.Verify(m => m.HasParentNode, Times.Once());
             startNode.Verify(m => m.ParentNode, Times.Once());
-            
+
             Assert.Same(parentOfStartNode.Object, result);
         }
     }

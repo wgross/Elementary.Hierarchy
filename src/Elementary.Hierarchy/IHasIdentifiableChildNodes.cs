@@ -13,6 +13,6 @@
         /// </summary>
         /// <param name="id">unique identifier of a child node</param>
         /// <returns>true if found, false otherwise</returns>
-        (bool,TNode) TryGetChildNode(TKey id);
+        (bool, TNode) TryGetChildNode(TKey id);
     }
 }

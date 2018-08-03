@@ -16,12 +16,12 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
         public HasDescandantNodesLeavesTest()
         {
             //                rootNode
-            //                /     
-            //        leftNode 
+            //                /
+            //        leftNode
 
             this.leftNode = new Mock<MockableNodeType>();
             this.leftNode
-                .Setup(n => n.GetDescendants(It.IsAny<bool>(),It.IsAny<int>()))
+                .Setup(n => n.GetDescendants(It.IsAny<bool>(), It.IsAny<int>()))
                 .Returns((IEnumerable<MockableNodeType>)null);
             this.leftNode
                 .Setup(n => n.HasChildNodes)

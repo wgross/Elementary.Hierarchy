@@ -58,7 +58,6 @@ namespace Elementary.Hierarchy.Test.SelectWithInterfaces
             Assert.Same(startNode.Object, result2);
             Assert.Equal(HierarchyPath.Create<int>(), foundNodePath);
 
-            
             this.startNode.Verify(n => n.TryGetChildNode(1), Times.Never());
         }
 

@@ -1,6 +1,6 @@
+using Moq;
 using System.Collections.Generic;
 using System.Linq;
-using Moq;
 using Xunit;
 
 namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
@@ -66,19 +66,19 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
             this.leftNode.Verify(r => r.ChildNodes, Times.Never());
         }
 
-        [Fact] 
+        [Fact]
         public void IHasChildNodes_converts_null_to_empty_collection_on_Children()
         {
             // ARRANGE
             // make a inconsisstent mockup
-            
+
             var node = new Mock<MockableNodeType>();
             node.Setup(n => n.HasChildNodes).Returns(true);
             node.Setup(n => n.ChildNodes).Returns((IEnumerable<MockableNodeType>)null);
 
             // ACT
             // ask for children
-            
+
             var result = node.Object.Children();
 
             // ASSERT

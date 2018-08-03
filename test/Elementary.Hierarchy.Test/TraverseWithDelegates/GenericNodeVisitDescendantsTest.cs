@@ -32,7 +32,7 @@
             // ACT
 
             var result = new List<Tuple<List<string>, string>>();
-            "rootNode".VisitDescendants(this.GetChildNodes, (b, n) => result.Add(Tuple.Create(b.ToList(), n)));
+            "rootNode".VisitDescendants(getChildren: this.GetChildNodes, visitor: (b, n) => result.Add(Tuple.Create(b.ToList(), n)));
 
             // ASSERT
 
@@ -51,7 +51,7 @@
             // ACT
 
             var result = new List<Tuple<List<string>, string>>();
-            "rootNode".VisitDescendants(this.GetChildNodes, (b, n) => result.Add(Tuple.Create(b.ToList(), n)), depthFirst: true);
+            "rootNode".VisitDescendants(getChildren: this.GetChildNodes, visitor: (b, n) => result.Add(Tuple.Create(b.ToList(), n)), depthFirst: true);
 
             // ASSERT
 

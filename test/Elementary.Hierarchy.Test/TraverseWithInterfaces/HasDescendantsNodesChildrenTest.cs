@@ -1,5 +1,5 @@
-using System.Linq;
 using Moq;
+using System.Linq;
 using Xunit;
 
 namespace Elementary.Hierarchy.Test
@@ -15,7 +15,6 @@ namespace Elementary.Hierarchy.Test
 
         public HasDescendantsNodesChildrenTest()
         {
-
             this.leftNode = new Mock<MockableNodeType>();
             this.rootNode = new Mock<MockableNodeType>();
             this.rootNode

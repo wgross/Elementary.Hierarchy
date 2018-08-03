@@ -247,7 +247,7 @@ namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
                 .Returns(new[] { this.leftNode.Object, this.rightNode.Object });
 
             // ACT
-            // 
+            //
 
             var descendants = this.rootNode.Object.Descendants(maxDepth: 1).ToArray();
 

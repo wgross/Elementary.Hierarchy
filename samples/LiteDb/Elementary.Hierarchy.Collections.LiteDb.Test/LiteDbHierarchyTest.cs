@@ -211,7 +211,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test
 
             var arrangeRootDoc = this.nodes.FindOne(Query.EQ("key", null));
             arrangeRootDoc.TryGetValue("_id", out var arrangeRootDocId);
-            var arrangeChildDocId = arrangeRootDoc.Get("cn").AsDocument.Get("a").AsObjectId;
+            var arrangeChildDocId = arrangeRootDoc.Get("cn").Single().AsDocument.Get("a").Single().AsObjectId;
             var arrangeChildDoc = this.nodes.FindById(arrangeChildDocId);
 
             // ACT
@@ -233,7 +233,7 @@ namespace Elementary.Hierarchy.Collections.LiteDb.Test
             Assert.True(rootDoc.TryGetValue("_id", out var rootDocId));
             Assert.NotEqual(arrangeRootDocId, rootDocId);
             Assert.False(rootDoc.TryGetValue("value", out var rootDocValue));
-            Assert.Equal(BsonValue.Null, rootDoc.Get("cn"));
+            Assert.Equal(BsonValue.Null, rootDoc.Get("cn").Single());
             Assert.Null(this.nodes.FindById(arrangeChildDocId));
         }
     }

@@ -21,10 +21,10 @@
         {
             if (pathItems == null)
                 throw new ArgumentNullException(nameof(pathItems));
-            
+
             return new HierarchyPath<T>(pathItems.ToArray());
         }
-        
+
         /// <summary>
         /// Creates a HierarchyPath<typeparamref name="T"/> instance. T is derived from the type of the path items
         /// specified by pathItems.

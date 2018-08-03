@@ -79,7 +79,7 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="startNode">reference to the node to start from</param>
         /// <param name="getChildren">Delegate to retrieve a nodes children</param>
         /// <param name="tryGetParent">Delegate to retrieve a nodes parent</param>
-        public static IEnumerable<TNode> FollowingSiblings<TNode>(this TNode startNode, Func<TNode,(bool,TNode)> tryGetParent, Func<TNode, IEnumerable<TNode>> getChildren)
+        public static IEnumerable<TNode> FollowingSiblings<TNode>(this TNode startNode, Func<TNode, (bool, TNode)> tryGetParent, Func<TNode, IEnumerable<TNode>> getChildren)
         {
             if (tryGetParent == null)
                 throw new ArgumentNullException(nameof(tryGetParent));
@@ -88,8 +88,8 @@ namespace Elementary.Hierarchy.Generic
                 throw new ArgumentNullException(nameof(getChildren));
 
             // if there is no parnet node, no sbilings are enumerated.
-            var (found,parentNode) = tryGetParent(startNode);
-            if(found)
+            var (found, parentNode) = tryGetParent(startNode);
+            if (found)
                 return getChildren(parentNode).SkipWhile(n => !n.Equals(startNode)).Skip(1);
 
             return Enumerable.Empty<TNode>();
@@ -107,7 +107,7 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="startNode">reference to the node to start from</param>
         /// <param name="getChildren">Delegate to retrieve a nodes children</param>
         /// <param name="tryGetParent">Delegate to retrieve a nodes parent</param>
-        public static IEnumerable<TNode> PrecedingSiblings<TNode>(this TNode startNode, Func<TNode,(bool,TNode)> tryGetParent, Func<TNode, IEnumerable<TNode>> getChildren)
+        public static IEnumerable<TNode> PrecedingSiblings<TNode>(this TNode startNode, Func<TNode, (bool, TNode)> tryGetParent, Func<TNode, IEnumerable<TNode>> getChildren)
         {
             if (tryGetParent == null)
                 throw new ArgumentNullException(nameof(tryGetParent));
@@ -117,7 +117,7 @@ namespace Elementary.Hierarchy.Generic
 
             // if there is no parnet node, no sbilings are enumerated.
             var (found, parentNode) = tryGetParent(startNode);
-            if(found)
+            if (found)
                 return getChildren(parentNode).TakeWhile(n => !n.Equals(startNode));
 
             return Enumerable.Empty<TNode>();

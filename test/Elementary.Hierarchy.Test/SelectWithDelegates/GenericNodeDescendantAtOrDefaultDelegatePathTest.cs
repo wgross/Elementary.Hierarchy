@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Elementary.Hierarchy.Generic;
 using System.Linq;
-using Elementary.Hierarchy.Generic;
 using Xunit;
 
 namespace Elementary.Hierarchy.Test.SelectWithDelegates

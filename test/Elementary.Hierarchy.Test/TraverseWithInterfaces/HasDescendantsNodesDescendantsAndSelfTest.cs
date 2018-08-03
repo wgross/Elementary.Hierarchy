@@ -261,7 +261,6 @@
             // ACT
 
             var descendantsAndSelf = this.rootNode.Object.DescendantsAndSelf(maxDepth: 2).Skip(1).ToArray();
-            
 
             // ASSERT
 
