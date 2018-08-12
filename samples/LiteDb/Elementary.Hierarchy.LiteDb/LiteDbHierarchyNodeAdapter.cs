@@ -1,4 +1,5 @@
 ﻿using LiteDB;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,19 +29,34 @@ namespace Elementary.Hierarchy.LiteDb
 
         public LiteDbHierarchyNodeAdapter AddChildNode(string key)
         {
+            if (this.InnerNodeChildNodes.ContainsKey(key))
+            {
+                throw new InvalidOperationException($"Duplicate child node(key='{key}') under parent node(id='{this.InnerNode._Id}') was rejected.");
+            }
+
             var child = new LiteDbHierarchyNodeAdapter(this.repository, new LiteDbHierarchyNode { Key = key });
             var (inserted, childId) = this.repository.TryInsert(child.InnerNode);
+
             this.InnerNode._ChildNodeIds[key] = childId;
             this.repository.Update(this.InnerNode);
             this.childNodes.Add(child);
             return child;
         }
 
-        public bool RemoveChildNode(LiteDbHierarchyNodeAdapter child)
+        public bool RemoveChildNode(string key)
         {
-            if (this.InnerNodeChildNodes.Remove(child.Key))
-                if (this.childNodes.Remove(child))
+            // remove child node from db
+            if (this.InnerNodeChildNodes.TryGetValue(key, out var childNodeId) && this.repository.Remove(childNodeId))
+                // update parent node
+                if (this.InnerNodeChildNodes.Remove(key) && this.repository.Update(this.InnerNode))
+                {
+                    // cleanup cached transient data
+                    var childNode = this.childNodes.SingleOrDefault(c => c.Key.Equals(key));
+                    if (childNode != null)
+                        this.childNodes.Remove(childNode);
                     return true;
+                }
+
             return false;
         }
     }

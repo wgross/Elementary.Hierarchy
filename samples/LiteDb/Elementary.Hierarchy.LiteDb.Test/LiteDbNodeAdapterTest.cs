@@ -39,7 +39,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
         public void LiteDbHierarchyNodeAdapter_adds_new_node_as_child()
         {
             // ARRANGE
-            // node node mast be added
+            // node node must be added
             this.repository
                 .Setup(r => r.TryInsert(It.IsAny<LiteDbHierarchyNode>()))
                 .Returns((true, new BsonValue("id")));
@@ -63,27 +63,86 @@ namespace Elementary.Hierarchy.LiteDb.Test
             Assert.Equal("child", result.Key);
         }
 
-        //[Fact]
-        //public void LiteDbHierarchyNodeAdapter_adding_new_node_as_child_throws_on_duplicate_id()
-        //{
-        //    // ARRANGE
+        [Fact]
+        public void LiteDbHierarchyNodeAdapter_adding_new_node_as_child_throws_on_duplicate_id()
+        {
+            // ARRANGE
+            // node node must be added
+            this.repository
+                .Setup(r => r.TryInsert(It.IsAny<LiteDbHierarchyNode>()))
+                .Callback<LiteDbHierarchyNode>(r => r._Id = ObjectId.NewObjectId())
+                .Returns((true, new BsonValue("id")));
+            // parent node must be updated
+            this.repository
+                .Setup(r => r.Update(this.root.InnerNode))
+                .Returns(true);
 
-        //    var child1 = new LiteDbHierarchyNodeAdapter("child", new BsonDocument());
-        //    var node = new LiteDbHierarchyNodeAdapter(string.Empty, new BsonDocument());
-        //    node.AddChildNode(child1);
+            var child = this.root.AddChildNode(key: "child");
 
-        //    var child2 = new LiteDbHierarchyNodeAdapter("child", new BsonDocument());
+            // ACT
 
-        //    // ACT
+            var result = Assert.Throws<InvalidOperationException>(() => this.root.AddChildNode(key: "child"));
 
-        //    var result = Assert.Throws<InvalidOperationException>(() => node.AddChildNode(child2));
+            // ASSERT
 
-        //    // ASSERT
+            Assert.Equal($"Duplicate child node(key='child') under parent node(id='{this.root.InnerNode._Id}') was rejected.", result.Message);
+        }
 
-        //    Assert.Equal("duplicate key: 'child'", result.Message);
-        //    Assert.Same(child1, node.ChildNodes.Single());
-        //    Assert.Equal(BsonValue.Null, node.InnerNode["cn"].AsDocument["child"]);
-        //}
+        [Fact]
+        public void LiteDbHierarchyNodeAdapter_removes_child_node()
+        {
+            // ARRANGE
+            // node node must be added
+            var childId = ObjectId.NewObjectId();
+            this.repository
+                .Setup(r => r.TryInsert(It.IsAny<LiteDbHierarchyNode>()))
+                .Callback<LiteDbHierarchyNode>(n => n._Id = childId)
+                .Returns((true, childId));
+            // parent node must be updated
+            this.repository
+                .Setup(r => r.Update(this.root.InnerNode))
+                .Returns(true);
+            
+            var childNode = this.root.AddChildNode(key: "child");
+
+            // child was deleted 
+            this.repository
+                .Setup(r => r.Remove(childNode.InnerNode._Id))
+                .Returns(true);
+
+
+            // ACT
+
+            var result = this.root.RemoveChildNode(key: "child");
+
+            // ASSERT
+
+            this.repository.Verify(r => r.Update(this.root.InnerNode), Times.Exactly(2));
+            
+            Assert.True(result);
+            // root has now a child
+            Assert.False(this.root.HasChildNodes);
+            Assert.Empty(this.root.ChildNodes);
+            // root referebces the child node
+            Assert.Empty(this.root.InnerNode._ChildNodeIds);
+        }
+
+        [Fact]
+        public void LiteDbHierarchyNodeAdapter_removing_child_node_returns_false_on_unknown_child()
+        {
+            // ACT
+
+            var result = this.root.RemoveChildNode(key: "child");
+
+            // ASSERT
+
+            Assert.False(result);
+            // root has now a child
+            Assert.False(this.root.HasChildNodes);
+            Assert.Empty(this.root.ChildNodes);
+            // root referebces the child node
+            Assert.Empty(this.root.InnerNode._ChildNodeIds);
+        }
 
         //[Fact]
         //public void LiteDbHierarchyNodeAdapter_removes_child_node()

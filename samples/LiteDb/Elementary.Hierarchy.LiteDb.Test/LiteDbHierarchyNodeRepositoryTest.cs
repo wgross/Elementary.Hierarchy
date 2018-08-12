@@ -62,27 +62,6 @@ namespace Elementary.Hierarchy.LiteDb.Test
         }
 
         [Fact]
-        public void LiteDbHierarchyNodeRepository_inserting_a_new_node_fails_with_duplicate_key()
-        {
-            // ARRANGE
-
-            var node1 = new LiteDbHierarchyNode { Key = "node_key" };
-            var (_, node1Id) = this.repository.TryInsert(node1);
-
-            // ACT
-
-            var node2 = new LiteDbHierarchyNode { Key = "node_key" };
-            var (result, _) = this.repository.TryInsert(node1);
-
-            // ASSERT
-            // insert failed
-            Assert.False(result);
-            // node is still in db
-            var nodeFromDb = this.nodes.FindById(node1Id);
-            Assert.NotNull(nodeFromDb);
-        }
-
-        [Fact]
         public void LiteDbHierarchyNodeRepository_updates_an_existing_node()
         {
             // ARRANGE
@@ -103,33 +82,6 @@ namespace Elementary.Hierarchy.LiteDb.Test
             Assert.NotNull(nodeFromDb);
             Assert.Equal("new_key", nodeFromDb.AsDocument[nameof(LiteDbHierarchyNode.Key)]);
             Assert.Equal("child_id", nodeFromDb.AsDocument["_cn"].AsDocument["child_key"].AsString);
-        }
-
-        [Fact]
-        public void LiteDbHierarchyNodeRepository_updating_an_existing_node_fails_on_duplicate_key()
-        {
-            // ARRANGE
-
-            var node1 = new LiteDbHierarchyNode { Key = "key1" };
-            var (_, node1Id) = this.repository.TryInsert(node1);
-
-            var node2 = new LiteDbHierarchyNode { Key = "key2" };
-            var (_, node2Id) = this.repository.TryInsert(node2);
-
-            // ACT
-
-            node2.Key = "key1";
-            var result = this.repository.Update(node2);
-
-            // ASSERT
-            // node isn't modified in db
-            Assert.False(result);
-
-            var node1FromDb = this.nodes.FindById(node1Id);
-            Assert.Equal("key1", node1FromDb.AsDocument[nameof(LiteDbHierarchyNode.Key)]);
-
-            var node2FromDb = this.nodes.FindById(node2Id);
-            Assert.Equal("key2", node2FromDb.AsDocument[nameof(LiteDbHierarchyNode.Key)]);
         }
     }
 }

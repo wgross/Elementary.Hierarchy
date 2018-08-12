@@ -9,6 +9,7 @@ namespace Elementary.Hierarchy.LiteDb
         (bool, BsonValue) TryInsert(LiteDbHierarchyNode node);
 
         bool Update(LiteDbHierarchyNode liteDbHierarchyNode);
+        bool Remove(BsonValue nodeId);
     }
 
     public class LiteDbHierarchyNodeRepository : ILiteDbHierarchyNodeRepository
@@ -27,7 +28,7 @@ namespace Elementary.Hierarchy.LiteDb
         public LiteDbHierarchyNodeRepository(LiteDatabase database, string collectionName)
         {
             this.collection = database.GetCollection<LiteDbHierarchyNode>(collectionName);
-            this.collection.EnsureIndex(n => n.Key, unique: true);
+            this.collection.EnsureIndex(n => n._Id, unique: true);
 
             if (this.Root == null)
                 this.collection.Insert(new LiteDbHierarchyNode { Key = null });
@@ -57,6 +58,11 @@ namespace Elementary.Hierarchy.LiteDb
             {
                 return false;
             }
+        }
+
+        public bool Remove(BsonValue nodeId)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
