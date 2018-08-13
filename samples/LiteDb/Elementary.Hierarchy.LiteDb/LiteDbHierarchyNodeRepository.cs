@@ -4,39 +4,43 @@ namespace Elementary.Hierarchy.LiteDb
 {
     public interface ILiteDbHierarchyNodeRepository
     {
-        LiteDbHierarchyNode Root { get; }
+        LiteDbHierarchyNodeEntity Root { get; }
 
-        (bool, BsonValue) TryInsert(LiteDbHierarchyNode node);
+        (bool, BsonValue) TryInsert(LiteDbHierarchyNodeEntity node);
 
-        bool Update(LiteDbHierarchyNode liteDbHierarchyNode);
+        bool Update(LiteDbHierarchyNodeEntity liteDbHierarchyNode);
+
         bool Remove(BsonValue nodeId);
+
+        LiteDbHierarchyNodeEntity Read(BsonValue nodeId);
+
     }
 
     public class LiteDbHierarchyNodeRepository : ILiteDbHierarchyNodeRepository
     {
         static LiteDbHierarchyNodeRepository()
         {
-            BsonMapper.Global.Entity<LiteDbHierarchyNode>()
+            BsonMapper.Global.Entity<LiteDbHierarchyNodeEntity>()
                 .Id(n => n._Id)
-                .Field(n => n._ChildNodeIds, "_cn")
+                .Field(n => n.ChildNodeIds, "_cn")
                 .Ignore(n => n.HasChildNodes)
                 .Ignore(n => n.ChildNodes);
         }
 
-        private readonly LiteCollection<LiteDbHierarchyNode> collection;
+        private readonly LiteCollection<LiteDbHierarchyNodeEntity> collection;
 
         public LiteDbHierarchyNodeRepository(LiteDatabase database, string collectionName)
         {
-            this.collection = database.GetCollection<LiteDbHierarchyNode>(collectionName);
+            this.collection = database.GetCollection<LiteDbHierarchyNodeEntity>(collectionName);
             this.collection.EnsureIndex(n => n._Id, unique: true);
 
             if (this.Root == null)
-                this.collection.Insert(new LiteDbHierarchyNode { Key = null });
+                this.collection.Insert(new LiteDbHierarchyNodeEntity { Key = null });
         }
 
-        public LiteDbHierarchyNode Root => this.collection.FindOne(n => n.Key == null);
+        public LiteDbHierarchyNodeEntity Root => this.collection.FindOne(n => n.Key == null);
 
-        public (bool, BsonValue) TryInsert(LiteDbHierarchyNode node)
+        public (bool, BsonValue) TryInsert(LiteDbHierarchyNodeEntity node)
         {
             try
             {
@@ -48,21 +52,10 @@ namespace Elementary.Hierarchy.LiteDb
             }
         }
 
-        public bool Update(LiteDbHierarchyNode liteDbHierarchyNode)
-        {
-            try
-            {
-                return this.collection.Update(liteDbHierarchyNode);
-            }
-            catch (LiteException ex) when (ex.ErrorCode == 110)
-            {
-                return false;
-            }
-        }
+        public bool Update(LiteDbHierarchyNodeEntity liteDbHierarchyNode) => this.collection.Update(liteDbHierarchyNode);
 
-        public bool Remove(BsonValue nodeId)
-        {
-            throw new System.NotImplementedException();
-        }
+        public bool Remove(BsonValue nodeId) => this.collection.Delete(nodeId);
+
+        public LiteDbHierarchyNodeEntity Read(BsonValue nodeId) => this.collection.FindById(nodeId);
     }
 }

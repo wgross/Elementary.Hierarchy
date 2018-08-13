@@ -40,11 +40,11 @@ namespace Elementary.Hierarchy.LiteDb.Test
         }
 
         [Fact]
-        public void LiteDbHierarchyNodeRepository_inserts_a_new_node()
+        public void LiteDbHierarchyNodeRepository_creates_a_new_node()
         {
             // ARRANGE
 
-            var node = new LiteDbHierarchyNode { Key = "node_key" };
+            var node = new LiteDbHierarchyNodeEntity { Key = "node_key" };
 
             // ACT
 
@@ -58,7 +58,26 @@ namespace Elementary.Hierarchy.LiteDb.Test
             var nodeFromDb = this.nodes.FindById(resultId);
 
             Assert.NotNull(nodeFromDb);
-            Assert.Equal("node_key", nodeFromDb.AsDocument[nameof(LiteDbHierarchyNode.Key)]);
+            Assert.Equal("node_key", nodeFromDb.AsDocument[nameof(LiteDbHierarchyNodeEntity.Key)]);
+        }
+
+        [Fact]
+        private void LiteDbHierarchyNodeRepository_reads_an_existing_node()
+        {
+            // ARRANGE
+
+            var node = new LiteDbHierarchyNodeEntity { Key = "key" };
+            var (_, nodeId) = this.repository.TryInsert(node);
+
+            // ACT
+
+            var result = this.repository.Read(nodeId);
+
+            // ASSERT
+
+            Assert.Equal(node._Id, result._Id);
+            Assert.NotSame(node, result);
+
         }
 
         [Fact]
@@ -66,11 +85,11 @@ namespace Elementary.Hierarchy.LiteDb.Test
         {
             // ARRANGE
 
-            var node = new LiteDbHierarchyNode { Key = "key" };
+            var node = new LiteDbHierarchyNodeEntity { Key = "key" };
             var (_, nodeId) = this.repository.TryInsert(node);
 
             node.Key = "new_key";
-            node._ChildNodeIds["child_key"] = "child_id";
+            node.ChildNodeIds["child_key"] = "child_id";
 
             // ACT
 
@@ -80,8 +99,25 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // node is modified in db
             var nodeFromDb = this.nodes.FindById(nodeId);
             Assert.NotNull(nodeFromDb);
-            Assert.Equal("new_key", nodeFromDb.AsDocument[nameof(LiteDbHierarchyNode.Key)]);
+            Assert.Equal("new_key", nodeFromDb.AsDocument[nameof(LiteDbHierarchyNodeEntity.Key)]);
             Assert.Equal("child_id", nodeFromDb.AsDocument["_cn"].AsDocument["child_key"].AsString);
+        }
+
+        [Fact]
+        public void LiteDbHierarchyNodeRepository_deletes_an_existing_node()
+        {
+            // ARRANGE
+
+            var node = new LiteDbHierarchyNodeEntity { Key = "key" };
+            var (_, nodeId) = this.repository.TryInsert(node);
+
+            // ACT
+
+            this.repository.Remove(nodeId);
+
+            // ASSERT
+            // node is removed from db
+            Assert.Null(this.nodes.FindById(nodeId));
         }
     }
 }

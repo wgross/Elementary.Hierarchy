@@ -6,18 +6,18 @@ using Xunit;
 
 namespace Elementary.Hierarchy.LiteDb.Test
 {
-    public class LiteDbHierarchyNodeAdapterTest : IDisposable
+    public class LiteDbHierarchyNodeTest : IDisposable
     {
         private readonly MockRepository mocks = new MockRepository(MockBehavior.Strict);
         private readonly Mock<ILiteDbHierarchyNodeRepository> repository;
-        private LiteDbHierarchyNodeAdapter root;
-        private LiteCollection<LiteDbHierarchyNode> nodes;
+        private LiteDbHierarchyNode root;
+        private LiteCollection<LiteDbHierarchyNodeEntity> nodes;
 
-        public LiteDbHierarchyNodeAdapterTest()
+        public LiteDbHierarchyNodeTest()
         {
             this.repository = this.mocks.Create<ILiteDbHierarchyNodeRepository>();
-            this.repository.Setup(r => r.Root).Returns(new LiteDbHierarchyNode());
-            this.root = new LiteDbHierarchyNodeAdapter(this.repository.Object, this.repository.Object.Root);
+            this.repository.Setup(r => r.Root).Returns(new LiteDbHierarchyNodeEntity());
+            this.root = new LiteDbHierarchyNode(this.repository.Object, this.repository.Object.Root);
         }
 
         public void Dispose()
@@ -26,7 +26,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
         }
 
         [Fact]
-        public void LiteDbHierarchyNodeAdapter_has_no_child_nodes_when_empty()
+        public void LiteDbHierarchyNode_has_no_child_nodes_when_empty()
         {
             // ASSERT
 
@@ -36,17 +36,22 @@ namespace Elementary.Hierarchy.LiteDb.Test
         }
 
         [Fact]
-        public void LiteDbHierarchyNodeAdapter_adds_new_node_as_child()
+        public void LiteDbHierarchyNode_adds_new_node_as_child()
         {
             // ARRANGE
+            var childId = ObjectId.NewObjectId();
             // node node must be added
             this.repository
-                .Setup(r => r.TryInsert(It.IsAny<LiteDbHierarchyNode>()))
-                .Returns((true, new BsonValue("id")));
+                .Setup(r => r.TryInsert(It.IsAny<LiteDbHierarchyNodeEntity>()))
+                .Returns((true, childId));
             // parent node must be updated
             this.repository
                 .Setup(r => r.Update(this.root.InnerNode))
                 .Returns(true);
+            // child is read from repo
+            this.repository
+                .Setup(r => r.Read(childId))
+                .Returns(new LiteDbHierarchyNodeEntity { _Id = childId, Key = "child" });
 
             // ACT
 
@@ -55,23 +60,24 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // ASSERT
             // root has now a child
             Assert.True(this.root.HasChildNodes);
-            Assert.Same(result, this.root.ChildNodes.Single());
-            // root referebces the child node
-            Assert.Equal(new BsonValue("id"), this.root.InnerNode._ChildNodeIds["child"]);
+            Assert.Equal(childId, this.root.ChildNodes.Single().InnerNode._Id);
+            // root references the child node
+            Assert.Equal<BsonValue>(childId, this.root.InnerNode.ChildNodeIds["child"]);
             // the child has no children
             Assert.False(result.HasChildNodes);
             Assert.Equal("child", result.Key);
         }
 
         [Fact]
-        public void LiteDbHierarchyNodeAdapter_adding_new_node_as_child_throws_on_duplicate_id()
+        public void LiteDbHierarchyNode_adding_new_node_as_child_throws_on_duplicate_id()
         {
             // ARRANGE
+            var childId = ObjectId.NewObjectId();
             // node node must be added
             this.repository
-                .Setup(r => r.TryInsert(It.IsAny<LiteDbHierarchyNode>()))
-                .Callback<LiteDbHierarchyNode>(r => r._Id = ObjectId.NewObjectId())
-                .Returns((true, new BsonValue("id")));
+                .Setup(r => r.TryInsert(It.IsAny<LiteDbHierarchyNodeEntity>()))
+                .Callback<LiteDbHierarchyNodeEntity>(r => r._Id = childId)
+                .Returns((true, childId));
             // parent node must be updated
             this.repository
                 .Setup(r => r.Update(this.root.InnerNode))
@@ -89,27 +95,48 @@ namespace Elementary.Hierarchy.LiteDb.Test
         }
 
         [Fact]
-        public void LiteDbHierarchyNodeAdapter_removes_child_node()
+        public void LiteDbHierarchyNode_reads_child_nodes()
+        {
+            // ARRANGE
+
+            var childId = ObjectId.NewObjectId();
+
+            this.repository
+                .Setup(r => r.Read(childId))
+                .Returns(new LiteDbHierarchyNodeEntity() { _Id = childId });
+
+            this.root.InnerNode.ChildNodeIds.Add("child", childId);
+
+            // ACT
+
+            var result = this.root.ChildNodes.ToArray();
+
+            // ASSERT
+
+            Assert.Single(result);
+        }
+
+        [Fact]
+        public void LiteDbHierarchyNode_removes_child_node()
         {
             // ARRANGE
             // node node must be added
             var childId = ObjectId.NewObjectId();
             this.repository
-                .Setup(r => r.TryInsert(It.IsAny<LiteDbHierarchyNode>()))
-                .Callback<LiteDbHierarchyNode>(n => n._Id = childId)
+                .Setup(r => r.TryInsert(It.IsAny<LiteDbHierarchyNodeEntity>()))
+                .Callback<LiteDbHierarchyNodeEntity>(n => n._Id = childId)
                 .Returns((true, childId));
             // parent node must be updated
             this.repository
                 .Setup(r => r.Update(this.root.InnerNode))
                 .Returns(true);
-            
+
             var childNode = this.root.AddChildNode(key: "child");
 
-            // child was deleted 
+            // child was deleted
             this.repository
                 .Setup(r => r.Remove(childNode.InnerNode._Id))
                 .Returns(true);
-
 
             // ACT
 
@@ -118,17 +145,17 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // ASSERT
 
             this.repository.Verify(r => r.Update(this.root.InnerNode), Times.Exactly(2));
-            
+
             Assert.True(result);
             // root has now a child
             Assert.False(this.root.HasChildNodes);
             Assert.Empty(this.root.ChildNodes);
             // root referebces the child node
-            Assert.Empty(this.root.InnerNode._ChildNodeIds);
+            Assert.Empty(this.root.InnerNode.ChildNodeIds);
         }
 
         [Fact]
-        public void LiteDbHierarchyNodeAdapter_removing_child_node_returns_false_on_unknown_child()
+        public void LiteDbHierarchyNode_removing_child_node_returns_false_on_unknown_child()
         {
             // ACT
 
@@ -141,48 +168,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
             Assert.False(this.root.HasChildNodes);
             Assert.Empty(this.root.ChildNodes);
             // root referebces the child node
-            Assert.Empty(this.root.InnerNode._ChildNodeIds);
+            Assert.Empty(this.root.InnerNode.ChildNodeIds);
         }
-
-        //[Fact]
-        //public void LiteDbHierarchyNodeAdapter_removes_child_node()
-        //{
-        //    // ARRANGE
-
-        //    var child = new LiteDbHierarchyNodeAdapter("child", new BsonDocument());
-        //    var parent = new LiteDbHierarchyNodeAdapter(string.Empty, new BsonDocument());
-        //    parent.AddChildNode(child);
-
-        //    // ACT
-
-        //    var result = parent.RemoveChildNode(child);
-
-        //    // ASSERT
-
-        //    Assert.True(result);
-        //    Assert.False(parent.HasChildNodes);
-        //    Assert.NotNull(parent.InnerNode["cn"].AsDocument);
-        //    Assert.False(parent.InnerNode["cn"].AsDocument.Any());
-        //}
-
-        //[Fact]
-        //public void LiteDbHierarchyNodeAdapter_removing_child_node_fails_silently_for_unknown_child()
-        //{
-        //    // ARRANGE
-
-        //    var child = new LiteDbHierarchyNodeAdapter("child", new BsonDocument());
-        //    var parent = new LiteDbHierarchyNodeAdapter(string.Empty, new BsonDocument());
-
-        //    // ACT
-
-        //    var result = parent.RemoveChildNode(child);
-
-        //    // ASSERT
-
-        //    Assert.False(result);
-        //    Assert.False(parent.HasChildNodes);
-        //    Assert.NotNull(parent.InnerNode["cn"].AsDocument);
-        //    Assert.False(parent.InnerNode["cn"].AsDocument.Any());
-        //}
     }
 }
