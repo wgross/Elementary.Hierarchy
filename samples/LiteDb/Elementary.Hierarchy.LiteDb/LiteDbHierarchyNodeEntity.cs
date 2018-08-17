@@ -12,8 +12,12 @@ namespace Elementary.Hierarchy.LiteDb
 
         public string Key { get; set; }
 
-        public bool HasChildNodes => ChildNodeIds.Any();
+        #region IHasChildNodes members
+
+        public bool HasChildNodes => this.ChildNodeIds.Any();
 
         public IEnumerable<KeyValuePair<string, BsonValue>> ChildNodes => this.ChildNodeIds;
+
+        #endregion IHasChildNodes members
     }
 }

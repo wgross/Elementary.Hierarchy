@@ -77,7 +77,6 @@ namespace Elementary.Hierarchy.LiteDb.Test
 
             Assert.Equal(node._Id, result._Id);
             Assert.NotSame(node, result);
-
         }
 
         [Fact]
