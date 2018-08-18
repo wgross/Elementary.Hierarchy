@@ -29,6 +29,27 @@ namespace Elementary.Hierarchy.Test
             return Enumerable.Empty<string>();
         }
 
+        public static IEnumerable<string> GetChildNodes2(string node)
+        {
+            //                rootNode
+            //                /      \
+            //        leftNode        rightNode
+            //           /
+            //     leftLeaf
+            //
+            // unkown node -> {}
+
+            switch (node)
+            {
+                case "rootNode":
+                    return new[] { "leftNode", "rightNode" };
+
+                case "leftNode":
+                    return new[] { "leftLeaf" };
+            }
+            return Enumerable.Empty<string>();
+        }
+
         public static (bool, string) TryGetChildNode(string node, string childKey)
         {
             //                rootNode

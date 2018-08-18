@@ -478,10 +478,10 @@ namespace Elementary.Hierarchy.Generic
                 // go to the right or up (or to the first node if the enumeration hasn't started yet)
 
                 while (nodesToVisit.Any() && !nodesToVisit.Peek().Item2.MoveNext())
-                    nodesToVisit.Pop();
+                    nodesToVisit.Pop(); //  no children to inspect left: go up
 
                 if (!nodesToVisit.Any())
-                    yield break;
+                    yield break; // all nodes visited: Leave traversal completely
 
                 // descend and return current node
 
