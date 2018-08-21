@@ -9,12 +9,12 @@ namespace Elementary.Hierarchy.LiteDb.Test
     public class LitedbHierarchyTraversalTest : IDisposable
     {
         private readonly LiteDatabase database;
-        private readonly LiteDbHierarchyNodeRepository repository;
+        private readonly LiteDbHierarchy hierarchy;
 
         public LitedbHierarchyTraversalTest()
         {
             this.database = new LiteDatabase(new MemoryStream());
-            this.repository = new LiteDbHierarchyNodeRepository(this.database, "nodes");
+            this.hierarchy = new LiteDbHierarchy(new LiteDbHierarchyNodeRepository(this.database, "nodes"));
         }
 
         public void Dispose()
@@ -27,13 +27,12 @@ namespace Elementary.Hierarchy.LiteDb.Test
         {
             // ARRANGE
 
-            var root = new LiteDbHierarchyNode(this.repository, this.repository.Root);
-            var child = root.AddChildNode("child");
+            var child = this.hierarchy.Traverse().AddChildNode("child");
             var gchild = child.AddChildNode("gchild");
 
             // ACT
 
-            var result = new LiteDbHierarchyNode(this.repository, this.repository.Root).DescendantAt(HierarchyPath.Create("child", "gchild"));
+            var result = this.hierarchy.Traverse().DescendantAt(HierarchyPath.Create("child", "gchild"));
 
             // ASSERT
 
@@ -46,14 +45,13 @@ namespace Elementary.Hierarchy.LiteDb.Test
         {
             // ARRANGE
 
-            var root = new LiteDbHierarchyNode(this.repository, this.repository.Root);
-            var child1 = root.AddChildNode("child1");
-            var child2 = root.AddChildNode("child2");
+            var child1 = this.hierarchy.Traverse().AddChildNode("child1");
+            var child2 = this.hierarchy.Traverse().AddChildNode("child2");
             var gchild1 = child1.AddChildNode("gchild1");
 
             // ACT
 
-            var result = new LiteDbHierarchyNode(this.repository, this.repository.Root).Descendants(depthFirst: true).ToArray();
+            var result = this.hierarchy.Traverse().Descendants(depthFirst: true).ToArray();
 
             // ASSERT
 
