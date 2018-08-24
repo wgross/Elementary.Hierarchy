@@ -14,7 +14,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
         public LitedbHierarchyTraversalTest()
         {
             this.database = new LiteDatabase(new MemoryStream());
-            this.hierarchy = new LiteDbHierarchy(new LiteDbHierarchyNodeRepository(this.database, "nodes"));
+            this.hierarchy = new LiteDbHierarchy(new LiteDbHierarchyNodeRepository(this.database, "nodes", "values"));
         }
 
         public void Dispose()

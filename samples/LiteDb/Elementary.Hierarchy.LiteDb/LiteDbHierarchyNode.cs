@@ -8,18 +8,22 @@ namespace Elementary.Hierarchy.LiteDb
     public class LiteDbHierarchyNode : IHasChildNodes<LiteDbHierarchyNode>, IHasIdentifiableChildNodes<string, LiteDbHierarchyNode>
     {
         private readonly ILiteDbHierarchyNodeRepository repository;
-        private readonly LiteDbHierarchyNodeEntity innerNode;
+        private Lazy<IEnumerable<LiteDbHierarchyNode>> childNodes = null;
 
         public LiteDbHierarchyNode(ILiteDbHierarchyNodeRepository repository, LiteDbHierarchyNodeEntity innerNode)
         {
             this.repository = repository;
-            this.innerNode = innerNode;
+            this.InnerNode = innerNode;
             this.childNodes = this.CreateLazyChildNodes();
         }
 
-        #region child nodes are read lazy
+        public LiteDbHierarchyNode(ILiteDbHierarchyNodeRepository repository, LiteDbHierarchyNodeEntity innerNode, LiteDbHierarchyValueEntity innerValue)
+            : this(repository, innerNode)
+        {
+            this.InnerValue = innerValue;
+        }
 
-        private Lazy<IEnumerable<LiteDbHierarchyNode>> childNodes = null;
+        #region child nodes are read lazy
 
         private Lazy<IEnumerable<LiteDbHierarchyNode>> CreateLazyChildNodes() => new Lazy<IEnumerable<LiteDbHierarchyNode>>(valueFactory: () => ReadChildNodes(this.InnerNode.ChildNodes).ToList());
 
@@ -31,7 +35,26 @@ namespace Elementary.Hierarchy.LiteDb
 
         public string Key => this.InnerNode.Key;
 
-        public LiteDbHierarchyNodeEntity InnerNode => this.innerNode;
+        public LiteDbHierarchyNodeEntity InnerNode { get; }
+
+        public LiteDbHierarchyValueEntity InnerValue { get; private set; }
+
+        public void SetValue<T>(T value)
+        {
+            var valueEntity = this.InnerValue ?? new LiteDbHierarchyValueEntity();
+            if (valueEntity.SetValue(value))
+            {
+                // value has changed
+                this.repository.Upsert(valueEntity);
+                this.InnerValue = valueEntity;
+            }
+            if (this.InnerNode.ValueRef == null || this.InnerNode.ValueRef.CompareTo(valueEntity._Id) != 0)
+            {
+                // value is new
+                this.InnerNode.ValueRef = this.InnerValue._Id;
+                this.repository.Update(this.InnerNode);
+            }
+        }
 
         #region IHasChildNodes members
 
@@ -95,6 +118,14 @@ namespace Elementary.Hierarchy.LiteDb
                 }
 
             return false;
+        }
+
+        public (bool, object) TryGetValue()
+        {
+            if (this.InnerNode.ValueRef != null)
+                this.InnerValue = this.repository.ReadValue(this.InnerNode.ValueRef);
+
+            return (this.InnerValue != null, this.InnerValue?.Value.RawValue);
         }
     }
 }

@@ -18,6 +18,8 @@ namespace Elementary.Hierarchy.LiteDb
 
         public IEnumerable<KeyValuePair<string, BsonValue>> ChildNodes => this.ChildNodeIds;
 
+        public BsonValue ValueRef { get; set; }
+
         #endregion IHasChildNodes members
     }
 }

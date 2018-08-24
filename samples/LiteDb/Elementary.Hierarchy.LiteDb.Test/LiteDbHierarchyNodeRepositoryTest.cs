@@ -11,12 +11,14 @@ namespace Elementary.Hierarchy.LiteDb.Test
         private readonly LiteDatabase database;
         private readonly LiteDbHierarchyNodeRepository repository;
         private readonly LiteCollection<BsonDocument> nodes;
+        private readonly LiteCollection<BsonDocument> values;
 
         public LiteDbHierarchyNodeRepositoryTest()
         {
             this.database = new LiteDatabase(new MemoryStream());
-            this.repository = new LiteDbHierarchyNodeRepository(this.database, "nodes");
+            this.repository = new LiteDbHierarchyNodeRepository(this.database, "nodes", "values");
             this.nodes = this.database.GetCollection("nodes");
+            this.values = this.database.GetCollection("values");
         }
 
         public void Dispose()
@@ -25,7 +27,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
         }
 
         [Fact]
-        public void LiteDbHierarchyNodeRepository_has_a_root_node()
+        public void LiteDbHierarchyNodeRepository_has_root_node()
         {
             // ACT
 
@@ -40,7 +42,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
         }
 
         [Fact]
-        public void LiteDbHierarchyNodeRepository_creates_a_new_node()
+        public void LiteDbHierarchyNodeRepository_creates_node()
         {
             // ARRANGE
 
@@ -62,7 +64,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
         }
 
         [Fact]
-        private void LiteDbHierarchyNodeRepository_reads_an_existing_node()
+        private void LiteDbHierarchyNodeRepository_reads_node()
         {
             // ARRANGE
 
@@ -80,7 +82,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
         }
 
         [Fact]
-        public void LiteDbHierarchyNodeRepository_updates_an_existing_node()
+        public void LiteDbHierarchyNodeRepository_updates_node()
         {
             // ARRANGE
 
@@ -103,7 +105,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
         }
 
         [Fact]
-        public void LiteDbHierarchyNodeRepository_deletes_an_existing_node()
+        public void LiteDbHierarchyNodeRepository_deletes_node()
         {
             // ARRANGE
 
@@ -118,5 +120,57 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // node is removed from db
             Assert.Null(this.nodes.FindById(nodeId));
         }
+
+        [Fact]
+        public void LiteDbHierarchyNodeRepository_inserts_a_value_entity()
+        {
+            // ARRANGE
+
+            var valueEntity = new LiteDbHierarchyValueEntity();
+            valueEntity.SetValue(1);
+
+            // ACT
+
+            this.repository.Upsert(valueEntity);
+
+            // ASSERT
+
+            Assert.NotNull(valueEntity._Id);
+
+            // check db
+
+            var fromRead = this.values.FindById(valueEntity._Id);
+
+            Assert.NotNull(fromRead);
+            Assert.Equal(1, fromRead[nameof(LiteDbHierarchyValueEntity.Value)].AsInt32);
+        }
+
+        [Fact]
+        public void LiteDbHierarchyNodeRepository_updates_value_entity()
+        {
+            // ARRANGE
+
+            var valueEntity = new LiteDbHierarchyValueEntity();
+            valueEntity.SetValue(1);
+
+            this.repository.Upsert(valueEntity);
+
+            // ACT
+
+            valueEntity.SetValue(2);
+
+            this.repository.Upsert(valueEntity);
+
+            // ASSERT
+
+            //Assert.True(result);
+
+            // check db
+
+            var fromRead = this.values.FindById(valueEntity._Id);
+
+            Assert.NotNull(fromRead);
+            Assert.Equal(2, fromRead[nameof(LiteDbHierarchyValueEntity.Value)].AsInt32);
+        }
     }
-}
+};
