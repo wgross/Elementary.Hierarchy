@@ -10,13 +10,15 @@ namespace Elementary.Hierarchy.LiteDb
 
         bool Update(LiteDbHierarchyNodeEntity liteDbHierarchyNode);
 
-        bool Remove(BsonValue nodeId);
+        bool DeleteNode(BsonValue nodeId);
 
         LiteDbHierarchyNodeEntity Read(BsonValue nodeId);
 
         void Upsert(LiteDbHierarchyValueEntity liteDbHierarchyValueEntity);
 
         LiteDbHierarchyValueEntity ReadValue(BsonValue valueId);
+
+        bool DeleteValue(BsonValue id);
     }
 
     public class LiteDbHierarchyNodeRepository : ILiteDbHierarchyNodeRepository
@@ -62,12 +64,14 @@ namespace Elementary.Hierarchy.LiteDb
 
         public bool Update(LiteDbHierarchyNodeEntity liteDbHierarchyNode) => this.nodeCollection.Update(liteDbHierarchyNode);
 
-        public bool Remove(BsonValue nodeId) => this.nodeCollection.Delete(nodeId);
+        public bool DeleteNode(BsonValue nodeId) => this.nodeCollection.Delete(nodeId);
 
         public LiteDbHierarchyNodeEntity Read(BsonValue nodeId) => this.nodeCollection.FindById(nodeId);
 
         public void Upsert(LiteDbHierarchyValueEntity liteDbHierarchyValueEntity) => this.valueCollection.Upsert(liteDbHierarchyValueEntity);
 
         public LiteDbHierarchyValueEntity ReadValue(BsonValue valueId) => this.valueCollection.FindById(valueId);
+
+        public bool DeleteValue(BsonValue id) => this.valueCollection.Delete(id);
     }
 }

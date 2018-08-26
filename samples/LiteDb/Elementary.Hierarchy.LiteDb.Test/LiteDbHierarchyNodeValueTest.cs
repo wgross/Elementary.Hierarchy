@@ -25,7 +25,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
         }
 
         [Fact]
-        public void LiteDbHierachyNode_TryGetValue_returns_false_if_no_value_set()
+        public void LiteDbHierarchyNode_TryGetValue_returns_false_if_no_value_set()
         {
             // ACT
 
@@ -37,7 +37,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
         }
 
         [Fact]
-        public void LiteDbHierachyNode_TryGetValue_loads_value_from_value_ref()
+        public void LiteDbHierarchyNode_TryGetValue_loads_value_from_value_ref()
         {
             // ARRANGE
 
@@ -64,7 +64,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
         }
 
         [Fact]
-        public void LiteDbHierachyNode_saves_node_and_value_on_new_value()
+        public void LiteDbHierarchyNode_saves_node_and_value_on_new_value()
         {
             // ARRANGE
 
@@ -91,7 +91,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
         }
 
         [Fact]
-        public void LiteDbHierachyNode_saves_value_on_updated_value()
+        public void LiteDbHierarchyNode_saves_value_on_updated_value()
         {
             // ARRANGE
 
@@ -108,6 +108,58 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // ACT
 
             this.root.SetValue(2);
+        }
+
+        [Fact]
+        public void LiteDbHierarchyNode_deletes_value()
+        {
+            // ARRANGE
+
+            var childId = ObjectId.NewObjectId();
+            var valueId = ObjectId.NewObjectId();
+
+            // node node must be added
+            this.repository
+                .Setup(r => r.TryInsert(It.IsAny<LiteDbHierarchyNodeEntity>()))
+                .Returns((true, childId));
+
+            // parent node must be updated
+            this.repository
+                .Setup(r => r.Update(this.root.InnerNode))
+                .Returns(true);
+
+            // child is read from repo
+            this.repository
+                .Setup(r => r.Read(childId))
+                .Returns(new LiteDbHierarchyNodeEntity { _Id = childId, Key = "child" });
+
+            // value must be written
+            this.repository
+                .Setup(r => r.Upsert(It.Is<LiteDbHierarchyValueEntity>(v => v.Value.Equals(1))))
+                .Callback<LiteDbHierarchyValueEntity>(v => v._Id = valueId);
+
+            // child node must be updated with value
+            this.repository
+                .Setup(r => r.Update(It.Is<LiteDbHierarchyNodeEntity>(n => childId.Equals(n._Id))))
+                .Callback<LiteDbHierarchyNodeEntity>(n => n.ValueRef = valueId)
+                .Returns(true);
+
+            // child node must be deleted
+            this.repository
+                .Setup(r => r.DeleteNode(It.Is<BsonValue>(v => childId.Equals(v))))
+                .Returns(true);
+
+            // value node must be deleted
+            this.repository
+                .Setup(r => r.DeleteValue(valueId))
+                .Returns(true);
+
+            var childNode = this.root.AddChildNode(key: "child");
+            childNode.SetValue(1);
+
+            // ACT
+
+            this.root.RemoveChildNode(key: "child");
         }
     }
 }

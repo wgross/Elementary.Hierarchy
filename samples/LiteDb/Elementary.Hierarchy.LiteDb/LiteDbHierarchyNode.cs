@@ -92,7 +92,7 @@ namespace Elementary.Hierarchy.LiteDb
             if (!this.repository.Update(this.InnerNode))
             {
                 // delete the orphaned node
-                this.repository.Remove(childId);
+                this.repository.DeleteNode(childId);
                 // restore the child node list
                 this.InnerNode.ChildNodeIds = innerNodeCheckpoint;
 
@@ -105,19 +105,27 @@ namespace Elementary.Hierarchy.LiteDb
 
         public bool RemoveChildNode(string key)
         {
-            // remove child node from db
-            if (this.InnerNode.ChildNodeIds.TryGetValue(key, out var childNodeId) && this.repository.Remove(childNodeId))
+            var (exists, childNode) = this.TryGetChildNode(key);
+            if (!exists)
+                return false;
+
+            if (this.repository.DeleteNode(childNode.InnerNode._Id))
+            {
                 // update parent node
                 if (this.InnerNode.ChildNodeIds.Remove(key) && this.repository.Update(this.InnerNode))
                 {
                     // cleanup cached transient data
-                    var childNode = this.ChildNodes.SingleOrDefault(c => c.Key.Equals(key));
-                    if (childNode != null)
-                        this.childNodes = this.CreateLazyChildNodes();
-                    return true;
+                    this.childNodes = this.CreateLazyChildNodes();
                 }
+                else return false;
 
-            return false;
+                // remove childs value node: repo doesn't throw on missing ids
+                if (childNode.InnerValue != null)
+                    this.repository.DeleteValue(childNode.InnerValue._Id);
+
+                return true;
+            }
+            else return false;
         }
 
         public (bool, object) TryGetValue()
