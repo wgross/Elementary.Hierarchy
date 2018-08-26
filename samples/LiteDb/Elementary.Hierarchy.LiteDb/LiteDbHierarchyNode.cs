@@ -109,23 +109,15 @@ namespace Elementary.Hierarchy.LiteDb
             if (!exists)
                 return false;
 
-            if (this.repository.DeleteNode(childNode.InnerNode._Id))
-            {
-                // update parent node
-                if (this.InnerNode.ChildNodeIds.Remove(key) && this.repository.Update(this.InnerNode))
-                {
-                    // cleanup cached transient data
-                    this.childNodes = this.CreateLazyChildNodes();
-                }
-                else return false;
+            if (childNode.Delete())
+                if (this.InnerNode.ChildNodeIds.Remove(key))
+                    if (this.repository.Update(this.InnerNode))
+                    {
+                        this.childNodes = this.CreateLazyChildNodes();
+                        return true;
+                    }
 
-                // remove childs value node: repo doesn't throw on missing ids
-                if (childNode.InnerValue != null)
-                    this.repository.DeleteValue(childNode.InnerValue._Id);
-
-                return true;
-            }
-            else return false;
+            return false;
         }
 
         public (bool, object) TryGetValue()
@@ -134,6 +126,14 @@ namespace Elementary.Hierarchy.LiteDb
                 this.InnerValue = this.repository.ReadValue(this.InnerNode.ValueRef);
 
             return (this.InnerValue != null, this.InnerValue?.Value.RawValue);
+        }
+
+        public bool Delete()
+        {
+            var valueRemoved = false;
+            if (this.InnerNode.ValueRef != null && this.InnerNode.ValueRef.AsObjectId != ObjectId.Empty)
+                valueRemoved = this.repository.DeleteValue(this.InnerNode.ValueRef);
+            return this.repository.DeleteNode(this.InnerNode._Id) || valueRemoved;
         }
     }
 }

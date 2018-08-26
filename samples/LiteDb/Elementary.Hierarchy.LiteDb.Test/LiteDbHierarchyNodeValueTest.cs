@@ -8,14 +8,16 @@ namespace Elementary.Hierarchy.LiteDb.Test
     public class LiteDbHierarchyNodeValueTest : IDisposable
     {
         private readonly MockRepository mocks = new MockRepository(MockBehavior.Strict);
+        private readonly ObjectId rootId;
         private readonly Mock<ILiteDbHierarchyNodeRepository> repository;
         private LiteDbHierarchyNode root;
         private LiteCollection<LiteDbHierarchyNodeEntity> nodes;
 
         public LiteDbHierarchyNodeValueTest()
         {
+            this.rootId = ObjectId.NewObjectId();
             this.repository = this.mocks.Create<ILiteDbHierarchyNodeRepository>();
-            this.repository.Setup(r => r.Root).Returns(new LiteDbHierarchyNodeEntity());
+            this.repository.Setup(r => r.Root).Returns(new LiteDbHierarchyNodeEntity() { _Id = this.rootId });
             this.root = new LiteDbHierarchyNode(this.repository.Object, this.repository.Object.Root);
         }
 
@@ -152,6 +154,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // value node must be deleted
             this.repository
                 .Setup(r => r.DeleteValue(valueId))
+
                 .Returns(true);
 
             var childNode = this.root.AddChildNode(key: "child");
@@ -159,7 +162,61 @@ namespace Elementary.Hierarchy.LiteDb.Test
 
             // ACT
 
-            this.root.RemoveChildNode(key: "child");
+            var result = this.root.RemoveChildNode(key: "child");
+
+            // ASSERT
+
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void LiteDbHierarchyNode_deletes_node_and_value()
+        {
+            // ARRANGE
+
+            var valueId = ObjectId.NewObjectId();
+
+            this.root = new LiteDbHierarchyNode(this.repository.Object, this.repository.Object.Root, new LiteDbHierarchyValueEntity() { _Id = valueId });
+            this.root.InnerNode.ValueRef = valueId;
+
+            // node must be deleted
+
+            this.repository
+                .Setup(r => r.DeleteNode(this.rootId))
+                .Returns(true);
+
+            // value node must be deleted
+            this.repository
+                .Setup(r => r.DeleteValue(valueId))
+                .Returns(true);
+
+            // ACT
+
+            var result = this.root.Delete();
+
+            // ASSERT
+
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void LiteDbHierarchyNode_deletes_node_with_value()
+        {
+            // ARRANGE
+
+            // node must be deleted
+
+            this.repository
+                .Setup(r => r.DeleteNode(this.rootId))
+                .Returns(true);
+
+            // ACT
+
+            var result = this.root.Delete();
+
+            // ASSERT
+
+            Assert.True(result);
         }
     }
 }
