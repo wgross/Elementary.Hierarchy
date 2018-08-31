@@ -92,7 +92,7 @@ namespace Elementary.Hierarchy.LiteDb
             if (!this.repository.Update(this.InnerNode))
             {
                 // delete the orphaned node
-                this.repository.DeleteNode(childId);
+                this.repository.DeleteNode(childId, false);
                 // restore the child node list
                 this.InnerNode.ChildNodeIds = innerNodeCheckpoint;
 
@@ -133,7 +133,7 @@ namespace Elementary.Hierarchy.LiteDb
             var valueRemoved = false;
             if (this.InnerNode.ValueRef != null && this.InnerNode.ValueRef.AsObjectId != ObjectId.Empty)
                 valueRemoved = this.repository.DeleteValue(this.InnerNode.ValueRef);
-            return this.repository.DeleteNode(this.InnerNode._Id) || valueRemoved;
+            return this.repository.DeleteNode(this.InnerNode._Id, false) || valueRemoved;
         }
     }
 }

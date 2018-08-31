@@ -10,7 +10,7 @@ namespace Elementary.Hierarchy.LiteDb
 
         bool Update(LiteDbHierarchyNodeEntity liteDbHierarchyNode);
 
-        bool DeleteNode(BsonValue nodeId);
+        bool DeleteNode(BsonValue nodeId, bool recurse);
 
         LiteDbHierarchyNodeEntity Read(BsonValue nodeId);
 
@@ -64,7 +64,7 @@ namespace Elementary.Hierarchy.LiteDb
 
         public bool Update(LiteDbHierarchyNodeEntity liteDbHierarchyNode) => this.nodeCollection.Update(liteDbHierarchyNode);
 
-        public bool DeleteNode(BsonValue nodeId) => this.nodeCollection.Delete(nodeId);
+        public bool DeleteNode(BsonValue nodeId, bool recurse) => this.nodeCollection.Delete(nodeId);
 
         public LiteDbHierarchyNodeEntity Read(BsonValue nodeId) => this.nodeCollection.FindById(nodeId);
 

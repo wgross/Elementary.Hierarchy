@@ -167,7 +167,7 @@ namespace Elementary.Hierarchy.Generic
         /// <returns>enumerable children of the <paramref name="startNode"/></returns>
         public static IEnumerable<TNode> Children<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren)
         {
-            if (getChildren == null)
+            if (getChildren is null)
                 throw new ArgumentNullException(nameof(getChildren));
 
             return getChildren(startNode) ?? Enumerable.Empty<TNode>();
@@ -192,7 +192,7 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is always empty, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
         public static IEnumerable<TNode> Descendants<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, bool? depthFirst = null, int? maxDepth = null)
         {
-            if (getChildNodes == null)
+            if (getChildNodes is null)
                 throw new ArgumentNullException(nameof(getChildNodes));
 
             if (maxDepth.HasValue && maxDepth.Value < 0)
@@ -225,7 +225,7 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is the <paramref name="startNode"/>, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
         public static IEnumerable<TNode> DescendantsAndSelf<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, bool? depthFirst = null, int? maxDepth = null)
         {
-            if (getChildNodes == null)
+            if (getChildNodes is null)
                 throw new ArgumentNullException(nameof(getChildNodes));
 
             if (maxDepth.HasValue && maxDepth.Value < 0)
@@ -255,7 +255,7 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is always empty, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
         public static IEnumerable<(TNode node, IEnumerable<TNode> path)> DescendantsWithPath<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren, bool? depthFirst = null, int? maxDepth = null)
         {
-            if (getChildren == null)
+            if (getChildren is null)
                 throw new ArgumentNullException(nameof(getChildren));
 
             if (maxDepth.HasValue && maxDepth.Value < 0)
@@ -278,7 +278,7 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is always empty, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
         public static IEnumerable<(TNode node, IEnumerable<TNode> path)> DescendantsAndSelfWithPath<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren, bool? depthFirst = null, int? maxDepth = null)
         {
-            if (getChildren == null)
+            if (getChildren is null)
                 throw new ArgumentNullException(nameof(getChildren));
 
             if (maxDepth.HasValue && maxDepth.Value < 0)
@@ -326,10 +326,10 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is the <paramref name="startNode"/>, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
         public static void VisitDescendantsAndSelf<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren, Action<IEnumerable<TNode>, TNode> visitor, bool? depthFirst = null, int? maxDepth = null)
         {
-            if (getChildren == null)
+            if (getChildren is null)
                 throw new ArgumentNullException(nameof(getChildren));
 
-            if (visitor == null)
+            if (visitor is null)
                 throw new ArgumentNullException(nameof(visitor));
 
             if (maxDepth.HasValue && maxDepth.Value < 0)
@@ -365,10 +365,10 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is always empty, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
         public static void VisitDescendants<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren, Action<IEnumerable<TNode>, TNode> visitor, bool? depthFirst = null, int? maxDepth = null)
         {
-            if (getChildren == null)
+            if (getChildren is null)
                 throw new ArgumentNullException(nameof(getChildren));
 
-            if (visitor == null)
+            if (visitor is null)
                 throw new ArgumentNullException(nameof(visitor));
 
             if (maxDepth.HasValue && maxDepth.Value < 0)

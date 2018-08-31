@@ -126,7 +126,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
 
             // ACT
 
-            this.repository.DeleteNode(nodeId);
+            this.repository.DeleteNode(nodeId, false);
 
             // ASSERT
             // node is removed from db
@@ -138,7 +138,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
         {
             // ACT
 
-            var result = this.repository.DeleteNode(ObjectId.NewObjectId());
+            var result = this.repository.DeleteNode(ObjectId.NewObjectId(), false);
 
             // ASSERT
 

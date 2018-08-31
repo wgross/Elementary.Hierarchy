@@ -148,7 +148,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
 
             // child node must be deleted
             this.repository
-                .Setup(r => r.DeleteNode(It.Is<BsonValue>(v => childId.Equals(v))))
+                .Setup(r => r.DeleteNode(It.Is<BsonValue>(v => childId.Equals(v)), false))
                 .Returns(true);
 
             // value node must be deleted
@@ -182,7 +182,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // node must be deleted
 
             this.repository
-                .Setup(r => r.DeleteNode(this.rootId))
+                .Setup(r => r.DeleteNode(this.rootId, false))
                 .Returns(true);
 
             // value node must be deleted
@@ -207,7 +207,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // node must be deleted
 
             this.repository
-                .Setup(r => r.DeleteNode(this.rootId))
+                .Setup(r => r.DeleteNode(this.rootId, false))
                 .Returns(true);
 
             // ACT
