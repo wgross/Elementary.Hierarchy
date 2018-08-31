@@ -93,7 +93,7 @@ namespace Elementary.Hierarchy.Generic
         /// <returns>A parent node instance</returns>
         public static TNode Parent<TNode>(this TNode startNode, Func<TNode, (bool, TNode)> tryGetParentNode)
         {
-            if (tryGetParentNode == null)
+            if (tryGetParentNode is null)
                 throw new ArgumentNullException(nameof(tryGetParentNode));
 
             var (found, parentNode) = tryGetParentNode(startNode);
@@ -115,7 +115,7 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="tryGetParentNode">returns the parent node of the inspected node</param>
         public static IEnumerable<TNode> Ancestors<TNode>(this TNode startNode, Func<TNode, (bool, TNode)> tryGetParentNode)
         {
-            if (tryGetParentNode == null)
+            if (tryGetParentNode is null)
                 throw new ArgumentNullException(nameof(tryGetParentNode));
 
             var (found, current) = tryGetParentNode(startNode);
@@ -139,7 +139,7 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="tryGetParentNode">returns the parent node of the inspected node</param>
         public static IEnumerable<TNode> AncestorsAndSelf<TNode>(this TNode startNode, Func<TNode, (bool, TNode)> tryGetParentNode)
         {
-            if (tryGetParentNode == null)
+            if (tryGetParentNode is null)
                 throw new ArgumentNullException(nameof(tryGetParentNode));
 
             return Enumerable.Repeat(startNode, 1).Union(startNode.Ancestors(tryGetParentNode));

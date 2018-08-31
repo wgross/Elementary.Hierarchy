@@ -19,7 +19,7 @@
         /// <returns></returns>
         public static HierarchyPath<T> Create<T>(params T[] pathItems)
         {
-            if (pathItems == null)
+            if (pathItems is null)
                 throw new ArgumentNullException(nameof(pathItems));
 
             return new HierarchyPath<T>(pathItems.ToArray());
@@ -34,7 +34,7 @@
         /// <returns></returns>
         public static HierarchyPath<T> Create<T>(IEnumerable<T> pathItems)
         {
-            if (pathItems == null)
+            if (pathItems is null)
                 throw new ArgumentNullException(nameof(pathItems));
 
             return new HierarchyPath<T>(pathItems.ToArray());
@@ -209,7 +209,7 @@
         {
             HierarchyPath<T> otherAsTreeKey = other as HierarchyPath<T>;
 
-            if (otherAsTreeKey == null)
+            if (otherAsTreeKey is null)
                 return false; // wrong type
 
             if (object.ReferenceEquals(this, other))

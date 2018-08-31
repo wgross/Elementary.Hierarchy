@@ -44,7 +44,7 @@ namespace Elementary.Hierarchy.LiteDb
             this.nodeCollection.EnsureIndex(n => n._Id, unique: true);
             this.valueCollection = database.GetCollection<LiteDbHierarchyValueEntity>(valueCollectionName);
 
-            if (this.Root == null)
+            if (this.Root is null)
                 this.nodeCollection.Insert(new LiteDbHierarchyNodeEntity { Key = null });
         }
 

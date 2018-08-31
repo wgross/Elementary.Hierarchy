@@ -48,7 +48,7 @@ namespace Elementary.Hierarchy.LiteDb
                 this.repository.Upsert(valueEntity);
                 this.InnerValue = valueEntity;
             }
-            if (this.InnerNode.ValueRef == null || this.InnerNode.ValueRef.CompareTo(valueEntity._Id) != 0)
+            if (this.InnerNode.ValueRef is null || this.InnerNode.ValueRef.CompareTo(valueEntity._Id) != 0)
             {
                 // value is new
                 this.InnerNode.ValueRef = this.InnerValue._Id;

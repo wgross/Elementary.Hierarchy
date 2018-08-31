@@ -40,7 +40,7 @@ namespace Elementary.Hierarchy.Reflection
 
         protected bool IsNotAssignable<T>()
         {
-            if (this.propertyInfo.GetSetMethod() == null)
+            if (this.propertyInfo.GetSetMethod() is null)
                 return true;
 
             if (!this.propertyInfo.PropertyType.IsAssignableFrom(typeof(T)))
