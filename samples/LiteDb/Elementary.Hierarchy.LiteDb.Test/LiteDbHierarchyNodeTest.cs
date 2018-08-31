@@ -288,7 +288,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
         }
 
         [Fact]
-        public void LiteDbHierarchyNode_removes_child_node_recursively()
+        public void LiteDbHierarchyNode_removes_child_node_recursively_if_node_has_children()
         {
             // ARRANGE
             // node node must be added
@@ -310,23 +310,18 @@ namespace Elementary.Hierarchy.LiteDb.Test
 
             // child was deleted
             this.repository
-                .Setup(r => r.DeleteNode(childNode.InnerNode._Id, true))
+                .Setup(r => r.DeleteNode(this.root.InnerNode._Id, true))
                 .Returns(true);
 
             // ACT
 
-            var result = this.root.RemoveChildNode(key: "child");
+            var result = this.root.Delete();
 
             // ASSERT
 
-            this.repository.Verify(r => r.Update(this.root.InnerNode), Times.Exactly(2));
+            this.repository.Verify(r => r.Update(this.root.InnerNode), Times.Exactly(1));
 
             Assert.True(result);
-            // root has now a child
-            Assert.False(this.root.HasChildNodes);
-            Assert.Empty(this.root.ChildNodes);
-            // root referebces the child node
-            Assert.Empty(this.root.InnerNode.ChildNodeIds);
         }
 
         [Fact]

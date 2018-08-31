@@ -1,4 +1,6 @@
 ﻿using LiteDB;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Elementary.Hierarchy.LiteDb
 {
@@ -65,6 +67,21 @@ namespace Elementary.Hierarchy.LiteDb
         public bool Update(LiteDbHierarchyNodeEntity liteDbHierarchyNode) => this.nodeCollection.Update(liteDbHierarchyNode);
 
         public bool DeleteNode(BsonValue nodeId, bool recurse) => this.nodeCollection.Delete(nodeId);
+
+        public bool Delete(IEnumerable<LiteDbHierarchyNodeEntity> nodes)
+        {
+            return nodes.Aggregate(true, (ok, node) => this.DeleteNodeAndValue(node._Id, node.ValueRef) && ok);
+        }
+
+        private bool DeleteNodeAndValue(BsonValue nodeId, BsonValue valueId)
+        {
+            return (this.nodeCollection.Delete(nodeId) && (valueId != null && valueId != BsonValue.Null) ? this.valueCollection.Delete(valueId) : true);
+        }
+
+        public bool DeleteNodes(IEnumerable<BsonValue> nodeIds)
+        {
+            return nodeIds.Aggregate(true, (ok, nodeId) => this.nodeCollection.Delete(nodeId) && ok);
+        }
 
         public LiteDbHierarchyNodeEntity Read(BsonValue nodeId) => this.nodeCollection.FindById(nodeId);
 

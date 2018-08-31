@@ -133,7 +133,7 @@ namespace Elementary.Hierarchy.LiteDb
             var valueRemoved = false;
             if (this.InnerNode.ValueRef != null && this.InnerNode.ValueRef.AsObjectId != ObjectId.Empty)
                 valueRemoved = this.repository.DeleteValue(this.InnerNode.ValueRef);
-            return this.repository.DeleteNode(this.InnerNode._Id, false) || valueRemoved;
+            return this.repository.DeleteNode(this.InnerNode._Id, this.InnerNode.HasChildNodes) || valueRemoved;
         }
     }
 }

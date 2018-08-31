@@ -231,5 +231,68 @@ namespace Elementary.Hierarchy.LiteDb.Test
 
             Assert.False(result);
         }
+
+        [Fact]
+        public void LiteDbHierarchyNodeRepository_deletes_nodes_and_values()
+        {
+            // ARRANGE
+
+            var childValue = new LiteDbHierarchyValueEntity();
+            childValue.SetValue(1);
+            this.repository.Upsert(childValue);
+
+            var child = new LiteDbHierarchyNodeEntity { Key = "key2", ValueRef = childValue._Id };
+            var (_, childId) = this.repository.TryInsert(child);
+
+            var nodeValue = new LiteDbHierarchyValueEntity();
+            nodeValue.SetValue(1);
+            this.repository.Upsert(nodeValue);
+
+            var node = new LiteDbHierarchyNodeEntity { Key = "key1", ValueRef = nodeValue._Id };
+            node.ChildNodeIds.Add("key2", childId);
+            var (_, nodeId) = this.repository.TryInsert(node);
+
+            // ACT
+
+            var result = this.repository.Delete(new[] { node, child });
+
+            // ASSERT
+            // nodes are removed from db
+
+            Assert.True(result);
+            Assert.Null(this.nodes.FindById(nodeId));
+            Assert.Null(this.nodes.FindById(childId));
+            Assert.Null(this.values.FindById(nodeValue._Id));
+            Assert.Null(this.values.FindById(childValue._Id));
+        }
+
+        [Fact]
+        public void LiteDbHierarchyNodeRepository_deleting_nodes_and_values_skip_null_value()
+        {
+            // ARRANGE
+
+            var child = new LiteDbHierarchyNodeEntity { Key = "key2" };
+            var (_, childId) = this.repository.TryInsert(child);
+
+            var nodeValue = new LiteDbHierarchyValueEntity();
+            nodeValue.SetValue(1);
+            this.repository.Upsert(nodeValue);
+
+            var node = new LiteDbHierarchyNodeEntity { Key = "key1", ValueRef = nodeValue._Id };
+            node.ChildNodeIds.Add("key2", childId);
+            var (_, nodeId) = this.repository.TryInsert(node);
+
+            // ACT
+
+            var result = this.repository.Delete(new[] { node, child });
+
+            // ASSERT
+            // nodes are removed from db
+
+            Assert.True(result);
+            Assert.Null(this.nodes.FindById(nodeId));
+            Assert.Null(this.nodes.FindById(childId));
+            Assert.Null(this.values.FindById(nodeValue._Id));
+        }
     }
 };
