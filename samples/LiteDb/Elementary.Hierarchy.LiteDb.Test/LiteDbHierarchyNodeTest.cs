@@ -3,6 +3,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Elementary.Hierarchy.LiteDb.Test
@@ -103,9 +104,12 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // ARRANGE
 
             var childId = ObjectId.NewObjectId();
+
             // node node must be added
+            LiteDbHierarchyNodeEntity child = null;
             this.repository
                 .Setup(r => r.TryInsert(It.IsAny<LiteDbHierarchyNodeEntity>()))
+                .Callback<LiteDbHierarchyNodeEntity>(e => { child = e; child._Id = childId; })
                 .Returns((true, childId));
             // parent node must be updated
             this.repository
@@ -113,8 +117,8 @@ namespace Elementary.Hierarchy.LiteDb.Test
                 .Returns(false);
             // the orphaned node is deleted
             this.repository
-                .Setup(r => r.DeleteNode(childId, false))
-                .Returns(true);
+                .Setup(r => r.Delete(It.Is<IEnumerable<LiteDbHierarchyNodeEntity>>(e => e.Single()._Id.Equals(childId))))
+                .ReturnsAsync(true);
 
             // ACT
 
@@ -246,7 +250,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
         }
 
         [Fact]
-        public void LiteDbHierarchyNode_removes_child_node()
+        public async Task LiteDbHierarchyNode_removes_child_node()
         {
             // ARRANGE
             // node node must be added
@@ -268,12 +272,12 @@ namespace Elementary.Hierarchy.LiteDb.Test
 
             // child was deleted
             this.repository
-                .Setup(r => r.DeleteNode(childNode.InnerNode._Id, false))
-                .Returns(true);
+                .Setup(r => r.Delete(new[] { childNode.InnerNode }))
+                .ReturnsAsync(true);
 
             // ACT
 
-            var result = this.root.RemoveChildNode(key: "child");
+            var result = await this.root.RemoveChildNode(key: "child");
 
             // ASSERT
 
@@ -288,34 +292,38 @@ namespace Elementary.Hierarchy.LiteDb.Test
         }
 
         [Fact]
-        public void LiteDbHierarchyNode_removes_child_node_recursively_if_node_has_children()
+        public async Task LiteDbHierarchyNode_deletes_node_recursively()
         {
             // ARRANGE
             // node node must be added
             var childId = ObjectId.NewObjectId();
+            var child = new LiteDbHierarchyNodeEntity { Key = "child" };
+
             this.repository
                 .Setup(r => r.TryInsert(It.IsAny<LiteDbHierarchyNodeEntity>()))
-                .Callback<LiteDbHierarchyNodeEntity>(n => n._Id = childId)
+                .Callback<LiteDbHierarchyNodeEntity>(n => { child = n; n._Id = childId; })
                 .Returns((true, childId));
+
             // root node must be updated
             this.repository
                 .Setup(r => r.Update(this.root.InnerNode))
                 .Returns(true);
+
             // child is read from repo
             this.repository
                 .Setup(r => r.Read(childId))
-                .Returns(new LiteDbHierarchyNodeEntity { _Id = childId, Key = "child" });
+                .Returns(child);
 
             var childNode = this.root.AddChildNode(key: "child");
 
             // child was deleted
             this.repository
-                .Setup(r => r.DeleteNode(this.root.InnerNode._Id, true))
-                .Returns(true);
+                .Setup(r => r.Delete(It.Is<IEnumerable<LiteDbHierarchyNodeEntity>>(e => e.Count() == 2)))
+                .ReturnsAsync(true);
 
             // ACT
 
-            var result = this.root.Delete();
+            var result = await this.root.Delete();
 
             // ASSERT
 
@@ -325,7 +333,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
         }
 
         [Fact]
-        public void LiteDbHierarchyNode_removing_child_node_returns_false_on_unknown_child()
+        public async Task LiteDbHierarchyNode_removing_child_node_returns_false_on_unknown_child()
         {
             // ARRANGE
 
@@ -345,8 +353,8 @@ namespace Elementary.Hierarchy.LiteDb.Test
                 .Returns<BsonValue>(id => nodes.Single(n => n._Id.Equals(id)));
             // child was deleted
             this.repository
-                .Setup(r => r.DeleteNode(It.Is<BsonValue>(v => v.Equals(nodes.Single(n => n.Key.Equals("child"))._Id)), false))
-                .Returns(true);
+                .Setup(r => r.Delete(It.Is<IEnumerable<LiteDbHierarchyNodeEntity>>(e => e.Single().Key.Equals("child"))))
+                .ReturnsAsync(true);
 
             var child = this.root.AddChildNode(key: "child");
             var grandChild1 = this.root.AddChildNode(key: "grandchild1");
@@ -355,7 +363,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
 
             // ACT
 
-            var result = this.root.RemoveChildNode(child.Key);
+            var result = await this.root.RemoveChildNode(child.Key);
 
             // ASSERT
 

@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Elementary.Hierarchy.LiteDb.Test
@@ -117,7 +118,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
         }
 
         [Fact]
-        public void LiteDbHierarchyNodeRepository_deletes_node()
+        public async Task LiteDbHierarchyNodeRepository_deletes_node()
         {
             // ARRANGE
 
@@ -126,7 +127,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
 
             // ACT
 
-            this.repository.DeleteNode(nodeId, false);
+            await this.repository.Delete(new[] { node });
 
             // ASSERT
             // node is removed from db
@@ -134,15 +135,66 @@ namespace Elementary.Hierarchy.LiteDb.Test
         }
 
         [Fact]
-        public void LiteDbHierarchyNodeRepository_deleting_node_fails_gracefully_on_missing_id()
+        public async Task LiteDbHierarchyNodeRepository_deletes_nodes_and_values()
         {
+            // ARRANGE
+
+            var childValue = new LiteDbHierarchyValueEntity();
+            childValue.SetValue(1);
+            this.repository.Upsert(childValue);
+
+            var child = new LiteDbHierarchyNodeEntity { Key = "key2", ValueRef = childValue._Id };
+            var (_, childId) = this.repository.TryInsert(child);
+
+            var nodeValue = new LiteDbHierarchyValueEntity();
+            nodeValue.SetValue(1);
+            this.repository.Upsert(nodeValue);
+
+            var node = new LiteDbHierarchyNodeEntity { Key = "key1", ValueRef = nodeValue._Id };
+            node.ChildNodeIds.Add("key2", childId);
+            var (_, nodeId) = this.repository.TryInsert(node);
+
             // ACT
 
-            var result = this.repository.DeleteNode(ObjectId.NewObjectId(), false);
+            var result = await this.repository.Delete(new[] { node, child });
 
             // ASSERT
+            // nodes are removed from db
 
-            Assert.False(result);
+            Assert.True(result);
+            Assert.Null(this.nodes.FindById(nodeId));
+            Assert.Null(this.nodes.FindById(childId));
+            Assert.Null(this.values.FindById(nodeValue._Id));
+            Assert.Null(this.values.FindById(childValue._Id));
+        }
+
+        [Fact]
+        public async Task LiteDbHierarchyNodeRepository_deleting_nodes_and_values_skip_null_value()
+        {
+            // ARRANGE
+
+            var child = new LiteDbHierarchyNodeEntity { Key = "key2" };
+            var (_, childId) = this.repository.TryInsert(child);
+
+            var nodeValue = new LiteDbHierarchyValueEntity();
+            nodeValue.SetValue(1);
+            this.repository.Upsert(nodeValue);
+
+            var node = new LiteDbHierarchyNodeEntity { Key = "key1", ValueRef = nodeValue._Id };
+            node.ChildNodeIds.Add("key2", childId);
+            var (_, nodeId) = this.repository.TryInsert(node);
+
+            // ACT
+
+            var result = await this.repository.Delete(new[] { node, child });
+
+            // ASSERT
+            // nodes are removed from db
+
+            Assert.True(result);
+            Assert.Null(this.nodes.FindById(nodeId));
+            Assert.Null(this.nodes.FindById(childId));
+            Assert.Null(this.values.FindById(nodeValue._Id));
         }
 
         [Fact]
@@ -230,69 +282,6 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // ASSERT
 
             Assert.False(result);
-        }
-
-        [Fact]
-        public void LiteDbHierarchyNodeRepository_deletes_nodes_and_values()
-        {
-            // ARRANGE
-
-            var childValue = new LiteDbHierarchyValueEntity();
-            childValue.SetValue(1);
-            this.repository.Upsert(childValue);
-
-            var child = new LiteDbHierarchyNodeEntity { Key = "key2", ValueRef = childValue._Id };
-            var (_, childId) = this.repository.TryInsert(child);
-
-            var nodeValue = new LiteDbHierarchyValueEntity();
-            nodeValue.SetValue(1);
-            this.repository.Upsert(nodeValue);
-
-            var node = new LiteDbHierarchyNodeEntity { Key = "key1", ValueRef = nodeValue._Id };
-            node.ChildNodeIds.Add("key2", childId);
-            var (_, nodeId) = this.repository.TryInsert(node);
-
-            // ACT
-
-            var result = this.repository.Delete(new[] { node, child });
-
-            // ASSERT
-            // nodes are removed from db
-
-            Assert.True(result);
-            Assert.Null(this.nodes.FindById(nodeId));
-            Assert.Null(this.nodes.FindById(childId));
-            Assert.Null(this.values.FindById(nodeValue._Id));
-            Assert.Null(this.values.FindById(childValue._Id));
-        }
-
-        [Fact]
-        public void LiteDbHierarchyNodeRepository_deleting_nodes_and_values_skip_null_value()
-        {
-            // ARRANGE
-
-            var child = new LiteDbHierarchyNodeEntity { Key = "key2" };
-            var (_, childId) = this.repository.TryInsert(child);
-
-            var nodeValue = new LiteDbHierarchyValueEntity();
-            nodeValue.SetValue(1);
-            this.repository.Upsert(nodeValue);
-
-            var node = new LiteDbHierarchyNodeEntity { Key = "key1", ValueRef = nodeValue._Id };
-            node.ChildNodeIds.Add("key2", childId);
-            var (_, nodeId) = this.repository.TryInsert(node);
-
-            // ACT
-
-            var result = this.repository.Delete(new[] { node, child });
-
-            // ASSERT
-            // nodes are removed from db
-
-            Assert.True(result);
-            Assert.Null(this.nodes.FindById(nodeId));
-            Assert.Null(this.nodes.FindById(childId));
-            Assert.Null(this.values.FindById(nodeValue._Id));
         }
     }
 };

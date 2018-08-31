@@ -1,6 +1,7 @@
 ﻿using LiteDB;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Elementary.Hierarchy.LiteDb
 {
@@ -12,8 +13,6 @@ namespace Elementary.Hierarchy.LiteDb
 
         bool Update(LiteDbHierarchyNodeEntity liteDbHierarchyNode);
 
-        bool DeleteNode(BsonValue nodeId, bool recurse);
-
         LiteDbHierarchyNodeEntity Read(BsonValue nodeId);
 
         void Upsert(LiteDbHierarchyValueEntity liteDbHierarchyValueEntity);
@@ -21,6 +20,8 @@ namespace Elementary.Hierarchy.LiteDb
         LiteDbHierarchyValueEntity ReadValue(BsonValue valueId);
 
         bool DeleteValue(BsonValue id);
+
+        Task<bool> Delete(IEnumerable<LiteDbHierarchyNodeEntity> nodes);
     }
 
     public class LiteDbHierarchyNodeRepository : ILiteDbHierarchyNodeRepository
@@ -66,21 +67,14 @@ namespace Elementary.Hierarchy.LiteDb
 
         public bool Update(LiteDbHierarchyNodeEntity liteDbHierarchyNode) => this.nodeCollection.Update(liteDbHierarchyNode);
 
-        public bool DeleteNode(BsonValue nodeId, bool recurse) => this.nodeCollection.Delete(nodeId);
-
-        public bool Delete(IEnumerable<LiteDbHierarchyNodeEntity> nodes)
+        public Task<bool> Delete(IEnumerable<LiteDbHierarchyNodeEntity> nodes)
         {
-            return nodes.Aggregate(true, (ok, node) => this.DeleteNodeAndValue(node._Id, node.ValueRef) && ok);
+            return Task.Run(() => nodes.Aggregate(true, (ok, node) => this.DeleteNodeAndValue(node._Id, node.ValueRef) && ok));
         }
 
         private bool DeleteNodeAndValue(BsonValue nodeId, BsonValue valueId)
         {
-            return (this.nodeCollection.Delete(nodeId) && (valueId != null && valueId != BsonValue.Null) ? this.valueCollection.Delete(valueId) : true);
-        }
-
-        public bool DeleteNodes(IEnumerable<BsonValue> nodeIds)
-        {
-            return nodeIds.Aggregate(true, (ok, nodeId) => this.nodeCollection.Delete(nodeId) && ok);
+            return (this.nodeCollection.Delete(nodeId) && ObjectId.Empty.Equals(valueId?.AsObjectId ?? ObjectId.Empty) ? true : this.valueCollection.Delete(valueId));
         }
 
         public LiteDbHierarchyNodeEntity Read(BsonValue nodeId) => this.nodeCollection.FindById(nodeId);

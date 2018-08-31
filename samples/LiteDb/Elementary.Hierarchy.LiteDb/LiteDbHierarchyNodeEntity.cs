@@ -6,6 +6,7 @@ namespace Elementary.Hierarchy.LiteDb
 {
     public class LiteDbHierarchyNodeEntity : IHasChildNodes<KeyValuePair<string, BsonValue>>
     {
+        
         public ObjectId _Id { get; set; }
 
         public IDictionary<string, BsonValue> ChildNodeIds { get; set; } = new Dictionary<string, BsonValue>();

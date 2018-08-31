@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Elementary.Hierarchy.LiteDb
 {
@@ -81,7 +82,8 @@ namespace Elementary.Hierarchy.LiteDb
                 throw new InvalidOperationException($"Duplicate child node(key='{key}') under parent node(id='{this.InnerNode._Id}') was rejected.");
             }
 
-            var (inserted, childId) = this.repository.TryInsert(new LiteDbHierarchyNodeEntity { Key = key });
+            var newChild = new LiteDbHierarchyNodeEntity { Key = key };
+            var (inserted, childId) = this.repository.TryInsert(newChild);
             if (!inserted)
                 return null;
 
@@ -92,7 +94,7 @@ namespace Elementary.Hierarchy.LiteDb
             if (!this.repository.Update(this.InnerNode))
             {
                 // delete the orphaned node
-                this.repository.DeleteNode(childId, false);
+                this.repository.Delete(new[] { newChild });
                 // restore the child node list
                 this.InnerNode.ChildNodeIds = innerNodeCheckpoint;
 
@@ -103,21 +105,25 @@ namespace Elementary.Hierarchy.LiteDb
             return this.ChildNodes.Single(n => n.Key.Equals(key));
         }
 
-        public bool RemoveChildNode(string key)
+        public Task<bool> RemoveChildNode(string key)
         {
             var (exists, childNode) = this.TryGetChildNode(key);
             if (!exists)
-                return false;
+                return Task.FromResult(false);
 
-            if (childNode.Delete())
-                if (this.InnerNode.ChildNodeIds.Remove(key))
-                    if (this.repository.Update(this.InnerNode))
-                    {
-                        this.childNodes = this.CreateLazyChildNodes();
-                        return true;
-                    }
-
-            return false;
+            return childNode
+                .Delete()
+                .ContinueWith(deletion =>
+                {
+                    if (deletion.IsCompleted && deletion.Result)
+                        if (this.InnerNode.ChildNodeIds.Remove(key))
+                            if (this.repository.Update(this.InnerNode))
+                            {
+                                this.childNodes = this.CreateLazyChildNodes();
+                                return true;
+                            }
+                    return false;
+                });
         }
 
         public (bool, object) TryGetValue()
@@ -128,12 +134,17 @@ namespace Elementary.Hierarchy.LiteDb
             return (this.InnerValue != null, this.InnerValue?.Value.RawValue);
         }
 
-        public bool Delete()
+        public Task<bool> Delete()
         {
-            var valueRemoved = false;
-            if (this.InnerNode.ValueRef != null && this.InnerNode.ValueRef.AsObjectId != ObjectId.Empty)
-                valueRemoved = this.repository.DeleteValue(this.InnerNode.ValueRef);
-            return this.repository.DeleteNode(this.InnerNode._Id, this.InnerNode.HasChildNodes) || valueRemoved;
+            return Task
+                .Run(() => this.DescendantsAndSelf().Select(n => n.InnerNode).ToArray())
+                .ContinueWith(descendantTraversal =>
+                {
+                    if (descendantTraversal.IsCompleted)
+                        return this.repository.Delete(descendantTraversal.Result);
+                    return Task.FromResult(false);
+                })
+                .Unwrap();
         }
     }
 }
