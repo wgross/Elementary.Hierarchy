@@ -37,7 +37,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // ASSERT
 
             Assert.Equal(gchild.Key, result.Key);
-            Assert.Equal(gchild.InnerNode._Id, result.InnerNode._Id);
+            Assert.Equal(gchild.InnerNode.Id, result.InnerNode.Id);
         }
 
         [Fact]

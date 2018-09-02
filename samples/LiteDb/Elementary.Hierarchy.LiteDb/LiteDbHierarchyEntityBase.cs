@@ -4,7 +4,7 @@ namespace Elementary.Hierarchy.LiteDb
 {
     public class LiteDbHierarchyEntityBase
     {
-        public ObjectId _Id { get; set; }
+        public ObjectId Id { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -15,12 +15,12 @@ namespace Elementary.Hierarchy.LiteDb
             if (objAsLiteDbHierarchyEntityBase is null)
                 return false;
 
-            return (this.GetType(), this._Id).Equals((obj.GetType(), objAsLiteDbHierarchyEntityBase._Id));
+            return (this.GetType(), this.Id).Equals((obj.GetType(), objAsLiteDbHierarchyEntityBase.Id));
         }
 
         public override int GetHashCode()
         {
-            return (this.GetType(), this._Id).GetHashCode();
+            return (this.GetType(), this.Id).GetHashCode();
         }
     }
 }

@@ -54,7 +54,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // child is read from repo
             this.repository
                 .Setup(r => r.Read(childId))
-                .Returns(new LiteDbHierarchyNodeEntity { _Id = childId, Key = "child" });
+                .Returns(new LiteDbHierarchyNodeEntity { Id = childId, Key = "child" });
 
             // ACT
 
@@ -68,7 +68,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // root has child
             Assert.True(this.root.HasChildNodes);
             Assert.Single(this.root.ChildNodes);
-            Assert.Equal<BsonValue>(childId, this.root.ChildNodes.Single().InnerNode._Id);
+            Assert.Equal<BsonValue>(childId, this.root.ChildNodes.Single().InnerNode.Id);
             // the child has no children
             Assert.False(result.InnerNode.HasChildNodes);
             Assert.Equal("child", result.InnerNode.Key);
@@ -109,7 +109,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
             LiteDbHierarchyNodeEntity child = null;
             this.repository
                 .Setup(r => r.TryInsert(It.IsAny<LiteDbHierarchyNodeEntity>()))
-                .Callback<LiteDbHierarchyNodeEntity>(e => { child = e; child._Id = childId; })
+                .Callback<LiteDbHierarchyNodeEntity>(e => { child = e; child.Id = childId; })
                 .Returns((true, childId));
             // parent node must be updated
             this.repository
@@ -117,7 +117,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
                 .Returns(false);
             // the orphaned node is deleted
             this.repository
-                .Setup(r => r.Delete(It.Is<IEnumerable<LiteDbHierarchyNodeEntity>>(e => e.Single()._Id.Equals(childId))))
+                .Setup(r => r.Delete(It.Is<IEnumerable<LiteDbHierarchyNodeEntity>>(e => e.Single().Id.Equals(childId))))
                 .ReturnsAsync(true);
 
             // ACT
@@ -141,7 +141,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // node node must be added
             this.repository
                 .Setup(r => r.TryInsert(It.IsAny<LiteDbHierarchyNodeEntity>()))
-                .Callback<LiteDbHierarchyNodeEntity>(r => r._Id = childId)
+                .Callback<LiteDbHierarchyNodeEntity>(r => r.Id = childId)
                 .Returns((true, childId));
             // parent node must be updated
             this.repository
@@ -150,7 +150,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // child node is read from db
             this.repository
                 .Setup(r => r.Read(childId))
-                .Returns(new LiteDbHierarchyNodeEntity { Key = "child", _Id = childId });
+                .Returns(new LiteDbHierarchyNodeEntity { Key = "child", Id = childId });
 
             var child = this.root.AddChildNode(key: "child");
 
@@ -160,7 +160,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
 
             // ASSERT
 
-            Assert.Equal($"Duplicate child node(key='child') under parent node(id='{this.root.InnerNode._Id}') was rejected.", result.Message);
+            Assert.Equal($"Duplicate child node(key='child') under parent node(id='{this.root.InnerNode.Id}') was rejected.", result.Message);
         }
 
         [Fact]
@@ -172,7 +172,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
 
             this.repository
                 .Setup(r => r.Read(childId))
-                .Returns(new LiteDbHierarchyNodeEntity() { _Id = childId });
+                .Returns(new LiteDbHierarchyNodeEntity() { Id = childId });
 
             this.root.InnerNode.ChildNodeIds.Add("child", childId);
 
@@ -194,7 +194,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // node node must be added
             this.repository
                 .Setup(r => r.TryInsert(It.IsAny<LiteDbHierarchyNodeEntity>()))
-                .Callback<LiteDbHierarchyNodeEntity>(r => r._Id = childId)
+                .Callback<LiteDbHierarchyNodeEntity>(r => r.Id = childId)
                 .Returns((true, childId));
             // parent node must be updated
             this.repository
@@ -203,7 +203,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // child node is read from db
             this.repository
                 .Setup(r => r.Read(childId))
-                .Returns(new LiteDbHierarchyNodeEntity { Key = "child", _Id = childId });
+                .Returns(new LiteDbHierarchyNodeEntity { Key = "child", Id = childId });
 
             this.root.AddChildNode("child");
 
@@ -214,7 +214,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // ASSERT
 
             Assert.True(success);
-            Assert.Equal<ObjectId>(childId, result.InnerNode._Id);
+            Assert.Equal<ObjectId>(childId, result.InnerNode.Id);
         }
 
         [Fact]
@@ -226,7 +226,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // node node must be added
             this.repository
                 .Setup(r => r.TryInsert(It.IsAny<LiteDbHierarchyNodeEntity>()))
-                .Callback<LiteDbHierarchyNodeEntity>(r => r._Id = childId)
+                .Callback<LiteDbHierarchyNodeEntity>(r => r.Id = childId)
                 .Returns((true, childId));
             // parent node must be updated
             this.repository
@@ -235,7 +235,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // child node is read from db
             this.repository
                 .Setup(r => r.Read(childId))
-                .Returns(new LiteDbHierarchyNodeEntity { Key = "child", _Id = childId });
+                .Returns(new LiteDbHierarchyNodeEntity { Key = "child", Id = childId });
 
             this.root.AddChildNode("child");
 
@@ -246,7 +246,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // ASSERT
 
             Assert.True(success);
-            Assert.Equal<ObjectId>(childId, result.InnerNode._Id);
+            Assert.Equal<ObjectId>(childId, result.InnerNode.Id);
         }
 
         [Fact]
@@ -257,7 +257,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
             var childId = ObjectId.NewObjectId();
             this.repository
                 .Setup(r => r.TryInsert(It.IsAny<LiteDbHierarchyNodeEntity>()))
-                .Callback<LiteDbHierarchyNodeEntity>(n => n._Id = childId)
+                .Callback<LiteDbHierarchyNodeEntity>(n => n.Id = childId)
                 .Returns((true, childId));
             // root node must be updated
             this.repository
@@ -266,7 +266,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // child is read from repo
             this.repository
                 .Setup(r => r.Read(childId))
-                .Returns(new LiteDbHierarchyNodeEntity { _Id = childId, Key = "child" });
+                .Returns(new LiteDbHierarchyNodeEntity { Id = childId, Key = "child" });
 
             var childNode = this.root.AddChildNode(key: "child");
 
@@ -301,7 +301,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
 
             this.repository
                 .Setup(r => r.TryInsert(It.IsAny<LiteDbHierarchyNodeEntity>()))
-                .Callback<LiteDbHierarchyNodeEntity>(n => { child = n; n._Id = childId; })
+                .Callback<LiteDbHierarchyNodeEntity>(n => { child = n; n.Id = childId; })
                 .Returns((true, childId));
 
             // root node must be updated
@@ -341,8 +341,8 @@ namespace Elementary.Hierarchy.LiteDb.Test
             var nodes = new List<LiteDbHierarchyNodeEntity>();
             this.repository
                  .Setup(r => r.TryInsert(It.IsAny<LiteDbHierarchyNodeEntity>()))
-                 .Callback<LiteDbHierarchyNodeEntity>(n => { nodes.Add(n); n._Id = ObjectId.NewObjectId(); })
-                 .Returns<LiteDbHierarchyNodeEntity>(n => (true, n._Id));
+                 .Callback<LiteDbHierarchyNodeEntity>(n => { nodes.Add(n); n.Id = ObjectId.NewObjectId(); })
+                 .Returns<LiteDbHierarchyNodeEntity>(n => (true, n.Id));
             // root node must be updated
             this.repository
                 .Setup(r => r.Update(this.root.InnerNode))
@@ -350,7 +350,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // child nodes are read from repo
             this.repository
                 .Setup(r => r.Read(It.IsAny<BsonValue>()))
-                .Returns<BsonValue>(id => nodes.Single(n => n._Id.Equals(id)));
+                .Returns<BsonValue>(id => nodes.Single(n => n.Id.Equals(id)));
             // child was deleted
             this.repository
                 .Setup(r => r.Delete(It.Is<IEnumerable<LiteDbHierarchyNodeEntity>>(e => e.Single().Key.Equals("child"))))

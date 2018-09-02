@@ -49,10 +49,10 @@ namespace Elementary.Hierarchy.LiteDb
                 this.repository.Upsert(valueEntity);
                 this.InnerValue = valueEntity;
             }
-            if (this.InnerNode.ValueRef is null || this.InnerNode.ValueRef.CompareTo(valueEntity._Id) != 0)
+            if (this.InnerNode.ValueRef is null || this.InnerNode.ValueRef.CompareTo(valueEntity.Id) != 0)
             {
                 // value is new
-                this.InnerNode.ValueRef = this.InnerValue._Id;
+                this.InnerNode.ValueRef = this.InnerValue.Id;
                 this.repository.Update(this.InnerNode);
             }
         }
@@ -79,7 +79,7 @@ namespace Elementary.Hierarchy.LiteDb
         {
             if (this.InnerNode.ChildNodeIds.ContainsKey(key))
             {
-                throw new InvalidOperationException($"Duplicate child node(key='{key}') under parent node(id='{this.InnerNode._Id}') was rejected.");
+                throw new InvalidOperationException($"Duplicate child node(key='{key}') under parent node(id='{this.InnerNode.Id}') was rejected.");
             }
 
             var newChild = new LiteDbHierarchyNodeEntity { Key = key };

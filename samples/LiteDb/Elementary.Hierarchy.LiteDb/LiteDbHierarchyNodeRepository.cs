@@ -29,13 +29,13 @@ namespace Elementary.Hierarchy.LiteDb
         static LiteDbHierarchyNodeRepository()
         {
             BsonMapper.Global.Entity<LiteDbHierarchyNodeEntity>()
-                .Id(n => n._Id)
+                .Id(n => n.Id)
                 .Field(n => n.ChildNodeIds, "_cn")
                 .Ignore(n => n.HasChildNodes)
                 .Ignore(n => n.ChildNodes);
 
             BsonMapper.Global.Entity<LiteDbHierarchyValueEntity>()
-                .Id(v => v._Id);
+                .Id(v => v.Id);
         }
 
         private readonly LiteCollection<LiteDbHierarchyNodeEntity> nodeCollection;
@@ -44,7 +44,7 @@ namespace Elementary.Hierarchy.LiteDb
         public LiteDbHierarchyNodeRepository(LiteDatabase database, string nodeCollectionName, string valueCollectionName)
         {
             this.nodeCollection = database.GetCollection<LiteDbHierarchyNodeEntity>(nodeCollectionName);
-            this.nodeCollection.EnsureIndex(n => n._Id, unique: true);
+            this.nodeCollection.EnsureIndex(n => n.Id, unique: true);
             this.valueCollection = database.GetCollection<LiteDbHierarchyValueEntity>(valueCollectionName);
 
             if (this.Root is null)
@@ -69,7 +69,7 @@ namespace Elementary.Hierarchy.LiteDb
 
         public Task<bool> Delete(IEnumerable<LiteDbHierarchyNodeEntity> nodes)
         {
-            return Task.Run(() => nodes.Aggregate(true, (ok, node) => this.DeleteNodeAndValue(node._Id, node.ValueRef) && ok));
+            return Task.Run(() => nodes.Aggregate(true, (ok, node) => this.DeleteNodeAndValue(node.Id, node.ValueRef) && ok));
         }
 
         private bool DeleteNodeAndValue(BsonValue nodeId, BsonValue valueId)

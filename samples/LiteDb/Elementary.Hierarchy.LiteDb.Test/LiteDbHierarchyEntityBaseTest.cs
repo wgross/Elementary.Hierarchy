@@ -11,8 +11,8 @@ namespace Elementary.Hierarchy.LiteDb.Test
             var refId = ObjectId.NewObjectId();
             var differentId = ObjectId.NewObjectId();
 
-            yield return new object[] { new LiteDbHierarchyNodeEntity { _Id = refId }, new LiteDbHierarchyNodeEntity { _Id = refId }, new LiteDbHierarchyNodeEntity { _Id = differentId }, new LiteDbHierarchyValueEntity { _Id = refId } };
-            yield return new object[] { new LiteDbHierarchyValueEntity { _Id = refId }, new LiteDbHierarchyValueEntity { _Id = refId }, new LiteDbHierarchyValueEntity { _Id = differentId }, new LiteDbHierarchyNodeEntity { _Id = refId } };
+            yield return new object[] { new LiteDbHierarchyNodeEntity { Id = refId }, new LiteDbHierarchyNodeEntity { Id = refId }, new LiteDbHierarchyNodeEntity { Id = differentId }, new LiteDbHierarchyValueEntity { Id = refId } };
+            yield return new object[] { new LiteDbHierarchyValueEntity { Id = refId }, new LiteDbHierarchyValueEntity { Id = refId }, new LiteDbHierarchyValueEntity { Id = differentId }, new LiteDbHierarchyNodeEntity { Id = refId } };
         }
 
         [Theory]

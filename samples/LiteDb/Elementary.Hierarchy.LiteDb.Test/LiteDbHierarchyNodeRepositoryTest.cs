@@ -78,7 +78,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
 
             // ASSERT
 
-            Assert.Equal(node._Id, result._Id);
+            Assert.Equal(node.Id, result.Id);
             Assert.NotSame(node, result);
         }
 
@@ -143,14 +143,14 @@ namespace Elementary.Hierarchy.LiteDb.Test
             childValue.SetValue(1);
             this.repository.Upsert(childValue);
 
-            var child = new LiteDbHierarchyNodeEntity { Key = "key2", ValueRef = childValue._Id };
+            var child = new LiteDbHierarchyNodeEntity { Key = "key2", ValueRef = childValue.Id };
             var (_, childId) = this.repository.TryInsert(child);
 
             var nodeValue = new LiteDbHierarchyValueEntity();
             nodeValue.SetValue(1);
             this.repository.Upsert(nodeValue);
 
-            var node = new LiteDbHierarchyNodeEntity { Key = "key1", ValueRef = nodeValue._Id };
+            var node = new LiteDbHierarchyNodeEntity { Key = "key1", ValueRef = nodeValue.Id };
             node.ChildNodeIds.Add("key2", childId);
             var (_, nodeId) = this.repository.TryInsert(node);
 
@@ -164,8 +164,8 @@ namespace Elementary.Hierarchy.LiteDb.Test
             Assert.True(result);
             Assert.Null(this.nodes.FindById(nodeId));
             Assert.Null(this.nodes.FindById(childId));
-            Assert.Null(this.values.FindById(nodeValue._Id));
-            Assert.Null(this.values.FindById(childValue._Id));
+            Assert.Null(this.values.FindById(nodeValue.Id));
+            Assert.Null(this.values.FindById(childValue.Id));
         }
 
         [Fact]
@@ -180,7 +180,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
             nodeValue.SetValue(1);
             this.repository.Upsert(nodeValue);
 
-            var node = new LiteDbHierarchyNodeEntity { Key = "key1", ValueRef = nodeValue._Id };
+            var node = new LiteDbHierarchyNodeEntity { Key = "key1", ValueRef = nodeValue.Id };
             node.ChildNodeIds.Add("key2", childId);
             var (_, nodeId) = this.repository.TryInsert(node);
 
@@ -194,7 +194,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
             Assert.True(result);
             Assert.Null(this.nodes.FindById(nodeId));
             Assert.Null(this.nodes.FindById(childId));
-            Assert.Null(this.values.FindById(nodeValue._Id));
+            Assert.Null(this.values.FindById(nodeValue.Id));
         }
 
         [Fact]
@@ -211,11 +211,11 @@ namespace Elementary.Hierarchy.LiteDb.Test
 
             // ASSERT
 
-            Assert.NotNull(valueEntity._Id);
+            Assert.NotNull(valueEntity.Id);
 
             // check db
 
-            var fromRead = this.values.FindById(valueEntity._Id);
+            var fromRead = this.values.FindById(valueEntity.Id);
 
             Assert.NotNull(fromRead);
             Assert.Equal(1, fromRead[nameof(LiteDbHierarchyValueEntity.Value)].AsInt32);
@@ -243,7 +243,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
 
             // check db
 
-            var fromRead = this.values.FindById(valueEntity._Id);
+            var fromRead = this.values.FindById(valueEntity.Id);
 
             Assert.NotNull(fromRead);
             Assert.Equal(2, fromRead[nameof(LiteDbHierarchyValueEntity.Value)].AsInt32);
@@ -260,12 +260,12 @@ namespace Elementary.Hierarchy.LiteDb.Test
 
             // ACT
 
-            var result = this.repository.DeleteValue(valueEntity._Id);
+            var result = this.repository.DeleteValue(valueEntity.Id);
 
             // ASSERT
 
             Assert.True(result);
-            Assert.NotNull(valueEntity._Id);
+            Assert.NotNull(valueEntity.Id);
 
             // check db
 

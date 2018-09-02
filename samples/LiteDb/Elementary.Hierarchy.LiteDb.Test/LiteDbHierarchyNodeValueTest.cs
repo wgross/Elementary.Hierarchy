@@ -18,7 +18,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
         {
             this.rootId = ObjectId.NewObjectId();
             this.repository = this.mocks.Create<ILiteDbHierarchyNodeRepository>();
-            this.repository.Setup(r => r.Root).Returns(new LiteDbHierarchyNodeEntity() { _Id = this.rootId });
+            this.repository.Setup(r => r.Root).Returns(new LiteDbHierarchyNodeEntity() { Id = this.rootId });
             this.root = new LiteDbHierarchyNode(this.repository.Object, this.repository.Object.Root);
         }
 
@@ -45,7 +45,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // ARRANGE
 
             var valueId = ObjectId.NewObjectId();
-            var valueEntity = new LiteDbHierarchyValueEntity { _Id = valueId };
+            var valueEntity = new LiteDbHierarchyValueEntity { Id = valueId };
             valueEntity.SetValue(1);
 
             // fake root value
@@ -76,7 +76,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // value node must be written
             this.repository
                 .Setup(r => r.Upsert(It.Is<LiteDbHierarchyValueEntity>(v => v.Value.Equals(1))))
-                .Callback<LiteDbHierarchyValueEntity>(v => v._Id = valueId);
+                .Callback<LiteDbHierarchyValueEntity>(v => v.Id = valueId);
 
             // node must be updated wit reference to value entity
             this.repository
@@ -89,7 +89,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
 
             // ASSERT
 
-            Assert.Equal<ObjectId>(this.root.InnerValue._Id, this.root.InnerNode.ValueRef);
+            Assert.Equal<ObjectId>(this.root.InnerValue.Id, this.root.InnerNode.ValueRef);
             Assert.Equal(1, this.root.InnerValue.Value.AsInt32);
         }
 
@@ -101,8 +101,8 @@ namespace Elementary.Hierarchy.LiteDb.Test
             // node alredy has a value
             this.root = new LiteDbHierarchyNode(this.repository.Object, this.repository.Object.Root, new LiteDbHierarchyValueEntity());
             this.root.InnerValue.SetValue(1);
-            this.root.InnerValue._Id = ObjectId.NewObjectId();
-            this.root.InnerNode.ValueRef = this.root.InnerValue._Id;
+            this.root.InnerValue.Id = ObjectId.NewObjectId();
+            this.root.InnerNode.ValueRef = this.root.InnerValue.Id;
 
             // value node must be written
             this.repository
@@ -120,7 +120,7 @@ namespace Elementary.Hierarchy.LiteDb.Test
 
             var valueId = ObjectId.NewObjectId();
 
-            this.root = new LiteDbHierarchyNode(this.repository.Object, this.repository.Object.Root, new LiteDbHierarchyValueEntity() { _Id = valueId });
+            this.root = new LiteDbHierarchyNode(this.repository.Object, this.repository.Object.Root, new LiteDbHierarchyValueEntity() { Id = valueId });
             this.root.InnerNode.ValueRef = valueId;
 
             // node must be deleted
