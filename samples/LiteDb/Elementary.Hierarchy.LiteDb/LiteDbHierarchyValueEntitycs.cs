@@ -2,10 +2,8 @@
 
 namespace Elementary.Hierarchy.LiteDb
 {
-    public class LiteDbHierarchyValueEntity
+    public class LiteDbHierarchyValueEntity : LiteDbHierarchyEntityBase
     {
-        public ObjectId _Id { get; set; }
-
         public BsonValue Value { get; private set; }
 
         public bool SetValue<T>(T value)
