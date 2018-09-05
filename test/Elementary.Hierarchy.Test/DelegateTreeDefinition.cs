@@ -50,14 +50,8 @@ namespace Elementary.Hierarchy.Test
             return Enumerable.Empty<string>();
         }
 
-        public const string rootNode = "rootNode";
-
         public static IEnumerable<string> GetChildNodesWithParentCycle(string node)
         {
-            
-            const string leftNode = "leftNode";
-            const string leftLeaf = "leftLeaf";
-
             //              -> rootNode
             //            /    /
             //          leftNode
@@ -68,28 +62,27 @@ namespace Elementary.Hierarchy.Test
 
             switch (node)
             {
-                case rootNode:
-                    return new[] { leftNode };
+                case "rootNode":
+                    return new[] { "leftNode" };
 
-                case leftNode:
-                    return new[] { leftLeaf, rootNode };
+                case "leftNode":
+                    return new[] { "leftLeaf", "rootNode" };
             }
             return Enumerable.Empty<string>();
         }
 
         public static IEnumerable<string> GetChildNodesWithSelfCycle(string node)
         {
-
             //           -> rootNode
             //          |_____|
-            //             
+            //
             //
             // unkown node -> {}
 
             switch (node)
             {
-                case rootNode:
-                    return new[] { rootNode };
+                case "rootNode":
+                    return new[] { "rootNode" };
             }
             return Enumerable.Empty<string>();
         }

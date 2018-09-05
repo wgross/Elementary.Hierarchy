@@ -144,7 +144,7 @@
         }
 
         [Fact]
-        public void d_root_returns_children_as_level1_descendants_on_Descendants()
+        public void D_root_returns_children_as_level1_descendants_on_Descendants()
         {
             // ACT
 
@@ -156,7 +156,7 @@
         }
 
         [Fact]
-        public void D_root_returns_children_as_level1_descendants_on_Descendants()
+        public void D_root_returns_empty_set_as_level0_descendants_on_Descendants()
         {
             // ACT
 
@@ -223,7 +223,7 @@
         {
             // ACT
 
-            IEnumerable<string> result = DelegateTreeDefinition.rootNode.Descendants(DelegateTreeDefinition.GetChildNodesWithParentCycle).ToArray();
+            IEnumerable<string> result = "rootNode".Descendants(DelegateTreeDefinition.GetChildNodesWithParentCycle).ToArray();
 
             // ASSERT
 
@@ -231,13 +231,12 @@
             Assert.Equal(new[] { "leftNode", "leftLeaf" }, result);
         }
 
-       
         [Fact]
         public void D_node_with_parent_cyvle_doesnt_descend_in_already_visited_node_on_Descendants_depthFirst()
         {
             // ACT
 
-            IEnumerable<string> result = DelegateTreeDefinition.rootNode.Descendants(DelegateTreeDefinition.GetChildNodesWithParentCycle, depthFirst: true).ToArray();
+            IEnumerable<string> result = "rootNode".Descendants(DelegateTreeDefinition.GetChildNodesWithParentCycle, depthFirst: true).ToArray();
 
             // ASSERT
 

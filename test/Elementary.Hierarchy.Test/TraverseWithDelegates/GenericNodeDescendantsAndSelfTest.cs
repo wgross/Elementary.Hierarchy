@@ -116,7 +116,7 @@
         {
             // ACT
 
-            IEnumerable<string> result = DelegateTreeDefinition.rootNode.DescendantsAndSelf(DelegateTreeDefinition.GetChildNodesWithSelfCycle).ToArray();
+            IEnumerable<string> result = "rootNode".DescendantsAndSelf(DelegateTreeDefinition.GetChildNodesWithSelfCycle).ToArray();
 
             // ASSERT
 
@@ -129,7 +129,7 @@
         {
             // ACT
 
-            IEnumerable<string> result = DelegateTreeDefinition.rootNode.DescendantsAndSelf(DelegateTreeDefinition.GetChildNodesWithSelfCycle, depthFirst: true).ToArray();
+            IEnumerable<string> result = "rootNode".DescendantsAndSelf(DelegateTreeDefinition.GetChildNodesWithSelfCycle, depthFirst: true).ToArray();
 
             // ASSERT
 

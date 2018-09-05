@@ -202,12 +202,14 @@ namespace Elementary.Hierarchy.Generic
                 return EnumerateDescendentsAndSelfDepthFirst(startNode,
                     breadcrumbs: null,
                     maxDepth: maxDepth ?? int.MaxValue,
-                    getChildNodes: getChildNodes).Skip(1);
+                    getChildNodes: getChildNodes,
+                    equalityComparer:EqualityComparer<TNode>.Default).Skip(1);
             else // this is the default case:
                 return EnumerateDescendantsAndSelfBreadthFirst(startNode,
                     breadcrumbs: null,
                     maxDepth: maxDepth ?? int.MaxValue,
-                    getChildNodes: getChildNodes).Skip(1);
+                    getChildNodes: getChildNodes, 
+                    equalityComparer:EqualityComparer<TNode>.Default).Skip(1);
         }
 
         /// <summary>
@@ -263,8 +265,12 @@ namespace Elementary.Hierarchy.Generic
 
             var breadcrumbs = new List<TNode>();
             return depthFirst.GetValueOrDefault(false)
-                ? EnumerateDescendentsAndSelfDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Skip(1).Select(n => (n, breadcrumbs.ToArray().AsEnumerable()))
-                : EnumerateDescendantsAndSelfBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Skip(1).Select(n => (n, breadcrumbs.ToArray().AsEnumerable()));
+                ? EnumerateDescendentsAndSelfDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren, EqualityComparer<TNode>.Default)
+                    .Skip(1)
+                    .Select(n => (n, breadcrumbs.ToArray().AsEnumerable()))
+                : EnumerateDescendantsAndSelfBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren, EqualityComparer<TNode>.Default)
+                    .Skip(1)
+                    .Select(n => (n, breadcrumbs.ToArray().AsEnumerable()));
         }
 
         /// <summary>
@@ -286,8 +292,10 @@ namespace Elementary.Hierarchy.Generic
 
             var breadcrumbs = new List<TNode>();
             return depthFirst.GetValueOrDefault(false)
-                ? EnumerateDescendentsAndSelfDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Select(n => (n, (IEnumerable<TNode>)(breadcrumbs.ToArray())))
-                : EnumerateDescendantsAndSelfBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Select(n => (n, (IEnumerable<TNode>)(breadcrumbs.ToArray())));
+                ? EnumerateDescendentsAndSelfDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren, EqualityComparer<TNode>.Default)
+                    .Select(n => (n, (IEnumerable<TNode>)(breadcrumbs.ToArray())))
+                : EnumerateDescendantsAndSelfBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren, EqualityComparer<TNode>.Default)
+                    .Select(n => (n, (IEnumerable<TNode>)(breadcrumbs.ToArray())));
         }
 
         #endregion DescandantsWithPath/-AndSelf
@@ -343,12 +351,12 @@ namespace Elementary.Hierarchy.Generic
             // and continue with descendants
             if (depthFirst.GetValueOrDefault(false))
             {
-                foreach (var node in EnumerateDescendentsAndSelfDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Skip(1))
+                foreach (var node in EnumerateDescendentsAndSelfDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren, EqualityComparer<TNode>.Default).Skip(1))
                     visitor(breadcrumbs, node);
             }
             else // this is the default case:
             {
-                foreach (var node in EnumerateDescendantsAndSelfBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Skip(1))
+                foreach (var node in EnumerateDescendantsAndSelfBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren, EqualityComparer<TNode>.Default).Skip(1))
                     visitor(breadcrumbs, node);
             }
         }
@@ -377,12 +385,12 @@ namespace Elementary.Hierarchy.Generic
             var breadcrumbs = new List<TNode>();
             if (depthFirst.GetValueOrDefault(false))
             {
-                foreach (var node in EnumerateDescendentsAndSelfDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Skip(1))
+                foreach (var node in EnumerateDescendentsAndSelfDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren, EqualityComparer<TNode>.Default).Skip(1))
                     visitor(breadcrumbs, node);
             }
             else // this is the default case:
             {
-                foreach (var node in EnumerateDescendantsAndSelfBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren).Skip(1))
+                foreach (var node in EnumerateDescendantsAndSelfBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren, EqualityComparer<TNode>.Default).Skip(1))
                     visitor(breadcrumbs, node);
             }
         }
@@ -391,7 +399,7 @@ namespace Elementary.Hierarchy.Generic
 
         #region Internal implementation of hierarchy traversal
 
-        private static IEnumerable<TNode> EnumerateDescendantsAndSelfBreadthFirst<TNode>(TNode startNode, List<TNode> breadcrumbs, int maxDepth, Func<TNode, IEnumerable<TNode>> getChildNodes)
+        private static IEnumerable<TNode> EnumerateDescendantsAndSelfBreadthFirst<TNode>(TNode startNode, List<TNode> breadcrumbs, int maxDepth, Func<TNode, IEnumerable<TNode>> getChildNodes, IEqualityComparer<TNode> equalityComparer)
         {
             // keep track of all visited nodes for cycle detection
 
@@ -422,7 +430,7 @@ namespace Elementary.Hierarchy.Generic
             {
                 foreach (var childOfStartNode in getChildNodes(startNode) ?? Enumerable.Empty<TNode>()) // descend one level from the start node
                 {
-                    if (!visitedNodes.Any(n => object.ReferenceEquals(n, childOfStartNode)))
+                    if (!visitedNodes.Contains(childOfStartNode, equalityComparer))
                     {
                         // add child to the queue of child nodes to visit
                         nodesToVisit.Enqueue((level: 1, child: childOfStartNode, node: startNode));
@@ -447,7 +455,7 @@ namespace Elementary.Hierarchy.Generic
                 {
                     foreach (TNode childOfCurrentNode in getChildNodes(currentNode)) // descend one level
                     {
-                        if (!visitedNodes.Any(n => object.ReferenceEquals(n, childOfCurrentNode)))
+                        if (!visitedNodes.Contains(childOfCurrentNode, equalityComparer))
                         {
                             // child noes are added only if they are not visted already
                             nodesToVisit.Enqueue((level: currentNodeLevel + 1, child: childOfCurrentNode, node: currentNode));
@@ -468,7 +476,7 @@ namespace Elementary.Hierarchy.Generic
             yield break;
         }
 
-        private static IEnumerable<TNode> EnumerateDescendentsAndSelfDepthFirst<TNode>(TNode startNode, List<TNode> breadcrumbs, int maxDepth, Func<TNode, IEnumerable<TNode>> getChildNodes)
+        private static IEnumerable<TNode> EnumerateDescendentsAndSelfDepthFirst<TNode>(TNode startNode, List<TNode> breadcrumbs, int maxDepth, Func<TNode, IEnumerable<TNode>> getChildNodes, IEqualityComparer<TNode> equalityComparer)
         {
             // keep track of all visited nodes for cycle detection
 
@@ -522,7 +530,7 @@ namespace Elementary.Hierarchy.Generic
 
                 // visit only nodes which are not visited previously
 
-                if (!visitedNodes.Any(n => object.ReferenceEquals(n, currentNode)))
+                if (!visitedNodes.Contains(currentNode, equalityComparer))
                 {
                     // enumerate the child nodes of this node during the next step
 
