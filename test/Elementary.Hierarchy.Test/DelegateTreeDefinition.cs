@@ -50,43 +50,6 @@ namespace Elementary.Hierarchy.Test
             return Enumerable.Empty<string>();
         }
 
-        public static IEnumerable<string> GetChildNodesWithParentCycle(string node)
-        {
-            //              -> rootNode
-            //            /    /
-            //          leftNode
-            //           /
-            //     leftLeaf
-            //
-            // unkown node -> {}
-
-            switch (node)
-            {
-                case "rootNode":
-                    return new[] { "leftNode" };
-
-                case "leftNode":
-                    return new[] { "leftLeaf", "rootNode" };
-            }
-            return Enumerable.Empty<string>();
-        }
-
-        public static IEnumerable<string> GetChildNodesWithSelfCycle(string node)
-        {
-            //           -> rootNode
-            //          |_____|
-            //
-            //
-            // unkown node -> {}
-
-            switch (node)
-            {
-                case "rootNode":
-                    return new[] { "rootNode" };
-            }
-            return Enumerable.Empty<string>();
-        }
-
         public static (bool, string) TryGetChildNode(string node, string childKey)
         {
             //                rootNode

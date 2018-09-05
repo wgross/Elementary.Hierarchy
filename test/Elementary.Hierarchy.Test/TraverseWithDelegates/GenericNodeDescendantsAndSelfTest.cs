@@ -110,31 +110,5 @@
 
             Assert.Equal(children, descendants);
         }
-
-        [Fact]
-        public void D_root_with_self_cycle_doesnt_descend_in_already_visited_node_on_Descendants_breadFirst()
-        {
-            // ACT
-
-            IEnumerable<string> result = "rootNode".DescendantsAndSelf(DelegateTreeDefinition.GetChildNodesWithSelfCycle).ToArray();
-
-            // ASSERT
-
-            Assert.Single(result);
-            Assert.Equal(new[] { "rootNode" }, result);
-        }
-
-        [Fact]
-        public void D_root_with_self_cycle_doesnt_descend_in_already_visited_node_on_Descendants_depthFirst()
-        {
-            // ACT
-
-            IEnumerable<string> result = "rootNode".DescendantsAndSelf(DelegateTreeDefinition.GetChildNodesWithSelfCycle, depthFirst: true).ToArray();
-
-            // ASSERT
-
-            Assert.Single(result);
-            Assert.Equal(new[] { "rootNode" }, result);
-        }
     }
 }
