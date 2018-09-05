@@ -29,7 +29,7 @@ namespace Elementary.Hierarchy.Test
             return Enumerable.Empty<string>();
         }
 
-        public static IEnumerable<string> GetChildNodes2(string node)
+        public static IEnumerable<string> GetChildNodesSmall(string node)
         {
             //                rootNode
             //                /      \
@@ -46,6 +46,50 @@ namespace Elementary.Hierarchy.Test
 
                 case "leftNode":
                     return new[] { "leftLeaf" };
+            }
+            return Enumerable.Empty<string>();
+        }
+
+        public const string rootNode = "rootNode";
+
+        public static IEnumerable<string> GetChildNodesWithParentCycle(string node)
+        {
+            
+            const string leftNode = "leftNode";
+            const string leftLeaf = "leftLeaf";
+
+            //              -> rootNode
+            //            /    /
+            //          leftNode
+            //           /
+            //     leftLeaf
+            //
+            // unkown node -> {}
+
+            switch (node)
+            {
+                case rootNode:
+                    return new[] { leftNode };
+
+                case leftNode:
+                    return new[] { leftLeaf, rootNode };
+            }
+            return Enumerable.Empty<string>();
+        }
+
+        public static IEnumerable<string> GetChildNodesWithSelfCycle(string node)
+        {
+
+            //           -> rootNode
+            //          |_____|
+            //             
+            //
+            // unkown node -> {}
+
+            switch (node)
+            {
+                case rootNode:
+                    return new[] { rootNode };
             }
             return Enumerable.Empty<string>();
         }

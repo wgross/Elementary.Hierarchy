@@ -393,9 +393,14 @@ namespace Elementary.Hierarchy.Generic
 
         private static IEnumerable<TNode> EnumerateDescendantsAndSelfBreadthFirst<TNode>(TNode startNode, List<TNode> breadcrumbs, int maxDepth, Func<TNode, IEnumerable<TNode>> getChildNodes)
         {
+            // keep track of all visited nodes for cycle detection
+
+            var visitedNodes = new List<TNode>();
+
             // enable the breadcrumb handling if needed
 
             Action<List<TNode>, int, TNode> updateBreadcrumbs = delegate { };
+
             if (breadcrumbs != null)
             {
                 updateBreadcrumbs = UpdateBreadcrumbs;
@@ -406,14 +411,22 @@ namespace Elementary.Hierarchy.Generic
 
             yield return startNode;
 
+            // start node was visited
+
+            visitedNodes.Add(startNode);
+
             // add the children of the start node to the queue of nodes to vist
 
             var nodesToVisit = new Queue<(int level, TNode child, TNode node)>();
             if (0 < maxDepth) // startNode is depth 0, next level is 1
             {
-                foreach (var child in getChildNodes(startNode) ?? Enumerable.Empty<TNode>()) // descend one level from the start node
+                foreach (var childOfStartNode in getChildNodes(startNode) ?? Enumerable.Empty<TNode>()) // descend one level from the start node
                 {
-                    nodesToVisit.Enqueue((level: 1, child: child, node: startNode));
+                    if (!visitedNodes.Any(n => object.ReferenceEquals(n, childOfStartNode)))
+                    {
+                        // add child to the queue of child nodes to visit
+                        nodesToVisit.Enqueue((level: 1, child: childOfStartNode, node: startNode));
+                    }
                 }
             }
 
@@ -434,20 +447,33 @@ namespace Elementary.Hierarchy.Generic
                 {
                     foreach (TNode childOfCurrentNode in getChildNodes(currentNode)) // descend one level
                     {
-                        nodesToVisit.Enqueue((level: currentNodeLevel + 1, child: childOfCurrentNode, node: currentNode));
+                        if (!visitedNodes.Any(n => object.ReferenceEquals(n, childOfCurrentNode)))
+                        {
+                            // child noes are added only if they are not visted already
+                            nodesToVisit.Enqueue((level: currentNodeLevel + 1, child: childOfCurrentNode, node: currentNode));
+                        }
                     }
                 }
                 lastLevel = currentNodeLevel;
 
                 // present the current node for enumeration, including an update of the breadcrumbs to the current node
+
                 updateBreadcrumbs(breadcrumbs, currentNodeLevel, currentNodeParent);
                 yield return currentNode;
+
+                // current node was visited
+
+                visitedNodes.Add(currentNode);
             }
             yield break;
         }
 
         private static IEnumerable<TNode> EnumerateDescendentsAndSelfDepthFirst<TNode>(TNode startNode, List<TNode> breadcrumbs, int maxDepth, Func<TNode, IEnumerable<TNode>> getChildNodes)
         {
+            // keep track of all visited nodes for cycle detection
+
+            var visitedNodes = new List<TNode>();
+
             // enable the breadcrumb handling if needed
 
             Action<List<TNode>, int, TNode> updateBreadcrumbs = delegate { };
@@ -460,6 +486,10 @@ namespace Elementary.Hierarchy.Generic
             // return start node first as 'self'
 
             yield return startNode;
+
+            // start node was visited
+
+            visitedNodes.Add(startNode);
 
             // keep a stack with the enumerators in their current enumeration state
 
@@ -490,14 +520,19 @@ namespace Elementary.Hierarchy.Generic
                 var currentNodeParent = currentNodeTuple.Item3;
                 var currentNode = currentNodeTuple.Item2.Current;
 
-                // enumerate the child nodes of this node during the next step
+                // visit only nodes which are not visited previously
 
-                if (currentNodeLevel < maxDepth)
-                    nodesToVisit.Push((level: currentNodeLevel + 1, children: getChildNodes(currentNode).GetEnumerator(), node: currentNode));
+                if (!visitedNodes.Any(n => object.ReferenceEquals(n, currentNode)))
+                {
+                    // enumerate the child nodes of this node during the next step
 
-                // present the current node for enumeration, including an update of the breadcrumbs to the current node
-                updateBreadcrumbs(breadcrumbs, currentNodeLevel, currentNodeParent);
-                yield return currentNode;
+                    if (currentNodeLevel < maxDepth)
+                        nodesToVisit.Push((level: currentNodeLevel + 1, children: getChildNodes(currentNode).GetEnumerator(), node: currentNode));
+
+                    // present the current node for enumeration, including an update of the breadcrumbs to the current node
+                    updateBreadcrumbs(breadcrumbs, currentNodeLevel, currentNodeParent);
+                    yield return currentNode;
+                }
             }
             yield break;
         }

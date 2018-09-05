@@ -99,7 +99,7 @@
         {
             // ACT
 
-            IEnumerable<string> result = "rootNode".Descendants(DelegateTreeDefinition.GetChildNodes2).ToArray();
+            IEnumerable<string> result = "rootNode".Descendants(DelegateTreeDefinition.GetChildNodesSmall).ToArray();
 
             // ASSERT
 
@@ -131,7 +131,7 @@
         {
             // ACT
 
-            IEnumerable<string> result = "rootNode".Descendants(DelegateTreeDefinition.GetChildNodes2, depthFirst: true).ToArray();
+            IEnumerable<string> result = "rootNode".Descendants(DelegateTreeDefinition.GetChildNodesSmall, depthFirst: true).ToArray();
 
             // ASSERT
 
@@ -216,6 +216,33 @@
                 "leftRightLeaf",
                 "rightRightLeaf"
             }, result);
+        }
+
+        [Fact]
+        public void D_node_with_parent_cycle_doesnt_descend_in_already_visited_node_on_Descendants_breadFirst()
+        {
+            // ACT
+
+            IEnumerable<string> result = DelegateTreeDefinition.rootNode.Descendants(DelegateTreeDefinition.GetChildNodesWithParentCycle).ToArray();
+
+            // ASSERT
+
+            Assert.Equal(2, result.Count());
+            Assert.Equal(new[] { "leftNode", "leftLeaf" }, result);
+        }
+
+       
+        [Fact]
+        public void D_node_with_parent_cyvle_doesnt_descend_in_already_visited_node_on_Descendants_depthFirst()
+        {
+            // ACT
+
+            IEnumerable<string> result = DelegateTreeDefinition.rootNode.Descendants(DelegateTreeDefinition.GetChildNodesWithParentCycle, depthFirst: true).ToArray();
+
+            // ASSERT
+
+            Assert.Equal(2, result.Count());
+            Assert.Equal(new[] { "leftNode", "leftLeaf" }, result);
         }
     }
 }
