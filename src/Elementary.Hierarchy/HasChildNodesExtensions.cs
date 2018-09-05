@@ -190,7 +190,7 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="depthFirst">specifies if child noded are enumerated depth first or breadth first</param>
         /// <param name="getChildNodes">delegate retrieved the child nodes of the specified TNode instance</param>
         /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is always empty, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
-        public static IEnumerable<TNode> Descendants<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, bool? depthFirst = null, int? maxDepth = null)
+        public static IEnumerable<TNode> Descendants<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, bool? depthFirst = null, int? maxDepth = null, IEqualityComparer<TNode> comparer = null)
         {
             if (getChildNodes is null)
                 throw new ArgumentNullException(nameof(getChildNodes));
@@ -203,13 +203,13 @@ namespace Elementary.Hierarchy.Generic
                     breadcrumbs: null,
                     maxDepth: maxDepth ?? int.MaxValue,
                     getChildNodes: getChildNodes,
-                    equalityComparer:EqualityComparer<TNode>.Default).Skip(1);
+                    equalityComparer: comparer ?? EqualityComparer<TNode>.Default).Skip(1);
             else // this is the default case:
                 return EnumerateDescendantsAndSelfBreadthFirst(startNode,
                     breadcrumbs: null,
                     maxDepth: maxDepth ?? int.MaxValue,
-                    getChildNodes: getChildNodes, 
-                    equalityComparer:EqualityComparer<TNode>.Default).Skip(1);
+                    getChildNodes: getChildNodes,
+                    equalityComparer: comparer ?? EqualityComparer<TNode>.Default).Skip(1);
         }
 
         /// <summary>
@@ -225,7 +225,7 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="depthFirst">specifies if child nodes are enumerated depth first or breadth first</param>
         /// <param name="getChildNodes">delegate retrueved the child nodes of the specified TNode instance</param>
         /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is the <paramref name="startNode"/>, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
-        public static IEnumerable<TNode> DescendantsAndSelf<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, bool? depthFirst = null, int? maxDepth = null)
+        public static IEnumerable<TNode> DescendantsAndSelf<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildNodes, bool? depthFirst = null, int? maxDepth = null, IEqualityComparer<TNode> comparer = null)
         {
             if (getChildNodes is null)
                 throw new ArgumentNullException(nameof(getChildNodes));
@@ -238,7 +238,7 @@ namespace Elementary.Hierarchy.Generic
                 yield break; // depth null means -> do not descend
 
             yield return startNode;
-            foreach (var nextNode in startNode.Descendants(getChildNodes, depthFirst.GetValueOrDefault(false), evaluatedMaxDepth - 1))
+            foreach (var nextNode in startNode.Descendants(getChildNodes, depthFirst.GetValueOrDefault(false), evaluatedMaxDepth - 1, comparer))
                 yield return nextNode;
         }
 
@@ -255,7 +255,7 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="getChildren">delegate to retruebe children form any node of the hierarchy</param>
         /// <param name="depthFirst">enables deth first traversal, breadth first is default</param>
         /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is always empty, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
-        public static IEnumerable<(TNode node, IEnumerable<TNode> path)> DescendantsWithPath<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren, bool? depthFirst = null, int? maxDepth = null)
+        public static IEnumerable<(TNode node, IEnumerable<TNode> path)> DescendantsWithPath<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren, bool? depthFirst = null, int? maxDepth = null, IEqualityComparer<TNode> comparer = null)
         {
             if (getChildren is null)
                 throw new ArgumentNullException(nameof(getChildren));
@@ -265,10 +265,10 @@ namespace Elementary.Hierarchy.Generic
 
             var breadcrumbs = new List<TNode>();
             return depthFirst.GetValueOrDefault(false)
-                ? EnumerateDescendentsAndSelfDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren, EqualityComparer<TNode>.Default)
+                ? EnumerateDescendentsAndSelfDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren, comparer ?? EqualityComparer<TNode>.Default)
                     .Skip(1)
                     .Select(n => (n, breadcrumbs.ToArray().AsEnumerable()))
-                : EnumerateDescendantsAndSelfBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren, EqualityComparer<TNode>.Default)
+                : EnumerateDescendantsAndSelfBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren, comparer ?? EqualityComparer<TNode>.Default)
                     .Skip(1)
                     .Select(n => (n, breadcrumbs.ToArray().AsEnumerable()));
         }
@@ -282,7 +282,7 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="getChildren">delegate to retruebe children form any node of the hierarchy</param>
         /// <param name="depthFirst">enables deth first traversal, breadth first is default</param>
         /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is always empty, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
-        public static IEnumerable<(TNode node, IEnumerable<TNode> path)> DescendantsAndSelfWithPath<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren, bool? depthFirst = null, int? maxDepth = null)
+        public static IEnumerable<(TNode node, IEnumerable<TNode> path)> DescendantsAndSelfWithPath<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren, bool? depthFirst = null, int? maxDepth = null, IEqualityComparer<TNode> comparer = null)
         {
             if (getChildren is null)
                 throw new ArgumentNullException(nameof(getChildren));
@@ -292,9 +292,9 @@ namespace Elementary.Hierarchy.Generic
 
             var breadcrumbs = new List<TNode>();
             return depthFirst.GetValueOrDefault(false)
-                ? EnumerateDescendentsAndSelfDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren, EqualityComparer<TNode>.Default)
+                ? EnumerateDescendentsAndSelfDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren, comparer ?? EqualityComparer<TNode>.Default)
                     .Select(n => (n, (IEnumerable<TNode>)(breadcrumbs.ToArray())))
-                : EnumerateDescendantsAndSelfBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren, EqualityComparer<TNode>.Default)
+                : EnumerateDescendantsAndSelfBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren, comparer ?? EqualityComparer<TNode>.Default)
                     .Select(n => (n, (IEnumerable<TNode>)(breadcrumbs.ToArray())));
         }
 
@@ -332,7 +332,7 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="visitor">delegate to present each node and its path to the <paramref name="startNode"/></param>
         /// <param name="depthFirst">enables deth first traversal, breadth first is default</param>
         /// <param name="maxDepth">specifies the maximum depth of traversal: 0 is the <paramref name="startNode"/>, 1 is the children of the <paramref name="startNode"/> and so on. default is unlimited</param>
-        public static void VisitDescendantsAndSelf<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren, Action<IEnumerable<TNode>, TNode> visitor, bool? depthFirst = null, int? maxDepth = null)
+        public static void VisitDescendantsAndSelf<TNode>(this TNode startNode, Func<TNode, IEnumerable<TNode>> getChildren, Action<IEnumerable<TNode>, TNode> visitor, bool? depthFirst = null, int? maxDepth = null, IEqualityComparer<TNode> comparer = null)
         {
             if (getChildren is null)
                 throw new ArgumentNullException(nameof(getChildren));
@@ -351,12 +351,12 @@ namespace Elementary.Hierarchy.Generic
             // and continue with descendants
             if (depthFirst.GetValueOrDefault(false))
             {
-                foreach (var node in EnumerateDescendentsAndSelfDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren, EqualityComparer<TNode>.Default).Skip(1))
+                foreach (var node in EnumerateDescendentsAndSelfDepthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren, comparer ?? EqualityComparer<TNode>.Default).Skip(1))
                     visitor(breadcrumbs, node);
             }
             else // this is the default case:
             {
-                foreach (var node in EnumerateDescendantsAndSelfBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren, EqualityComparer<TNode>.Default).Skip(1))
+                foreach (var node in EnumerateDescendantsAndSelfBreadthFirst(startNode, breadcrumbs, maxDepth ?? int.MaxValue, getChildren, comparer ?? EqualityComparer<TNode>.Default).Skip(1))
                     visitor(breadcrumbs, node);
             }
         }
