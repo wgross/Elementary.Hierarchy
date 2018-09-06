@@ -77,7 +77,7 @@
                 throw new ArgumentException("must be > 0", nameof(maxDepth));
 
             if (startNode is IHasDescendantNodes<TNode>)
-                return Enumerable.Concat(new[] { startNode }, startNode.Descendants(depthFirst, maxDepth - 1));
+                return startNode.Yield().Concat(startNode.Descendants(depthFirst, maxDepth - 1));
 
             // startNode's implememtation doesn't provide an optimized accessor to its descendants.
             // just rely on the child nodes
