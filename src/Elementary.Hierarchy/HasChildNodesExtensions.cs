@@ -541,7 +541,7 @@ namespace Elementary.Hierarchy.Generic
             // from agiven path fetch the child nodes without the nodes already visited as ancestors
             // this works only for depth first search
 
-            IEnumerable<TNode> getChildNodesWithoutAncestors(IEnumerable<TNode> path, TNode currentNode) => getChildNodes(currentNode).Except(path, comparer).Except(new[] { currentNode });
+            IEnumerable<TNode> getChildNodesWithoutAncestors(IEnumerable<TNode> path, TNode currentNode) => getChildNodes(currentNode).Except(currentNode.Yield().Concat(path), comparer);
 
             // clear breadcrumbs before yielding start node, to remove potential relics during multiple enumeration
             breadcrumbs.Clear();

@@ -267,7 +267,7 @@
         /// <returns>a new HierarchyPath instance, this instance remains unchanged</returns>
         public HierarchyPath<T> Join(T pathItem)
         {
-            return HierarchyPath.Create(this.Items.Concat(new[] { pathItem }));
+            return HierarchyPath.Create(this.Items.Concat(pathItem.Yield()));
         }
 
         /// <summary>
