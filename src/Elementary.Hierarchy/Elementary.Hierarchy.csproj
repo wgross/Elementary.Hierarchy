@@ -14,7 +14,7 @@
     </PackageReleaseNotes>
     <PackageLicenseUrl>https://raw.githubusercontent.com/wgross/Elementary.Hierarchy/master/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/wgross/Elementary.Hierarchy</RepositoryUrl>
-    <Version>2.1.1-alpha2</Version>
+    <Version>2.1.1-alpha3</Version>
 	<PackageProjectUrl>https://github.com/wgross/Elementary.Hierarchy</PackageProjectUrl>
   </PropertyGroup>
   
