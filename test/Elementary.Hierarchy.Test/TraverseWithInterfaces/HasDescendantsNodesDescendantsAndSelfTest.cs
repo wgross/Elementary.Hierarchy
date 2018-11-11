@@ -1,12 +1,15 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 {
     using Moq;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Xunit;
 
     public class HasDescendantNodesDescendantsAndSelfTest
     {
+        private readonly MockRepository mocks = new MockRepository(MockBehavior.Strict);
+
         public interface MockableNodeType : IHasDescendantNodes<MockableNodeType>
         {
         }
@@ -28,31 +31,31 @@
 
             // leaves
 
-            this.rightRightLeaf = new Mock<MockableNodeType>();
+            this.rightRightLeaf = this.mocks.Create<MockableNodeType>();
             this.rightRightLeaf
                 .Setup(n => n.GetDescendants(false, int.MaxValue)).Returns(Enumerable.Empty<MockableNodeType>());
 
-            this.leftRightLeaf = new Mock<MockableNodeType>();
+            this.leftRightLeaf = this.mocks.Create<MockableNodeType>();
             this.leftRightLeaf
                 .Setup(n => n.GetDescendants(false, int.MaxValue)).Returns(Enumerable.Empty<MockableNodeType>());
 
-            this.leftLeaf = new Mock<MockableNodeType>();
+            this.leftLeaf = this.mocks.Create<MockableNodeType>();
             this.leftLeaf
                 .Setup(n => n.GetDescendants(false, int.MaxValue)).Returns(Enumerable.Empty<MockableNodeType>());
 
             // inner nodes
 
-            this.leftNode = new Mock<MockableNodeType>();
+            this.leftNode = this.mocks.Create<MockableNodeType>();
             this.leftNode
                 .Setup(n => n.GetDescendants(false, int.MaxValue)).Returns(new[] { this.leftLeaf.Object });
 
-            this.rightNode = new Mock<MockableNodeType>();
+            this.rightNode = this.mocks.Create<MockableNodeType>();
             this.rightNode // return leftRight and rightRightLeaf as children
                 .Setup(n => n.GetDescendants(false, int.MaxValue)).Returns(new[] { this.leftRightLeaf.Object, this.rightRightLeaf.Object });
 
             // root
 
-            this.rootNode = new Mock<MockableNodeType>();
+            this.rootNode = this.mocks.Create<MockableNodeType>();
             this.rootNode
                 .Setup(n => n.GetDescendants(false, int.MaxValue))
                 .Returns(new[]
@@ -86,8 +89,10 @@
                 });
         }
 
+       
+
         [Fact]
-        public void IHasDescendentNodes_leaf_returns_itself_on_DescendantsAndSelf()
+        public void I_DescendantsAndSelf_returns_itself_as_first_node()
         {
             // ACT
 
@@ -96,7 +101,7 @@
             // ASSERT
 
             Assert.NotNull(result);
-            Assert.Equal(1, result.Count());
+            Assert.Single(result);
             Assert.Same(this.rightRightLeaf.Object, result.ElementAt(0));
 
             this.rightRightLeaf.Verify(n => n.GetDescendants(false, int.MaxValue), Times.Once());
@@ -105,7 +110,7 @@
         }
 
         [Fact]
-        public void IHasDescendentNodes_leaf_returns_single_child_on_DescendantsAndSelf()
+        public void I_DescendantsAndSelf_returns_single_child()
         {
             // ACT
 
@@ -126,7 +131,7 @@
         }
 
         [Fact]
-        public void IHasDescendentNodes_leaf_returns_left_before_right_child_on_DescendantsAndSelf()
+        public void I_DescendantsAndSelf_returns_left_before_right_child()
         {
             // ACT
 
@@ -151,7 +156,7 @@
         }
 
         [Fact]
-        public void IHasDescendentNodes_leaf_returns_descendants_breadthFirst_on_DescendantsAndSelf()
+        public void I_DescendantsAndSelf_returns_descendants_breadth_first()
         {
             // ACT
 
@@ -195,7 +200,7 @@
         }
 
         [Fact]
-        public void IHasDescendentNodes_leaf_returns_descendants_depthFirst_on_DescendantsAndSelf()
+        public void I_DescendantsAndSelf_returns_descendants_depth_first()
         {
             // ACT
 
@@ -239,7 +244,7 @@
         }
 
         [Fact]
-        public void IHasDescendentNodes_DescendantsAndSelfLevel2AreChildren_on_DescendantsAndSelf()
+        public void I_DescendantsAndSelf_returns_descendants_breadth_first_restricted_to_max_Depth()
         {
             // ARRANGE
 

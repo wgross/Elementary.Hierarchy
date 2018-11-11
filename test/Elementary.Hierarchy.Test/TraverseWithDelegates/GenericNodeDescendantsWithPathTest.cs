@@ -26,7 +26,7 @@
         #region DescendantsWithPath
 
         [Fact]
-        public void D_Traverse_complete_tree_breadthFirst_and_return_node_with_path()
+        public void D_DescendantsWithPath_traverse_tree_breadth_first()
         {
             // ACT
 
@@ -44,7 +44,7 @@
         }
 
         [Fact]
-        public void D_Traverse_complete_tree_depthFirst_and_return_node_with_path()
+        public void D__DescendantsWithPath_traverses_tree_depth_first()
         {
             // ACT
 
@@ -70,7 +70,7 @@
         }
 
         [Fact]
-        public void D_Traverse_singleChild_on_TraverseWithPath()
+        public void D_DescendantsWithPath_traverses_single_child()
         {
             // ACT
 
@@ -84,7 +84,7 @@
         }
 
         [Fact]
-        public void D_visit_leftChild_first_on_TraverseWithPath()
+        public void D_DescendantsWithPath_visits_leftChild_first()
         {
             // ACT
 
@@ -99,12 +99,12 @@
         }
 
         [Fact]
-        public void D_TraverseWithPath_breaks_on_maxDepth()
+        public void D_DescendantsWithPath_breaks_on_maxDepth()
         {
             // ACT
 
-            var result = "rootNode".DescendantsWithPath(this.GetChildNodes, maxDepth:1);
-            
+            var result = "rootNode".DescendantsWithPath(this.GetChildNodes, maxDepth: 1);
+
             // ASSERT
 
             Assert.Equal(2, result.Count());
@@ -116,7 +116,7 @@
         #region DescendantsAndSelfWithPath
 
         [Fact]
-        public void D_Traverse_complete_tree_breadthFirst_with_DescendantsAndSelfWithPath()
+        public void D_DescendantsAndSelfWithPath_traverses_tree_breadthFirst()
         {
             // ACT
 
@@ -141,7 +141,7 @@
         }
 
         [Fact]
-        public void D_visit_complete_tree_depthFirst_with_DescendantsAndSelfWithPath()
+        public void D_DescendantsAndSelfWithPath_traverses_tree_depthFirst()
         {
             // ACT
 
@@ -160,7 +160,7 @@
             }, result.Select(i => i.node));
 
             Assert.Equal(new[] { "rootNode", "leftNode", "leftLeaf", "rightNode", "leftRightLeaf", "rightRightLeaf" }, result.Select(i => i.node));
-            Assert.Equal(new string[] { }, result.ElementAt(0).path);
+            Assert.Empty(result.ElementAt(0).path);
             Assert.Equal(new[] { "rootNode" }, result.ElementAt(1).path);
             Assert.Equal(new[] { "rootNode", "leftNode" }, result.ElementAt(2).path);
             Assert.Equal(new[] { "rootNode" }, result.ElementAt(3).path);

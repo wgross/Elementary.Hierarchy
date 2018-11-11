@@ -1,12 +1,15 @@
 ﻿namespace Elementary.Hierarchy.Test.TraverseWithInterfaces
 {
     using Moq;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Xunit;
 
     public class HasChildNodesDescendantsAndSelfTest
     {
+        private readonly MockRepository mocks = new MockRepository(MockBehavior.Strict);
+
         public interface MockableNodeType : IHasChildNodes<MockableNodeType>
         {
         }
@@ -26,31 +29,31 @@
             //           /            /       \
             //     leftLeaf    leftRightLeaf  rightRightLeaf
 
-            this.rightRightLeaf = new Mock<MockableNodeType>();
+            this.rightRightLeaf = this.mocks.Create<MockableNodeType>();
             this.rightRightLeaf // has no children
                 .Setup(n => n.HasChildNodes).Returns(false);
 
-            this.leftRightLeaf = new Mock<MockableNodeType>();
+            this.leftRightLeaf = this.mocks.Create<MockableNodeType>();
             this.leftRightLeaf // has no children
                 .Setup(n => n.HasChildNodes).Returns(false);
 
-            this.leftLeaf = new Mock<MockableNodeType>();
+            this.leftLeaf = this.mocks.Create<MockableNodeType>();
             this.leftLeaf // has no children
                 .Setup(n => n.HasChildNodes).Returns(false);
 
-            this.leftNode = new Mock<MockableNodeType>();
+            this.leftNode = this.mocks.Create<MockableNodeType>();
             this.leftNode // has single child
                 .Setup(n => n.HasChildNodes).Returns(true);
             this.leftNode // returns leftLeaf as child
                 .Setup(n => n.ChildNodes).Returns(new[] { this.leftLeaf.Object });
 
-            this.rightNode = new Mock<MockableNodeType>();
+            this.rightNode = this.mocks.Create<MockableNodeType>();
             this.rightNode // has two children
                 .Setup(n => n.HasChildNodes).Returns(true);
             this.rightNode // return leftRight and rightRightLeaf as children
                 .Setup(n => n.ChildNodes).Returns(new[] { this.leftRightLeaf.Object, this.rightRightLeaf.Object });
 
-            this.rootNode = new Mock<MockableNodeType>();
+            this.rootNode = this.mocks.Create<MockableNodeType>();
             this.rootNode // has a tw children
                 .Setup(n => n.HasChildNodes).Returns(true);
             this.rootNode // returns the left node and right node as children
@@ -58,7 +61,20 @@
         }
 
         [Fact]
-        public void I_leaf_returns_itself_on_DescendantsAndSelf()
+        public void I_DescendantsAndSelf_rejects_max_depth_less_than_0()
+        {
+            // ACT
+
+            var result = Assert.Throws<ArgumentException>(() => this.rightRightLeaf.Object.DescendantsAndSelf(maxDepth: -1));
+
+            // ASSERT
+
+            Assert.Equal("maxDepth", result.ParamName);
+            Assert.StartsWith("must be > 0", result.Message);
+        }
+
+        [Fact]
+        public void I_DescendantsAndSelf_returns_itself_as_first_node()
         {
             // ACT
 
@@ -67,18 +83,18 @@
             // ASSERT
 
             Assert.NotNull(result);
-            Assert.Equal(1, result.Count());
+            Assert.Single(result);
 
             this.rightRightLeaf.Verify(n => n.HasChildNodes, Times.Once());
             this.rightRightLeaf.Verify(n => n.ChildNodes, Times.Never());
         }
 
         [Fact]
-        public void I_inconsistent_leaf_returns_itself_on_DescendantsAndSelf()
+        public void I_DescendantsAndSelf_returns_itself_despite_inconsistent_leaf()
         {
             // ARRANGE
 
-            var badLeaf = new Mock<MockableNodeType>();
+            var badLeaf = this.mocks.Create<MockableNodeType>();
             badLeaf // claims to hav subnodes
                 .Setup(n => n.HasChildNodes).Returns(true);
             badLeaf //  but returns empty set of subnodes
@@ -90,7 +106,7 @@
 
             // ASSERT
 
-            Assert.Equal(1, result.Count());
+            Assert.Single(result);
             Assert.Same(badLeaf.Object, result.ElementAt(0));
 
             badLeaf.Verify(n => n.HasChildNodes, Times.Once());
@@ -98,7 +114,7 @@
         }
 
         [Fact]
-        public void I_leaf_returns_single_child_on_DescendantsAndSelf()
+        public void I_DescendantsAndSelf_returns_single_child()
         {
             // ACT
 
@@ -113,7 +129,7 @@
         }
 
         [Fact]
-        public void I_leaf_returns_left_before_right_child_on_DescendantsAndSelf()
+        public void I_DescendantsAndSelf_returns_left_child_before_right_child()
         {
             // ACT
 
@@ -130,7 +146,7 @@
         }
 
         [Fact]
-        public void I_leaf_returns_descendants_breadthFirst_on_DescendantsAndSelf()
+        public void I_DescendantsAndSelf_returns_descendants_breadth_first()
         {
             // ACT
 
@@ -157,7 +173,7 @@
         }
 
         [Fact]
-        public void I_leaf_returns_descendants_depthFirst_on_DescendantsAndSelf()
+        public void I_DescendantsAndSelf_returns_descendants_depth_first()
         {
             // ACT
 
@@ -184,11 +200,24 @@
         }
 
         [Fact]
-        public void I_DescendantsAndSelfLevel2AreChildren_on_DescendantsAndSelf()
+        public void I_DescendantsAndSelf_max_depth_2_restricts_to_start_nodes_children_on_bread_first()
         {
             // ACT
 
             var descendantsAndSelf = this.rootNode.Object.DescendantsAndSelf(maxDepth: 2).Skip(1).ToArray();
+            var children = this.rootNode.Object.Children().ToArray();
+
+            // ASSERT
+
+            Assert.Equal(children, descendantsAndSelf);
+        }
+
+        [Fact]
+        public void I_DescendantsAndSelf_max_depth_2_restricts_to_start_nodes_children_on_depth_first()
+        {
+            // ACT
+
+            var descendantsAndSelf = this.rootNode.Object.DescendantsAndSelf(depthFirst: true, maxDepth: 2).Skip(1).ToArray();
             var children = this.rootNode.Object.Children().ToArray();
 
             // ASSERT
