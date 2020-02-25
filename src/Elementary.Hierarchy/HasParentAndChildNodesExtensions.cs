@@ -22,7 +22,7 @@
         public static IEnumerable<TNode> NextSiblings<TNode>(this TNode startNode)
             where TNode : class, IHasChildNodes<TNode>, IHasParentNode<TNode>
         {
-            if (startNode == null)
+            if (startNode is null)
                 throw new ArgumentNullException(nameof(startNode));
 
             if (!startNode.HasParentNode)
@@ -45,7 +45,7 @@
         public static IEnumerable<TNode> PreviousSiblings<TNode>(this TNode startNode)
             where TNode : class, IHasChildNodes<TNode>, IHasParentNode<TNode>
         {
-            if (startNode == null)
+            if (startNode is null)
                 throw new ArgumentNullException(nameof(startNode));
 
             if (!startNode.HasParentNode)
@@ -81,10 +81,10 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="tryGetParent">Delegate to retrieve a nodes parent</param>
         public static IEnumerable<TNode> FollowingSiblings<TNode>(this TNode startNode, Func<TNode, (bool, TNode)> tryGetParent, Func<TNode, IEnumerable<TNode>> getChildren)
         {
-            if (tryGetParent == null)
+            if (tryGetParent is null)
                 throw new ArgumentNullException(nameof(tryGetParent));
 
-            if (getChildren == null)
+            if (getChildren is null)
                 throw new ArgumentNullException(nameof(getChildren));
 
             // if there is no parnet node, no sbilings are enumerated.
@@ -109,10 +109,10 @@ namespace Elementary.Hierarchy.Generic
         /// <param name="tryGetParent">Delegate to retrieve a nodes parent</param>
         public static IEnumerable<TNode> PrecedingSiblings<TNode>(this TNode startNode, Func<TNode, (bool, TNode)> tryGetParent, Func<TNode, IEnumerable<TNode>> getChildren)
         {
-            if (tryGetParent == null)
+            if (tryGetParent is null)
                 throw new ArgumentNullException(nameof(tryGetParent));
 
-            if (getChildren == null)
+            if (getChildren is null)
                 throw new ArgumentNullException(nameof(getChildren));
 
             // if there is no parnet node, no sbilings are enumerated.

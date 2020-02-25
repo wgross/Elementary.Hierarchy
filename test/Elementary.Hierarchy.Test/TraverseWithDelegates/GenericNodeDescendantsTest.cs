@@ -64,7 +64,7 @@
 
             // ASSERT
 
-            Assert.Equal(1, result.Count());
+            Assert.Single(result);
             Assert.Same("leftLeaf", result.ElementAt(0));
         }
 
@@ -95,6 +95,19 @@
         }
 
         [Fact]
+        public void D_root_returns_descendants_breadthFirst_on_Descendants_rightest_node_without_child()
+        {
+            // ACT
+
+            IEnumerable<string> result = "rootNode".Descendants(DelegateTreeDefinition.GetChildNodesSmall).ToArray();
+
+            // ASSERT
+
+            Assert.Equal(3, result.Count());
+            Assert.Equal(new[] { "leftNode", "rightNode", "leftLeaf" }, result);
+        }
+
+        [Fact]
         public void D_root_returns_descendants_depthFirst_on_Descendants()
         {
             // ACT
@@ -114,7 +127,24 @@
         }
 
         [Fact]
-        public void d_root_returns_children_as_level1_descendants_on_Descendants()
+        public void D_root_returns_descendants_depthFirst_on_Descendants_rightest_node_without_child()
+        {
+            // ACT
+
+            IEnumerable<string> result = "rootNode".Descendants(DelegateTreeDefinition.GetChildNodesSmall, depthFirst: true).ToArray();
+
+            // ASSERT
+
+            Assert.Equal(3, result.Count());
+            Assert.Equal(new[] {
+                "leftNode",
+                "leftLeaf",
+                "rightNode"
+            }, result);
+        }
+
+        [Fact]
+        public void D_root_returns_children_as_level1_descendants_on_Descendants()
         {
             // ACT
 
@@ -126,7 +156,7 @@
         }
 
         [Fact]
-        public void D_root_returns_children_as_level1_descendants_on_Descendants()
+        public void D_root_returns_empty_set_as_level0_descendants_on_Descendants()
         {
             // ACT
 

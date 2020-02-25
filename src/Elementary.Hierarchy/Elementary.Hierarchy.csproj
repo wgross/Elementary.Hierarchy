@@ -7,13 +7,14 @@
     <PackageId>Elementary.Hierarchy</PackageId>
     <PackageTags>framework;tree;traversal;hierarchy</PackageTags>
     <PackageReleaseNotes>
+      2.1.1: Cycle detection in some descending algorithms
       2.1.0: Traversal 'DescendantsWithPath' added
       2.0.0: supports .NetStandard 2.0; removed TryGet pattern from interfaces.
       1.7.1: added net461 as target platform, fixed assemblies wrong file version
     </PackageReleaseNotes>
     <PackageLicenseUrl>https://raw.githubusercontent.com/wgross/Elementary.Hierarchy/master/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/wgross/Elementary.Hierarchy</RepositoryUrl>
-    <Version>2.1.0</Version>
+    <Version>2.1.1</Version>
 	<PackageProjectUrl>https://github.com/wgross/Elementary.Hierarchy</PackageProjectUrl>
   </PropertyGroup>
   
@@ -21,12 +22,20 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DebugType>portable</DebugType>
-    <DebugSymbols>True</DebugSymbols>
+  <!-- Source link: config -->
+  <PropertyGroup>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
+
+  <!-- Source link: connect to github -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All"/>
+  </ItemGroup>
   
   <ItemGroup>
     <Folder Include="Properties\" />
